@@ -1,0 +1,41 @@
+.screen, .sec { display: none; }
+.screen.on, .sec.on { display: block; }
+
+/* Landing */
+#landing-screen {
+  background: radial-gradient(circle at center, var(--card), var(--bg));
+  min-height: 100vh;
+}
+#landing-screen h1 { margin-bottom: 1rem; }
+
+/* Avatar Builder */
+#avatar-screen .scene {
+  max-width: 400px;
+  margin: 2rem auto;
+}
+
+/* Intake Flow */
+#intake-screen .card {
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+/* Main Tab Area Padding */
+#app-screen {
+  padding-bottom: 60px; /* Space for fixed bottom nav if added later, or just general breathing room */
+}
+
+.sec {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  #intake-screen .card, #avatar-screen .scene {
+    margin: 1rem;
+  }
+}

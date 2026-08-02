@@ -1,0 +1,107 @@
+:root {
+  --bg: #0b090e; 
+  --card: #17131c; 
+  --card2: #110e15; 
+  --border: #332b3a;
+  --crimson: #5a0a10; 
+  --crimson-b: #c4243a; 
+  --plum: #3a1148; 
+  --plum-b: #5e2a75;
+  --rose: #b08494; 
+  --parch: #e6dcc3; 
+  --silver: #b9bcc4; 
+  --gold: #a9adb8;
+  --moss: #3d4438; 
+  --ink: #0a0810;
+  --white: #efe9f0; 
+  --ash: #a49aa8; 
+  --dim: #6b6272;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--parch);
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.script { font-family: 'Pinyon Script', cursive; }
+.serif-head { font-family: 'Cormorant Garamond', serif; }
+.serif-body { font-family: 'IM Fell English', serif; }
+
+h1, h2, h3 { font-weight: normal; }
+
+h1 { font-family: 'Pinyon Script', cursive; font-size: 2.5rem; color: var(--gold); }
+h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; color: var(--silver); }
+h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--rose); }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+
+/* Selection */
+::selection { background: var(--crimson); color: var(--white); }
+
+/* Focus */
+*:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* Transitions */
+.transition { transition: all 0.2s ease; }
+
+/* Flourish */
+.flourish {
+  text-align: center;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin: 1rem 0;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--gold);
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border);
+}
+.divider:not(:empty)::before { margin-right: .5em; }
+.divider:not(:empty)::after { margin-left: .5em; }
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Card */
+.card {
+  background: linear-gradient(to bottom, var(--card), var(--card2));
+  border: 1px solid var(--crimson);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.3);
+  position: relative;
+  padding: 1.5rem;
+  border-radius: 4px;
+}
+.corner { position: absolute; width: 10px; height: 10px; border: 1px solid var(--gold); }
+.corner.tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+.corner.tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+.corner.bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+.corner.br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+@media (max-width: 480px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+  .card { padding: 1rem; }
+}
