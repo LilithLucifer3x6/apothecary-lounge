@@ -12,58 +12,35 @@ export default function Rites({ pose }) {
   const [pmItems, setPmItems] = useState([]);
   const [conflicts, setConflicts] = useState([]);
   const [checkedIds, setCheckedIds] = useState(new Set());
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [amSaving, setAmSaving] = useState(false);
+  const [amSaved, setAmSaved] = useState(false);
+  const [pmSaving, setPmSaving] = useState(false);
+  const [pmSaved, setPmSaved] = useState(false);
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const { data } = await supabase
-        .from('items')
-        .select('*')
-        .in('lifecycle_state', ['stocked', 'ebbing', 'enshrined'])
-        .order('category', { ascending: true });
-        
-      const itemsArr = data || [];
-      setItems(itemsArr);
-      
-      // Mocking wearable data as Terra API is enabled in settings
-      const mockWearables = {
-        sleepDuration: 5.5, // Less than 6 hours -> trigger de-puffing
-        heavySweat: true    // Heavy sweat -> trigger gentle cleanse
-      };
-      
-      const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
-      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, mockWearables);
-      setAmItems(am);
-      setPmItems(pm);
-      setConflicts(checkConflicts(itemsArr));
-      setLoading(false);
-    }
-    
-    fetchData();
-  }, []);
-
-  const handleCheck = (id) => {
-    const newChecked = new Set(checkedIds);
-    if (newChecked.has(id)) {
-      newChecked.delete(id);
-    } else {
-      newChecked.add(id);
-    }
-    setCheckedIds(newChecked);
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    if (checkedIds.size > 0) {
+  const handleSaveAm = async () => {
+    setAmSaving(true);
+    const amChecked = amItems.filter(i => checkedIds.has(i.id)).map(i => i.id);
+    if (amChecked.length > 0) {
       await supabase.from('routine_history').insert({
         completed_at: new Date().toISOString(),
-        items_used: Array.from(checkedIds)
+        items_used: amChecked
       });
     }
-    setSaved(true);
-    setSaving(false);
+    setAmSaved(true);
+    setAmSaving(false);
+  };
+
+  const handleSavePm = async () => {
+    setPmSaving(true);
+    const pmChecked = pmItems.filter(i => checkedIds.has(i.id)).map(i => i.id);
+    if (pmChecked.length > 0) {
+      await supabase.from('routine_history').insert({
+        completed_at: new Date().toISOString(),
+        items_used: pmChecked
+      });
+    }
+    setPmSaved(true);
+    setPmSaving(false);
   };
 
   function getRitualDate() {
@@ -85,6 +62,19 @@ export default function Rites({ pose }) {
     );
   }
 
+  const renderScheduleStep = (time, desc, color) => (
+    <div className="step" style={{ borderLeft: `3px solid ${color}` }}>
+      <input type="checkbox" />
+      <div style={{ flex: 1 }}>
+        <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+          {time} 
+          <span style={{ marginLeft: '0.4rem' }} dangerouslySetInnerHTML={{ __html: speakerMarkup(`${time}. ${desc}`) }} />
+        </div>
+        <div className="mt">{desc}</div>
+      </div>
+    </div>
+  );
+
   const renderStep = (item, isOpt = false, isRx = false, isAid = false) => {
     const rxClass = isRx ? 'rx' : '';
     const optClass = isOpt ? 'opt' : '';
@@ -105,8 +95,10 @@ export default function Rites({ pose }) {
           />
         )}
         <div style={{ flex: 1 }}>
-          <div className={`nm ${rxClass}`}>
-            {item.name} {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
+          <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+            {item.name} 
+            <span style={{ marginLeft: '0.4rem' }} dangerouslySetInnerHTML={{ __html: speakerMarkup(item.name) }} />
+            {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
           </div>
           <div className="mt">{item.brand || 'Prescription'} &bull; {item.storage_location || 'Vanity'}</div>
         </div>
@@ -125,53 +117,12 @@ export default function Rites({ pose }) {
         <h3>The Long Hours <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Long Hours') }} /></h3>
         <div className="mt mb-4">The Daily Schedule</div>
         
-        <div className="step" style={{ borderLeft: '3px solid var(--crimson-b)' }}>
-          <input type="checkbox" /> 
-          <div style={{ flex: 1 }}>
-            <div className="nm">8:00 AM - The Awakening</div>
-            <div className="mt">Wake up and perform The Morning Invocation</div>
-          </div>
-        </div>
-        
-        <div className="step" style={{ borderLeft: '3px solid var(--silver)' }}>
-          <input type="checkbox" /> 
-          <div style={{ flex: 1 }}>
-            <div className="nm">8:15 AM - 5:00 PM - The Labors</div>
-            <div className="mt">Work hours</div>
-          </div>
-        </div>
-        
-        <div className="step" style={{ borderLeft: '3px solid var(--rose)' }}>
-          <input type="checkbox" /> 
-          <div style={{ flex: 1 }}>
-            <div className="nm">9:00 AM to 10:30 AM - The Morning Respite</div>
-            <div className="mt">15-minute break &bull; Hydrate (16oz water)</div>
-          </div>
-        </div>
-        
-        <div className="step" style={{ borderLeft: '3px solid var(--rose)' }}>
-          <input type="checkbox" /> 
-          <div style={{ flex: 1 }}>
-            <div className="nm">11:00 AM to 12:30 PM - The Midday Sustenance</div>
-            <div className="mt">Lunch &bull; Gentle Movement (Walk/Stretch)</div>
-          </div>
-        </div>
-        
-        <div className="step" style={{ borderLeft: '3px solid var(--rose)' }}>
-          <input type="checkbox" /> 
-          <div style={{ flex: 1 }}>
-            <div className="nm">1:30 PM to 2:30 PM - The Afternoon Respite</div>
-            <div className="mt">15-minute break &bull; Hydrate (16oz water)</div>
-          </div>
-        </div>
-        
-        <div className="step" style={{ borderLeft: '3px solid var(--plum)' }}>
-          <input type="checkbox" /> 
-          <div style={{ flex: 1 }}>
-            <div className="nm">5:00 PM onwards - The Descent</div>
-            <div className="mt">Work ends &bull; The Evening Invocation</div>
-          </div>
-        </div>
+        {renderScheduleStep('8:00 AM - The Awakening', 'Wake up and perform The Morning Invocation', 'var(--crimson-b)')}
+        {renderScheduleStep('8:15 AM - 5:00 PM - The Labors', 'Work hours', 'var(--silver)')}
+        {renderScheduleStep('9:00 AM to 10:30 AM - The Morning Respite', '15-minute break. Hydrate (16oz water)', 'var(--rose)')}
+        {renderScheduleStep('11:00 AM to 12:30 PM - The Midday Sustenance', 'Lunch. Gentle Movement (Walk/Stretch)', 'var(--rose)')}
+        {renderScheduleStep('1:30 PM to 2:30 PM - The Afternoon Respite', '15-minute break. Hydrate (16oz water)', 'var(--rose)')}
+        {renderScheduleStep('5:00 PM onwards - The Descent', 'Work ends. The Evening Invocation', 'var(--plum)')}
       </div>
 
       <div className="rites2">
@@ -180,6 +131,18 @@ export default function Rites({ pose }) {
           <h3>Morning Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Morning Invocation') }} /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
             {amItems.length > 0 ? amItems.map(i => renderStep(i)) : <div className="empty">No morning rites.</div>}
+            {amItems.length > 0 && (
+              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                <button 
+                  className={`btn ${amSaved ? 'g' : 'plum'}`} 
+                  style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
+                  onClick={handleSaveAm}
+                  disabled={amSaving || amSaved}
+                >
+                  {amSaved ? 'Morning Rite Concluded' : 'Conclude Morning Rite'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
         
@@ -188,29 +151,33 @@ export default function Rites({ pose }) {
           <h3>Evening Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Evening Invocation') }} /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
             {pmItems.length > 0 ? pmItems.map(i => renderStep(i)) : <div className="empty">No evening rites.</div>}
+            {pmItems.length > 0 && (
+              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                <button 
+                  className={`btn ${pmSaved ? 'g' : 'plum'}`} 
+                  style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
+                  onClick={handleSavePm}
+                  disabled={pmSaving || pmSaved}
+                >
+                  {pmSaved ? 'Evening Rite Concluded' : 'Conclude Evening Rite'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
         
         {conflicts.length > 0 && (
           <div className="card mt-4" style={{ background: 'var(--card-bg-alt, rgba(100,20,20,0.5))', borderColor: '#882222' }}>
-            <h3 style={{ color: '#ff8888' }}>Keeper's Warning</h3>
+            <h3 style={{ color: '#ff8888' }}>Keeper's Warning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Keeper's Warning") }} /></h3>
             <ul style={{ marginTop: '0.5rem', color: '#ffcccc', paddingLeft: '1.5rem' }}>
-              {conflicts.map((c, idx) => <li key={idx}>{c}</li>)}
+              {conflicts.map((c, idx) => (
+                <li key={idx}>
+                  {c} <span dangerouslySetInnerHTML={{ __html: speakerMarkup(c) }} style={{ marginLeft: '0.4rem', verticalAlign: 'middle' }} />
+                </li>
+              ))}
             </ul>
           </div>
         )}
-
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <button 
-            id="btn-save-rite" 
-            className={`btn ${saved ? 'g' : 'plum'}`} 
-            style={{ fontSize: '1.2rem', padding: '1rem 2rem' }}
-            onClick={handleSave}
-            disabled={saving || saved}
-          >
-            {saved ? 'Rite Concluded' : 'Conclude the Rite'}
-          </button>
-        </div>
       </div>
     </div>
   );
