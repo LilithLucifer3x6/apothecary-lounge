@@ -86,6 +86,21 @@ input[type=text]:focus, input[type=number]:focus, select:focus, textarea:focus {
   margin: 1rem 0;
 }
 
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.blur-overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(12px) brightness(0.6);
+  -webkit-backdrop-filter: blur(12px) brightness(0.6);
+  z-index: 1;
+  pointer-events: none;
+}
+
 .divider {
   display: flex;
   align-items: center;

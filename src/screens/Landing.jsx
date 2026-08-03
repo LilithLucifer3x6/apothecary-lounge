@@ -34,9 +34,7 @@ export default function Landing({ onProceed, onOpenAvatar }) {
         a place to keep the work of caring for yourself
       </div>
       
-      <div className="scene" style={{ borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.5)', marginBottom: '2rem' }}>
-        <img src="/assets/bg_sanctuary.jpg" alt="Sanctuary Room" style={{ width: '100%', display: 'block' }} />
-      </div>
+      <div style={{ marginTop: '2rem' }}></div>
 
       {avatarConfig && (
         <div className="card" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '2rem', padding: '1.5rem', background: 'var(--card2)', border: '1px solid var(--border)' }}>
