@@ -29,8 +29,44 @@ export function generateLocsSVG(c, style) {
     <path d="M92 62 Q98 120 90 152" stroke="${c}" stroke-width="7" fill="none" stroke-linecap="round" opacity=".85"/>`;
 }
 
-export function generateAvatarSVG(s) {
-  return `<path d="M45 180 Q45 112 75 112 Q105 112 105 180 Z" fill="${s.robe}" stroke="#1a1110" stroke-width="2.5"/>
+export function generateAvatarSVG(s, pose = 'standing') {
+  if(!s) return '';
+  const locs = generateLocsSVG(s.loc, s.style);
+  
+  let rArm = `M50 140 Q40 180 50 220`;
+  let lArm = `M100 140 Q115 180 100 220`;
+  let props = '';
+
+  if (pose === 'reading') {
+    rArm = `M50 140 Q50 180 70 170`;
+    lArm = `M100 140 Q100 180 80 170`;
+    props = `<rect x="60" y="150" width="30" height="20" fill="#e6dcc3" stroke="#5a0a10" stroke-width="2" transform="rotate(-10 75 160)" />`;
+  } else if (pose === 'meditating') {
+    rArm = `M50 140 Q70 160 75 170`;
+    lArm = `M100 140 Q80 160 75 170`;
+    props = `<circle cx="75" cy="170" r="8" fill="#c4243a" opacity="0.6" filter="blur(2px)"/>`;
+  } else if (pose === 'scrying') {
+    rArm = `M50 140 Q60 200 65 220`;
+    lArm = `M100 140 Q90 200 85 220`;
+    props = `<ellipse cx="75" cy="230" rx="15" ry="5" fill="#3aa88a" opacity="0.5" filter="blur(3px)"/>`;
+  } else if (pose === 'working') {
+    rArm = `M50 140 Q70 180 90 200`;
+    lArm = `M100 140 Q110 180 120 200`;
+  }
+
+  return `
+  <!-- right arm (back) -->
+  <path d="${rArm}" stroke="${s.robe}" stroke-width="26" fill="none" stroke-linecap="round" filter="drop-shadow(3px 3px 5px rgba(0,0,0,0.5))"/>
+  
+  <!-- body / robe base -->
+  <path d="M75 140 Q40 220 20 310 L130 310 Q110 220 75 140Z" fill="${s.robe}"/>
+  
+  ${props}
+
+  <!-- left arm (front) -->
+  <path d="${lArm}" stroke="${s.robe}" stroke-width="28" fill="none" stroke-linecap="round" filter="drop-shadow(-3px 3px 5px rgba(0,0,0,0.6))"/>
+  
+  <path d="M45 180 Q45 112 75 112 Q105 112 105 180 Z" fill="${s.robe}" stroke="#1a1110" stroke-width="2.5"/>
   <!-- body shading -->
   <path d="M45 180 Q45 112 75 112 Q80 112 85 180 Z" fill="#000" opacity="0.15"/>
   <path d="M45 180 Q75 172 105 180" fill="none" stroke="rgba(201,162,90,.5)" stroke-width="2"/>
@@ -62,10 +98,7 @@ export function generateAvatarSVG(s) {
   <!-- mouth -->
   <path d="M70 86 Q75 89 80 86" stroke="#1a1110" stroke-width="1.8" fill="none" stroke-linecap="round"/>
   
-  <!-- book -->
-  <rect x="88" y="132" width="26" height="32" rx="3" fill="#2a1a10" stroke="#a9adb8" stroke-width="2"/>
-  <path d="M101 134 V162" stroke="#a9adb8" stroke-width="1.5" opacity=".7"/>
-  <path d="M92 140 h7 M92 146 h7 M104 140 h7 M104 146 h7" stroke="#e6dcc3" stroke-width="1.2" opacity=".6"/>
+
   
   <!-- familiar -->
   <defs>

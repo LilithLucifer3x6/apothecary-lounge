@@ -3,6 +3,7 @@ import '../design-tokens.css';
 import { supabase } from './lib/supabase.js';
 import { ic, G, cor, verifyGlyphs } from './lib/icons.js';
 
+import { getAvatarConfig, generateAvatarSVG } from './lib/avatar.js';
 import { render as renderAvatar } from './screens/avatar-builder.js';
 import { render as renderLanding } from './screens/landing.js';
 import { render as renderIntake } from './screens/intake.js';
@@ -14,31 +15,43 @@ import { render as renderScrying } from './screens/scrying.js';
 import { render as renderShadowTome } from './screens/shadow-tome.js';
 
 const TABS = [
-  { id: 'rites', label: 'The Mortal Rites', glyph: G.tabRites, render: renderRites },
-  { id: 'grim', label: 'The Grimoire', glyph: G.tabGrim, render: renderGrimoire },
-  { id: 'altars', label: 'The Altars', glyph: G.tabAltars, render: renderAltars },
-  { id: 'root', label: 'The Rootwork', glyph: G.tabRoot, render: renderRootwork },
-  { id: 'pool', label: 'The Scrying Pool', glyph: G.tabPool, render: renderScrying },
-  { id: 'tome', label: 'The Shadow Tome', glyph: G.tabTome, render: renderShadowTome }
+  { id: 'rites', label: 'The Mortal Rites', glyph: G.tabRites, render: renderRites, bg: '/assets/room_land.jpg', pose: 'working' },
+  { id: 'grim', label: 'The Grimoire', glyph: G.tabGrim, render: renderGrimoire, bg: '/assets/room_grim.jpg', pose: 'reading' },
+  { id: 'altars', label: 'The Altars', glyph: G.tabAltars, render: renderAltars, bg: '/assets/room_altars.jpg', pose: 'meditating' },
+  { id: 'root', label: 'The Rootwork', glyph: G.tabRoot, render: renderRootwork, bg: '/assets/room_root.jpg', pose: 'working' },
+  { id: 'pool', label: 'The Scrying Pool', glyph: G.tabPool, render: renderScrying, bg: '/assets/room_pool.jpg', pose: 'scrying' },
+  { id: 'tome', label: 'The Shadow Tome', glyph: G.tabTome, render: renderShadowTome, bg: '/assets/room_tome.jpg', pose: 'reading' }
 ];
 
 let currentScreen = null;
 
+export function setRoomBackground(bgUrl) {
+  document.body.style.backgroundImage = `url('${bgUrl}')`;
+}
+
 function buildAppShell() {
   const app = document.getElementById('app');
   app.innerHTML = `
+    <div id="s-splash" class="land" style="display: none;">
+      <h1 style="text-shadow: 0 0 20px rgba(0,0,0,0.8);">The Apothecary Lounge</h1>
+      <div class="tag" style="text-shadow: 0 0 10px rgba(0,0,0,0.8);">A sanctuary of self-care.</div>
+      <button id="btn-enter" class="btn" style="font-size:1.1rem; padding: 0.8rem 1.5rem; margin-top:2rem;">Approach the Cottage ➔</button>
+    </div>
     <div id="s-av" class="land" style="display: none;"></div>
     <div id="s-land" class="land" style="display: none;"></div>
     <div id="s-ins" class="land" style="display: none;"></div>
     
-    <div id="s-app" style="display: none;">
-      <div class="topbar">
-        <div class="brand">The Apothecary Lounge</div>
-        <div class="datemark" id="top-date"></div>
-        <button id="btn-settings" class="btn sm" title="Settings">${ic(G.settings)}</button>
+    <div id="s-app" style="display: none; position: relative; min-height: 100vh;">
+      <div id="global-avatar" style="position: absolute; right: -20px; bottom: 0; width: 280px; height: 380px; pointer-events: none; z-index: 1;"></div>
+      <div style="position: relative; z-index: 5;">
+        <div class="topbar">
+          <div class="brand">The Apothecary Lounge</div>
+          <div class="datemark" id="top-date"></div>
+          <button id="btn-settings" class="btn sm" title="Settings">${ic(G.settings)}</button>
+        </div>
+        <div class="tabs" id="app-tabs"></div>
+        <div id="main-content"></div>
       </div>
-      <div class="tabs" id="app-tabs"></div>
-      <div id="main-content"></div>
     </div>
     
     <div id="setmodal" class="modal" style="display:none;">
@@ -98,16 +111,28 @@ function buildAppShell() {
   // Tab switching
   document.querySelectorAll('.tb').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tb').forEach(b => b.classList.remove('active', 'on'));
       const targetBtn = e.currentTarget;
-      targetBtn.classList.add('active');
+      targetBtn.classList.add('active', 'on');
       const targetId = targetBtn.getAttribute('data-target');
       
       const tab = TABS.find(t => t.id === targetId);
       if (tab) {
-        tab.render(document.getElementById('main-content'));
+        setRoomBackground(tab.bg);
+        const avCfg = getAvatarConfig();
+        if(avCfg) {
+          document.getElementById('global-avatar').innerHTML = `<svg viewBox="0 0 200 320" width="100%" height="100%"><g transform="translate(-10, 0) scale(0.9)">${generateAvatarSVG(avCfg, tab.pose)}</g></svg>`;
+        }
+        tab.render(document.getElementById('main-content'), tab.pose);
       }
     });
+  });
+
+  document.getElementById('btn-enter').addEventListener('click', () => {
+    setRoomBackground('/assets/room_dress.jpg');
+    const avContainer = document.getElementById('s-av');
+    renderAvatar(avContainer);
+    go('s-av');
   });
 
   // Settings Modal
@@ -231,14 +256,15 @@ async function start() {
   }
   
   if (!profile && !avatarConfig) {
-    const avContainer = document.getElementById('s-av');
-    renderAvatar(avContainer);
-    go('s-av');
+    setRoomBackground('/assets/app_bg.jpg');
+    go('s-splash');
   } else if (!profile && avatarConfig) {
+    setRoomBackground('/assets/room_land.jpg');
     const landContainer = document.getElementById('s-land');
     renderLanding(landContainer);
     go('s-land');
   } else if (!profile.intake_completed) {
+    setRoomBackground('/assets/room_land.jpg');
     const insContainer = document.getElementById('s-ins');
     renderIntake(insContainer);
     go('s-ins');
