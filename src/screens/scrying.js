@@ -9,8 +9,15 @@ export async function render(container) {
       <div class="card mt-4">
         <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
         <h3>The Echo</h3>
-        <div class="mt mb-4">Prospective formula analysis (Phase 2).</div>
-        <div class="empty">The Pool is still. Present a formula to divine its nature.</div>
+        <div class="mt mb-4">Prospective formula analysis. Present a formula to divine its nature.</div>
+        <div class="field" style="display:flex; gap:0.5rem; align-items:flex-start;">
+          <div class="ip mic" style="flex:1;">
+            <textarea id="scry-input" rows="3" style="width:100%; background:transparent; border:none; color:var(--white); font-family:'IM Fell English', serif; font-size:1.1rem; resize:vertical; outline:none;" placeholder="Enter formula name or ingredients..."></textarea>
+          </div>
+          <button id="btn-scry" class="btn plum">Scry</button>
+        </div>
+        <div id="scry-status" style="margin-top:0.5rem; font-size:0.9rem; color:var(--rose); height:1rem;"></div>
+        <div id="scry-result" style="margin-top:1rem; font-family:'IM Fell English', serif; font-size:1.1rem; line-height:1.5; color:var(--parch); white-space:pre-wrap;"></div>
       </div>
 
       <div class="card mt-4">
@@ -36,12 +43,8 @@ export async function render(container) {
         <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
         <h3>The Waning</h3>
         <div class="mt mb-4">Formulas nearing their end.</div>
-        <div class="row">
-          <div style="flex:1;">
-            <div class="nm">Vitamin C Serum</div>
-            <div class="mt">Opened 4 months ago. PAO: 6M.</div>
-          </div>
-          <div style="color:var(--crimson-b); font-weight:bold;">60 Days Remaining</div>
+        <div id="waning-list">
+          <div class="empty">No formulas are currently waning.</div>
         </div>
       </div>
 
@@ -53,4 +56,53 @@ export async function render(container) {
       </div>
     </div>
   `;
+
+  const { data: items } = await supabase.from('items').select('*');
+  const inventory = items || [];
+  
+  // Calculate Silver Toll (if prices exist)
+  // For the sake of the demo, we assume price might be stored in 'price' metadata, or we default to a simulated value if it's 0.
+  // Wait, if no prices, we don't render it here, it was rendered in Rootwork. 
+  
+  const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
+  
+  const btnScry = document.getElementById('btn-scry');
+  if (btnScry) {
+    btnScry.addEventListener('click', async () => {
+      const input = document.getElementById('scry-input').value.trim();
+      if (!input) return;
+      
+      const status = document.getElementById('scry-status');
+      const result = document.getElementById('scry-result');
+      status.textContent = 'The Pool stirs...';
+      result.textContent = '';
+      
+      try {
+        const { evaluateScryingPool } = await import('../lib/ai-engine.js');
+        const reply = await evaluateScryingPool(input, profile?.intake_answers || {}, inventory);
+        
+        // Render text
+        status.textContent = '';
+        result.textContent = reply;
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'The Pool is clouded. ' + err.message;
+      }
+    });
+  }
+
+  // Waning logic
+  const waningList = document.getElementById('waning-list');
+  const waningItems = inventory.filter(i => i.lifecycle_state === 'ebbing' || i.lifecycle_state === 'hollow');
+  if (waningItems.length > 0) {
+    waningList.innerHTML = waningItems.map(item => `
+      <div class="row">
+        <div style="flex:1;">
+          <div class="nm">${item.name}</div>
+          <div class="mt">${item.brand} &bull; ${item.lifecycle_state}</div>
+        </div>
+        <div style="color:var(--crimson-b); font-weight:bold;">Prepare Replacement</div>
+      </div>
+    `).join('');
+  }
 }

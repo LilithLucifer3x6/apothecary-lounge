@@ -175,3 +175,6 @@
   .setrow:last-child{border-bottom:none;}
   .setrow .lbl{font-size:.86em;}
   .setrow .sub2{font-size:.72em;color:var(--dim);font-family:'Cormorant Garamond',serif;font-style:italic;}
+
+body.tts-disabled .spk { display: none !important; }
+

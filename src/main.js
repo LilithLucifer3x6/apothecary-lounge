@@ -1,6 +1,5 @@
-import './styles/index.css';
-import './styles/components.css';
-import './styles/screens.css';
+import '../design-tokens.css';
+import '@phosphor-icons/web/src/duotone/style.css';
 
 import { supabase } from './lib/supabase.js';
 import { ic, G, cor, verifyGlyphs } from './lib/icons.js';
@@ -62,7 +61,14 @@ function buildAppShell() {
         </div>
         <div class="field">
           <label>Voice (TTS)</label>
-          <input type="checkbox" id="setting-tts" checked> Enable Voice
+          <input type="checkbox" id="setting-tts"> Enable Voice
+        </div>
+        <div class="field mt-4">
+          <label>Integrations</label>
+          <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.5rem;">
+            <label><input type="checkbox" id="setting-health"> Android Health Connect</label>
+            <label><input type="checkbox" id="setting-cal"> Google Calendar</label>
+          </div>
         </div>
         <button id="btn-close-settings" class="btn mt-4">Close</button>
       </div>
@@ -94,15 +100,53 @@ function buildAppShell() {
   });
 
   // Settings Modal
-  document.getElementById('btn-settings').addEventListener('click', () => {
-    document.getElementById('setmodal').style.display = 'block';
-  });
-  document.getElementById('btn-close-settings').addEventListener('click', () => {
-    document.getElementById('setmodal').style.display = 'none';
+  const modal = document.getElementById('setmodal');
+  const btnSet = document.getElementById('btn-settings');
+  const btnClose = document.getElementById('btn-close-settings');
+  
+  const fontSizeInput = document.getElementById('setting-fontsize');
+  const fontSelect = document.getElementById('setting-font');
+  const ttsCheckbox = document.getElementById('setting-tts');
+  const healthCheckbox = document.getElementById('setting-health');
+  const calCheckbox = document.getElementById('setting-cal');
+
+  // Load Settings
+  const settings = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"IM Fell English","tts":false,"health":false,"cal":false}');
+  fontSizeInput.value = settings.fontSize;
+  fontSelect.value = settings.fontFamily;
+  ttsCheckbox.checked = settings.tts;
+  healthCheckbox.checked = settings.health;
+  calCheckbox.checked = settings.cal;
+
+  applySettings(settings);
+
+  btnSet.addEventListener('click', () => modal.style.display = 'block');
+  btnClose.addEventListener('click', () => {
+    modal.style.display = 'none';
+    const newSettings = {
+      fontSize: fontSizeInput.value,
+      fontFamily: fontSelect.value,
+      tts: ttsCheckbox.checked,
+      health: healthCheckbox.checked,
+      cal: calCheckbox.checked
+    };
+    localStorage.setItem('app_settings', JSON.stringify(newSettings));
+    applySettings(newSettings);
   });
 
   // Update date
   document.getElementById('top-date').textContent = getRitualDate();
+}
+
+function applySettings(settings) {
+  document.documentElement.style.setProperty('--base-font-size', settings.fontSize + 'px');
+  document.documentElement.style.setProperty('--font-body', \`"\${settings.fontFamily}", serif\`);
+  
+  if (settings.tts) {
+    document.body.classList.remove('tts-disabled');
+  } else {
+    document.body.classList.add('tts-disabled');
+  }
 }
 
 function getRitualDate() {
@@ -128,7 +172,8 @@ async function start() {
   buildAppShell();
 
   // Check auth/intake status
-  const { data: profile } = await supabase.from('user_profile').select('*').single();
+  const { data: profile, error } = await supabase.from('user_profile').select('*').maybeSingle();
+  if (error) console.error("Profile fetch error:", error);
   
   if (!profile) {
     const avContainer = document.getElementById('s-av');

@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase.js';
+
 import { go } from '../main.js';
 import { ic, G } from '../lib/icons.js';
 import { speakerMarkup } from '../lib/tts.js';
@@ -71,7 +71,7 @@ export function render(container) {
       </div>
       
       <div style="margin-top:2rem; text-align:right;">
-        <button id="btn-save-av" class="btn plum">She is ready</button>
+        <button id="btn-save-av" class="btn plum">The Keeper stands ready</button>
       </div>
     </div>
   `;
@@ -164,11 +164,7 @@ export function render(container) {
       familiar: familiarSel.value
     };
     
-    // We assume single user for this app
-    await supabase.from('user_profile').upsert({
-      id: 'default-user',
-      avatar_prefs: prefs
-    });
+    localStorage.setItem('avatar_config', JSON.stringify(prefs));
     
     go('s-land');
   });

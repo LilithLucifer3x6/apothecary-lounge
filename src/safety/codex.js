@@ -1,4 +1,4 @@
-import { supabase } from '../db/supabase.js';
+import { supabase } from '../lib/supabase.js';
 
 /**
  * Checks an array of ingredients against the Codex (blocklist).

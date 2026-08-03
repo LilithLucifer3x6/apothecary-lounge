@@ -5,7 +5,7 @@ import { attachVoice } from '../lib/voice.js';
 export async function render(container) {
   container.innerHTML = `<div class="card"><div class="empty">Unearthing roots...</div></div>`;
   
-  const { data: items } = await supabase.from('inventory').select('*').order('name');
+  const { data: items } = await supabase.from('items').select('*').order('name');
   const itemsArr = items || [];
   
   const ebbing = itemsArr.filter(i => i.lifecycle_state === 'ebbing' || i.lifecycle_state === 'hollow');
@@ -25,7 +25,7 @@ export async function render(container) {
           <div class="mt">${item.brand} &bull; ${item.category}</div>
         </div>
         <div class="acts">
-          <button class="btn sm">Edit</button>
+          <button class="btn sm">Amend</button>
           <button class="btn sm g">Banish</button>
         </div>
       </div>
@@ -89,9 +89,10 @@ export async function render(container) {
         <div class="mt mb-4">Inscribe a new item into the codex.</div>
         
         <div class="field">
-          <label>Photo (Phase 2)</label>
-          <div style="height:100px; background:var(--card2); border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; color:var(--dim);">
-            ${ic(G.tabPool)} Photo Scanner
+          <label>Photo Scan</label>
+          <div style="position:relative; overflow:hidden; background:var(--card2); border:1px dashed var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem; color:var(--dim); cursor:pointer;">
+            ${ic(G.tabPool)} <span id="photo-status" style="margin-top:0.5rem; text-align:center;">Upload or take a photo</span>
+            <input type="file" id="photo-upload" accept="image/*" capture="environment" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
           </div>
         </div>
 
@@ -143,8 +144,7 @@ export async function render(container) {
     const category = document.getElementById('add-cat').value;
     
     if (name) {
-      await supabase.from('inventory').insert([{
-        user_id: 'default-user',
+      await supabase.from('items').insert([{
         brand,
         name,
         domain,
@@ -155,4 +155,37 @@ export async function render(container) {
       render(container); // Re-render to show new item
     }
   });
+
+  const photoUpload = document.getElementById('photo-upload');
+  if (photoUpload) {
+    photoUpload.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const status = document.getElementById('photo-status');
+      status.textContent = 'Divining image...';
+      
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const dataUrl = ev.target.result;
+        const base64 = dataUrl.split(',')[1];
+        const mime = dataUrl.split(';')[0].split(':')[1];
+        
+        try {
+          const { parseProductImage } = await import('../lib/ai-engine.js');
+          const details = await parseProductImage(base64, mime);
+          
+          if (details.brand) document.getElementById('add-brand').value = details.brand;
+          if (details.name) document.getElementById('add-name').value = details.name;
+          if (details.category) document.getElementById('add-cat').value = details.category;
+          
+          status.textContent = 'Vision extracted.';
+        } catch (err) {
+          console.error(err);
+          status.textContent = 'Failed to divine image.';
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 }

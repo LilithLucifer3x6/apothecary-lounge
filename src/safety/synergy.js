@@ -1,4 +1,4 @@
-import { supabase } from '../db/supabase.js';
+import { supabase } from '../lib/supabase.js';
 import { zonesOverlap, zonesAdjacent } from './zone-resolver.js';
 
 /**

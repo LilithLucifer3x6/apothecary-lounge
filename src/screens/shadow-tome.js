@@ -1,27 +1,39 @@
 import { supabase } from '../lib/supabase.js';
 import { ic, G } from '../lib/icons.js';
 import { attachVoice } from '../lib/voice.js';
+import * as AI from '../lib/ai-service.js';
+import { getReadiness } from '../lib/health-connect.js';
 
 export async function render(container) {
+  const readiness = await getReadiness();
+  let readinessMarkup = '';
+  if (readiness) {
+    readinessMarkup = `
+      <div style="margin-top:1rem; padding:1rem; background:var(--card3); border-radius:8px; display:flex; align-items:center; gap:1rem;">
+        <div style="font-size:2rem;">${readiness.score}</div>
+        <div>
+          <div style="font-weight:bold; color:var(--gold);">Readiness: ${readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
+          <div style="font-size:0.9rem; color:var(--dim);">Data from Android Health Connect</div>
+        </div>
+      </div>
+    `;
+  }
+
   container.innerHTML = `
     <div style="padding:1rem; max-width:900px; margin:0 auto;">
       <h2 style="font-family:'Pinyon Script', cursive; font-size:2.5rem; text-align:center; color:var(--parch);">The Shadow Tome</h2>
       
       <div class="card mt-4">
         <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <h3>The Inner Sanctum</h3>
         <div class="note mb-4">"The ink is your own. Nothing written here is read by any other part of this place."</div>
+        
+        ${readinessMarkup}
         
         <div class="field">
           <label>The Mood</label>
           <div class="chips" id="tome-moods">
-            <div class="chip" data-val="serene">Serene</div>
-            <div class="chip" data-val="heavy">Heavy</div>
-            <div class="chip" data-val="restless">Restless</div>
-            <div class="chip" data-val="tender">Tender</div>
-            <div class="chip" data-val="fierce">Fierce</div>
-            <div class="chip" data-val="grounded">Grounded</div>
-            <div class="chip" data-val="raw">Raw</div>
-            <div class="chip" data-val="weary">Weary</div>
+            <div style="opacity:0.5;">Divining moods...</div>
           </div>
         </div>
         
@@ -57,10 +69,12 @@ export async function render(container) {
 
   attachVoice();
 
-  // Mood chips
-  document.querySelectorAll('#tome-moods .chip').forEach(chip => {
-    chip.addEventListener('click', (e) => {
-      e.target.classList.toggle('active');
+  AI.generateMoods().then(list => {
+    document.getElementById('tome-moods').innerHTML = list.map(m => `<div class="chip" data-val="${m.id}">${m.label}</div>`).join('');
+    document.querySelectorAll('#tome-moods .chip').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        e.target.classList.toggle('active');
+      });
     });
   });
 
@@ -71,9 +85,8 @@ export async function render(container) {
     
     if (text || moods.length > 0) {
       await supabase.from('journal_entries').insert([{
-        user_id: 'default-user',
-        entry_text: text,
-        mood_tags: moods
+        body_text: text,
+        moods: moods
       }]);
       
       document.getElementById('tome-entry').value = '';
@@ -142,8 +155,8 @@ export async function render(container) {
       <div class="card mb-4">
         <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
         <div class="mt mb-2">${new Date(entry.created_at).toLocaleDateString()}</div>
-        ${entry.mood_tags?.length ? `<div class="mb-2" style="color:var(--rose); font-size:0.9rem;">${entry.mood_tags.join(' &bull; ')}</div>` : ''}
-        <div style="font-family:'IM Fell English', serif; font-size:1.1rem; line-height:1.5;">${entry.entry_text}</div>
+        ${entry.moods?.length ? `<div class="mb-2" style="color:var(--rose); font-size:0.9rem;">${entry.moods.join(' &bull; ')}</div>` : ''}
+        <div style="font-family:'IM Fell English', serif; font-size:1.1rem; line-height:1.5;">${entry.body_text}</div>
       </div>
     `).join('');
   }

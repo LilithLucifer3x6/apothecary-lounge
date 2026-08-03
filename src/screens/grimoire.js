@@ -1,15 +1,26 @@
 import { ic, G } from '../lib/icons.js';
 import { speakerMarkup } from '../lib/tts.js';
+import { syncAppointments, markAppointmentDone } from '../lib/calendar.js';
 
-export function render(container) {
+export async function render(container) {
   // Generate basic calendar data
   const d = new Date();
-  const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  const year = d.getFullYear();
+  const month = d.getMonth();
+  
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday
+  
+  const appointments = await syncAppointments();
   
   let calHTML = '';
+  for (let i = 0; i < firstDay; i++) {
+    calHTML += `<div></div>`;
+  }
+  
   for(let i=1; i<=daysInMonth; i++) {
     const isToday = i === d.getDate() ? 'today' : '';
-    const hasEvent = i % 5 === 0 ? `<div class="ce" title="Root Weaving">${ic(G.tabAltars)}</div>` : '';
+    const hasEvent = appointments.some(app => new Date(app.date).getDate() === i) ? `<div class="ce" title="Appointment">${ic(G.tabAltars)}</div>` : '';
     calHTML += `<div class="cd ${isToday}">${i}${hasEvent}</div>`;
   }
 
@@ -40,8 +51,6 @@ export function render(container) {
         
         <div class="cal">
           <div class="ch">S</div><div class="ch">M</div><div class="ch">T</div><div class="ch">W</div><div class="ch">T</div><div class="ch">F</div><div class="ch">S</div>
-          <!-- offset for 1st of month (simplification) -->
-          <div></div><div></div><div></div>
           ${calHTML}
         </div>
       </div>
@@ -54,27 +63,29 @@ export function render(container) {
         <div style="display:flex; flex-direction:column; gap:1rem;">
           <div class="row">
             <div style="flex:1;">
-              <div class="nm">Root Weaving</div>
-              <div class="mt">Every 8 weeks. Last kept 3 weeks ago.</div>
+              <div class="nm">Root Weaving (Retie)</div>
+              <div class="mt">Every 8 weeks. Scheduled for ${appointments.find(a => a.type === 'retie')?.date ? new Date(appointments.find(a => a.type === 'retie').date).toLocaleDateString() : 'Unknown'}.</div>
             </div>
-            <button class="btn sm plum">Kept</button>
+            <button class="btn sm plum btn-appt" data-type="retie">Kept</button>
           </div>
           <div class="row">
             <div style="flex:1;">
-              <div class="nm">Talon Honing</div>
-              <div class="mt">Every 2 weeks. Last kept 12 days ago.</div>
+              <div class="nm">Talon Honing (Nails)</div>
+              <div class="mt">Every 2 weeks. Scheduled for ${appointments.find(a => a.type === 'nails')?.date ? new Date(appointments.find(a => a.type === 'nails').date).toLocaleDateString() : 'Unknown'}.</div>
             </div>
-            <button class="btn sm">Draw one</button>
-          </div>
-          <div class="row">
-            <div style="flex:1;">
-              <div class="nm">Soaking</div>
-              <div class="mt">Every 2 weeks. Last kept 5 days ago.</div>
-            </div>
-            <button class="btn sm">Kept</button>
+            <button class="btn sm btn-appt" data-type="nails">Kept</button>
           </div>
         </div>
       </div>
     </div>
   `;
+
+  document.querySelectorAll('.btn-appt').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const type = e.target.getAttribute('data-type');
+      await markAppointmentDone(type);
+      e.target.textContent = 'Marked';
+      e.target.style.opacity = '0.5';
+    });
+  });
 }

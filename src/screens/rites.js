@@ -7,7 +7,7 @@ export async function render(container) {
   container.innerHTML = `<div class="card"><div class="empty">Consulting the rites...</div></div>`;
 
   const { data: items } = await supabase
-    .from('inventory')
+    .from('items')
     .select('*')
     .in('lifecycle_state', ['stocked', 'ebbing', 'enshrined'])
     .order('category', { ascending: true }); // simplified sort

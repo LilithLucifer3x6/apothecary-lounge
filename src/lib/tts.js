@@ -1,4 +1,4 @@
-let ttsEnabled = true;
+let ttsEnabled = false;
 
 export function getTtsEnabled() {
   return ttsEnabled;
@@ -6,6 +6,7 @@ export function getTtsEnabled() {
 
 export function setTtsEnabled(enabled) {
   ttsEnabled = !!enabled;
+  document.querySelectorAll('.spk').forEach(el => el.style.display = ttsEnabled ? '' : 'none');
 }
 
 export function speak(text) {
@@ -22,10 +23,10 @@ export function createSpeakerButton(text) {
   btn.className = 'spk';
   btn.innerHTML = '<i class="ph-duotone ph-speaker-high"></i>';
   
-  if (!window.speechSynthesis) {
+  if (!window.speechSynthesis || !ttsEnabled) {
     btn.style.display = 'none';
-    return btn;
   }
+  if (!window.speechSynthesis) return btn;
   
   btn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -38,5 +39,5 @@ export function createSpeakerButton(text) {
 export function speakerMarkup(text) {
   if (!window.speechSynthesis) return '';
   const safeText = text.replace(/"/g, '&quot;');
-  return `<button type="button" class="spk" onclick="window.speechSynthesis.cancel(); window.speechSynthesis.speak(new SpeechSynthesisUtterance('${text.replace(/'/g, "\\'")}'))"><i class="ph-duotone ph-speaker-high"></i></button>`;
+  return `<button type="button" class="spk" style="${ttsEnabled ? '' : 'display:none;'}" onclick="window.speechSynthesis.cancel(); window.speechSynthesis.speak(new SpeechSynthesisUtterance('${text.replace(/'/g, "\\'")}'))"><i class="ph-duotone ph-speaker-high"></i></button>`;
 }
