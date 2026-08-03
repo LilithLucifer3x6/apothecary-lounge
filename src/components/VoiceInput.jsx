@@ -24,7 +24,7 @@ export default function VoiceInput({ className = '', value, onChange, placeholde
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
-        style={{ ...style, width: '100%', padding: '1rem 3rem 1rem 1.25rem', fontSize: '1.1rem', borderRadius: '8px', border: '2px solid var(--border)', background: 'rgba(255, 255, 255, 0.8)' }}
+        style={{ ...style, width: '100%', padding: '1rem 3rem 1rem 1.25rem', fontSize: '1.1rem', borderRadius: '8px', border: '2px solid var(--border)', background: 'var(--card2)', color: 'var(--white)' }}
         onKeyDown={onKeyDown}
         rows={isTextArea ? 3 : undefined}
       />

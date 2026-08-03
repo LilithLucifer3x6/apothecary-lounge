@@ -1,12 +1,7 @@
-import Anthropic from '@anthropic-ai/sdk';
-
-let anthropic = null;
+let anthropicApiKey = null;
 
 export function initAnthropic(apiKey) {
-  anthropic = new Anthropic({
-    apiKey: apiKey,
-    dangerouslyAllowBrowser: true // For prototype only
-  });
+  anthropicApiKey = apiKey;
   localStorage.setItem('anthropic_api_key', apiKey);
 }
 
@@ -20,7 +15,7 @@ if (savedKey) {
 }
 
 export function isAiReady() {
-  return !!anthropic;
+  return !!anthropicApiKey;
 }
 
 /**
@@ -29,7 +24,7 @@ export function isAiReady() {
  * @returns {Promise<{ reply: string, extractedData: Object|null }>}
  */
 export async function conductIntake(messageHistory) {
-  if (!anthropic) throw new Error('AI not configured. Please add an API key.');
+  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
 
   const systemPrompt = `You are the keeper of The Apothecary Lounge, an entity guiding a user through The First Inscription (an onboarding ritual).
 Speak in a respectful, slightly mystical, cottagecore-goth tone ("ritual voice"). Do not be overly verbose. Be direct but atmospheric.
@@ -49,54 +44,70 @@ When you believe you have gathered enough information across these categories (o
 
   const tools = [
     {
-      name: 'finalize_intake',
-      description: 'Call this when you have collected sufficient intake information or the user indicates they are finished.',
+      name: "finalize_intake",
+      description: "Call this tool ONLY when you have gathered all necessary information from the user regarding their concerns, conditions, prescriptions, oral meds, allergies, and traditions.",
       input_schema: {
-        type: 'object',
+        type: "object",
         properties: {
-          concerns: { type: 'array', items: { type: 'string' } },
-          conditions: { type: 'array', items: { type: 'string' } },
-          traditions: { type: 'array', items: { type: 'string' } },
-          prescriptions: { 
-            type: 'array', 
+          concerns: { type: "array", items: { type: "string" } },
+          conditions: { type: "array", items: { type: "string" } },
+          rxList: { 
+            type: "array", 
             items: { 
-              type: 'object',
+              type: "object",
               properties: {
-                name: { type: 'string' },
-                strength: { type: 'string' },
-                zone: { type: 'string' },
-                frequency: { type: 'string' }
+                name: { type: "string" },
+                strength: { type: "string" },
+                zone: { type: "string" },
+                frequency: { type: "string" }
               }
             } 
           },
-          orals: { type: 'array', items: { type: 'string' } },
-          allergies: { type: 'array', items: { type: 'string' } }
+          oralList: { type: "array", items: { type: "string" } },
+          algList: { type: "array", items: { type: "string" } },
+          traditions: { type: "array", items: { type: "string" } }
         },
-        required: ['concerns', 'conditions', 'traditions', 'prescriptions', 'orals', 'allergies']
+        required: ["concerns", "conditions", "rxList", "oralList", "algList", "traditions"]
       }
     }
   ];
 
-  const response = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20240620',
-    max_tokens: 1024,
-    system: systemPrompt,
-    messages: messageHistory,
-    tools: tools
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': anthropicApiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: messageHistory,
+      tools: tools
+    })
   });
 
-  let textReply = "";
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
+  }
+
+  const response = await res.json();
+
+  let replyText = '';
   let extractedData = null;
 
   for (const block of response.content) {
     if (block.type === 'text') {
-      textReply += block.text;
+      replyText += block.text;
     } else if (block.type === 'tool_use' && block.name === 'finalize_intake') {
       extractedData = block.input;
     }
   }
 
-  return { reply: textReply, extractedData };
+  return { reply: replyText, extractedData };
 }
 
 /**

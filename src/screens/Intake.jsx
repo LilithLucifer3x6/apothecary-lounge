@@ -87,12 +87,18 @@ export default function Intake({ onComplete }) {
       if (extractedData) {
         setAiStatus('The Keeper has finished divining your answers.');
         const avatarConfig = JSON.parse(localStorage.getItem('avatar_config') || '{}');
-        await supabase.from('user_profile').delete().neq('intake_completed', null);
-        await supabase.from('user_profile').insert({
+        const { data: existing } = await supabase.from('user_profile').select('id').maybeSingle();
+        const profileData = {
           intake_completed: true,
           intake_answers: extractedData,
           avatar_config: avatarConfig
-        });
+        };
+        if (existing) {
+          await supabase.from('user_profile').update(profileData).eq('id', existing.id);
+        } else {
+          await supabase.from('user_profile').insert([profileData]);
+        }
+        localStorage.setItem('intake_completed', 'true');
         setTimeout(() => {
           onComplete();
         }, 2000);
