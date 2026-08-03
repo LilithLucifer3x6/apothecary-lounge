@@ -133,45 +133,6 @@ export default function Rites({ pose }) {
         {getRitualDate()}
       </div>
 
-      <div className="rites2">
-        <div className="card mt-4">
-          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>Morning Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Morning Invocation') }} /></h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
-            {amItems.length > 0 ? amItems.map(i => renderStep(i)) : <div className="empty">No morning rites.</div>}
-          </div>
-        </div>
-        
-        <div className="card mt-4">
-          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>Evening Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Evening Invocation') }} /></h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
-            {pmItems.length > 0 ? pmItems.map(i => renderStep(i)) : <div className="empty">No evening rites.</div>}
-          </div>
-        </div>
-        
-        {conflicts.length > 0 && (
-          <div className="card mt-4" style={{ background: 'var(--card-bg-alt, rgba(100,20,20,0.5))', borderColor: '#882222' }}>
-            <h3 style={{ color: '#ff8888' }}>Keeper's Warning</h3>
-            <ul style={{ marginTop: '0.5rem', color: '#ffcccc', paddingLeft: '1.5rem' }}>
-              {conflicts.map((c, idx) => <li key={idx}>{c}</li>)}
-            </ul>
-          </div>
-        )}
-
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <button 
-            id="btn-save-rite" 
-            className={`btn ${saved ? 'g' : 'plum'}`} 
-            style={{ fontSize: '1.2rem', padding: '1rem 2rem' }}
-            onClick={handleSave}
-            disabled={saving || saved}
-          >
-            {saved ? 'Rite Concluded' : 'Conclude the Rite'}
-          </button>
-        </div>
-      </div>
-      
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Long Hours <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Long Hours') }} /></h3>
@@ -223,6 +184,45 @@ export default function Rites({ pose }) {
             <div className="nm">5:00 PM onwards - The Descent</div>
             <div className="mt">Work ends &bull; The Evening Invocation</div>
           </div>
+        </div>
+      </div>
+
+      <div className="rites2">
+        <div className="card mt-4">
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3>Morning Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Morning Invocation') }} /></h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
+            {amItems.length > 0 ? amItems.map(i => renderStep(i)) : <div className="empty">No morning rites.</div>}
+          </div>
+        </div>
+        
+        <div className="card mt-4">
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3>Evening Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Evening Invocation') }} /></h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
+            {pmItems.length > 0 ? pmItems.map(i => renderStep(i)) : <div className="empty">No evening rites.</div>}
+          </div>
+        </div>
+        
+        {conflicts.length > 0 && (
+          <div className="card mt-4" style={{ background: 'var(--card-bg-alt, rgba(100,20,20,0.5))', borderColor: '#882222' }}>
+            <h3 style={{ color: '#ff8888' }}>Keeper's Warning</h3>
+            <ul style={{ marginTop: '0.5rem', color: '#ffcccc', paddingLeft: '1.5rem' }}>
+              {conflicts.map((c, idx) => <li key={idx}>{c}</li>)}
+            </ul>
+          </div>
+        )}
+
+        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <button 
+            id="btn-save-rite" 
+            className={`btn ${saved ? 'g' : 'plum'}`} 
+            style={{ fontSize: '1.2rem', padding: '1rem 2rem' }}
+            onClick={handleSave}
+            disabled={saving || saved}
+          >
+            {saved ? 'Rite Concluded' : 'Conclude the Rite'}
+          </button>
         </div>
       </div>
     </div>

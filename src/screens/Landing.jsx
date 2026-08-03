@@ -11,10 +11,14 @@ export default function Landing({ onProceed }) {
   useEffect(() => {
     setAvatarConfig(getAvatarConfig());
     
-    // Check if the user already has a profile
-    supabase.from('user_profile').select('id').maybeSingle().then(({ data }) => {
-      setHasProfile(!!data);
-    });
+    const isCompletedLocally = localStorage.getItem('intake_completed') === 'true';
+    if (isCompletedLocally) {
+      setHasProfile(true);
+    } else {
+      supabase.from('user_profile').select('id').maybeSingle().then(({ data }) => {
+        setHasProfile(!!data);
+      });
+    }
   }, []);
 
   function drawCottage() {
@@ -25,8 +29,7 @@ export default function Landing({ onProceed }) {
         {/* AI-Generated 2D Cartoon Background */}
         <image href="/assets/cottage_room.jpg" width="520" height="340" preserveAspectRatio="xMidYMid slice" />
         
-        {/* Dynamic SVG Avatar Overlay */}
-        <g transform="translate(196,152) scale(0.7)" dangerouslySetInnerHTML={{ __html: generateAvatarSVG(avatarConfig) }} />
+        {/* Avatar Builder replaces the SVG overlay */}
         
         {/* Familiar */}
         <defs>

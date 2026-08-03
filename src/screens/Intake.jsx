@@ -109,13 +109,20 @@ export default function Intake({ onComplete }) {
     const traditions = selectedTraditions;
 
     const avatarConfig = JSON.parse(localStorage.getItem('avatar_config') || '{}');
-    await supabase.from('user_profile').delete().neq('intake_completed', null);
-    await supabase.from('user_profile').insert({
+    const { data: existing } = await supabase.from('user_profile').select('id').maybeSingle();
+    const profileData = {
       intake_completed: true,
       intake_answers: { concerns, conditions, traditions, noRx, noOral, noAlg, rxList, oralList, algList },
       avatar_config: avatarConfig
-    });
+    };
     
+    if (existing) {
+      await supabase.from('user_profile').update(profileData).eq('id', existing.id);
+    } else {
+      await supabase.from('user_profile').insert([profileData]);
+    }
+    
+    localStorage.setItem('intake_completed', 'true');
     onComplete();
   };
 
@@ -187,7 +194,7 @@ export default function Intake({ onComplete }) {
   );
 
   return (
-    <div className="card" style={{ maxWidth: '700px', margin: '2rem auto' }}>
+    <div className="card" style={{ maxWidth: '700px', margin: '2rem auto', minHeight: '580px', display: 'flex', flexDirection: 'column' }}>
       <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
       <h2 style={{ textAlign: 'center', fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', color: 'var(--parch)' }}>
         <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
@@ -476,7 +483,7 @@ export default function Intake({ onComplete }) {
           )}
 
           {currentStep === 7 && (
-            <div className="ins-step" style={{ textAlign: 'center' }}>
+            <div className="ins-step" style={{ textAlign: 'center', margin: 'auto' }}>
               <h3 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3rem', color: 'var(--parch)' }}>The First Inscription is sealed</h3>
               <div className="mt" style={{ fontSize: '1.2rem', marginTop: '2rem' }}>Your chamber awaits.</div>
             </div>

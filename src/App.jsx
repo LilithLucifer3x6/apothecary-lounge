@@ -131,16 +131,23 @@ export default function App() {
   };
 
   const handleEnter = async () => {
-    const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
+    let profile = null;
+    try {
+      const res = await supabase.from('user_profile').select('*').maybeSingle();
+      profile = res.data;
+    } catch(e) {}
     
     if (profile && profile.avatar_config) {
       localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
     }
+    
+    const isCompletedLocally = localStorage.getItem('intake_completed') === 'true';
+    const hasAvatar = !!localStorage.getItem('avatar_config');
 
-    if (!profile) {
+    if (!profile && !hasAvatar) {
       document.body.style.backgroundImage = `url('/assets/room_land.jpg')`;
-      setCurrentScreen('landing');
-    } else if (profile && !profile.intake_completed) {
+      setCurrentScreen('avatar');
+    } else if (!isCompletedLocally && (!profile || !profile.intake_completed)) {
       document.body.style.backgroundImage = `url('/assets/room_land.jpg')`;
       setCurrentScreen('intake');
     } else {
@@ -186,38 +193,7 @@ export default function App() {
         {activeTab === 'pool' && <Scrying pose={TABS.find(t=>t.id==='pool').pose} />}
         {activeTab === 'tome' && <ShadowTome pose={TABS.find(t=>t.id==='tome').pose} />}
       </div>
-      
-      {/* Avatar Display */}
-      {avatarConfig && (
-        <div style={{ 
-          position: 'fixed', 
-          bottom: '20px', 
-          right: '20px', 
-          zIndex: 100,
-          pointerEvents: 'none',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '0.5rem'
-        }}>
-          <img 
-            src={avatarConfig.avatarVibe === 'locs' ? '/assets/avatar_locs.jpg' : '/assets/avatar_buns.jpg'} 
-            alt="The Keeper"
-            style={{
-              width: '120px',
-              height: '160px',
-              objectFit: 'cover',
-              borderRadius: '8px',
-              border: '2px solid var(--gold)',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.8)'
-            }} 
-          />
-          <div style={{ background: 'rgba(0,0,0,0.7)', color: 'var(--gold)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontFamily: "'Cormorant Garamond', serif", display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            {avatarConfig.name}
-            {avatarConfig.familiar !== 'none' && <Icon name={avatarConfig.familiar === 'cat' ? 'ph-duotone ph-cat' : avatarConfig.familiar === 'raven' ? 'ph-duotone ph-bird' : avatarConfig.familiar === 'moth' ? 'ph-duotone ph-butterfly' : 'ph-duotone ph-dog'} />}
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

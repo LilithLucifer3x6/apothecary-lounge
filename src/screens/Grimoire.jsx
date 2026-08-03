@@ -78,7 +78,9 @@ export default function Grimoire({ pose }) {
         The Grimoire
       </h2>
       
-      <div className="card mt-4">
+      <div className="grim-grid mt-4">
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>Today's Appointed Times <span className="spk"><Icon name="ph-duotone ph-speaker-high" /></span></h3>
         <div className="mt mb-4">From Google Calendar</div>
@@ -126,15 +128,75 @@ export default function Grimoire({ pose }) {
               <div className="tg"></div>
             </div>
             <div className="d"><div className="dn">Sat</div><div className="tg"></div></div>
-            <div className="d">
-              <div className="dn">Sun</div>
-              <div className="tg"></div>
+              <div className="d">
+                <div className="dn">Sun</div>
+                <div className="tg"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card mt-4">
+          <div className="corner tl"></div><div className="corner tr"></div>
+          <div className="corner bl"></div><div className="corner br"></div>
+          <h3>
+            The Appointed Days{' '}
+            <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Appointed Days') }} />
+          </h3>
+          <div className="mt mb-4">Rites that occur sparingly.</div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div className="row" style={{ flex: '0 1 auto', marginBottom: 0 }}>
+                <div>
+                  <div className="nm">Root Weaving (Retie) <Icon name="star-four" /></div>
+                  <div className="mt">
+                    Every 8 weeks. Scheduled for {retieAppt?.date ? new Date(retieAppt.date).toLocaleDateString() : 'Unknown'}.
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button 
+                  className="btn sm plum btn-appt" 
+                  onClick={() => markDone('retie')}
+                  style={{ opacity: marked['retie'] ? 0.5 : 1 }}
+                >
+                  {marked['retie'] ? 'Marked' : 'Kept'}
+                </button>
+                <button className="spk btn-override" title="Manual Override" onClick={handleOverride}>
+                  <i className="ph-duotone ph-dots-three-vertical"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div className="row" style={{ flex: '0 1 auto', marginBottom: 0 }}>
+                <div>
+                  <div className="nm">Talon Honing (Nails) <Icon name="sparkle" /></div>
+                  <div className="mt">
+                    Every 2 weeks. Scheduled for {nailsAppt?.date ? new Date(nailsAppt.date).toLocaleDateString() : 'Unknown'}.
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button 
+                  className="btn sm plum btn-appt" 
+                  onClick={() => markDone('nails')}
+                  style={{ opacity: marked['nails'] ? 0.5 : 1 }}
+                >
+                  {marked['nails'] ? 'Marked' : 'Kept'}
+                </button>
+                <button className="spk btn-override" title="Manual Override" onClick={handleOverride}>
+                  <i className="ph-duotone ph-dots-three-vertical"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="card mt-4">
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div>
         <div className="corner bl"></div><div className="corner br"></div>
         <h3>
@@ -152,62 +214,8 @@ export default function Grimoire({ pose }) {
         </div>
       </div>
 
-      <div className="card mt-4">
-        <div className="corner tl"></div><div className="corner tr"></div>
-        <div className="corner bl"></div><div className="corner br"></div>
-        <h3>
-          The Appointed Days{' '}
-          <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Appointed Days') }} />
-        </h3>
-        <div className="mt mb-4">Rites that occur sparingly.</div>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <div className="row" style={{ flex: '0 1 auto', marginBottom: 0 }}>
-              <div>
-                <div className="nm">Root Weaving (Retie) <Icon name="star-four" /></div>
-                <div className="mt">
-                  Every 8 weeks. Scheduled for {retieAppt?.date ? new Date(retieAppt.date).toLocaleDateString() : 'Unknown'}.
-                </div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <button 
-                className="btn sm plum btn-appt" 
-                onClick={() => markDone('retie')}
-                style={{ opacity: marked['retie'] ? 0.5 : 1 }}
-              >
-                {marked['retie'] ? 'Marked' : 'Kept'}
-              </button>
-              <button className="spk btn-override" title="Manual Override" onClick={handleOverride}>
-                <i className="ph-duotone ph-dots-three-vertical"></i>
-              </button>
-            </div>
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <div className="row" style={{ flex: '0 1 auto', marginBottom: 0 }}>
-              <div>
-                <div className="nm">Talon Honing (Nails) <Icon name="sparkle" /></div>
-                <div className="mt">
-                  Every 2 weeks. Scheduled for {nailsAppt?.date ? new Date(nailsAppt.date).toLocaleDateString() : 'Unknown'}.
-                </div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <button 
-                className="btn sm plum btn-appt" 
-                onClick={() => markDone('nails')}
-                style={{ opacity: marked['nails'] ? 0.5 : 1 }}
-              >
-                {marked['nails'] ? 'Marked' : 'Kept'}
-              </button>
-              <button className="spk btn-override" title="Manual Override" onClick={handleOverride}>
-                <i className="ph-duotone ph-dots-three-vertical"></i>
-              </button>
-            </div>
-          </div>
         </div>
+      </div>
       </div>
     </div>
   );
