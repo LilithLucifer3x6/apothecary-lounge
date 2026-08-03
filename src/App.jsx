@@ -203,11 +203,11 @@ export default function App() {
   return (
     <>
       {currentScreen === 'splash' && (
-        <div id="s-splash" className="land">
-          <h1 style={{ textShadow: '0 0 20px rgba(0,0,0,0.8)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
-          <div className="tag" style={{ textShadow: '0 0 10px rgba(0,0,0,0.8)', color: 'var(--rose)', marginTop: '0.5rem', marginBottom: '2rem' }}>A sanctuary of self-care.</div>
-          <button onClick={handleEnter} className="btn plum" style={{ fontSize: '1.2rem', padding: '1rem 2rem' }}>
-            Approach the Cottage <Icon name="arrow-right" />
+        <div id="s-splash" className="land" style={{ justifyContent: 'flex-start', paddingTop: '15vh' }}>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '5rem', fontWeight: 'bold', textShadow: '0 4px 20px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,1)', color: '#4a0012', margin: '0', padding: '0.2em' }}>Shadow & Sanctuary</h1>
+          <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.5rem', textShadow: '0 2px 10px rgba(0,0,0,0.9)', color: '#d41c3c', marginTop: '0.5rem', marginBottom: '20vh' }}>A sanctuary of self-care.</div>
+          <button onClick={handleEnter} className="btn" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.4rem', padding: '0.6rem 1.5rem', background: 'linear-gradient(180deg, #4a0012, #1a0204)', borderColor: '#8a0020' }}>
+            Approach the Cottage
           </button>
         </div>
       )}
@@ -218,9 +218,7 @@ export default function App() {
         </div>
       )}
 
-      {(currentScreen !== 'app' || activeTab !== 'home') && currentScreen !== 'loading' && currentScreen !== 'splash' && (
-        <div className="blur-overlay"></div>
-      )}
+
 
       {currentScreen === 'avatar' && (
         <div id="s-av" className="land">
