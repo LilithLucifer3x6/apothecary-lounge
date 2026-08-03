@@ -1,5 +1,6 @@
 import { go } from '../main.js';
 import { getAvatarConfig, generateAvatarSVG } from '../lib/avatar.js';
+import { render as renderIntake } from './intake.js';
 
 export function render(container) {
   const avatarConfig = getAvatarConfig();
@@ -88,6 +89,7 @@ export function render(container) {
   `;
 
   document.getElementById('btn-cross').addEventListener('click', () => {
+    renderIntake(document.getElementById('s-ins'));
     go('s-ins'); // Go to intake
   });
 }

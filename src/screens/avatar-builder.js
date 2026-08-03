@@ -1,9 +1,9 @@
-
 import { go } from '../main.js';
 import { ic, G } from '../lib/icons.js';
 import { speakerMarkup } from '../lib/tts.js';
 import { attachVoice } from '../lib/voice.js';
 import { generateAvatarSVG } from '../lib/avatar.js';
+import { render as renderLanding } from './landing.js';
 
 export function render(container) {
   container.innerHTML = `
@@ -115,6 +115,7 @@ export function render(container) {
     
     localStorage.setItem('avatar_config', JSON.stringify(prefs));
     
+    renderLanding(document.getElementById('s-land'));
     go('s-land');
   });
 }
