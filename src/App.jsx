@@ -244,7 +244,7 @@ export default function App() {
               </div>
 
               <div style={{ width: '33%', display: 'flex', justifyContent: 'flex-end' }}>
-                <button onClick={() => setShowSettings(true)} className="btn sm" title="Settings">
+                <button onClick={() => setShowSettings(true)} className="btn sm" title="Configurations">
                   <Icon name="ph-gear" />
                 </button>
               </div>
@@ -383,7 +383,7 @@ export default function App() {
                                initGoogleCalendar(e.target.value, () => alert("Google Calendar Authenticated!"));
                              }
                            }} style={{ padding: '0.5rem', width: '100%' }} />
-                    <button className="btn sm g" onClick={() => requestCalendarAccess()} style={{ width: 'fit-content' }}>Log In to Google</button>
+                    <button className="btn sm g" onClick={() => requestCalendarAccess()} style={{ width: 'fit-content' }}>Bind Google Calendar</button>
                     <div className="mt" style={{ fontSize: '0.8rem' }}>Enter your Client ID and log in to fetch events.</div>
                   </div>
                 )}
@@ -402,17 +402,17 @@ export default function App() {
                   setShowSettings(false);
                   setCurrentScreen('intake');
                 }
-              }} className="btn g" style={{ width: '100%', marginBottom: '0.5rem' }}>Reset First Inscription</button>
+              }} className="btn g" style={{ width: '100%', marginBottom: '0.5rem' }}>Shatter the First Inscription</button>
 
               <button onClick={() => {
                 if (window.confirm("Are you sure you want to completely erase all local settings, saved routines, and Supabase data? This cannot be undone.")) {
                   localStorage.clear();
                   window.location.reload();
                 }
-              }} className="btn g" style={{ width: '100%' }}>Reset Entire App Data</button>
+              }} className="btn g" style={{ width: '100%' }}>Erase the Entire Codex</button>
             </div>
             
-            <button onClick={() => saveSettings(settings)} className="btn full plum" style={{ marginTop: '2rem', padding: '0.8rem' }}>Save Settings</button>
+            <button onClick={() => saveSettings(settings)} className="btn full plum" style={{ marginTop: '2rem', padding: '0.8rem' }}>Seal Configurations</button>
           </div>
         </div>
       )}

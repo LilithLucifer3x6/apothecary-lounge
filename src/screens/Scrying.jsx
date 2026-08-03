@@ -132,7 +132,7 @@ export default function Scrying({ pose }) {
               style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--white)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem' }}
             />
           </div>
-          <button className="btn plum" onClick={handleScry} style={{ minWidth: '120px' }}>Analyze Overlap</button>
+          <button className="btn plum" onClick={handleScry} style={{ minWidth: '120px' }}>Divine Synergies</button>
         </div>
         <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'bold' }}>
           {scryStatus}
@@ -162,7 +162,7 @@ export default function Scrying({ pose }) {
                   <div className="nm">{item.name}</div>
                   <div className="mt">{item.brand} &bull; {item.isExpired ? <span style={{color:'var(--rose)'}}>Expired!</span> : item.lifecycle_state}</div>
                 </div>
-                <button className="btn sm">Order</button>
+                <button className="btn sm">Summon</button>
               </div>
             ))
           ) : (

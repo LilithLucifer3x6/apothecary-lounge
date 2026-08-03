@@ -264,7 +264,7 @@ export default function Intake({ onComplete }) {
                 placeholder="Speak your mind..." 
               />
             </div>
-            <button className="btn plum" onClick={sendChatMessage}>Send</button>
+            <button className="btn plum" onClick={sendChatMessage}>Whisper</button>
           </div>
           <div id="ai-status" style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--rose)', height: '1rem' }}>
             {aiStatus ? (
@@ -360,7 +360,7 @@ export default function Intake({ onComplete }) {
                     <div key={i} style={{ borderLeft: '2px solid var(--gold)', paddingLeft: '1rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <span style={{ color: 'var(--plum)', fontWeight: 'bold' }}>Prescription {i + 1}</span>
-                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Remove</button>
+                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Banish</button>
                       </div>
                       <div className="field">
                         <label>Name</label>
@@ -380,7 +380,7 @@ export default function Intake({ onComplete }) {
                       </div>
                     </div>
                   ))}
-                  <button className="btn" onClick={addRx} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Add Topical Prescription</button>
+                  <button className="btn" onClick={addRx} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Topical Prescription</button>
                 </div>
               )}
             </div>
@@ -402,10 +402,10 @@ export default function Intake({ onComplete }) {
                       <div style={{ flex: 1 }}>
                         <VoiceInput value={med} onChange={e => updateOral(i, e.target.value)} placeholder="e.g. Spironolactone" />
                       </div>
-                      <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: '0.5rem' }} onClick={() => removeOral(i)}>Remove</button>
+                      <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: '0.5rem' }} onClick={() => removeOral(i)}>Banish</button>
                     </div>
                   ))}
-                  <button className="btn" onClick={addOral} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Add Oral Medication</button>
+                  <button className="btn" onClick={addOral} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Systemic Measure</button>
                 </div>
               )}
             </div>
@@ -440,11 +440,11 @@ export default function Intake({ onComplete }) {
                           const newList = [...algList];
                           newList.splice(i, 1);
                           setAlgList(newList);
-                        }}>Remove</button>
+                        }}>Banish</button>
                       )}
                     </div>
                   ))}
-                  <button className="btn" onClick={() => setAlgList([...algList, ''])} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Add Allergy</button>
+                  <button className="btn" onClick={() => setAlgList([...algList, ''])} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Aversion</button>
                 </div>
               )}
             </div>
@@ -537,7 +537,7 @@ export default function Intake({ onComplete }) {
               }
             }}
           >
-            {currentStep === totalSteps ? 'Enter the Lounge' : 'Continue'}
+            {currentStep === totalSteps ? 'Enter the Sanctuary' : 'Step Deeper'}
           </button>
         </div>
       )}

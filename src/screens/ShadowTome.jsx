@@ -184,7 +184,7 @@ export default function ShadowTome({ pose }) {
             <input type="number" defaultValue="50" style={{ width: '100%' }} />
           </div>
           <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <button className="btn plum" onClick={() => alert('Total Yield: 1500mg. Dosage per drop (~0.05ml): 2.5mg.')}>Calculate Yield</button>
+            <button className="btn plum" onClick={() => alert('Total Yield: 1500mg. Dosage per drop (~0.05ml): 2.5mg.')}>Divine the Yield</button>
           </div>
         </div>
       </div>
@@ -206,7 +206,7 @@ export default function ShadowTome({ pose }) {
             }}
           ></div>
           <button id="btn-breath" className="btn" onClick={toggleBreathing}>
-            {isBreathing ? 'End Breathwork' : 'Begin Breathwork'}
+            {isBreathing ? 'Release Breath' : 'Draw Breath'}
           </button>
           <div id="breath-inst" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', color: 'var(--rose)', height: '2rem' }}>
             {breathInst}
