@@ -4,7 +4,7 @@ import { getAvatarConfig, generateAvatarSVG } from '../lib/avatar.js';
 import Icon from '../components/Icon.jsx';
 import { G } from '../lib/icons.js';
 
-export default function Landing({ onProceed }) {
+export default function Landing({ onProceed, onOpenAvatar }) {
   const [hasProfile, setHasProfile] = useState(false);
   const [avatarConfig, setAvatarConfig] = useState(null);
 
@@ -21,36 +21,14 @@ export default function Landing({ onProceed }) {
     }
   }, []);
 
-  function drawCottage() {
-    if (!avatarConfig) return null;
-    
-    return (
-      <>
-        {/* AI-Generated 2D Cartoon Background */}
-        <image href="/assets/cottage_room.jpg" width="520" height="340" preserveAspectRatio="xMidYMid slice" />
-        
-        {/* Avatar Builder replaces the SVG overlay */}
-        
-        {/* Familiar */}
-        <defs>
-          <clipPath id="landingFamClip"><circle cx="316" cy="266" r="22" /></clipPath>
-        </defs>
-        <circle cx="316" cy="266" r="24" fill="#1a1110" />
-        {avatarConfig.fam && (
-          <image href={`/assets/${avatarConfig.fam}`} x="294" y="244" width="44" height="44" clipPath="url(#landingFamClip)" />
-        )}
-      </>
-    );
-  }
+        <img src="/assets/cottage_room.jpg" alt="Sanctuary Room" style={{ width: '100%', display: 'block', borderRadius: '4px' }} />
 
   return (
     <div className="land">
-      <div className="scene">
-        <svg id="cottage" viewBox="0 0 520 340" width="100%">
-          {drawCottage()}
-        </svg>
+      <div className="scene" style={{ borderRadius: '4px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
+        <img src="/assets/cottage_room.jpg" alt="Sanctuary Room" style={{ width: '100%', display: 'block' }} />
       </div>
-      <h1 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3.1em', margin: '.7rem 0 .1rem', color: 'var(--white)' }}>
+      <h1 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', lineHeight: '1.2', padding: '0.1em', margin: '.7rem 0 .1rem', color: 'var(--white)' }}>
         Shadow & Sanctuary
       </h1>
       <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', color: 'var(--silver)', fontSize: '1.06em', marginBottom: '1.2rem' }}>
@@ -59,6 +37,11 @@ export default function Landing({ onProceed }) {
       {!hasProfile && (
         <button className="btn plum" onClick={() => onProceed(false)}>
           <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
+        </button>
+      )}
+      {hasProfile && (
+        <button className="btn sm" onClick={onOpenAvatar} style={{ marginTop: '1.5rem', background: 'transparent', border: '1px solid var(--border)', color: 'var(--ash)' }}>
+          <Icon name="ph-user" /> Avatar Builder
         </button>
       )}
     </div>

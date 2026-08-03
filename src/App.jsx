@@ -189,7 +189,7 @@ export default function App() {
     const pose = tab ? tab.pose : 'working';
     
     switch (activeTab) {
-      case 'home': return <div style={{ minHeight: 'calc(100vh - 120px)' }}><Landing onProceed={() => setCurrentScreen('intake')} /></div>;
+      case 'home': return <div style={{ minHeight: 'calc(100vh - 120px)' }}><Landing onProceed={() => setCurrentScreen('intake')} onOpenAvatar={() => setCurrentScreen('avatar')} /></div>;
       case 'rites': return <div><Rites pose={pose} /></div>;
       case 'grim': return <div><Grimoire pose={pose} /></div>;
       case 'altars': return <div><Altars pose={pose} /></div>;
