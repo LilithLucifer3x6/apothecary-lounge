@@ -205,7 +205,16 @@ export default function Rites({ pose }) {
 
   return (
     <div style={{ padding: '1rem' }}>
-      <div style={{ textAlign: 'center', marginBottom: '2rem', fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', color: 'var(--ash)' }}>
+      <div style={{ 
+        textAlign: 'center', 
+        marginBottom: '2rem', 
+        fontFamily: "'Cormorant Garamond', serif", 
+        fontStyle: 'italic', 
+        fontSize: '1.6rem',
+        fontWeight: 'bold',
+        color: '#ffffff',
+        textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 4px #000'
+      }}>
         {getRitualDate()}
       </div>
 
