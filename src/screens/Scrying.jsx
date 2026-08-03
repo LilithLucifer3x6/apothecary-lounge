@@ -108,10 +108,6 @@ export default function Scrying({ pose }) {
 
   return (
     <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto' }}>
-      <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', textAlign: 'center', color: 'var(--parch)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-        <Icon name={G.tabPool} /> The Scrying Pool
-      </h2>
-
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Echo</h3>

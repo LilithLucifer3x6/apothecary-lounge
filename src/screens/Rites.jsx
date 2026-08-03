@@ -32,7 +32,9 @@ export default function Rites({ pose }) {
         sleepDuration: 5.5, // Less than 6 hours -> trigger de-puffing
         heavySweat: true    // Heavy sweat -> trigger gentle cleanse
       };
-      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile, mockWearables);
+      
+      const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
+      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, mockWearables);
       setAmItems(am);
       setPmItems(pm);
       setConflicts(checkConflicts(itemsArr));
@@ -83,18 +85,6 @@ export default function Rites({ pose }) {
     );
   }
 
-  if (items.length === 0) {
-    return (
-      <div className="card" style={{ margin: '2rem' }}>
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <div className="empty">
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>
-            <Icon name={G.tabRoot} />
-          </div>
-          The shelves are bare. Visit The Rootwork to begin gathering.
-        </div>
-      </div>
-    );
   }
 
   const renderStep = (item, isOpt = false, isRx = false, isAid = false) => {
@@ -128,7 +118,6 @@ export default function Rites({ pose }) {
 
   return (
     <div style={{ padding: '1rem' }}>
-      <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', textAlign: 'center', color: 'var(--parch)' }}>The Mortal Rites</h2>
       <div style={{ textAlign: 'center', marginBottom: '2rem', fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', color: 'var(--ash)' }}>
         {getRitualDate()}
       </div>

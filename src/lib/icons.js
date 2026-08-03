@@ -1,7 +1,7 @@
 export { CUSTOM, ic } from '../../custom-icons.js';
 
 export const G = {
-  tabRites:'clock', tabGrim:'calendar', tabAltars:'fire', tabRoot:'plant', tabPool:'scrying-bowl', tabTome:'grimoire',
+  tabRites:'clock', tabGrim:'calendar', tabAltars:'flower-lotus', tabRoot:'plant', tabPool:'scrying-bowl', tabTome:'grimoire',
   morning:'sun-horizon', evening:'moon', cleanser:'cleanser-tube', toner:'toner-bottle', serum:'eyedropper',
   moisturiser:'cream-jar', spf:'sunscreen', tretinoin:'rx-tube', tacrolimus:'ointment-tube', drysol:'roll-on',
   drops:'eye-drops', lenses:'contact-lens', oral:'toothbrush', shower:'shower', dryoff:'towel',

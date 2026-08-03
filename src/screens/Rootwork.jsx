@@ -155,7 +155,6 @@ export default function Rootwork({ pose }) {
   return (
     <div style={{padding: '1rem', maxWidth: '900px', margin: '0 auto'}}>
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem', gap: '1rem'}}>
-        <h2 style={{fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', color: 'var(--parch)', margin: 0, textAlign: 'center'}}>The Rootwork</h2>
         <button className="btn plum" onClick={() => setShowAddModal(true)}>+ Add to Inventory</button>
       </div>
 

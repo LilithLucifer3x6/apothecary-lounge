@@ -35,8 +35,8 @@
 
   h2.t{font-family:'Pinyon Script',cursive;font-size:2.35em;margin:0;text-align:center;
     color:var(--parch);text-shadow:0 0 22px rgba(196,36,58,.8), 0 0 10px rgba(0,0,0,1), 0 0 2px rgba(0,0,0,1);}
-  h3{font-family:'Cormorant Garamond',serif;font-size:1.12em;color:var(--gold);margin:1.2em 0 .55em;
-    font-weight:700;letter-spacing:.03em;text-shadow: 0 2px 4px rgba(0,0,0,1), 0 0 8px rgba(0,0,0,0.8);}
+  h3{font-family:'Cormorant Garamond',serif;font-size:1.5em;color:var(--crimson-b);margin:1.2em 0 .55em;
+    display:flex;align-items:center;}
   h3 .g{margin-right:.35em;}
 
   .btn{background:linear-gradient(180deg,var(--crimson),#3d0509);color:var(--parch);

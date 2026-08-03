@@ -74,15 +74,11 @@ export default function Grimoire({ pose }) {
 
   return (
     <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto' }}>
-      <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', textAlign: 'center', color: 'var(--parch)' }}>
-        The Grimoire
-      </h2>
-      
-      <div className="grim-grid mt-4">
+      <div className="grim-grid mt-2">
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>Today's Appointed Times <span className="spk"><Icon name="ph-duotone ph-speaker-high" /></span></h3>
+        <h3>Today's Appointed Times <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Today's Appointed Times") }} /></h3>
         <div className="mt mb-4">From Google Calendar</div>
         
         {realEvents.length > 0 ? realEvents.map((ev, i) => (
@@ -136,7 +132,7 @@ export default function Grimoire({ pose }) {
           </div>
         </div>
 
-        <div className="card mt-4">
+        <div className="card mt-4" style={{ alignSelf: 'flex-start' }}>
           <div className="corner tl"></div><div className="corner tr"></div>
           <div className="corner bl"></div><div className="corner br"></div>
           <h3>
