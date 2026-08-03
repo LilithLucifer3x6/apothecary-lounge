@@ -32,7 +32,7 @@ export async function syncAppointments() {
 }
 
 export async function markAppointmentDone(appointmentType) {
-  console.log(\`Marked \${appointmentType} as done. Recalculating next date...\`);
+  console.log(`Marked ${appointmentType} as done. Recalculating next date...`);
   // In a real app, this would push a new event to Google Calendar for +2 weeks or +8 weeks.
   return true;
 }

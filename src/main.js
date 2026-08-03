@@ -1,5 +1,4 @@
 import '../design-tokens.css';
-import '@phosphor-icons/web/src/duotone/style.css';
 
 import { supabase } from './lib/supabase.js';
 import { ic, G, cor, verifyGlyphs } from './lib/icons.js';
@@ -140,7 +139,7 @@ function buildAppShell() {
 
 function applySettings(settings) {
   document.documentElement.style.setProperty('--base-font-size', settings.fontSize + 'px');
-  document.documentElement.style.setProperty('--font-body', \`"\${settings.fontFamily}", serif\`);
+  document.documentElement.style.setProperty('--font-body', `"${settings.fontFamily}", serif`);
   
   if (settings.tts) {
     document.body.classList.remove('tts-disabled');

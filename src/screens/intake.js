@@ -328,7 +328,7 @@ export function render(container) {
       input.value = '';
       const chatLog = document.getElementById('ai-chat-log');
       
-      chatLog.insertAdjacentHTML('beforeend', \`<div class="msg user" style="color:var(--white); margin-bottom:1rem; text-align:right;">\${text}</div>\`);
+      chatLog.insertAdjacentHTML('beforeend', `<div class="msg user" style="color:var(--white); margin-bottom:1rem; text-align:right;">${text}</div>`);
       chatLog.scrollTop = chatLog.scrollHeight;
       
       messageHistory.push({ role: 'user', content: text });
@@ -339,7 +339,7 @@ export function render(container) {
         status.textContent = '';
         
         messageHistory.push({ role: 'assistant', content: reply });
-        chatLog.insertAdjacentHTML('beforeend', \`<div class="msg ai" style="color:var(--parch); margin-bottom:1rem;">\${reply}</div>\`);
+        chatLog.insertAdjacentHTML('beforeend', `<div class="msg ai" style="color:var(--parch); margin-bottom:1rem;">${reply}</div>`);
         chatLog.scrollTop = chatLog.scrollHeight;
 
         if (extractedData) {
