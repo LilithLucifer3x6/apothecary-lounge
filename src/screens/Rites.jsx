@@ -197,7 +197,11 @@ export default function Rites({ pose }) {
             <span style={{ marginLeft: '0.4rem' }} dangerouslySetInnerHTML={{ __html: speakerMarkup(item.name) }} />
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
           </div>
-          <div className="mt">{item.brand || 'Elixir'} &bull; {item.storage_location || 'The Vanity'}</div>
+          {item.isInjected ? (
+            <div className="mt" style={{opacity: 0.8}}>{item.desc || 'Baseline Routine'}</div>
+          ) : (
+            <div className="mt">{item.brand || 'Elixir'} &bull; {item.storage_location || 'The Vanity'}</div>
+          )}
         </div>
       </div>
     );

@@ -107,13 +107,13 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
   
   // Inject fixed sequences for the evening wind-down
   const fixedEveningSteps = [
-    { id: 'winddown-1', name: 'Shower', brand: 'Fixed', category: 'cleanser', domain: 'vessel', weight: 0.1 },
-    { id: 'winddown-2', name: 'Dry Off', brand: 'Fixed', category: 'towel', domain: 'vessel', weight: 0.2 },
-    { id: 'winddown-3', name: 'Extractions & Heated Eye Mask', desc: 'Submerge tools in 70% isopropyl alcohol for 5-10 mins before and after.', brand: 'Fixed', category: 'tool', domain: 'visage', weight: 0.3 }
+    { id: 'winddown-1', name: 'Shower', category: 'cleanser', domain: 'vessel', weight: 0.1, isInjected: true },
+    { id: 'winddown-2', name: 'Dry Off', category: 'towel', domain: 'vessel', weight: 0.2, isInjected: true },
+    { id: 'winddown-3', name: 'Extractions & Heated Eye Mask', desc: 'Submerge tools in 70% isopropyl alcohol for 5-10 mins before and after.', category: 'tool', domain: 'visage', weight: 0.3, isInjected: true }
   ];
   
   if (isWeekend) {
-    fixedEveningSteps.unshift({ id: 'bath-ritual-engine', name: 'The Bath Ritual', brand: 'Every 2 Weeks', desc: 'Milk powder, orange peel, rose petals, epsom salts.', category: 'soak', domain: 'vessel', weight: 0.05 });
+    fixedEveningSteps.unshift({ id: 'bath-ritual-engine', name: 'The Bath Ritual', desc: 'Every 2 Weeks. Milk powder, orange peel, rose petals, epsom salts.', category: 'soak', domain: 'vessel', weight: 0.05, isInjected: true });
   }
 
   // Prepend fixed evening steps to pmItems
