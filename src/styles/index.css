@@ -1,18 +1,18 @@
 :root {
   --bg: #0b090e; 
-  --card: #f9f6f0; 
-  --card2: #efe9e0; 
-  --border: #d4ccb8;
+  --card: rgba(20, 16, 24, 0.85); 
+  --card2: rgba(10, 8, 12, 0.95); 
+  --border: #4a3c50;
   --crimson: #8b0000; 
   --crimson-b: #5a0a10; 
   --plum: #3a1148; 
   --plum-b: #280a33;
   --rose: #b08494; 
   --parch: #0b090e; 
-  --silver: #2a2a2a; 
+  --silver: #888888; 
   --gold: #806015;
   --moss: #3d4438; 
-  --ink: #0a0810;
+  --ink: #efe9f0;
   --white: #efe9f0; 
   --ash: #a49aa8; 
   --dim: #6b6272;
@@ -38,9 +38,9 @@ body {
 
 h1, h2, h3 { font-weight: normal; }
 
-h1 { font-family: 'Pinyon Script', cursive; font-size: 2.8rem; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 4px #000; }
-h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: var(--crimson-b); font-weight: 700; text-shadow: 0 0 5px rgba(255,255,255,0.9); }
-h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: #000000; font-weight: 700; text-shadow: 0 0 5px rgba(255,255,255,0.9); }
+h1 { font-family: 'Pinyon Script', cursive; font-size: 2.8rem; color: var(--white); text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 4px #000; }
+h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: var(--white); font-weight: 700; text-shadow: 0 2px 5px rgba(0,0,0,0.9); }
+h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--white); font-weight: 700; text-shadow: 0 2px 5px rgba(0,0,0,0.9); }
 
 /* Global Input Fields */
 input[type=text], input[type=number], select, textarea {
@@ -48,8 +48,8 @@ input[type=text], input[type=number], select, textarea {
   padding: 1rem 1.25rem;
   font-size: 1.1rem;
   font-family: inherit;
-  background: rgba(255, 255, 255, 0.8);
-  border: 2px solid var(--border);
+  background: rgba(10, 8, 12, 0.8);
+  border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--ink);
   transition: all 0.2s ease;
@@ -59,7 +59,7 @@ input[type=text], input[type=number], select, textarea {
 input[type=text]:focus, input[type=number]:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--crimson-b);
-  background: #ffffff;
+  background: rgba(20, 16, 24, 0.95);
   box-shadow: 0 0 8px rgba(90, 10, 16, 0.3);
 }
 

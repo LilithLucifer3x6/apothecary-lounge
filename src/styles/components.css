@@ -24,7 +24,7 @@
 .topbar {
   position: sticky;
   top: 0;
-  background: rgba(255,255,255,0.9);
+  background: rgba(10, 8, 12, 0.9);
   border-bottom: 1px solid var(--crimson-b);
   z-index: 10;
   display: flex;
@@ -48,25 +48,25 @@
 }
 .tb {
   padding: 0.75rem 1rem;
-  color: #000000;
+  color: var(--ash);
   cursor: pointer;
   white-space: nowrap;
   font-family: 'Cormorant Garamond', serif;
-  background: rgba(255,255,255,0.7);
+  background: rgba(10, 8, 12, 0.7);
   font-weight: 700;
 }
 .tb.on {
   background: var(--crimson-b);
   border-bottom: 2px solid var(--crimson-b);
-  color: #ffffff;
+  color: var(--white);
 }
 
 /* Steps */
 .step { display: flex; align-items: flex-start; padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
 .step .body { flex: 1; margin-left: 1rem; }
-.step .nm { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--crimson-b); font-weight: bold; }
-.step .mt { font-size: 1rem; color: #000000; margin-top: 0.25rem; }
-.step .rx { font-family: 'IM Fell English', serif; color: var(--plum-b); font-style: italic; }
+.step .nm { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--white); font-weight: bold; }
+.step .mt { font-size: 1rem; color: var(--ash); margin-top: 0.25rem; }
+.step .rx { font-family: 'IM Fell English', serif; color: var(--ash); font-style: italic; }
 .step .aid { display: inline-block; background: var(--plum); color: var(--white); font-size: 0.75rem; padding: 0.125rem 0.375rem; border-radius: 12px; margin-left: 0.5rem; }
 
 /* Opt */
