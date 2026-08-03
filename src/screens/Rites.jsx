@@ -197,7 +197,7 @@ export default function Rites({ pose }) {
             <span style={{ marginLeft: '0.4rem' }} dangerouslySetInnerHTML={{ __html: speakerMarkup(item.name) }} />
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
           </div>
-          <div className="mt">{item.brand || 'Prescription'} &bull; {item.storage_location || 'Vanity'}</div>
+          <div className="mt">{item.brand || 'Elixir'} &bull; {item.storage_location || 'The Vanity'}</div>
         </div>
       </div>
     );
@@ -209,14 +209,14 @@ export default function Rites({ pose }) {
         {getRitualDate()}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', alignItems: 'start', marginTop: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem', alignItems: 'start', marginTop: '1.5rem' }}>
         
         {/* Left Column: Morning Invocation */}
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>Morning Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Morning Invocation') }} /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
-            {amItems.length > 0 ? amItems.map(i => renderStep(i)) : <div className="empty">No morning rites.</div>}
+            {amItems.length > 0 ? amItems.map(i => renderStep(i)) : <div className="empty">The altar is bare. No morning rites are required.</div>}
             {amItems.length > 0 && (
               <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                 <button 
@@ -225,7 +225,7 @@ export default function Rites({ pose }) {
                   onClick={handleCompleteAllAm}
                   disabled={amSaving || amSaved || amItems.every(i => checkedIds.has(i.id))}
                 >
-                  {amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'Morning Rite Completed' : 'Complete All Morning Steps'}
+                  {amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'The Morning Rites are Concluded' : 'Conclude All Morning Rites'}
                 </button>
               </div>
             )}
@@ -236,7 +236,7 @@ export default function Rites({ pose }) {
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Long Hours <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Long Hours') }} /></h3>
-          <div className="mt mb-4" style={{ textAlign: 'center' }}>The Daily Schedule</div>
+          <div className="mt mb-4" style={{ textAlign: 'center' }}>The Order of the Day</div>
           
           {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift.', 'var(--crimson-b)')}
           {renderScheduleStep('The Morning Invocation', 'Perform your morning rites to set the day\'s intentions.', 'var(--crimson-b)')}
@@ -252,7 +252,7 @@ export default function Rites({ pose }) {
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>Evening Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Evening Invocation') }} /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
-            {pmItems.length > 0 ? pmItems.map(i => renderStep(i)) : <div className="empty">No evening rites.</div>}
+            {pmItems.length > 0 ? pmItems.map(i => renderStep(i)) : <div className="empty">The altar is bare. No evening rites are required.</div>}
             {pmItems.length > 0 && (
               <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                 <button 
@@ -261,7 +261,7 @@ export default function Rites({ pose }) {
                   onClick={handleCompleteAllPm}
                   disabled={pmSaving || pmSaved || pmItems.every(i => checkedIds.has(i.id))}
                 >
-                  {pmSaved || pmItems.every(i => checkedIds.has(i.id)) ? 'Evening Rite Completed' : 'Complete All Evening Steps'}
+                  {pmSaved || pmItems.every(i => checkedIds.has(i.id)) ? 'The Evening Rites are Concluded' : 'Conclude All Evening Rites'}
                 </button>
               </div>
             )}
