@@ -30,20 +30,43 @@ export function generateLocsSVG(c, style) {
 }
 
 export function generateAvatarSVG(s) {
-  return `<path d="M45 180 Q45 112 75 112 Q105 112 105 180 Z" fill="${s.robe}" stroke="#000" stroke-width="1.5"/>
-  <path d="M45 180 Q75 172 105 180" fill="none" stroke="rgba(201,162,90,.35)" stroke-width="1.5"/>
-  <rect x="66" y="98" width="18" height="20" rx="6" fill="${s.skin}"/>
+  return `<path d="M45 180 Q45 112 75 112 Q105 112 105 180 Z" fill="${s.robe}" stroke="#1a1110" stroke-width="2.5"/>
+  <!-- body shading -->
+  <path d="M45 180 Q45 112 75 112 Q80 112 85 180 Z" fill="#000" opacity="0.15"/>
+  <path d="M45 180 Q75 172 105 180" fill="none" stroke="rgba(201,162,90,.5)" stroke-width="2"/>
+  
+  <!-- neck -->
+  <rect x="66" y="98" width="18" height="20" rx="6" fill="${s.skin}" stroke="#1a1110" stroke-width="2.5"/>
+  <!-- chin shadow -->
+  <path d="M66 100 Q75 115 84 100 Z" fill="#000" opacity="0.25"/>
+  
   ${generateLocsSVG(s.loc,s.style)}
-  <ellipse cx="75" cy="72" rx="27" ry="30" fill="${s.skin}"/>
-  <path d="M48 66 Q75 34 102 66 Q102 44 75 40 Q48 44 48 66Z" fill="${s.loc}"/>
+  
+  <!-- head -->
+  <ellipse cx="75" cy="72" rx="27" ry="30" fill="${s.skin}" stroke="#1a1110" stroke-width="2.5"/>
+  <!-- face shading -->
+  <ellipse cx="70" cy="72" rx="22" ry="30" fill="#fff" opacity="0.05"/>
+  
+  <!-- hair base -->
+  <path d="M48 66 Q75 34 102 66 Q102 44 75 40 Q48 44 48 66Z" fill="${s.loc}" stroke="#1a1110" stroke-width="2"/>
   ${[52,60,68,76,84,92,98].map(x=>`<circle cx="${x}" cy="${44+Math.abs(75-x)*0.16}" r="3.4" fill="${s.loc}"/>`).join('')}
-  <path d="M62 72 Q67 66 73 72 Q67 77 62 72Z" fill="#fff" opacity=".92"/>
-  <path d="M77 72 Q83 66 88 72 Q83 77 77 72Z" fill="#fff" opacity=".92"/>
+  
+  <!-- eyes -->
+  <path d="M62 72 Q67 66 73 72 Q67 77 62 72Z" fill="#fff" stroke="#1a1110" stroke-width="1.5"/>
+  <path d="M77 72 Q83 66 88 72 Q83 77 77 72Z" fill="#fff" stroke="#1a1110" stroke-width="1.5"/>
+  
+  <!-- irises -->
   <ellipse cx="67.5" cy="72" rx="2.1" ry="4.2" fill="${s.eye}"/>
   <ellipse cx="82.5" cy="72" rx="2.1" ry="4.2" fill="${s.eye}"/>
-  <path d="M70 86 Q75 89 80 86" stroke="#000" stroke-width="1.3" fill="none" opacity=".45" stroke-linecap="round"/>
-  <rect x="88" y="132" width="26" height="32" rx="3" fill="#2a1a10" stroke="#a9adb8" stroke-width="1.4"/>
-  <path d="M101 134 V162" stroke="#a9adb8" stroke-width="1" opacity=".7"/>
-  <path d="M92 140 h7 M92 146 h7 M104 140 h7 M104 146 h7" stroke="#e6dcc3" stroke-width=".8" opacity=".5"/>
-  <text x="120" y="178" font-size="21">${s.fam}</text>`;
+  
+  <!-- mouth -->
+  <path d="M70 86 Q75 89 80 86" stroke="#1a1110" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  
+  <!-- book -->
+  <rect x="88" y="132" width="26" height="32" rx="3" fill="#2a1a10" stroke="#a9adb8" stroke-width="2"/>
+  <path d="M101 134 V162" stroke="#a9adb8" stroke-width="1.5" opacity=".7"/>
+  <path d="M92 140 h7 M92 146 h7 M104 140 h7 M104 146 h7" stroke="#e6dcc3" stroke-width="1.2" opacity=".6"/>
+  
+  <!-- familiar -->
+  <text x="120" y="178" font-size="24" style="filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.5));">${s.fam}</text>`;
 }

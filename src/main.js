@@ -174,7 +174,13 @@ async function start() {
   const { data: profile, error } = await supabase.from('user_profile').select('*').maybeSingle();
   if (error) console.error("Profile fetch error:", error);
   
-  const avatarConfig = localStorage.getItem('avatar_config');
+  let avatarConfigStr = localStorage.getItem('avatar_config');
+  let avatarConfig = avatarConfigStr ? JSON.parse(avatarConfigStr) : null;
+  
+  if (avatarConfig && !avatarConfig.fam) {
+    localStorage.removeItem('avatar_config');
+    avatarConfig = null;
+  }
   
   if (!profile && !avatarConfig) {
     const avContainer = document.getElementById('s-av');
