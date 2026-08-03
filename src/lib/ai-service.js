@@ -58,10 +58,17 @@ export async function generateConditions() {
 export async function generateTraditions() {
   await delay();
   return [
-    { id: 'kbeauty', label: 'K-Beauty / Asian Heritage' },
+    { id: 'kbeauty', label: 'K-Beauty / Korean Heritage' },
+    { id: 'jbeauty', label: 'J-Beauty / Japanese Heritage' },
     { id: 'ayurvedic', label: 'Ayurvedic Principles' },
     { id: 'western', label: 'Western Clinical / Dermatological' },
+    { id: 'french', label: 'French Pharmacy / Dermo-Cosmetics' },
     { id: 'holistic', label: 'Holistic / Plant-Based' },
+    { id: 'clean', label: 'Clean Beauty / Minimalist' },
+    { id: 'african', label: 'African Botanicals & Butters' },
+    { id: 'indigenous', label: 'Indigenous / Ancestral Remedies' },
+    { id: 'biohack', label: 'Bio-Hacking / Longevity Focus' },
+    { id: 'diy', label: 'DIY / Home-Crafted' },
     { id: 'hoodoo', label: 'Hoodoo / Rootwork' }
   ];
 }
