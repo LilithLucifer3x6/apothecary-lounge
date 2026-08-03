@@ -125,10 +125,10 @@ export default function ShadowTome({ pose }) {
   return (
     <div style={{ padding: '1rem', maxWidth: '1000px', margin: '0 auto' }}>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', alignItems: 'start', marginTop: '1rem' }}>
+      <div className="tome-grid mt-4">
         
         {/* Left Column: Journal & History */}
-        <div style={{ gridColumn: '1 / span 2' }} className="tome-main-col">
+        <div className="tome-main-col">
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <h3>The Inner Sanctum</h3>
@@ -214,7 +214,7 @@ export default function ShadowTome({ pose }) {
         </div>
 
         {/* Right Column: Widgets */}
-        <div style={{ gridColumn: 'auto / span 1', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
