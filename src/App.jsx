@@ -260,7 +260,7 @@ export default function App() {
               </div>
             </div>
             
-            <div className="tabs">
+            <div className="tabs" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '0.2rem', padding: '0.5rem 1rem' }}>
               {TABS.map(t => (
                 <button
                   key={t.id}
@@ -282,22 +282,62 @@ export default function App() {
       )}
 
       {showSettings && (
-        <div id="setmodal" className="modal" style={{ display: 'block' }}>
-          <div className="modal-content card">
+        <div id="setmodal" className="modal" style={{ display: 'block', padding: '1rem' }}>
+          <div className="modal-content card" style={{ maxWidth: '1000px', width: '95vw', maxHeight: '90vh', overflowY: 'auto', margin: '0 auto', display: 'flex', flexDirection: 'column' }}>
             <div className="corner tl"></div><div className="corner tr"></div>
             <div className="corner bl"></div><div className="corner br"></div>
-            <h2>Settings</h2>
-            <div className="mt">Adjust the chamber's atmosphere.</div>
             
-            <div className="field" style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Font Size ({settings.fontSize}px)</label>
-              <input type="range" min="12" max="32" value={settings.fontSize} 
-                     onChange={e => setSettings({...settings, fontSize: e.target.value})} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h2>Settings</h2>
+                <div className="mt mb-4">Adjust the chamber's atmosphere.</div>
+              </div>
+              <button className="btn sm" onClick={() => setShowSettings(false)}>X</button>
             </div>
             
-            <div className="field" style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Typeface</label>
-              <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+              {/* Left Column: Appearance */}
+              <div>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Appearance</h3>
+                
+                <div className="field" style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Font Size ({settings.fontSize}px)</label>
+                  <input type="range" min="12" max="32" value={settings.fontSize} 
+                         onChange={e => setSettings({...settings, fontSize: e.target.value})} />
+                </div>
+                
+                <div className="field" style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Typeface</label>
+                  <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
+                    <option value="IM Fell English">IM Fell English</option>
+                    <option value="Cormorant Garamond">Cormorant Garamond</option>
+                    <option value="Pinyon Script">Pinyon Script</option>
+                    <option value="Playfair Display">Playfair Display</option>
+                    <option value="Lora">Lora</option>
+                    <option value="Merriweather">Merriweather</option>
+                    <option value="Inter">Inter</option>
+                    <option value="Outfit">Outfit</option>
+                    <option value="system-ui">System</option>
+                  </select>
+                </div>
+
+                <div style={{ 
+                  padding: '1rem', 
+                  border: '1px dashed var(--border)', 
+                  borderRadius: '8px',
+                  background: 'var(--bg)',
+                  marginTop: '1rem'
+                }}>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginBottom: '0.5rem' }}>Preview:</div>
+                  <div style={{ 
+                    fontFamily: `"${settings.fontFamily}", serif`, 
+                    fontSize: `${settings.fontSize}px`,
+                    color: 'var(--crimson)'
+                  }}>
+                    The quick brown fox jumps over the lazy dog. 1234567890
+                  </div>
+                </div>
+              </div>
                 <option value="IM Fell English">IM Fell English</option>
                 <option value="Cormorant Garamond">Cormorant Garamond</option>
                 <option value="Pinyon Script">Pinyon Script</option>
@@ -310,9 +350,12 @@ export default function App() {
               </select>
             </div>
             
-            <div className="field" style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Voice (TTS)</label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {/* Middle Column: Voice & Integrations */}
+              <div>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Integrations & Voice</h3>
+                
+                <div className="field" style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }}>
                 <input type="checkbox" checked={settings.tts} 
                      onChange={e => {
                        setSettings({...settings, tts: e.target.checked});
@@ -357,7 +400,6 @@ export default function App() {
             </div>
             
             <div className="field" style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Integrations</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
                 <label style={{ color: 'var(--rose)', fontWeight: 'bold' }}>
                   <input type="checkbox" checked={settings.health}
@@ -399,9 +441,12 @@ export default function App() {
                 )}
               </div>
             </div>
-
-            <div className="field" style={{ marginBottom: '1.5rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Danger Zone</label>
+          </div>
+          
+          {/* Right Column: Danger Zone & Actions */}
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--crimson)' }}>Danger Zone</h3>
               
               <button onClick={async () => {
                 if (window.confirm("Are you sure you want to reset the First Inscription? This will take you back to the intake questionnaire.")) {
@@ -412,7 +457,7 @@ export default function App() {
                   setShowSettings(false);
                   setCurrentScreen('intake');
                 }
-              }} className="btn g" style={{ width: '100%', marginBottom: '0.5rem' }}>Shatter the First Inscription</button>
+              }} className="btn g" style={{ width: '100%', marginBottom: '1rem' }}>Shatter the First Inscription</button>
 
               <button onClick={() => {
                 if (window.confirm("Are you sure you want to completely erase all local settings, saved routines, and Supabase data? This cannot be undone.")) {
@@ -422,9 +467,11 @@ export default function App() {
               }} className="btn g" style={{ width: '100%' }}>Erase the Entire Codex</button>
             </div>
             
-            <button onClick={() => saveSettings(settings)} className="btn full plum" style={{ marginTop: '2rem', padding: '0.8rem' }}>Seal Configurations</button>
+            <button onClick={() => saveSettings(settings)} className="btn full plum" style={{ marginTop: '2rem', padding: '1rem', fontSize: '1.2rem' }}>Seal Configurations</button>
           </div>
         </div>
+      </div>
+    </div>
       )}
     </>
   );

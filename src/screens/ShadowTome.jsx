@@ -116,9 +116,9 @@ export default function ShadowTome({ pose }) {
         
         {healthEnabled ? (
           readiness ? (
-            <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ fontSize: '2rem', fontFamily: "'IM Fell English', serif" }}>{readiness.score}</div>
-              <div>
+            <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1.5rem', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: '3rem', fontFamily: "'IM Fell English', serif", color: 'var(--rose)', minWidth: '40px', textAlign: 'center' }}>{readiness.score}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <div style={{ fontWeight: 'bold', color: 'var(--rose)' }}>Readiness: {readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--rose)' }}>Data from Android Health Connect</div>
               </div>

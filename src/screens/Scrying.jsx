@@ -11,6 +11,10 @@ export default function Scrying({ pose }) {
   const [scryInput, setScryInput] = useState('');
   const [scryStatus, setScryStatus] = useState('');
   const [scryResult, setScryResult] = useState('');
+  const [reactions, setReactions] = useState({});
+
+  const reactionOptions = ['Peeling', 'Redness', 'Burning', 'Itching', 'Purging', 'Dryness'];
+
 
   useEffect(() => {
     async function fetchData() {
@@ -100,6 +104,21 @@ export default function Scrying({ pose }) {
     }
     return false;
   });
+
+  const toggleReaction = (itemId, reaction) => {
+    setReactions(prev => {
+      const current = prev[itemId] || new Set();
+      const next = new Set(current);
+      if (next.has(reaction)) next.delete(reaction);
+      else next.add(reaction);
+      return { ...prev, [itemId]: next };
+    });
+  };
+
+  const handleSaveLedger = () => {
+    alert("Somatic reactions saved to the Ledger.");
+  };
+
   const allergies = profile?.intake_answers?.conditions?.filter(c => c.type === 'allergy') || [];
   const banishedItems = inventory.filter(i => i.lifecycle_state === 'banished');
 
@@ -146,7 +165,39 @@ export default function Scrying({ pose }) {
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Somatic Ledger</h3>
         <div className="mt mb-4">Log bodily responses to active ingredients.</div>
-        <div className="empty">No somatic reactions logged. Use this ledger to record adverse reactions to specific components in your routine.</div>
+        
+        {inventory.length > 0 ? (
+          <>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {inventory.map(item => (
+                <div key={item.id || item.name} className="row" style={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                  <div style={{ flex: '1 1 200px' }}>
+                    <div className="nm">{item.name}</div>
+                    <div className="mt">{item.brand}</div>
+                  </div>
+                  <div style={{ flex: '2 1 300px', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {reactionOptions.map(r => {
+                      const isChecked = (reactions[item.id] || new Set()).has(r);
+                      return (
+                        <label key={r} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.9rem', cursor: 'pointer', color: isChecked ? 'var(--rose)' : 'var(--dim)' }}>
+                          <input type="checkbox" checked={isChecked} onChange={() => toggleReaction(item.id, r)} style={{ display: 'none' }} />
+                          <div style={{ padding: '0.2rem 0.5rem', border: `1px solid ${isChecked ? 'var(--rose)' : 'var(--border)'}`, borderRadius: '12px', background: isChecked ? 'rgba(176,132,148,0.2)' : 'transparent' }}>
+                            {r}
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: '1rem', textAlign: 'right' }}>
+              <button className="btn plum sm" onClick={handleSaveLedger}>Inscribe Ledger</button>
+            </div>
+          </>
+        ) : (
+          <div className="empty">No somatic reactions logged. Use this ledger to record adverse reactions to specific components in your routine.</div>
+        )}
       </div>
 
 

@@ -117,7 +117,7 @@ When you believe you have gathered enough information across these categories (o
  * @returns {Promise<Object>}
  */
 export async function parseProductImage(base64Image, mediaType) {
-  if (!anthropic) throw new Error('AI not configured. Please add an API key.');
+  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
 
   const tools = [
     {
@@ -137,31 +137,46 @@ export async function parseProductImage(base64Image, mediaType) {
     }
   ];
 
-  const response = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 1024,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: mediaType,
-              data: base64Image
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': anthropicApiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-3-5-sonnet-20241022',
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: mediaType,
+                data: base64Image
+              }
+            },
+            {
+              type: 'text',
+              text: 'Extract the brand, product name, ingredients list, category (e.g. Cleanser, Moisturizer, Toner), and physical form of this product.'
             }
-          },
-          {
-            type: 'text',
-            text: 'Extract the brand, product name, ingredients list, category (e.g. Cleanser, Moisturizer, Toner), and physical form of this product.'
-          }
-        ]
-      }
-    ],
-    tools: tools,
-    tool_choice: { type: 'tool', name: 'extract_product_details' }
+          ]
+        }
+      ],
+      tools: tools,
+      tool_choice: { type: 'tool', name: 'extract_product_details' }
+    })
   });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
+  }
+  const response = await res.json();
 
   // Extract from tool use block
   for (const block of response.content) {
@@ -181,7 +196,7 @@ export async function parseProductImage(base64Image, mediaType) {
  * @returns {Promise<string>} - The AI's evaluation in the ritual voice.
  */
 export async function evaluateScryingPool(productInfo, userProfile, inventory) {
-  if (!anthropic) throw new Error('AI not configured. Please add an API key.');
+  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
 
   const systemPrompt = `You are the Scrying Pool, an oracle within The Apothecary Lounge.
 The user seeks your wisdom on a prospective new product or formula.
@@ -196,14 +211,29 @@ Current Inventory:
 ${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}
 `;
 
-  const response = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 1024,
-    system: systemPrompt,
-    messages: [
-      { role: 'user', content: `Please scry this prospective addition to my chamber: ${productInfo}` }
-    ]
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': anthropicApiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-3-5-sonnet-20241022',
+      max_tokens: 1024,
+      system: systemPrompt,
+      messages: [
+        { role: 'user', content: `Please scry this prospective addition to my chamber: ${productInfo}` }
+      ]
+    })
   });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
+  }
+  const response = await res.json();
 
   return response.content.map(b => b.text).join('\n');
 }
@@ -215,7 +245,7 @@ ${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}
  * @param {Array<string>} ingredients 
  */
 export async function analyzeProduct(name, category, ingredients) {
-  if (!anthropic) throw new Error('AI not configured.');
+  if (!anthropicApiKey) throw new Error('AI not configured.');
 
   const tools = [{
     name: 'save_product_analysis',
@@ -245,18 +275,33 @@ export async function analyzeProduct(name, category, ingredients) {
     }
   }];
 
-  const response = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 500,
-    tools: tools,
-    tool_choice: { type: 'tool', name: 'save_product_analysis' },
-    messages: [
-      { role: 'user', content: `Analyze this cosmetic product:
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': anthropicApiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-3-5-sonnet-20241022',
+      max_tokens: 500,
+      tools: tools,
+      tool_choice: { type: 'tool', name: 'save_product_analysis' },
+      messages: [
+        { role: 'user', content: `Analyze this cosmetic product:
 Name: ${name}
 Category: ${category}
 Ingredients: ${ingredients.join(', ')}` }
-    ]
+      ]
+    })
   });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
+  }
+  const response = await res.json();
 
   for (const block of response.content) {
     if (block.type === 'tool_use' && block.name === 'save_product_analysis') {

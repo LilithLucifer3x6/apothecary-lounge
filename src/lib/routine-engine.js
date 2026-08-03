@@ -41,6 +41,9 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
   const amItems = [];
   const pmItems = [];
   
+  const d = new Date();
+  const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+  
   const { readiness = 100, sleepDuration = 8, heavySweat = false } = wearables;
   
   items.forEach(rawItem => {
@@ -101,6 +104,20 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
 
   amItems.sort((a, b) => getWeight(a) - getWeight(b));
   pmItems.sort((a, b) => getWeight(a) - getWeight(b));
+  
+  // Inject fixed sequences for the evening wind-down
+  const fixedEveningSteps = [
+    { id: 'winddown-1', name: 'Shower', brand: 'Fixed', category: 'cleanser', domain: 'vessel', weight: 0.1 },
+    { id: 'winddown-2', name: 'Dry Off', brand: 'Fixed', category: 'towel', domain: 'vessel', weight: 0.2 },
+    { id: 'winddown-3', name: 'Extractions & Heated Eye Mask', desc: 'Submerge tools in 70% isopropyl alcohol for 5-10 mins before and after.', brand: 'Fixed', category: 'tool', domain: 'visage', weight: 0.3 }
+  ];
+  
+  if (isWeekend) {
+    fixedEveningSteps.unshift({ id: 'bath-ritual-engine', name: 'The Bath Ritual', brand: 'Every 2 Weeks', desc: 'Milk powder, orange peel, rose petals, epsom salts.', category: 'soak', domain: 'vessel', weight: 0.05 });
+  }
+
+  // Prepend fixed evening steps to pmItems
+  pmItems.unshift(...fixedEveningSteps);
 
   return { amItems, pmItems, getWeight };
 }

@@ -7,15 +7,15 @@
   --crimson-b: #5a0a10; 
   --plum: #3a1148; 
   --plum-b: #280a33;
-  --rose: #b08494; 
-  --parch: #0b090e; 
-  --silver: #888888; 
-  --gold: #806015;
+  --rose: #8b0000; 
+  --parch: #8b0000; 
+  --silver: #8b0000; 
+  --gold: #8b0000;
   --moss: #3d4438; 
-  --ink: #efe9f0;
-  --white: #efe9f0; 
-  --ash: #a49aa8; 
-  --dim: #6b6272;
+  --ink: #8b0000;
+  --white: #8b0000; 
+  --ash: #8b0000; 
+  --dim: #8b0000;
 }
 
 *, *::before, *::after {
@@ -26,7 +26,7 @@
 
 body {
   background-color: var(--bg);
-  color: var(--rose);
+  color: var(--crimson);
   font-family: system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
