@@ -409,43 +409,38 @@ export default function Intake({ onComplete }) {
           {currentStep === 5 && (
             <div className="ins-step">
               {renderTitle('The ingredients to never touch')}
-              <div className="mt">Allergies and sensitivities.</div>
-              <label style={{ display: 'block', marginTop: '1rem', marginBottom: '1rem' }}>
-                <input type="checkbox" checked={noAlg} onChange={e => setNoAlg(e.target.checked)} /> Not Applicable (None)
+              <div className="mt mb-4">Allergies and sensitivities.</div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--gold)' }}>
+                <input type="checkbox" checked={noAlg} onChange={e => { setNoAlg(e.target.checked); if(e.target.checked) setAlgList(['Lavender']); }} /> I have no other allergies.
               </label>
               {!noAlg && (
-                <>
-                <div id="alg-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {algList.map((alg, idx) => (
-                  <div key={idx} className="field">
-                    <div className="ip mic">
-                      <VoiceInput 
-                        className="alg-item" 
-                        value={alg} 
-                        disabled={idx === 0} 
-                        style={idx === 0 ? { opacity: 0.7 } : {}} 
-                        onChange={() => {}}
-                      />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {algList.map((alg, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <div style={{ flex: 1 }}>
+                        <VoiceInput 
+                          value={alg} 
+                          disabled={i === 0 && alg.toLowerCase() === 'lavender'} 
+                          style={(i === 0 && alg.toLowerCase() === 'lavender') ? { opacity: 0.7, background: 'rgba(255,255,255,0.5)' } : {}} 
+                          onChange={e => {
+                            const newList = [...algList];
+                            newList[i] = e.target.value;
+                            setAlgList(newList);
+                          }}
+                          placeholder="e.g. Lanolin" 
+                        />
+                      </div>
+                      {!(i === 0 && alg.toLowerCase() === 'lavender') && (
+                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: '0.5rem' }} onClick={() => {
+                          const newList = [...algList];
+                          newList.splice(i, 1);
+                          setAlgList(newList);
+                        }}>Remove</button>
+                      )}
                     </div>
-                  </div>
-                ))}
-              </div>
-              <div className="field mt-4">
-                <div className="ip mic" style={{ width: '100%' }}>
-                  <VoiceInput 
-                    placeholder="Type an allergy and press Enter..." 
-                    value={newAlg}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' && newAlg.trim()) {
-                        addAlg();
-                      }
-                    }}
-                    onChange={e => setNewAlg(e.target.value)}
-                  />
-                  </div>
+                  ))}
+                  <button className="btn" onClick={() => setAlgList([...algList, ''])} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Add Allergy</button>
                 </div>
-                <button className="btn sm" onClick={addAlg}>+ Add</button>
-                </>
               )}
             </div>
           )}
