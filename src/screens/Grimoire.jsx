@@ -49,8 +49,8 @@ export default function Grimoire({ pose }) {
     calDays.push(
       <div key={`day-${i}`} className={`cd ${isToday}`}>
         {i}
-        {hasRetie && <div className="ce" title="Root Weaving" style={{ color: 'var(--plum-b)', fontSize: '1.2rem' }}>⚝</div>}
-        {hasNails && <div className="ce" title="Talon Honing" style={{ color: 'var(--rose)', fontSize: '1.2rem' }}>✧</div>}
+        {hasRetie && <div className="ce" title="Root Weaving" style={{ color: 'var(--plum-b)', fontSize: '1.2rem' }}><Icon name="star-four" /></div>}
+        {hasNails && <div className="ce" title="Talon Honing" style={{ color: 'var(--rose)', fontSize: '1.2rem' }}><Icon name="sparkle" /></div>}
       </div>
     );
   }
@@ -68,41 +68,31 @@ export default function Grimoire({ pose }) {
         <div className="corner tl"></div><div className="corner tr"></div>
         <div className="corner bl"></div><div className="corner br"></div>
         <h3>
-          The Turning Week{' '}
-          <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Turning Week') }} />
+          The Weekly Wheel{' '}
+          <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Weekly Wheel') }} />
         </h3>
         <div className="mt mb-4">Rhythms and cycles.</div>
         
-        <div className="wheel" style={{ display: 'flex', justifyContent: 'space-between', textAlign: 'center' }}>
-          <div className="d">
-            <div className="dn">Mon</div>
-            <div className="tg" title="Rootwork">
-              <Icon name={G.tabRoot} />
-              <div style={{ fontSize: '0.6rem', marginTop: '2px' }}>Rootwork</div>
+        <div className="wheel-container">
+          <div className="wheel">
+            <div className="d">
+              <div className="dn">Mon</div>
+              <div className="tg"></div>
             </div>
-          </div>
-          <div className="d"><div className="dn">Tue</div><div className="tg"></div></div>
-          <div className="d">
-            <div className="dn">Wed</div>
-            <div className="tg" title="Grimoire">
-              <Icon name={G.tabGrim} />
-              <div style={{ fontSize: '0.6rem', marginTop: '2px' }}>Grimoire</div>
+            <div className="d"><div className="dn">Tue</div><div className="tg"></div></div>
+            <div className="d">
+              <div className="dn">Wed</div>
+              <div className="tg"></div>
             </div>
-          </div>
-          <div className="d"><div className="dn">Thu</div><div className="tg"></div></div>
-          <div className="d">
-            <div className="dn">Fri</div>
-            <div className="tg" title="Scrying Pool">
-              <Icon name={G.tabPool} />
-              <div style={{ fontSize: '0.6rem', marginTop: '2px' }}>Scrying</div>
+            <div className="d"><div className="dn">Thu</div><div className="tg"></div></div>
+            <div className="d">
+              <div className="dn">Fri</div>
+              <div className="tg"></div>
             </div>
-          </div>
-          <div className="d"><div className="dn">Sat</div><div className="tg"></div></div>
-          <div className="d">
-            <div className="dn">Sun</div>
-            <div className="tg" title="Mortal Rites">
-              <Icon name={G.tabRites} />
-              <div style={{ fontSize: '0.6rem', marginTop: '2px' }}>Rites</div>
+            <div className="d"><div className="dn">Sat</div><div className="tg"></div></div>
+            <div className="d">
+              <div className="dn">Sun</div>
+              <div className="tg"></div>
             </div>
           </div>
         </div>
@@ -135,12 +125,14 @@ export default function Grimoire({ pose }) {
         </h3>
         <div className="mt mb-4">Rites that occur sparingly.</div>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div className="row">
-            <div style={{ flex: 1 }}>
-              <div className="nm">Root Weaving (Retie) ⚝</div>
-              <div className="mt">
-                Every 8 weeks. Scheduled for {retieAppt?.date ? new Date(retieAppt.date).toLocaleDateString() : 'Unknown'}.
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <div className="row" style={{ flex: '0 1 auto', marginBottom: 0 }}>
+              <div>
+                <div className="nm">Root Weaving (Retie) <Icon name="star-four" /></div>
+                <div className="mt">
+                  Every 8 weeks. Scheduled for {retieAppt?.date ? new Date(retieAppt.date).toLocaleDateString() : 'Unknown'}.
+                </div>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -157,11 +149,13 @@ export default function Grimoire({ pose }) {
             </div>
           </div>
           
-          <div className="row">
-            <div style={{ flex: 1 }}>
-              <div className="nm">Talon Honing (Nails) ✧</div>
-              <div className="mt">
-                Every 2 weeks. Scheduled for {nailsAppt?.date ? new Date(nailsAppt.date).toLocaleDateString() : 'Unknown'}.
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <div className="row" style={{ flex: '0 1 auto', marginBottom: 0 }}>
+              <div>
+                <div className="nm">Talon Honing (Nails) <Icon name="sparkle" /></div>
+                <div className="mt">
+                  Every 2 weeks. Scheduled for {nailsAppt?.date ? new Date(nailsAppt.date).toLocaleDateString() : 'Unknown'}.
+                </div>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

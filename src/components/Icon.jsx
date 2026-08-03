@@ -3,5 +3,8 @@ import { ic } from '../lib/icons.js';
 
 export default function Icon({ name }) {
   if (!name) return null;
-  return <span style={{ display: 'inline-flex', alignItems: 'center' }} dangerouslySetInnerHTML={{ __html: ic(name) }} />;
+  
+  // Fix missing ph-gear
+  let finalName = name === 'ph-gear' || name === 'gear' ? 'gear' : name;
+  return <span style={{ display: 'inline-flex', alignItems: 'center' }} dangerouslySetInnerHTML={{ __html: ic(finalName) }} />;
 }

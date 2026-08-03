@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateAvatarSVG, AVO, getAvatarConfig } from '../lib/avatar.js';
+import { generateAvatarSVG, AVATAR_OPTIONS, getAvatarConfig } from '../lib/avatar.js';
 import Icon from '../components/Icon.jsx';
 
 export default function AvatarBuilder({ onComplete }) {
@@ -36,7 +36,7 @@ export default function AvatarBuilder({ onComplete }) {
           <h2 className="t" style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3rem', textAlign: 'center', color: 'var(--parch)', marginBottom: 0 }}>
             Who Keeps This Place?
           </h2>
-          <div className="flourish" style={{ marginBottom: '1.5rem' }}>✧ ✦ ✧</div>
+          <div className="flourish" style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}><Icon name="sparkle" /> <Icon name="sparkle" /> <Icon name="sparkle" /></div>
           
           <div className="scene" style={{ background: 'transparent', boxShadow: 'none', border: 'none', marginBottom: '1.5rem', position: 'relative', overflow: 'visible' }}>
             <svg 
@@ -49,7 +49,7 @@ export default function AvatarBuilder({ onComplete }) {
             />
           </div>
           <div id="avopts" style={{ background: 'rgba(5,3,8,0.4)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-            {AVO.map((o) => (
+            {AVATAR_OPTIONS.map((o) => (
               <React.Fragment key={o.k}>
                 <label className="fl">{o.l}</label>
                 <div className="opts">

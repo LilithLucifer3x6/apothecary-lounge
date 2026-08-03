@@ -150,7 +150,7 @@ export default function ShadowTome({ pose }) {
               moodsList.map(m => (
                 <div 
                   key={m.id} 
-                  className={`chip ${selectedMoods.has(m.id) ? 'active' : ''}`} 
+                  className={`chip ${selectedMoods.has(m.id) ? 'on' : ''}`} 
                   onClick={() => toggleMood(m.id)}
                 >
                   {m.label}
@@ -162,22 +162,37 @@ export default function ShadowTome({ pose }) {
         
         <div className="field mt-4">
           <label>The Entry</label>
-          <div className="ip mic" style={{ height: 'auto' }}>
-            <textarea 
-              id="tome-entry" 
-              rows={12} 
-              style={{ width: '100%', minHeight: '200px', background: 'transparent', border: 'none', color: 'var(--white)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem', padding: '0.5rem', resize: 'vertical', outline: 'none' }} 
-              placeholder="Inscribe your thoughts..."
-              value={entryText}
-              onChange={(e) => setEntryText(e.target.value)}
-            ></textarea>
-          </div>
+          <VoiceInput 
+            isTextArea={true}
+            placeholder="Inscribe your thoughts..."
+            value={entryText}
+            onChange={(e) => setEntryText(e.target.value)}
+            style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--white)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem' }}
+          />
         </div>
         
         <div style={{ textAlign: 'right', marginTop: '1rem' }}>
           <button id="btn-save-tome" className="btn plum" onClick={handleSave}>
             Seal the Page
           </button>
+        </div>
+      </div>
+
+      <div className="card mt-4">
+        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+        <h3>Herbal Elixirs & Apothecary Dosage</h3>
+        <div className="mt mb-4">Calculate tincture and herbal infusion concentrations.</div>
+        
+        <div className="row">
+          <div style={{ flex: 1, minWidth: '150px' }}>
+            <label className="fl">Total Volume (ml)</label>
+            <input type="number" defaultValue="30" style={{ width: '100%', marginBottom: '0.5rem' }} />
+            <label className="fl">Concentration (mg/ml)</label>
+            <input type="number" defaultValue="50" style={{ width: '100%' }} />
+          </div>
+          <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <button className="btn plum" onClick={() => alert('Total Yield: 1500mg. Dosage per drop (~0.05ml): 2.5mg.')}>Calculate Yield</button>
+          </div>
         </div>
       </div>
 
@@ -219,7 +234,7 @@ export default function ShadowTome({ pose }) {
                   {entry.moods.join(' \u2022 ')}
                 </div>
               )}
-              <div style={{ fontFamily: "'IM Fell English', serif", fontSize: '1.1rem', lineHeight: '1.5' }}>
+              <div style={{ fontFamily: "'IM Fell English', serif", fontSize: '1.1rem', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
                 {entry.body_text}
               </div>
             </div>

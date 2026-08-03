@@ -6,30 +6,7 @@ import * as AI from '../lib/ai-service.js';
 import Icon from '../components/Icon.jsx';
 import { G } from '../lib/icons.js';
 
-const VoiceInput = ({ className, value, onChange, placeholder, disabled, style, onKeyDown }) => {
-  const ref = useRef(null);
-  const attachedRef = useRef(false);
-  useEffect(() => {
-    if (ref.current && !attachedRef.current) {
-      attachVoice(ref.current);
-      attachedRef.current = true;
-    }
-  }, []);
-  
-  return (
-    <input 
-      ref={ref}
-      type="text" 
-      className={className} 
-      value={value} 
-      onChange={onChange} 
-      placeholder={placeholder}
-      disabled={disabled}
-      style={style}
-      onKeyDown={onKeyDown}
-    />
-  );
-};
+import VoiceInput from '../components/VoiceInput.jsx';
 
 export default function Intake({ onComplete }) {
   const [path, setPath] = useState('ai');

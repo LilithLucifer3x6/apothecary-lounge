@@ -1,14 +1,14 @@
-export const DEFAULT_AVATAR = {skin:'#5b3a29', loc:'#141118', eye:'#c4243a', robe:'#3a1148', style:'free', fam:'fam_cat.jpg', aura:'rgba(176,132,148,0.7)', sigil:'✧'};
+export const DEFAULT_AVATAR = {skin:'#5b3a29', loc:'#141118', eye:'#c4243a', robe:'#3a1148', style:'free', fam:'fam_cat.jpg', aura:'rgba(176,132,148,0.7)', sigil:'sparkle'};
 
-export const AVO = [
-  {k:'skin', l:'Their complexion', v:[['#6b4630','Warm deep'],['#5b3a29','Rich umber'],['#4a2e20','Espresso'],['#3a2318','Deepest']]},
-  {k:'loc', l:'The colour of their crown', v:[['#141118','Black'],['#3b1d24','Oxblood'],['#2a1a3a','Violet-black'],['#6b4a2a','Bronze']]},
-  {k:'eye', l:'Their eyes', v:[['#c4243a','Red'],['#a9adb8','Amber'],['#7a4ec4','Violet'],['#3aa88a','Jade']]},
-  {k:'robe', l:'Their garment', v:[['#3a1148','Plum'],['#5a0a10','Crimson'],['#14141a','Obsidian'],['#3d4438','Moss']]},
-  {k:'style', l:'How they wear their crown', v:[['free','Loose'],['buns','Twin buns'],['high','Crowned high'],['wrap','Wrapped'],['side','Swept aside']]},
+export const AVATAR_OPTIONS = [
+  {k:'skin', l:'Melanin', v:[['#3d2314','Obsidian'],['#4a2c1b','Chestnut'],['#5b3a29','Mahogany'],['#6c4634','Copper'],['#7a523d','Bronze']]},
+  {k:'eye', l:'The Gaze', v:[['#c4243a','Crimson'],['#4b0082','Indigo'],['#d4af37','Gold'],['#c0c0c0','Silver']]},
+  {k:'style', l:'The Crown (4C Locs)', v:[['free','Free flowing'],['buns','Twin Buns'],['updo','High Crown'],['half','Half Bound']]},
+  {k:'loc', l:'Loc Tint', v:[['#141118','Midnight'],['#2b1b17','Sable'],['#4a0404','Blood'],['#241533','Plum']]},
+  {k:'robe', l:'Vestments', v:[['#3a1148','Violet'],['#1a1110','Charcoal'],['#2c3539','Gunmetal'],['#400000','Oxblood']]},
+  {k:'fam', l:'Familiar', v:[['fam_cat.jpg','Black Cat'],['fam_raven.jpg','Raven'],['fam_moth.jpg','Luna Moth']]},
+  {k:'sigil', l:'Floating Sigil', v:[['sparkle','Star'],['moon','Moon'],['pentagram','Pentagram'],['sun','Sun']]},
   {k:'aura', l:'Magical Resonance', v:[['rgba(176,132,148,0.7)','Violet Void'],['rgba(255,215,0,0.6)','Golden Dawn'],['rgba(220,20,60,0.6)','Crimson Blood'],['rgba(46,139,87,0.7)','Jade Forest']]},
-  {k:'sigil', l:'Floating Sigil', v:[['✧','Star'],['☾','Moon'],['⚝','Pentagram'],['❂','Sun']]},
-  {k:'fam', l:'Their familiar', v:[['fam_cat.jpg','Cat'],['fam_bat.jpg','Bat'],['fam_snake.jpg','Serpent'],['fam_owl.jpg','Owl'],['fam_rat.jpg','Rat']]},
 ];
 
 export function getAvatarConfig() {
@@ -60,7 +60,7 @@ export function generateAvatarSVG(s, pose = 'standing') {
   }
 
   const auraColor = s.aura || 'rgba(176,132,148,0.7)';
-  const sigil = s.sigil || '✧';
+  const sigil = s.sigil || 'sparkle';
 
   return `
   <defs>

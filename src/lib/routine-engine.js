@@ -1,26 +1,55 @@
 /**
  * Routine Engine
  * Sorts items by time of day and layering weight.
+ * Enforces the Deterministic Safety Layer (Codex, Melanin Ward, 4C Hair, Zonal Rules).
  */
 
-export function buildRoutines(items) {
+// Hardcoded Codex Blocks
+const CODEX_BANS = ['lavender', 'lavandula'];
+
+// Risk Ward checks (presence-based triggers)
+const MELANIN_TRIGGERS = ['hydroquinone', 'citrus', 'lemon', 'lime', 'grapefruit'];
+const HAIR_4C_BUILDUP = ['beeswax', 'petrolatum', 'mineral oil', 'dimethicone']; // Heavy waxes/silicones
+const INTIMATE_DISRUPTORS = ['fragrance', 'parfum', 'baking soda', 'sodium bicarbonate'];
+const DEPILATORY_CAUTIONS = ['thioglycolate', 'calcium hydroxide', 'potassium hydroxide'];
+
+// Helper to check if any ingredient contains any of the bad words
+function checkIngredients(ingredients, badList) {
+  if (!ingredients || !Array.isArray(ingredients)) return false;
+  return ingredients.some(ing => {
+    const lower = ing.toLowerCase();
+    return badList.some(bad => lower.includes(bad));
+  });
+}
+
+function parseFlags(item) {
+  let rf = item.risk_flags;
+  let bf = item.behavior_flags;
+  let ing = item.ingredients;
+  
+  if (typeof rf === 'string') try { rf = JSON.parse(rf); } catch(e) { rf = {}; }
+  if (typeof bf === 'string') try { bf = JSON.parse(bf); } catch(e) { bf = {}; }
+  if (typeof ing === 'string') try { ing = JSON.parse(ing); } catch(e) { ing = []; }
+  
+  item.risk_flags = rf || {};
+  item.behavior_flags = bf || {};
+  item.ingredients = Array.isArray(ing) ? ing : [];
+  return item;
+}
+
+export function buildRoutines(items, userProfile = {}, wearables = {}) {
   const amItems = [];
   const pmItems = [];
-
-  items.forEach(item => {
-    let rf = item.risk_flags;
-    let bf = item.behavior_flags;
+  
+  const { readiness = 100, sleepDuration = 8, heavySweat = false } = wearables;
+  
+  items.forEach(rawItem => {
+    const item = parseFlags(rawItem);
     
-    // Parse strings if they are JSON (Supabase sometimes returns strings for jsonb)
-    if (typeof rf === 'string') try { rf = JSON.parse(rf); } catch(e) { rf = {}; }
-    if (typeof bf === 'string') try { bf = JSON.parse(bf); } catch(e) { bf = {}; }
-    
-    rf = rf || {};
-    bf = bf || {};
-
-    // For sorting, re-assign parsed back so we don't parse multiple times
-    item.risk_flags = rf;
-    item.behavior_flags = bf;
+    // THE CODEX: Absolute Ban
+    if (checkIngredients(item.ingredients, CODEX_BANS)) {
+      return; // Stripped entirely
+    }
 
     const name = (item.name || '').toLowerCase();
     const cat = (item.category || '').toLowerCase();
@@ -28,11 +57,26 @@ export function buildRoutines(items) {
     let isAm = true;
     let isPm = true;
 
-    if (rf.retinoid || cat.includes('sleeping mask') || name.includes('night')) {
-      isAm = false;
+    // Master Invocations & Time-of-day parsing
+    if (item.risk_flags.retinoid || cat.includes('sleeping mask') || name.includes('night') || name.includes('tretinoin')) {
+      isAm = false; // Retinoids at night
     }
     if (cat.includes('sunscreen') || cat.includes('spf')) {
       isPm = false;
+    }
+    if (name.includes('drysol')) {
+      isAm = false; // Drysol at bedtime only
+    }
+
+    // Wearables adaptation: 
+    // Poor sleep (under 6 hours) -> De-puffing eye products in AM
+    if (sleepDuration < 6 && (cat.includes('eye') && cat.includes('de-puff'))) {
+      isAm = true; 
+    }
+    // Heavy sweat -> Gentle body cleanse
+    if (heavySweat && cat.includes('body wash') && item.risk_flags.gentle) {
+      isAm = true;
+      isPm = true;
     }
 
     if (isAm) amItems.push(item);
@@ -61,18 +105,72 @@ export function buildRoutines(items) {
   return { amItems, pmItems, getWeight };
 }
 
-export function checkConflicts(items) {
+export function checkConflicts(items, userProfile = {}) {
   const conflicts = [];
   
-  const hasRetinoid = items.some(i => i.risk_flags?.retinoid);
-  const hasAcid = items.some(i => i.risk_flags?.acid || i.risk_flags?.exfoliant);
-  const hasVitC = items.some(i => i.risk_flags?.vitamin_c);
+  // ZONAL MAPPING
+  // Map items to their zones to check overlaps
+  const zoneMap = {};
+  
+  items.forEach(rawItem => {
+    const item = parseFlags(rawItem);
+    const zone = (item.application_zone || 'full-face').toLowerCase();
+    if (!zoneMap[zone]) zoneMap[zone] = [];
+    zoneMap[zone].push(item);
+  });
 
-  if (hasRetinoid && hasAcid) {
-    conflicts.push("Mixing Retinoids and Acids in the same ritual can cause severe irritation.");
+  // ZONAL CONFLICT RESOLUTION
+  for (const [zone, zoneItems] of Object.entries(zoneMap)) {
+    const hasRetinoid = zoneItems.some(i => i.risk_flags.retinoid || i.name.toLowerCase().includes('tretinoin'));
+    const hasAcid = zoneItems.some(i => i.risk_flags.acid || i.risk_flags.exfoliant);
+    const hasVitC = zoneItems.some(i => i.risk_flags.vitamin_c);
+    
+    if (hasRetinoid && hasAcid) {
+      conflicts.push(`Zonal Conflict [${zone}]: Mixing Retinoids and Acids in the same zone causes severe irritation. Reschedule acid to alternate days.`);
+    }
+    if (hasRetinoid && hasVitC) {
+      conflicts.push(`Zonal Conflict [${zone}]: Vitamin C and Retinoids destabilize each other. Move Vitamin C to the Morning Rite.`);
+    }
+    
+    // MELANIN WARD
+    const photosensitizers = zoneItems.filter(i => i.risk_flags.photosensitizer || checkIngredients(i.ingredients, MELANIN_TRIGGERS));
+    if (photosensitizers.length > 0 && !items.some(i => i.category.toLowerCase().includes('spf') || i.category.toLowerCase().includes('sunscreen'))) {
+      conflicts.push(`Melanin Ward Warning: ${photosensitizers.map(i=>i.name).join(', ')} increases photosensitivity. Sun protection is load-bearing. Add SPF to your routine!`);
+    }
   }
-  if (hasRetinoid && hasVitC) {
-    conflicts.push("Vitamin C and Retinoids can destabilize each other and irritate the skin.");
+
+  // 4C HAIR & INTIMATE WARDS
+  const crownItems = items.filter(i => (i.domain || '').toLowerCase() === 'crown');
+  if (crownItems.some(i => checkIngredients(i.ingredients, HAIR_4C_BUILDUP))) {
+    conflicts.push("4C Crown Ward: Heavy waxes or non-soluble silicones detected. Risk of buildup in microlocs.");
+  }
+
+  const vesselItems = items.filter(i => (i.domain || '').toLowerCase() === 'vessel');
+  if (vesselItems.some(i => i.application_zone === 'intimate' && checkIngredients(i.ingredients, INTIMATE_DISRUPTORS))) {
+    conflicts.push("Intimate Care Ward: pH disruptors or fragrance detected. Risk to microbiome.");
+  }
+  
+  // SENSITIVE SKIN (Depilatories)
+  const depilatories = items.filter(i => checkIngredients(i.ingredients, DEPILATORY_CAUTIONS) || (i.category||'').toLowerCase().includes('depilatory'));
+  if (depilatories.length > 0) {
+    conflicts.push(`Sensitive Ward: Depilatory (${depilatories.map(i=>i.name).join(', ')}) requires a low-pH cleanse post-care to neutralize alkaline burns.`);
+  }
+
+  // DRYSOL HARD RULE
+  const hasDrysol = items.some(i => i.name.toLowerCase().includes('drysol'));
+  const hasBathRitual = items.some(i => i.name.toLowerCase().includes('bath soak') || i.category.toLowerCase().includes('soak'));
+  const hasWitchHazel = items.some(i => i.name.toLowerCase().includes('witch hazel'));
+  if (hasDrysol && (hasBathRitual || hasWitchHazel)) {
+    conflicts.push("Drysol Hard Rule: Never apply aluminum chloride on the same day as the bath ritual or astringents to avoid chemical burning.");
+  }
+
+  // ORAL MEDICATIONS (IMMUNOSUPPRESSANTS)
+  const orals = userProfile.orals || [];
+  const isImmunosuppressed = orals.some(m => m.toLowerCase().includes('methotrexate') || m.toLowerCase().includes('etanercept'));
+  const hasExtractions = items.some(i => i.name.toLowerCase().includes('extraction'));
+  
+  if (isImmunosuppressed && hasExtractions) {
+    conflicts.push("Keeper's Caution: Immunosuppressants detected (Methotrexate/Etanercept). Extractions carry high infection risk. Submerge steel tools in 70% isopropyl alcohol for 10 mins before/after use.");
   }
 
   return conflicts;

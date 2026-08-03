@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.js';
 import Icon from '../components/Icon.jsx';
 import { attachVoice } from '../lib/voice.js';
+import { buildRoutines } from '../lib/routine-engine.js';
 
 export default function Rootwork({ pose }) {
   const [items, setItems] = useState([]);
@@ -151,8 +152,8 @@ export default function Rootwork({ pose }) {
 
   return (
     <div style={{padding: '1rem', maxWidth: '900px', margin: '0 auto'}}>
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem'}}>
-        <h2 style={{fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', color: 'var(--parch)', margin: 0}}>The Rootwork</h2>
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem', gap: '1rem'}}>
+        <h2 style={{fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', color: 'var(--parch)', margin: 0, textAlign: 'center'}}>The Rootwork</h2>
         <button className="btn plum" onClick={() => setShowAddModal(true)}>+ Add to Inventory</button>
       </div>
 
@@ -166,6 +167,33 @@ export default function Rootwork({ pose }) {
           </div>
         </div>
       )}
+
+      <div className="card mb-4">
+        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+        <h3>The Silver Toll</h3>
+        <div className="mt mb-4">Estimated monthly cost of your active routines.</div>
+        <div>
+          <div style={{ fontSize: '2rem', fontFamily: "'Pinyon Script', cursive", color: 'var(--candle)' }}>
+            ${(() => {
+              const { amItems, pmItems } = buildRoutines(items, {}, {});
+              const activeIds = new Set([...amItems.map(i=>i.id), ...pmItems.map(i=>i.id)]);
+              const activeItems = items.filter(i => activeIds.has(i.id));
+              
+              let totalMonthly = 0;
+              activeItems.forEach(item => {
+                if (item.price && item.pao_months) {
+                  // Rough estimate: Price / PAO months
+                  const price = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+                  const months = parseInt(item.pao_months, 10) || 1;
+                  totalMonthly += (price / months);
+                }
+              });
+              return totalMonthly.toFixed(2);
+            })()}
+          </div>
+          <div className="mt" style={{opacity:0.7}}>Calculated by averaging purchase price over the formula's Period-After-Opening lifespan.</div>
+        </div>
+      </div>
 
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>

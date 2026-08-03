@@ -27,7 +27,12 @@ export default function Rites({ pose }) {
       const itemsArr = data || [];
       setItems(itemsArr);
       
-      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr);
+      // Mocking wearable data as Terra API is enabled in settings
+      const mockWearables = {
+        sleepDuration: 5.5, // Less than 6 hours -> trigger de-puffing
+        heavySweat: true    // Heavy sweat -> trigger gentle cleanse
+      };
+      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile, mockWearables);
       setAmItems(am);
       setPmItems(pm);
       setConflicts(checkConflicts(itemsArr));
@@ -170,11 +175,55 @@ export default function Rites({ pose }) {
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Long Hours <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Long Hours') }} /></h3>
-        <div className="mt mb-4">Habits of the day.</div>
-        <div className="step"><input type="checkbox" /> <div className="nm">Water (64oz)</div></div>
-        <div className="step"><input type="checkbox" /> <div className="nm">SPF Reapplication</div></div>
-        <div className="step"><input type="checkbox" /> <div className="nm">Gentle Movement (Ride/Walk)</div></div>
-        <div className="step"><input type="checkbox" /> <div className="nm">Stretching (Rope)</div></div>
+        <div className="mt mb-4">The Daily Schedule</div>
+        
+        <div className="step" style={{ borderLeft: '3px solid var(--crimson-b)' }}>
+          <input type="checkbox" /> 
+          <div style={{ flex: 1 }}>
+            <div className="nm">8:00 AM - Awakening</div>
+            <div className="mt">Wake up and perform Morning Invocation</div>
+          </div>
+        </div>
+        
+        <div className="step" style={{ borderLeft: '3px solid var(--gold)' }}>
+          <input type="checkbox" /> 
+          <div style={{ flex: 1 }}>
+            <div className="nm">8:15 AM - 5:00 PM - The Labors</div>
+            <div className="mt">Work hours</div>
+          </div>
+        </div>
+        
+        <div className="step" style={{ borderLeft: '3px solid var(--rose)' }}>
+          <input type="checkbox" /> 
+          <div style={{ flex: 1 }}>
+            <div className="nm">10:30 AM - Morning Respite</div>
+            <div className="mt">15-minute break &bull; Hydrate (16oz water)</div>
+          </div>
+        </div>
+        
+        <div className="step" style={{ borderLeft: '3px solid var(--rose)' }}>
+          <input type="checkbox" /> 
+          <div style={{ flex: 1 }}>
+            <div className="nm">12:30 PM - Midday Sustenance</div>
+            <div className="mt">Lunch &bull; Gentle Movement (Walk/Stretch)</div>
+          </div>
+        </div>
+        
+        <div className="step" style={{ borderLeft: '3px solid var(--rose)' }}>
+          <input type="checkbox" /> 
+          <div style={{ flex: 1 }}>
+            <div className="nm">3:00 PM - Afternoon Respite</div>
+            <div className="mt">15-minute break &bull; Hydrate (16oz water)</div>
+          </div>
+        </div>
+        
+        <div className="step" style={{ borderLeft: '3px solid var(--plum)' }}>
+          <input type="checkbox" /> 
+          <div style={{ flex: 1 }}>
+            <div className="nm">5:00 PM onwards - The Descent</div>
+            <div className="mt">Work ends &bull; Evening Invocation</div>
+          </div>
+        </div>
       </div>
     </div>
   );
