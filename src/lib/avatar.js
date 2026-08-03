@@ -6,7 +6,7 @@ export const AVO = [
   {k:'eye', l:'Their eyes', v:[['#c4243a','Red'],['#a9adb8','Amber'],['#7a4ec4','Violet'],['#3aa88a','Jade']]},
   {k:'robe', l:'Their garment', v:[['#3a1148','Plum'],['#5a0a10','Crimson'],['#14141a','Obsidian'],['#3d4438','Moss']]},
   {k:'style', l:'How they wear their crown', v:[['free','Loose'],['buns','Twin buns'],['high','Crowned high'],['wrap','Wrapped'],['side','Swept aside']]},
-  {k:'fam', l:'Their familiar', v:[['🐈‍⬛','Cat'],['🦇','Bat'],['🐍','Serpent'],['🦉','Owl'],['🐀','Rat']]},
+  {k:'fam', l:'Their familiar', v:[['fam_cat.jpg','Cat'],['fam_bat.jpg','Bat'],['fam_snake.jpg','Serpent'],['fam_owl.jpg','Owl'],['fam_rat.jpg','Rat']]},
 ];
 
 export function getAvatarConfig() {
@@ -68,5 +68,9 @@ export function generateAvatarSVG(s) {
   <path d="M92 140 h7 M92 146 h7 M104 140 h7 M104 146 h7" stroke="#e6dcc3" stroke-width="1.2" opacity=".6"/>
   
   <!-- familiar -->
-  <text x="120" y="178" font-size="24" style="filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.5));">${s.fam}</text>`;
+  <defs>
+    <clipPath id="famClip"><circle cx="132" cy="165" r="16"/></clipPath>
+  </defs>
+  <circle cx="132" cy="165" r="17.5" fill="#1a1110"/>
+  <image href="/assets/${s.fam}" x="116" y="149" width="32" height="32" clip-path="url(#famClip)"/>`;
 }

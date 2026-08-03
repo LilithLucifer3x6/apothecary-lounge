@@ -16,7 +16,11 @@ export function render(container) {
       </g>
       
       <!-- Familiar -->
-      <text x="300" y="278" font-size="24">${avatarConfig.fam}</text>
+      <defs>
+        <clipPath id="landingFamClip"><circle cx="316" cy="266" r="22"/></clipPath>
+      </defs>
+      <circle cx="316" cy="266" r="24" fill="#1a1110"/>
+      <image href="/assets/${avatarConfig.fam}" x="294" y="244" width="44" height="44" clip-path="url(#landingFamClip)"/>
     `;
   }
 

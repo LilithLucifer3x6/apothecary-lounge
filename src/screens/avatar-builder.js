@@ -4,12 +4,16 @@ import { render as renderLanding } from './landing.js';
 
 export function render(container) {
   container.innerHTML = `
+  <!-- Cottage Background Immersion -->
+  <div style="position:absolute; inset:0; z-index:-1; overflow:hidden;">
+    <img src="/assets/cottage_room.jpg" style="width:100%; height:100%; object-fit:cover; filter:blur(4px) brightness(0.5);" />
+  </div>
   <main style="padding-top:1.5rem;">
-    <div class="card">
-      <span class="corner tl">❧</span><span class="corner tr">☙</span><span class="corner bl">☙</span><span class="corner br">❧</span>
+    <div class="card" style="background:transparent; box-shadow:none; border:none; padding:0;">
       <h2 class="t" style="font-family:'Pinyon Script', cursive; font-size:2.5rem; text-align:center; color:var(--parch);">Who Keeps This Place?</h2>
-      <div class="flourish">✦ ☾ ✦</div>
-      <div style="display:flex;justify-content:center;margin-bottom:1rem;">
+      <div class="flourish">✧ ✦ ✧</div>
+      
+      <div class="scene" style="background:transparent; box-shadow:none; border:none; margin-bottom:1rem; position:relative;">
         <svg id="avsvg" viewBox="0 0 150 195" width="170" height="220"></svg>
       </div>
       <div id="avopts"></div>

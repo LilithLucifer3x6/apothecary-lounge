@@ -58,9 +58,21 @@ function buildAppShell() {
             <option value="system-ui">System</option>
           </select>
         </div>
+        </div>
         <div class="field">
           <label>Voice (TTS)</label>
           <input type="checkbox" id="setting-tts"> Enable Voice
+          <div id="tts-controls" style="display:none; margin-top:0.5rem; flex-direction:column; gap:0.5rem;">
+            <label style="font-size:0.8rem;">Voice
+              <select id="setting-tts-voice" style="width:100%; margin-top:0.2rem;"></select>
+            </label>
+            <label style="font-size:0.8rem;">Speed
+              <input type="range" id="setting-tts-rate" min="0.5" max="2.0" step="0.1" value="1.0" style="width:100%;">
+            </label>
+            <label style="font-size:0.8rem;">Pitch
+              <input type="range" id="setting-tts-pitch" min="0.5" max="2.0" step="0.1" value="1.0" style="width:100%;">
+            </label>
+          </div>
         </div>
         <div class="field mt-4">
           <label>Integrations</label>
@@ -105,7 +117,44 @@ function buildAppShell() {
   
   const fontSizeInput = document.getElementById('setting-fontsize');
   const fontSelect = document.getElementById('setting-font');
+  
   const ttsCheckbox = document.getElementById('setting-tts');
+  const ttsControls = document.getElementById('tts-controls');
+  const ttsVoice = document.getElementById('setting-tts-voice');
+  const ttsRate = document.getElementById('setting-tts-rate');
+  const ttsPitch = document.getElementById('setting-tts-pitch');
+
+  ttsCheckbox.checked = getTtsEnabled();
+  ttsControls.style.display = getTtsEnabled() ? 'flex' : 'none';
+  ttsRate.value = getTtsRate();
+  ttsPitch.value = getTtsPitch();
+
+  // Populate voices when they load
+  function populateVoices() {
+    const voices = getFeminineVoices();
+    ttsVoice.innerHTML = voices.map(v => `<option value="${v.voiceURI}">${v.name}</option>`).join('');
+    const currentUri = getTtsVoiceURI();
+    if (currentUri && voices.some(v => v.voiceURI === currentUri)) {
+      ttsVoice.value = currentUri;
+    } else if (voices.length > 0) {
+      ttsVoice.value = voices[0].voiceURI;
+      setTtsVoiceURI(voices[0].voiceURI);
+    }
+  }
+  
+  if (window.speechSynthesis) {
+    if (window.speechSynthesis.getVoices().length > 0) populateVoices();
+    else window.speechSynthesis.onvoiceschanged = populateVoices;
+  }
+
+  ttsCheckbox.addEventListener('change', (e) => {
+    setTtsEnabled(e.target.checked);
+    ttsControls.style.display = e.target.checked ? 'flex' : 'none';
+  });
+  ttsVoice.addEventListener('change', (e) => setTtsVoiceURI(e.target.value));
+  ttsRate.addEventListener('input', (e) => setTtsRate(parseFloat(e.target.value)));
+  ttsPitch.addEventListener('input', (e) => setTtsPitch(parseFloat(e.target.value)));
+  
   const healthCheckbox = document.getElementById('setting-health');
   const calCheckbox = document.getElementById('setting-cal');
 
@@ -113,7 +162,6 @@ function buildAppShell() {
   const settings = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"IM Fell English","tts":false,"health":false,"cal":false}');
   fontSizeInput.value = settings.fontSize;
   fontSelect.value = settings.fontFamily;
-  ttsCheckbox.checked = settings.tts;
   healthCheckbox.checked = settings.health;
   calCheckbox.checked = settings.cal;
 
