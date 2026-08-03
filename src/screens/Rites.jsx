@@ -180,8 +180,8 @@ export default function Rites({ pose }) {
         <div className="step" style={{ borderLeft: '3px solid var(--crimson-b)' }}>
           <input type="checkbox" /> 
           <div style={{ flex: 1 }}>
-            <div className="nm">8:00 AM - Awakening</div>
-            <div className="mt">Wake up and perform Morning Invocation</div>
+            <div className="nm">8:00 AM - The Awakening</div>
+            <div className="mt">Wake up and perform The Morning Invocation</div>
           </div>
         </div>
         
@@ -196,7 +196,7 @@ export default function Rites({ pose }) {
         <div className="step" style={{ borderLeft: '3px solid var(--rose)' }}>
           <input type="checkbox" /> 
           <div style={{ flex: 1 }}>
-            <div className="nm">10:30 AM - Morning Respite</div>
+            <div className="nm">9:00 AM to 10:30 AM - The Morning Respite</div>
             <div className="mt">15-minute break &bull; Hydrate (16oz water)</div>
           </div>
         </div>
@@ -204,7 +204,7 @@ export default function Rites({ pose }) {
         <div className="step" style={{ borderLeft: '3px solid var(--rose)' }}>
           <input type="checkbox" /> 
           <div style={{ flex: 1 }}>
-            <div className="nm">12:30 PM - Midday Sustenance</div>
+            <div className="nm">11:00 AM to 12:30 PM - The Midday Sustenance</div>
             <div className="mt">Lunch &bull; Gentle Movement (Walk/Stretch)</div>
           </div>
         </div>
@@ -212,7 +212,7 @@ export default function Rites({ pose }) {
         <div className="step" style={{ borderLeft: '3px solid var(--rose)' }}>
           <input type="checkbox" /> 
           <div style={{ flex: 1 }}>
-            <div className="nm">3:00 PM - Afternoon Respite</div>
+            <div className="nm">1:30 PM to 2:30 PM - The Afternoon Respite</div>
             <div className="mt">15-minute break &bull; Hydrate (16oz water)</div>
           </div>
         </div>
@@ -221,7 +221,7 @@ export default function Rites({ pose }) {
           <input type="checkbox" /> 
           <div style={{ flex: 1 }}>
             <div className="nm">5:00 PM onwards - The Descent</div>
-            <div className="mt">Work ends &bull; Evening Invocation</div>
+            <div className="mt">Work ends &bull; The Evening Invocation</div>
           </div>
         </div>
       </div>

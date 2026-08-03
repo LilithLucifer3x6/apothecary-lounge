@@ -3,6 +3,7 @@ import { supabase } from './lib/supabase.js';
 import { G, verifyGlyphs } from './lib/icons.js';
 import { getTtsEnabled, getTtsRate, getTtsPitch, getTtsVoiceURI, setTtsEnabled, setTtsRate, setTtsPitch, setTtsVoiceURI, getFeminineVoices } from './lib/tts.js';
 import Icon from './components/Icon.jsx';
+import { initGoogleCalendar, requestCalendarAccess } from './lib/gcal.js';
 
 import AvatarBuilder from './screens/AvatarBuilder.jsx';
 import Landing from './screens/Landing.jsx';
@@ -47,7 +48,10 @@ export default function App() {
     fontFamily: 'IM Fell English',
     tts: false,
     health: false,
-    cal: false
+    cal: false,
+    terraDevId: '',
+    terraApiKey: '',
+    gcalClientId: ''
   });
   
   const [ttsOptions, setTtsOptions] = useState({
@@ -93,9 +97,18 @@ export default function App() {
     // Sync settings with profile in background
     supabase.from('user_profile').select('*').maybeSingle().then(({ data: profile }) => {
       if (profile && profile.settings) {
-        localStorage.setItem('app_settings', JSON.stringify(profile.settings));
-        setSettings(profile.settings);
-        applySettings(profile.settings);
+     const stored = localStorage.getItem('al_settings');
+    if (stored) {
+      const s = JSON.parse(stored);
+      setSettings(s);
+      if (s.tts) setTtsEnabled(true);
+      
+      if (s.gcalClientId) {
+        initGoogleCalendar(s.gcalClientId, (token) => {
+          console.log("Google Calendar Authenticated!");
+        });
+      }
+    }    applySettings(profile.settings);
       }
       if (profile && profile.avatar_config) {
         localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
@@ -326,36 +339,35 @@ export default function App() {
             <div className="field" style={{ marginBottom: '1.5rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--gold)' }}>Integrations</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
-                <label>
+                <label style={{ color: 'var(--crimson-b)', fontWeight: 'bold' }}>
                   <input type="checkbox" checked={settings.health}
-                         onChange={e => {
-                           const checked = e.target.checked;
-                           if (checked) {
-                             const key = prompt("Please provide your Terra API Developer ID to connect Samsung Health, RingConn, and Renpho over the cloud:");
-                             if (key) {
-                               alert("Terra API key accepted. Cloud health sync enabled.");
-                               setSettings({...settings, health: true});
-                             }
-                           } else {
-                             setSettings({...settings, health: false});
-                           }
-                         }} /> Health Connect (RingConn, Renpho, Samsung)
+                         onChange={e => setSettings({...settings, health: e.target.checked})} /> Health Connect (RingConn, Renpho, Samsung)
                 </label>
-                <label>
+                {settings.health && (
+                  <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <input type="text" placeholder="Terra Developer ID" value={settings.terraDevId || ''} onChange={e => setSettings({...settings, terraDevId: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
+                    <input type="text" placeholder="Terra API Key" value={settings.terraApiKey || ''} onChange={e => setSettings({...settings, terraApiKey: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
+                    <div className="mt" style={{ fontSize: '0.8rem' }}>Enter your Terra credentials to pull sleep & readiness data.</div>
+                  </div>
+                )}
+                
+                <label style={{ color: 'var(--crimson-b)', fontWeight: 'bold', marginTop: '1rem' }}>
                   <input type="checkbox" checked={settings.cal}
-                         onChange={e => {
-                           const checked = e.target.checked;
-                           if (checked) {
-                             const clientId = prompt("Please provide your Google OAuth Client ID to authenticate Calendar API:");
-                             if (clientId) {
-                               alert("Google API Client ID accepted. OAuth flow initialized.");
-                               setSettings({...settings, cal: true});
-                             }
-                           } else {
-                             setSettings({...settings, cal: false});
-                           }
-                         }} /> Google Calendar
+                         onChange={e => setSettings({...settings, cal: e.target.checked})} /> Google Calendar
                 </label>
+                {settings.cal && (
+                  <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <input type="text" placeholder="Google OAuth Client ID" value={settings.gcalClientId || ''} 
+                           onChange={e => {
+                             setSettings({...settings, gcalClientId: e.target.value});
+                             if (e.target.value) {
+                               initGoogleCalendar(e.target.value, () => alert("Google Calendar Authenticated!"));
+                             }
+                           }} style={{ padding: '0.5rem', width: '100%' }} />
+                    <button className="btn sm g" onClick={() => requestCalendarAccess()} style={{ width: 'fit-content' }}>Log In to Google</button>
+                    <div className="mt" style={{ fontSize: '0.8rem' }}>Enter your Client ID and log in to fetch events.</div>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -334,21 +334,19 @@ export default function Intake({ onComplete }) {
                 <div id="rx-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {rxList.map((rx, idx) => (
                   <div key={idx} className="card2" style={{ padding: '1rem' }}>
-                    <div className="field">
-                      <label>Name</label>
-                      <div className="ip mic">
-                        <VoiceInput 
-                          className="rx-name" 
-                          value={rx.name} 
-                          onChange={e => updateRx(idx, 'name', e.target.value)} 
-                          placeholder="Name" 
-                        />
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                      <div className="field" style={{ flex: 1 }}><label>Strength</label><div className="ip mic"><VoiceInput className="rx-strength" value={rx.strength} onChange={e => updateRx(idx, 'strength', e.target.value)} /></div></div>
-                      <div className="field" style={{ flex: 1 }}><label>Zone</label><div className="ip mic"><VoiceInput className="rx-zone" value={rx.zone} onChange={e => updateRx(idx, 'zone', e.target.value)} /></div></div>
-                      <div className="field" style={{ flex: 1 }}><label>Frequency</label><div className="ip mic"><VoiceInput className="rx-freq" value={rx.frequency} onChange={e => updateRx(idx, 'frequency', e.target.value)} /></div></div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', marginBottom: '1.5rem' }}>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. Tretinoin 0.05%" 
+                        value={rx.name}
+                        onChange={e => updateRx(idx, 'name', e.target.value)}
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="Application Zone (e.g. chin)" 
+                        value={rx.zone}
+                        onChange={e => updateRx(idx, 'zone', e.target.value)}
+                      />
                     </div>
                   </div>
                 ))}
@@ -368,15 +366,13 @@ export default function Intake({ onComplete }) {
               {!noOral && (
                 <div id="oral-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {oralList.map((oral, idx) => (
-                  <div key={idx} className="field">
-                    <div className="ip mic">
-                      <VoiceInput 
-                        className="oral-med" 
-                        value={oral} 
-                        onChange={e => updateOral(idx, e.target.value)} 
-                        placeholder="Medication" 
-                      />
-                    </div>
+                  <div key={idx} style={{ display: 'flex', width: '100%', marginBottom: '1rem' }}>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Methotrexate" 
+                      value={oral}
+                      onChange={e => updateOral(idx, e.target.value)}
+                    />
                   </div>
                 ))}
               </div>
@@ -403,7 +399,7 @@ export default function Intake({ onComplete }) {
                         value={alg} 
                         disabled={idx === 0} 
                         style={idx === 0 ? { opacity: 0.7 } : {}} 
-                        onChange={() => {}} // Disabled inputs shouldn't need an onChange, but it prevents React warnings
+                        onChange={() => {}}
                       />
                     </div>
                   </div>
@@ -411,10 +407,16 @@ export default function Intake({ onComplete }) {
               </div>
               <div className="field mt-4">
                 <div className="ip mic">
-                  <VoiceInput 
-                    value={newAlg} 
-                    onChange={e => setNewAlg(e.target.value)} 
-                    placeholder="Add ingredient..." 
+                  <input 
+                    type="text" 
+                    placeholder="Type an allergy and press Enter..." 
+                    value={newAlg}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && newAlg.trim()) {
+                        addAlg();
+                      }
+                    }}
+                    onChange={e => setNewAlg(e.target.value)}
                   />
                   </div>
                 </div>

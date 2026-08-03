@@ -1,18 +1,32 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.js';
 import Icon from '../components/Icon.jsx';
+import { fetchTodayEvents } from '../lib/gcal.js';
 import { speakerMarkup } from '../lib/tts.js';
 import { syncAppointments, markAppointmentDone } from '../lib/calendar.js';
 
 export default function Grimoire({ pose }) {
   const [appointments, setAppointments] = useState([]);
   const [marked, setMarked] = useState({});
+  const [history, setHistory] = useState([]);
+  const [realEvents, setRealEvents] = useState([]);
 
   useEffect(() => {
     let mounted = true;
     syncAppointments().then(data => {
       if (mounted) setAppointments(data);
     });
+
+    supabase.from('routine_history').select('*').order('completed_at', { ascending: false }).limit(30)
+      .then(({data}) => {
+        if (mounted && data) setHistory(data);
+      });
+      
+    fetchTodayEvents().then(events => {
+      if (mounted) setRealEvents(events);
+    });
+
     return () => { mounted = false; };
   }, []);
 
@@ -64,6 +78,28 @@ export default function Grimoire({ pose }) {
         The Grimoire
       </h2>
       
+      <div className="card mt-4">
+        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+        <h3>Today's Appointed Times <span className="spk"><Icon name="ph-duotone ph-speaker-high" /></span></h3>
+        <div className="mt mb-4">From Google Calendar</div>
+        
+        {realEvents.length > 0 ? realEvents.map((ev, i) => (
+          <div key={i} className="step">
+            <div className="body">
+              <div className="nm">{ev.summary}</div>
+              <div className="mt">{new Date(ev.start.dateTime || ev.start.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+            </div>
+          </div>
+        )) : (
+          <div className="step">
+            <div className="body">
+              <div className="nm">No events scheduled today.</div>
+              <div className="mt">Your day is your own.</div>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div>
         <div className="corner bl"></div><div className="corner br"></div>
