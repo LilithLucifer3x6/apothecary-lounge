@@ -206,9 +206,9 @@ export default function App() {
         <div id="s-splash" className="land" style={{ justifyContent: 'space-between', padding: '10vh 2rem 5vh 2rem' }}>
           <div style={{ textAlign: 'center' }}>
             <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '4.5rem', fontWeight: 'bold', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
-            <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--rose)', marginTop: '0.5rem' }}>A sanctuary of self-care.</div>
+            <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--rose)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '1rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
           </div>
-          <button onClick={handleEnter} className="btn" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.2rem', padding: '0.4rem 1.5rem', background: 'rgba(5, 3, 10, 0.85)', borderColor: 'var(--crimson)', color: 'var(--rose)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginBottom: '3vh' }}>
+          <button onClick={handleEnter} className="btn" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.1rem', padding: '0.4rem 1rem', background: 'rgba(5, 3, 10, 0.85)', borderColor: 'var(--crimson)', color: 'var(--rose)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginBottom: '3vh', width: '150px', whiteSpace: 'normal', lineHeight: '1.2' }}>
             Approach the Cottage
           </button>
         </div>
