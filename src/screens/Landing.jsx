@@ -42,10 +42,52 @@ export default function Landing({ onProceed, onOpenAvatar }) {
           <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
         </button>
       )}
+
+      {hasProfile && avatarConfig && (
+        <div style={{ position: 'relative', marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ position: 'relative', width: '300px', height: '400px' }}>
+            {/* Avatar */}
+            <img 
+              src={`/assets/avatar_${avatarConfig.avatarVibe}.jpg`} 
+              alt={avatarConfig.name} 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover', 
+                borderRadius: '12px', 
+                WebkitMaskImage: 'radial-gradient(circle at center, black 30%, rgba(0,0,0,0.8) 60%, transparent 100%)',
+                maskImage: 'radial-gradient(circle at center, black 30%, rgba(0,0,0,0.8) 60%, transparent 100%)'
+              }} 
+            />
+            {/* Familiar */}
+            <img 
+              src={`/assets/fam_${avatarConfig.familiar}.jpg`} 
+              alt="Familiar" 
+              style={{ 
+                position: 'absolute', 
+                bottom: '-20px', 
+                right: '-40px', 
+                width: '180px', 
+                height: '180px', 
+                objectFit: 'cover', 
+                borderRadius: '50%', 
+                border: '2px solid rgba(255,255,255,0.1)',
+                boxShadow: '0 10px 20px rgba(0,0,0,0.8)',
+                WebkitMaskImage: 'radial-gradient(circle at center, black 40%, transparent 100%)',
+                maskImage: 'radial-gradient(circle at center, black 40%, transparent 100%)'
+              }} 
+            />
+          </div>
+          
+          <div style={{ marginTop: '3rem', fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', color: 'var(--parch)', textShadow: '0 4px 10px rgba(0,0,0,0.9)' }}>
+            Welcome back, {avatarConfig.name}.
+          </div>
+        </div>
+      )}
       
       {hasProfile && (
-        <button className="btn sm" onClick={onOpenAvatar} style={{ marginTop: '1rem', background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)' }}>
-          <Icon name="ph-user" /> Conjure Your Visage
+        <button className="btn sm" onClick={onOpenAvatar} style={{ marginTop: '2rem', background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', opacity: 0.7 }}>
+          <Icon name="ph-user" /> Reshape Your Visage
         </button>
       )}
     </div>
