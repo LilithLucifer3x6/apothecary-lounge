@@ -61,13 +61,16 @@ export async function generateTraditions() {
     { id: 'kbeauty', label: 'K-Beauty / Korean Heritage' },
     { id: 'jbeauty', label: 'J-Beauty / Japanese Heritage' },
     { id: 'ayurvedic', label: 'Ayurvedic Principles' },
+    { id: 'tcm', label: 'Traditional Chinese Medicine (TCM)' },
     { id: 'western', label: 'Western Clinical / Dermatological' },
     { id: 'french', label: 'French Pharmacy / Dermo-Cosmetics' },
+    { id: 'nordic', label: 'Nordic / Arctic Botanicals' },
+    { id: 'mediterranean', label: 'Mediterranean Heritage' },
     { id: 'holistic', label: 'Holistic / Plant-Based' },
     { id: 'clean', label: 'Clean Beauty / Minimalist' },
+    { id: 'naturopathy', label: 'Naturopathy / Herbalism' },
     { id: 'african', label: 'African Botanicals & Butters' },
     { id: 'indigenous', label: 'Indigenous / Ancestral Remedies' },
-    { id: 'biohack', label: 'Bio-Hacking / Longevity Focus' },
     { id: 'diy', label: 'DIY / Home-Crafted' },
     { id: 'hoodoo', label: 'Hoodoo / Rootwork' }
   ];
