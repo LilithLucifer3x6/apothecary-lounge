@@ -19,10 +19,13 @@ export default function ConjureVisage({ onComplete }) {
     { id: 'raven', label: 'Watchful Raven', img: '/assets/fam_raven.jpg' },
     { id: 'moth', label: 'Luna Moth', img: '/assets/fam_moth.jpg' },
     { id: 'hound', label: 'Shadow Hound', img: '/assets/fam_hound.jpg' },
-    { id: 'none', label: 'None', img: null }
+    { id: 'toad', label: 'Forest Toad', img: '/assets/fam_toad.jpg' },
+    { id: 'spider', label: 'Weaver Spider', img: '/assets/fam_spider.jpg' },
+    { id: 'snake', label: 'Garden Serpent', img: '/assets/fam_snake.jpg' }
   ];
 
   const handleFinish = () => {
+    if (!avatarVibe || !familiar) return;
     const config = { name, avatarVibe, familiar };
     localStorage.setItem('avatar_config', JSON.stringify(config));
     if (onComplete) onComplete(config);
@@ -95,13 +98,7 @@ export default function ConjureVisage({ onComplete }) {
                 boxShadow: familiar === f.id ? '0 0 10px rgba(176,132,148,0.3)' : 'none'
               }}
             >
-              {f.img ? (
-                <img src={f.img} alt={f.label} style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ width: '100%', aspectRatio: '1/1', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
-                  <Icon name="ph-duotone ph-prohibit" style={{ fontSize: '2rem', color: 'var(--rose)' }} />
-                </div>
-              )}
+              <img src={f.img} alt={f.label} style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
               <div style={{ padding: '0.5rem', textAlign: 'center', fontFamily: "'Cormorant Garamond', serif", fontWeight: 'bold', color: 'var(--rose)', fontSize: '0.9rem' }}>
                 {f.label}
               </div>
@@ -110,7 +107,12 @@ export default function ConjureVisage({ onComplete }) {
         </div>
 
         <div style={{ marginTop: '3rem', textAlign: 'center' }}>
-          <button className="btn plum" style={{ fontSize: '1.5rem', padding: '1rem 3rem' }} onClick={handleFinish}>
+          <button 
+            className="btn plum" 
+            style={{ fontSize: '1.5rem', padding: '1rem 3rem' }} 
+            onClick={handleFinish}
+            disabled={!avatarVibe || !familiar}
+          >
             Manifest the Keeper
           </button>
         </div>
