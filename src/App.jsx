@@ -330,7 +330,8 @@ export default function App() {
                   <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
                     <option value="IM Fell English">IM Fell English</option>
                     <option value="Cormorant Garamond">Cormorant Garamond</option>
-                    <option value="Great Vibes">Great Vibes</option>
+                    <option value="Allura">Allura</option>
+                    <option value="Parisienne">Parisienne</option>
                     <option value="Playfair Display">Playfair Display</option>
                     <option value="Lora">Lora</option>
                     <option value="Merriweather">Merriweather</option>

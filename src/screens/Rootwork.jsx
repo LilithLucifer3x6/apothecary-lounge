@@ -164,7 +164,7 @@ export default function Rootwork({ pose }) {
   return (
     <div style={{padding: '1rem', maxWidth: '900px', margin: '0 auto'}}>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem'}}>
-        <h2 style={{ fontFamily: "'Great Vibes', cursive", fontSize: '3rem', margin: 0, color: 'var(--rose)' }}>The Rootwork</h2>
+        <h2 style={{ fontFamily: "'Allura', cursive", fontSize: '3rem', margin: 0, color: 'var(--rose)' }}>The Rootwork</h2>
         <button className="btn plum sm" onClick={() => {
           setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
           setPhotoStatus('Upload or Scan Photo');
@@ -191,7 +191,7 @@ export default function Rootwork({ pose }) {
         <h3>The Silver Toll</h3>
         <div className="mt mb-4">Estimated monthly cost of your active routines.</div>
         <div>
-          <div style={{ fontSize: '2rem', fontFamily: "'Great Vibes', cursive", color: 'var(--rose)' }}>
+          <div style={{ fontSize: '2rem', fontFamily: "'Allura', cursive", color: 'var(--rose)' }}>
             ${(() => {
               const { amItems, pmItems } = buildRoutines(items, {}, {});
               const activeIds = new Set([...amItems.map(i=>i.id), ...pmItems.map(i=>i.id)]);
