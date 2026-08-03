@@ -5,10 +5,10 @@
 
 :root{
     --bg:#0b090e; --card:rgba(0,0,0,0.2); --card2:rgba(0,0,0,0.3); --border:rgba(255,255,255,0.15);
-    --crimson:#800020; --crimson-b:#4a0012; --plum:transparent; --plum-b:transparent;
-    --rose:#d41c3c; --parch:#d41c3c; --silver:#d41c3c; --gold:#d41c3c;
-    --moss:#3d4438; --ink:#d41c3c;
-    --white:#d41c3c; --ash:#d41c3c; --dim:#d41c3c;
+    --crimson:#8c5a6b; --crimson-b:#5e3a46; --plum:#4a2531; --plum-b:rgba(74, 37, 49, 0.5);
+    --rose:#d6c5c9; --parch:#eaddcf; --silver:#a99fa1; --gold:#c2a66f;
+    --moss:#3d4438; --ink:#1a161b;
+    --white:#f5f0f1; --ash:#8a7f82; --dim:#7a6e71;
     --fs:1rem; --ff:-apple-system,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;}
