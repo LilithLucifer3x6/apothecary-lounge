@@ -46,7 +46,8 @@ function buildAppShell() {
     <div id="s-app" style="display: none; position: relative; min-height: 100vh;">
       <div style="position: relative; z-index: 5;">
         <div class="topbar">
-          <div class="brand">The Apothecary Lounge</div>
+          <button id="btn-home" class="btn sm" title="Return to Cottage" style="margin-right: 1rem;">${ic(G.tabRoot)}</button>
+          <div class="brand" style="flex-grow: 1;">The Apothecary Lounge</div>
           <div class="datemark" id="top-date"></div>
           <button id="btn-settings" class="btn sm" title="Settings">${ic(G.settings)}</button>
         </div>
@@ -164,6 +165,14 @@ function buildAppShell() {
   document.getElementById('btn-reset').addEventListener('click', () => {
     localStorage.removeItem('avatar_config');
     alert('Avatar data cleared! You can now approach the cottage to build a new one.');
+  });
+
+  // Home Button (Return to Cottage)
+  document.getElementById('btn-home').addEventListener('click', () => {
+    setRoomBackground('/assets/room_land.jpg');
+    const landContainer = document.getElementById('s-land');
+    renderLanding(landContainer);
+    go('s-land');
   });
 
   // Settings Modal
