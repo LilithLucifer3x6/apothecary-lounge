@@ -6,9 +6,9 @@
 :root{
     --bg:#0b090e; --card:rgba(0,0,0,0.2); --card2:rgba(0,0,0,0.3); --border:rgba(255,255,255,0.15);
     --crimson:#800020; --crimson-b:#4a0012; --plum:transparent; --plum-b:transparent;
-    --rose:#800020; --parch:#800020; --silver:#800020; --gold:#800020;
-    --moss:#3d4438; --ink:#800020;
-    --white:#800020; --ash:#800020; --dim:#800020;
+    --rose:#d41c3c; --parch:#d41c3c; --silver:#d41c3c; --gold:#d41c3c;
+    --moss:#3d4438; --ink:#d41c3c;
+    --white:#d41c3c; --ash:#d41c3c; --dim:#d41c3c;
     --fs:1rem; --ff:-apple-system,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;}
