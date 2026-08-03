@@ -215,10 +215,9 @@ export default function Rites({ pose }) {
         <div className="mt mb-4" style={{ textAlign: 'center' }}>The Daily Schedule</div>
         
         {renderScheduleStep('8:00 AM - The Awakening', 'Wake up and perform The Morning Invocation', 'var(--crimson-b)')}
-        {renderScheduleStep('8:15 AM - 5:00 PM - The Labors', 'Work hours', 'var(--silver)')}
-        {renderScheduleStep('9:00 AM to 10:30 AM - The Morning Respite', '15-minute break. Hydrate (16oz water)', 'var(--rose)')}
-        {renderScheduleStep('11:00 AM to 12:30 PM - The Midday Sustenance', 'Lunch. Gentle Movement (Walk/Stretch)', 'var(--rose)')}
-        {renderScheduleStep('1:30 PM to 2:30 PM - The Afternoon Respite', '15-minute break. Hydrate (16oz water)', 'var(--rose)')}
+        {renderScheduleStep('The Morning Respite', '15-minute break. Hydrate (16oz water)', 'var(--rose)')}
+        {renderScheduleStep('The Midday Sustenance', '45-minute lunch break. Gentle Movement (Walk/Stretch)', 'var(--rose)')}
+        {renderScheduleStep('The Afternoon Respite', '15-minute break. Hydrate (16oz water)', 'var(--rose)')}
         {renderScheduleStep('5:00 PM onwards - The Descent', 'Work ends. The Evening Invocation', 'var(--plum)')}
       </div>
 
