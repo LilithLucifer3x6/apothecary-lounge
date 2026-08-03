@@ -1,4 +1,4 @@
-export const DEFAULT_AVATAR = {skin:'#5b3a29', loc:'#141118', eye:'#c4243a', robe:'#3a1148', style:'free', fam:'🐈‍⬛'};
+export const DEFAULT_AVATAR = {skin:'#5b3a29', loc:'#141118', eye:'#c4243a', robe:'#3a1148', style:'free', fam:'fam_cat.jpg', aura:'rgba(176,132,148,0.7)', sigil:'✧'};
 
 export const AVO = [
   {k:'skin', l:'Their complexion', v:[['#6b4630','Warm deep'],['#5b3a29','Rich umber'],['#4a2e20','Espresso'],['#3a2318','Deepest']]},
@@ -6,6 +6,8 @@ export const AVO = [
   {k:'eye', l:'Their eyes', v:[['#c4243a','Red'],['#a9adb8','Amber'],['#7a4ec4','Violet'],['#3aa88a','Jade']]},
   {k:'robe', l:'Their garment', v:[['#3a1148','Plum'],['#5a0a10','Crimson'],['#14141a','Obsidian'],['#3d4438','Moss']]},
   {k:'style', l:'How they wear their crown', v:[['free','Loose'],['buns','Twin buns'],['high','Crowned high'],['wrap','Wrapped'],['side','Swept aside']]},
+  {k:'aura', l:'Magical Resonance', v:[['rgba(176,132,148,0.7)','Violet Void'],['rgba(255,215,0,0.6)','Golden Dawn'],['rgba(220,20,60,0.6)','Crimson Blood'],['rgba(46,139,87,0.7)','Jade Forest']]},
+  {k:'sigil', l:'Floating Sigil', v:[['✧','Star'],['☾','Moon'],['⚝','Pentagram'],['❂','Sun']]},
   {k:'fam', l:'Their familiar', v:[['fam_cat.jpg','Cat'],['fam_bat.jpg','Bat'],['fam_snake.jpg','Serpent'],['fam_owl.jpg','Owl'],['fam_rat.jpg','Rat']]},
 ];
 
@@ -54,9 +56,33 @@ export function generateAvatarSVG(s, pose = 'standing') {
     lArm = `M100 140 Q110 180 120 200`;
   }
 
+  const auraColor = s.aura || 'rgba(176,132,148,0.7)';
+  const sigil = s.sigil || '✧';
+
   return `
+  <defs>
+    <clipPath id="famClip"><circle cx="125" cy="115" r="30"/></clipPath>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="heavyGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="25" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Aura Background -->
+  <circle cx="75" cy="120" r="65" fill="${auraColor}" filter="url(#heavyGlow)" style="mix-blend-mode: screen;" opacity="0.9"/>
+  
   <!-- right arm (back) -->
-  <path d="${rArm}" stroke="${s.robe}" stroke-width="26" fill="none" stroke-linecap="round" filter="drop-shadow(3px 3px 5px rgba(0,0,0,0.5))"/>
+  <path d="${rArm}" stroke="${s.robe}" stroke-width="26" fill="none" stroke-linecap="round" filter="drop-shadow(3px 3px 5px rgba(0,0,0,0.8))"/>
   
   <!-- body / robe base -->
   <path d="M75 140 Q40 220 20 310 L130 310 Q110 220 75 140Z" fill="${s.robe}"/>
@@ -64,24 +90,24 @@ export function generateAvatarSVG(s, pose = 'standing') {
   ${props}
 
   <!-- left arm (front) -->
-  <path d="${lArm}" stroke="${s.robe}" stroke-width="28" fill="none" stroke-linecap="round" filter="drop-shadow(-3px 3px 5px rgba(0,0,0,0.6))"/>
+  <path d="${lArm}" stroke="${s.robe}" stroke-width="28" fill="none" stroke-linecap="round" filter="drop-shadow(-3px 3px 5px rgba(0,0,0,0.8))"/>
   
   <path d="M45 180 Q45 112 75 112 Q105 112 105 180 Z" fill="${s.robe}" stroke="#1a1110" stroke-width="2.5"/>
   <!-- body shading -->
-  <path d="M45 180 Q45 112 75 112 Q80 112 85 180 Z" fill="#000" opacity="0.15"/>
-  <path d="M45 180 Q75 172 105 180" fill="none" stroke="rgba(201,162,90,.5)" stroke-width="2"/>
+  <path d="M45 180 Q45 112 75 112 Q80 112 85 180 Z" fill="#000" opacity="0.3"/>
+  <path d="M45 180 Q75 172 105 180" fill="none" stroke="rgba(201,162,90,.6)" stroke-width="2.5"/>
   
   <!-- neck -->
   <rect x="66" y="98" width="18" height="20" rx="6" fill="${s.skin}" stroke="#1a1110" stroke-width="2.5"/>
   <!-- chin shadow -->
-  <path d="M66 100 Q75 115 84 100 Z" fill="#000" opacity="0.25"/>
+  <path d="M66 100 Q75 115 84 100 Z" fill="#000" opacity="0.35"/>
   
   ${generateLocsSVG(s.loc,s.style)}
   
   <!-- head -->
   <ellipse cx="75" cy="72" rx="27" ry="30" fill="${s.skin}" stroke="#1a1110" stroke-width="2.5"/>
   <!-- face shading -->
-  <ellipse cx="70" cy="72" rx="22" ry="30" fill="#fff" opacity="0.05"/>
+  <ellipse cx="70" cy="72" rx="22" ry="30" fill="#fff" opacity="0.08"/>
   
   <!-- hair base -->
   <path d="M48 66 Q75 34 102 66 Q102 44 75 40 Q48 44 48 66Z" fill="${s.loc}" stroke="#1a1110" stroke-width="2"/>
@@ -91,19 +117,21 @@ export function generateAvatarSVG(s, pose = 'standing') {
   <path d="M62 72 Q67 66 73 72 Q67 77 62 72Z" fill="#fff" stroke="#1a1110" stroke-width="1.5"/>
   <path d="M77 72 Q83 66 88 72 Q83 77 77 72Z" fill="#fff" stroke="#1a1110" stroke-width="1.5"/>
   
-  <!-- irises -->
-  <ellipse cx="67.5" cy="72" rx="2.1" ry="4.2" fill="${s.eye}"/>
-  <ellipse cx="82.5" cy="72" rx="2.1" ry="4.2" fill="${s.eye}"/>
+  <!-- irises with glow -->
+  <ellipse cx="67.5" cy="72" rx="2.1" ry="4.2" fill="${s.eye}" filter="url(#glow)"/>
+  <ellipse cx="82.5" cy="72" rx="2.1" ry="4.2" fill="${s.eye}" filter="url(#glow)"/>
   
   <!-- mouth -->
   <path d="M70 86 Q75 89 80 86" stroke="#1a1110" stroke-width="1.8" fill="none" stroke-linecap="round"/>
   
-
+  <!-- floating sigil -->
+  <text x="35" y="100" fill="${auraColor}" font-size="34" font-family="sans-serif" text-anchor="middle" filter="url(#glow)" opacity="0.9">${sigil}</text>
   
-  <!-- familiar -->
-  <defs>
-    <clipPath id="famClip"><circle cx="132" cy="165" r="16"/></clipPath>
-  </defs>
-  <circle cx="132" cy="165" r="17.5" fill="#1a1110"/>
-  <image href="/assets/${s.fam}" x="116" y="149" width="32" height="32" clip-path="url(#famClip)"/>`;
+  <!-- familiar floating frame -->
+  <g filter="url(#glow)">
+    <circle cx="125" cy="115" r="32" fill="${auraColor}" opacity="0.5"/>
+    <circle cx="125" cy="115" r="30" fill="none" stroke="#e6dcc3" stroke-width="2"/>
+  </g>
+  <image href="/assets/${s.fam}" x="95" y="85" width="60" height="60" clip-path="url(#famClip)"/>
+  `;
 }

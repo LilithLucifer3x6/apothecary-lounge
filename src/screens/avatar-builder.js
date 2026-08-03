@@ -6,18 +6,18 @@ export function render(container) {
   container.innerHTML = `
   <!-- Cottage Background Immersion -->
   <div style="position:absolute; inset:0; z-index:-1; overflow:hidden;">
-    <img src="/assets/cottage_room.jpg" style="width:100%; height:100%; object-fit:cover; filter:blur(4px) brightness(0.5);" />
+    <img src="/assets/cottage_room.jpg" style="width:100%; height:100%; object-fit:cover; filter:blur(3px) brightness(0.6) contrast(1.2);" />
   </div>
-  <main style="padding-top:1.5rem;">
-    <div class="card" style="background:transparent; box-shadow:none; border:none; padding:0;">
-      <h2 class="t" style="font-family:'Pinyon Script', cursive; font-size:2.5rem; text-align:center; color:var(--parch);">Who Keeps This Place?</h2>
-      <div class="flourish">✧ ✦ ✧</div>
+  <main style="padding-top:2rem; min-height:100vh; display:flex; flex-direction:column; align-items:center;">
+    <div style="width:100%; max-width:600px; padding:1.5rem; background:rgba(13,10,16,0.5); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:16px; box-shadow:0 12px 38px rgba(0,0,0,0.9);">
+      <h2 class="t" style="font-family:'Pinyon Script', cursive; font-size:3rem; text-align:center; color:var(--parch); margin-bottom:0;">Who Keeps This Place?</h2>
+      <div class="flourish" style="margin-bottom:1.5rem;">✧ ✦ ✧</div>
       
-      <div class="scene" style="background:transparent; box-shadow:none; border:none; margin-bottom:1rem; position:relative;">
-        <svg id="avsvg" viewBox="0 0 150 195" width="170" height="220"></svg>
+      <div class="scene" style="background:transparent; box-shadow:none; border:none; margin-bottom:1.5rem; position:relative; overflow:visible;">
+        <svg id="avsvg" viewBox="0 0 170 210" width="100%" height="260" style="overflow:visible;"></svg>
       </div>
-      <div id="avopts"></div>
-      <button class="btn full plum" id="btn-save-av">The Keeper stands ready</button>
+      <div id="avopts" style="background:rgba(5,3,8,0.4); padding:1.5rem; border-radius:12px; border:1px solid rgba(255,255,255,0.05);"></div>
+      <button class="btn full plum" id="btn-save-av" style="margin-top:1.5rem; font-size:1.1rem; padding:1rem;">The Keeper stands ready</button>
     </div>
   </main>
   `;
@@ -26,7 +26,7 @@ export function render(container) {
 
   function drawAv() {
     document.getElementById('avsvg').innerHTML = 
-      `<ellipse cx="75" cy="184" rx="42" ry="7" fill="#000" opacity=".45"/>` + 
+      `<ellipse cx="75" cy="190" rx="48" ry="8" fill="#000" opacity=".5" filter="blur(2px)"/>` + 
       generateAvatarSVG(currentConfig);
   }
 

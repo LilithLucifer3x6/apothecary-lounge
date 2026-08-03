@@ -122,7 +122,7 @@ function buildAppShell() {
         setRoomBackground(tab.bg);
         const avCfg = getAvatarConfig();
         if(avCfg) {
-          document.getElementById('global-avatar').innerHTML = `<svg viewBox="0 0 200 320" width="100%" height="100%"><g transform="translate(-10, 0) scale(0.9)">${generateAvatarSVG(avCfg, tab.pose)}</g></svg>`;
+          document.getElementById('global-avatar').innerHTML = `<svg viewBox="0 0 200 320" width="100%" height="100%" style="overflow:visible;"><g transform="translate(-10, 0) scale(0.9)">${generateAvatarSVG(avCfg, tab.pose)}</g></svg>`;
         }
         tab.render(document.getElementById('main-content'), tab.pose);
       }
