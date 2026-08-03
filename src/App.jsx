@@ -338,140 +338,128 @@ export default function App() {
                   </div>
                 </div>
               </div>
-                <option value="IM Fell English">IM Fell English</option>
-                <option value="Cormorant Garamond">Cormorant Garamond</option>
-                <option value="Pinyon Script">Pinyon Script</option>
-                <option value="Playfair Display">Playfair Display</option>
-                <option value="Lora">Lora</option>
-                <option value="Merriweather">Merriweather</option>
-                <option value="Inter">Inter</option>
-                <option value="Outfit">Outfit</option>
-                <option value="system-ui">System</option>
-              </select>
-            </div>
-            
+              
               {/* Middle Column: Voice & Integrations */}
               <div>
                 <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Integrations & Voice</h3>
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }}>
-                <input type="checkbox" checked={settings.tts} 
-                     onChange={e => {
-                       setSettings({...settings, tts: e.target.checked});
-                       setTtsEnabled(e.target.checked);
-                     }} /> Enable Voice
-              </label>
-              
-              {settings.tts && (
-                <div style={{ display: 'flex', marginTop: '0.5rem', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.8rem' }}>Voice
-                    <select style={{ width: '100%', marginTop: '0.2rem' }}
-                            value={ttsOptions.voice}
-                            onChange={e => {
-                              setTtsOptions({...ttsOptions, voice: e.target.value});
-                              setTtsVoiceURI(e.target.value);
-                            }}>
-                      {availableVoices.map(v => (
-                        <option key={v.voiceURI} value={v.voiceURI}>{v.displayName}</option>
-                      ))}
-                    </select>
+                    <input type="checkbox" checked={settings.tts} 
+                         onChange={e => {
+                           setSettings({...settings, tts: e.target.checked});
+                           setTtsEnabled(e.target.checked);
+                         }} /> Enable Voice
                   </label>
-                  <label style={{ fontSize: '0.8rem' }}>Speed
-                    <input type="range" min="0.5" max="2.0" step="0.1" style={{ width: '100%' }}
-                           value={ttsOptions.rate}
-                           onChange={e => {
-                             const v = parseFloat(e.target.value);
-                             setTtsOptions({...ttsOptions, rate: v});
-                             setTtsRate(v);
-                           }} />
-                  </label>
-                  <label style={{ fontSize: '0.8rem' }}>Pitch
-                    <input type="range" min="0.5" max="2.0" step="0.1" style={{ width: '100%' }}
-                           value={ttsOptions.pitch}
-                           onChange={e => {
-                             const v = parseFloat(e.target.value);
-                             setTtsOptions({...ttsOptions, pitch: v});
-                             setTtsPitch(v);
-                           }} />
-                  </label>
+                  
+                  {settings.tts && (
+                    <div style={{ display: 'flex', marginTop: '0.5rem', flexDirection: 'column', gap: '0.5rem' }}>
+                      <label style={{ fontSize: '0.8rem' }}>Voice
+                        <select style={{ width: '100%', marginTop: '0.2rem' }}
+                                value={ttsOptions.voice}
+                                onChange={e => {
+                                  setTtsOptions({...ttsOptions, voice: e.target.value});
+                                  setTtsVoiceURI(e.target.value);
+                                }}>
+                          {availableVoices.map(v => (
+                            <option key={v.voiceURI} value={v.voiceURI}>{v.displayName}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label style={{ fontSize: '0.8rem' }}>Speed
+                        <input type="range" min="0.5" max="2.0" step="0.1" style={{ width: '100%' }}
+                               value={ttsOptions.rate}
+                               onChange={e => {
+                                 const v = parseFloat(e.target.value);
+                                 setTtsOptions({...ttsOptions, rate: v});
+                                 setTtsRate(v);
+                               }} />
+                      </label>
+                      <label style={{ fontSize: '0.8rem' }}>Pitch
+                        <input type="range" min="0.5" max="2.0" step="0.1" style={{ width: '100%' }}
+                               value={ttsOptions.pitch}
+                               onChange={e => {
+                                 const v = parseFloat(e.target.value);
+                                 setTtsOptions({...ttsOptions, pitch: v});
+                                 setTtsPitch(v);
+                               }} />
+                      </label>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            
-            <div className="field" style={{ marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
-                <label style={{ color: 'var(--rose)', fontWeight: 'bold' }}>
-                  <input type="checkbox" checked={settings.health}
-                         onChange={async (e) => {
-                           const checked = e.target.checked;
-                           if (checked && Capacitor.isNativePlatform()) {
-                             alert("Native Android Detected: Requesting direct System Health Connect Permissions for Samsung Health, RingConn, and Renpho...");
-                             // Native plugin logic would go here
-                             setSettings({...settings, health: true});
-                           } else {
-                             setSettings({...settings, health: checked});
-                           }
-                         }} /> Health Connect (RingConn, Renpho, Samsung)
-                </label>
-                {settings.health && !Capacitor.isNativePlatform() && (
-                  <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <input type="text" placeholder="Terra Developer ID" value={settings.terraDevId || ''} onChange={e => setSettings({...settings, terraDevId: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
-                    <input type="text" placeholder="Terra API Key" value={settings.terraApiKey || ''} onChange={e => setSettings({...settings, terraApiKey: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
-                    <div className="mt" style={{ fontSize: '0.8rem' }}>Enter your Terra credentials to pull sleep & readiness data.</div>
-                  </div>
-                )}
                 
-                <label style={{ color: 'var(--rose)', fontWeight: 'bold', marginTop: '1rem' }}>
-                  <input type="checkbox" checked={settings.cal}
-                         onChange={e => setSettings({...settings, cal: e.target.checked})} /> Google Calendar
-                </label>
-                {settings.cal && (
-                  <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <input type="text" placeholder="Google OAuth Client ID" value={settings.gcalClientId || ''} 
-                           onChange={e => {
-                             setSettings({...settings, gcalClientId: e.target.value});
-                             if (e.target.value) {
-                               initGoogleCalendar(e.target.value, () => alert("Google Calendar Authenticated!"));
-                             }
-                           }} style={{ padding: '0.5rem', width: '100%' }} />
-                    <button className="btn sm g" onClick={() => requestCalendarAccess()} style={{ width: 'fit-content' }}>Bind Google Calendar</button>
-                    <div className="mt" style={{ fontSize: '0.8rem' }}>Enter your Client ID and log in to fetch events.</div>
+                <div className="field" style={{ marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
+                    <label style={{ color: 'var(--crimson)', fontWeight: 'bold' }}>
+                      <input type="checkbox" checked={settings.health}
+                             onChange={async (e) => {
+                               const checked = e.target.checked;
+                               if (checked && Capacitor.isNativePlatform()) {
+                                 alert("Native Android Detected: Requesting direct System Health Connect Permissions for Samsung Health, RingConn, and Renpho...");
+                                 setSettings({...settings, health: true});
+                               } else {
+                                 setSettings({...settings, health: checked});
+                               }
+                             }} /> Health Connect (RingConn, Renpho, Samsung)
+                    </label>
+                    {settings.health && !Capacitor.isNativePlatform() && (
+                      <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <input type="text" placeholder="Terra Developer ID" value={settings.terraDevId || ''} onChange={e => setSettings({...settings, terraDevId: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
+                        <input type="text" placeholder="Terra API Key" value={settings.terraApiKey || ''} onChange={e => setSettings({...settings, terraApiKey: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
+                        <div className="mt" style={{ fontSize: '0.8rem' }}>Enter your Terra credentials to pull sleep & readiness data.</div>
+                      </div>
+                    )}
+                    
+                    <label style={{ color: 'var(--crimson)', fontWeight: 'bold', marginTop: '1rem' }}>
+                      <input type="checkbox" checked={settings.cal}
+                             onChange={e => setSettings({...settings, cal: e.target.checked})} /> Google Calendar
+                    </label>
+                    {settings.cal && (
+                      <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <input type="text" placeholder="Google OAuth Client ID" value={settings.gcalClientId || ''} 
+                               onChange={e => {
+                                 setSettings({...settings, gcalClientId: e.target.value});
+                                 if (e.target.value) {
+                                   initGoogleCalendar(e.target.value, () => alert("Google Calendar Authenticated!"));
+                                 }
+                               }} style={{ padding: '0.5rem', width: '100%' }} />
+                        <button className="btn sm g" onClick={() => requestCalendarAccess()} style={{ width: 'fit-content' }}>Bind Google Calendar</button>
+                        <div className="mt" style={{ fontSize: '0.8rem' }}>Enter your Client ID and log in to fetch events.</div>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
+              </div>
+              
+              {/* Right Column: Danger Zone & Actions */}
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--crimson)' }}>Danger Zone</h3>
+                  
+                  <button onClick={async () => {
+                    if (window.confirm("Are you sure you want to reset the First Inscription? This will take you back to the intake questionnaire.")) {
+                      const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
+                      if (profile) {
+                        await supabase.from('user_profile').update({ intake_completed: false }).eq('id', profile.id);
+                      }
+                      setShowSettings(false);
+                      setCurrentScreen('intake');
+                    }
+                  }} className="btn g" style={{ width: '100%', marginBottom: '1rem' }}>Shatter the First Inscription</button>
+
+                  <button onClick={() => {
+                    if (window.confirm("Are you sure you want to completely erase all local settings, saved routines, and Supabase data? This cannot be undone.")) {
+                      localStorage.clear();
+                      window.location.reload();
+                    }
+                  }} className="btn g" style={{ width: '100%' }}>Erase the Entire Codex</button>
+                </div>
+                
+                <button onClick={() => saveSettings(settings)} className="btn full plum" style={{ marginTop: '2rem', padding: '1rem', fontSize: '1.2rem' }}>Seal Configurations</button>
               </div>
             </div>
           </div>
-          
-          {/* Right Column: Danger Zone & Actions */}
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
-              <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--crimson)' }}>Danger Zone</h3>
-              
-              <button onClick={async () => {
-                if (window.confirm("Are you sure you want to reset the First Inscription? This will take you back to the intake questionnaire.")) {
-                  const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
-                  if (profile) {
-                    await supabase.from('user_profile').update({ intake_completed: false }).eq('id', profile.id);
-                  }
-                  setShowSettings(false);
-                  setCurrentScreen('intake');
-                }
-              }} className="btn g" style={{ width: '100%', marginBottom: '1rem' }}>Shatter the First Inscription</button>
-
-              <button onClick={() => {
-                if (window.confirm("Are you sure you want to completely erase all local settings, saved routines, and Supabase data? This cannot be undone.")) {
-                  localStorage.clear();
-                  window.location.reload();
-                }
-              }} className="btn g" style={{ width: '100%' }}>Erase the Entire Codex</button>
-            </div>
-            
-            <button onClick={() => saveSettings(settings)} className="btn full plum" style={{ marginTop: '2rem', padding: '1rem', fontSize: '1.2rem' }}>Seal Configurations</button>
-          </div>
         </div>
-      </div>
-    </div>
       )}
     </>
   );
