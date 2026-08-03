@@ -86,7 +86,21 @@ export async function generateMoods() {
     { id: 'capable', label: 'Capable' },
     { id: 'heavy', label: 'Heavy' },
     { id: 'clear', label: 'Clear' },
-    { id: 'foggy', label: 'Foggy' }
+    { id: 'foggy', label: 'Foggy' },
+    { id: 'anxious', label: 'Anxious' },
+    { id: 'peaceful', label: 'Peaceful' },
+    { id: 'inspired', label: 'Inspired' },
+    { id: 'melancholic', label: 'Melancholy' },
+    { id: 'grounded', label: 'Grounded' },
+    { id: 'scattered', label: 'Scattered' },
+    { id: 'creative', label: 'Creative' },
+    { id: 'reflective', label: 'Reflective' },
+    { id: 'overwhelmed', label: 'Overwhelmed' },
+    { id: 'empowered', label: 'Empowered' },
+    { id: 'lethargic', label: 'Lethargic' },
+    { id: 'vibrant', label: 'Vibrant' },
+    { id: 'withdrawn', label: 'Withdrawn' },
+    { id: 'connected', label: 'Connected' }
   ];
 }
 

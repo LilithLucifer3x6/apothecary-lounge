@@ -218,6 +218,22 @@ export default function ShadowTome({ pose }) {
           
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3 style={{ fontSize: '1.5rem' }}>Herbal Elixirs & Teas</h3>
+            <div className="mt mb-4">Add loose leaf blends to your pantry.</div>
+            
+            <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px' }}>
+              <Icon name="ph-camera" /> 
+              <span style={{ marginTop: '0.5rem', textAlign: 'center', fontSize: '1rem' }}>Scan Tea Leaves</span>
+              <input type="file" accept="image/*" capture="environment" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={() => alert('AI Tea Vision Scanner will open here.')} />
+            </div>
+            
+            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+              <button className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>Add Manually</button>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <h3 style={{ fontSize: '1.5rem' }}>THC Infusions</h3>
             <div className="mt mb-4">Track infused honey dosages.</div>
             
