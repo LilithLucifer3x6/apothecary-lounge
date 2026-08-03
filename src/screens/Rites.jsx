@@ -85,8 +85,6 @@ export default function Rites({ pose }) {
     );
   }
 
-  }
-
   const renderStep = (item, isOpt = false, isRx = false, isAid = false) => {
     const rxClass = isRx ? 'rx' : '';
     const optClass = isOpt ? 'opt' : '';
