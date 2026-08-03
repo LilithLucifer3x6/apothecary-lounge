@@ -1,67 +1,49 @@
+export const DEFAULT_AVATAR = {skin:'#5b3a29', loc:'#141118', eye:'#c4243a', robe:'#3a1148', style:'free', fam:'🐈‍⬛'};
+
+export const AVO = [
+  {k:'skin', l:'Their complexion', v:[['#6b4630','Warm deep'],['#5b3a29','Rich umber'],['#4a2e20','Espresso'],['#3a2318','Deepest']]},
+  {k:'loc', l:'The colour of their crown', v:[['#141118','Black'],['#3b1d24','Oxblood'],['#2a1a3a','Violet-black'],['#6b4a2a','Bronze']]},
+  {k:'eye', l:'Their eyes', v:[['#c4243a','Red'],['#a9adb8','Amber'],['#7a4ec4','Violet'],['#3aa88a','Jade']]},
+  {k:'robe', l:'Their garment', v:[['#3a1148','Plum'],['#5a0a10','Crimson'],['#14141a','Obsidian'],['#3d4438','Moss']]},
+  {k:'style', l:'How they wear their crown', v:[['free','Loose'],['buns','Twin buns'],['high','Crowned high'],['wrap','Wrapped'],['side','Swept aside']]},
+  {k:'fam', l:'Their familiar', v:[['🐈‍⬛','Cat'],['🦇','Bat'],['🐍','Serpent'],['🦉','Owl'],['🐀','Rat']]},
+];
+
 export function getAvatarConfig() {
-  return JSON.parse(localStorage.getItem('avatar_config') || '{"skin":"#5c3a21","hair":"shoulder","eyes":"#c4243a","garment":"#5a0a10","familiar":"cat"}');
+  return JSON.parse(localStorage.getItem('avatar_config')) || DEFAULT_AVATAR;
 }
 
-export function generateAvatarSVG(config, scale = 1) {
-  const { skin, hair, eyes, garment, familiar } = config;
+export function generateLocsSVG(c, style) {
+  if(style==='buns') return `<circle cx="55" cy="36" r="13" fill="${c}"/><circle cx="95" cy="36" r="13" fill="${c}"/>
+    ${[50,60,90,100].map(x=>`<circle cx="${x}" cy="26" r="4" fill="${c}"/>`).join('')}`;
+  if(style==='high') return `<ellipse cx="75" cy="28" rx="20" ry="15" fill="${c}"/>
+    ${[62,70,78,86].map((x,i)=>`<circle cx="${x}" cy="${16+i%2*5}" r="4.5" fill="${c}"/>`).join('')}`;
+  if(style==='wrap') return `<path d="M46 58 Q75 30 104 58 Q104 40 75 36 Q46 40 46 58Z" fill="${c}"/>
+    <path d="M44 56 Q75 40 106 56 L106 64 Q75 50 44 64Z" fill="#a9adb8" opacity=".8"/>
+    <path d="M104 60 Q118 74 112 92" stroke="#a9adb8" stroke-width="5" fill="none" opacity=".8" stroke-linecap="round"/>`;
+  if(style==='side') return `<path d="M104 60 Q126 106 108 156" stroke="${c}" stroke-width="13" fill="none" stroke-linecap="round"/>
+    ${[100,106,110,112].map((x,i)=>`<circle cx="${x+8}" cy="${80+i*22}" r="5" fill="${c}"/>`).join('')}`;
+  return `<path d="M46 60 Q38 126 50 160" stroke="${c}" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M104 60 Q112 126 100 160" stroke="${c}" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M58 62 Q52 120 60 152" stroke="${c}" stroke-width="7" fill="none" stroke-linecap="round" opacity=".85"/>
+    <path d="M92 62 Q98 120 90 152" stroke="${c}" stroke-width="7" fill="none" stroke-linecap="round" opacity=".85"/>`;
+}
 
-  let hairSVG = '';
-  // Scalloped / bumpy paths to represent microlocs texture
-  if (hair === 'shoulder') {
-    hairSVG = `<path d="M 45 40 Q 30 70 40 100 Q 42 105 45 100 Q 55 110 50 80 Z M 105 40 Q 120 70 110 100 Q 108 105 105 100 Q 95 110 100 80 Z" fill="#111" stroke="#222" stroke-width="2"/>
-               <path d="M 45 40 Q 75 10 105 40 Q 75 20 45 40 Z" fill="#111" stroke="#222" stroke-width="2" stroke-dasharray="2,2"/>`;
-  } else if (hair === 'waist') {
-    hairSVG = `<path d="M 45 40 Q 20 90 35 150 Q 38 155 42 150 Q 55 140 50 80 Z M 105 40 Q 130 90 115 150 Q 112 155 108 150 Q 95 140 100 80 Z" fill="#111" stroke="#222" stroke-width="2"/>
-               <path d="M 45 40 Q 75 10 105 40 Q 75 20 45 40 Z" fill="#111" stroke="#222" stroke-width="2" stroke-dasharray="2,2"/>`;
-  } else if (hair === 'buns') {
-    hairSVG = `<path d="M 45 20 Q 25 20 25 40 Q 25 60 45 60 Q 65 60 65 40 Q 65 20 45 20 Z" fill="#111" stroke="#222" stroke-width="2" stroke-dasharray="2,2"/>
-               <path d="M 105 20 Q 85 20 85 40 Q 85 60 105 60 Q 125 60 125 40 Q 125 20 105 20 Z" fill="#111" stroke="#222" stroke-width="2" stroke-dasharray="2,2"/>`;
-  } else if (hair === 'updo') {
-    hairSVG = `<path d="M 45 30 Q 75 -10 105 30 Q 75 10 45 30 Z" fill="#111" stroke="#222" stroke-width="2" stroke-dasharray="2,2"/>`;
-  } else if (hair === 'short') {
-    hairSVG = `<path d="M 50 40 Q 40 10 75 15 Q 110 10 100 40 Q 75 25 50 40 Z" fill="#111" stroke="#222" stroke-width="2" stroke-dasharray="2,2" />`;
-  } else if (hair === 'wrapped') {
-    hairSVG = `<path d="M 40 50 Q 75 0 110 50 Z" fill="${garment}" />`;
-  }
-
-  let familiarSVG = '';
-  if (familiar === 'cat') {
-    familiarSVG = `<path d="M 120 160 Q 125 140 135 150 L 140 160 Z" fill="#111"/><circle cx="128" cy="152" r="2" fill="var(--gold)"/><circle cx="134" cy="152" r="2" fill="var(--gold)"/>`;
-  } else if (familiar === 'raven') {
-    familiarSVG = `<path d="M 120 150 L 135 140 L 140 160 Z" fill="#111"/>`;
-  } else if (familiar === 'toad') {
-    familiarSVG = `<ellipse cx="130" cy="170" rx="10" ry="8" fill="#3d4438"/>`;
-  } else if (familiar === 'moth') {
-    familiarSVG = `<path d="M 120 140 L 130 130 L 140 140 L 130 150 Z" fill="var(--silver)"/>`;
-  } else if (familiar === 'snake') {
-    familiarSVG = `<path d="M 120 170 Q 130 160 140 170 Q 135 180 120 175" fill="#3d4438" stroke="var(--gold)" stroke-width="1"/>`;
-  }
-
-  return `
-    <g transform="scale(${scale})">
-      <!-- Hair Back -->
-      ${hairSVG}
-
-      <!-- Body / Garment -->
-      <path d="M 40 100 C 40 90, 110 90, 110 100 L 140 195 L 10 195 Z" fill="${garment}" />
-      
-      <!-- Head / Skin -->
-      <circle cx="75" cy="65" r="30" fill="${skin}" />
-      <path d="M 65 90 L 75 110 L 85 90 Z" fill="${skin}" /> <!-- Neck -->
-
-      <!-- Eyes -->
-      <circle cx="62" cy="60" r="4" fill="${eyes}" />
-      <circle cx="88" cy="60" r="4" fill="${eyes}" />
-      ${eyes === '#c4243a' ? `
-        <ellipse cx="62" cy="60" rx="1" ry="3" fill="#000" />
-        <ellipse cx="88" cy="60" rx="1" ry="3" fill="#000" />
-      ` : `
-        <circle cx="62" cy="60" r="2" fill="#000" />
-        <circle cx="88" cy="60" r="2" fill="#000" />
-      `}
-      
-      <!-- Familiar -->
-      ${familiarSVG}
-    </g>
-  `;
+export function generateAvatarSVG(s) {
+  return `<path d="M45 180 Q45 112 75 112 Q105 112 105 180 Z" fill="${s.robe}" stroke="#000" stroke-width="1.5"/>
+  <path d="M45 180 Q75 172 105 180" fill="none" stroke="rgba(201,162,90,.35)" stroke-width="1.5"/>
+  <rect x="66" y="98" width="18" height="20" rx="6" fill="${s.skin}"/>
+  ${generateLocsSVG(s.loc,s.style)}
+  <ellipse cx="75" cy="72" rx="27" ry="30" fill="${s.skin}"/>
+  <path d="M48 66 Q75 34 102 66 Q102 44 75 40 Q48 44 48 66Z" fill="${s.loc}"/>
+  ${[52,60,68,76,84,92,98].map(x=>`<circle cx="${x}" cy="${44+Math.abs(75-x)*0.16}" r="3.4" fill="${s.loc}"/>`).join('')}
+  <path d="M62 72 Q67 66 73 72 Q67 77 62 72Z" fill="#fff" opacity=".92"/>
+  <path d="M77 72 Q83 66 88 72 Q83 77 77 72Z" fill="#fff" opacity=".92"/>
+  <ellipse cx="67.5" cy="72" rx="2.1" ry="4.2" fill="${s.eye}"/>
+  <ellipse cx="82.5" cy="72" rx="2.1" ry="4.2" fill="${s.eye}"/>
+  <path d="M70 86 Q75 89 80 86" stroke="#000" stroke-width="1.3" fill="none" opacity=".45" stroke-linecap="round"/>
+  <rect x="88" y="132" width="26" height="32" rx="3" fill="#2a1a10" stroke="#a9adb8" stroke-width="1.4"/>
+  <path d="M101 134 V162" stroke="#a9adb8" stroke-width="1" opacity=".7"/>
+  <path d="M92 140 h7 M92 146 h7 M104 140 h7 M104 146 h7" stroke="#e6dcc3" stroke-width=".8" opacity=".5"/>
+  <text x="120" y="178" font-size="21">${s.fam}</text>`;
 }
