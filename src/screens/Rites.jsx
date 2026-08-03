@@ -62,9 +62,106 @@ export default function Rites({ pose }) {
     );
   }
 
+  const todayKey = new Date().toISOString().split('T')[0];
+  const [scheduleChecked, setScheduleChecked] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`schedule_${todayKey}`);
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch(e) { return new Set(); }
+  });
+
+  const handleScheduleCheck = (time) => {
+    const newChecked = new Set(scheduleChecked);
+    if (newChecked.has(time)) newChecked.delete(time);
+    else newChecked.add(time);
+    setScheduleChecked(newChecked);
+    localStorage.setItem(`schedule_${todayKey}`, JSON.stringify(Array.from(newChecked)));
+  };
+
+  const handleCheck = async (id) => {
+    const newChecked = new Set(checkedIds);
+    const isNowChecked = !newChecked.has(id);
+    
+    if (isNowChecked) {
+      newChecked.add(id);
+      // Individually log completion to database immediately
+      supabase.from('routine_history').insert({
+        completed_at: new Date().toISOString(),
+        items_used: [id]
+      }).then();
+    } else {
+      newChecked.delete(id);
+    }
+    setCheckedIds(newChecked);
+  };
+
+  const handleCompleteAllAm = async () => {
+    setAmSaving(true);
+    const toSave = amItems.filter(i => !checkedIds.has(i.id)).map(i => i.id);
+    if (toSave.length > 0) {
+      await supabase.from('routine_history').insert({
+        completed_at: new Date().toISOString(),
+        items_used: toSave
+      });
+      const newChecked = new Set(checkedIds);
+      toSave.forEach(id => newChecked.add(id));
+      setCheckedIds(newChecked);
+    }
+    setAmSaved(true);
+    setAmSaving(false);
+  };
+
+  const handleCompleteAllPm = async () => {
+    setPmSaving(true);
+    const toSave = pmItems.filter(i => !checkedIds.has(i.id)).map(i => i.id);
+    if (toSave.length > 0) {
+      await supabase.from('routine_history').insert({
+        completed_at: new Date().toISOString(),
+        items_used: toSave
+      });
+      const newChecked = new Set(checkedIds);
+      toSave.forEach(id => newChecked.add(id));
+      setCheckedIds(newChecked);
+    }
+    setPmSaved(true);
+    setPmSaving(false);
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      const { data } = await supabase
+        .from('items')
+        .select('*')
+        .in('lifecycle_state', ['stocked', 'ebbing', 'enshrined'])
+        .order('category', { ascending: true });
+        
+      const itemsArr = data || [];
+      setItems(itemsArr);
+      
+      const mockWearables = {
+        sleepDuration: 5.5,
+        heavySweat: true
+      };
+      
+      const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
+      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, mockWearables);
+      setAmItems(am);
+      setPmItems(pm);
+      setConflicts(checkConflicts(itemsArr));
+      setLoading(false);
+    }
+    
+    fetchData();
+  }, []);
+
   const renderScheduleStep = (time, desc, color) => (
     <div className="step" style={{ borderLeft: `3px solid ${color}` }}>
-      <input type="checkbox" />
+      <input 
+        type="checkbox" 
+        checked={scheduleChecked.has(time)}
+        onChange={() => handleScheduleCheck(time)}
+      />
       <div style={{ flex: 1 }}>
         <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
           {time} 
@@ -134,12 +231,12 @@ export default function Rites({ pose }) {
             {amItems.length > 0 && (
               <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                 <button 
-                  className={`btn ${amSaved ? 'g' : 'plum'}`} 
+                  className={`btn ${amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
                   style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
-                  onClick={handleSaveAm}
-                  disabled={amSaving || amSaved}
+                  onClick={handleCompleteAllAm}
+                  disabled={amSaving || amSaved || amItems.every(i => checkedIds.has(i.id))}
                 >
-                  {amSaved ? 'Morning Rite Concluded' : 'Conclude Morning Rite'}
+                  {amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'Morning Rite Completed' : 'Complete All Morning Steps'}
                 </button>
               </div>
             )}
@@ -154,12 +251,12 @@ export default function Rites({ pose }) {
             {pmItems.length > 0 && (
               <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                 <button 
-                  className={`btn ${pmSaved ? 'g' : 'plum'}`} 
+                  className={`btn ${pmSaved || pmItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
                   style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
-                  onClick={handleSavePm}
-                  disabled={pmSaving || pmSaved}
+                  onClick={handleCompleteAllPm}
+                  disabled={pmSaving || pmSaved || pmItems.every(i => checkedIds.has(i.id))}
                 >
-                  {pmSaved ? 'Evening Rite Concluded' : 'Conclude Evening Rite'}
+                  {pmSaved || pmItems.every(i => checkedIds.has(i.id)) ? 'Evening Rite Completed' : 'Complete All Evening Steps'}
                 </button>
               </div>
             )}
