@@ -150,7 +150,8 @@ export function render(container) {
     </div>
   `;
 
-  attachVoice();
+  // Attach voice to all text inputs that are within .ip.mic
+  document.querySelectorAll('.ip.mic input[type="text"]').forEach(el => attachVoice(el));
 
   const totalSteps = 7;
   let currentStep = 1;
