@@ -6,7 +6,7 @@ import Icon from './components/Icon.jsx';
 import { initGoogleCalendar, requestCalendarAccess } from './lib/gcal.js';
 import { Capacitor } from '@capacitor/core';
 
-import AvatarBuilder from './screens/AvatarBuilder.jsx';
+import ConjureVisage from './screens/ConjureVisage.jsx';
 import Landing from './screens/Landing.jsx';
 import Intake from './screens/Intake.jsx';
 import Rites from './screens/Rites.jsx';
@@ -17,12 +17,12 @@ import Scrying from './screens/Scrying.jsx';
 import ShadowTome from './screens/ShadowTome.jsx';
 
 const TABS = [
-  { id: 'rites', label: 'The Mortal Rites', glyph: G.tabRites, bg: '/assets/room_land.jpg', pose: 'working' },
-  { id: 'grim', label: 'The Grimoire', glyph: G.tabGrim, bg: '/assets/room_grim.jpg', pose: 'reading' },
-  { id: 'altars', label: 'The Altars', glyph: G.tabAltars, bg: '/assets/room_altars.jpg', pose: 'meditating' },
-  { id: 'root', label: 'The Rootwork', glyph: G.tabRoot, bg: '/assets/room_root.jpg', pose: 'working' },
-  { id: 'pool', label: 'The Scrying Pool', glyph: G.tabPool, bg: '/assets/room_pool.jpg', pose: 'scrying' },
-  { id: 'tome', label: 'The Shadow Tome', glyph: G.tabTome, bg: '/assets/room_tome.jpg', pose: 'reading' }
+  { id: 'rites', label: 'The Mortal Rites', glyph: G.tabRites, bg: '/assets/bg_sanctuary.jpg', pose: 'working' },
+  { id: 'grim', label: 'The Grimoire', glyph: G.tabGrim, bg: '/assets/bg_grimoire.jpg', pose: 'reading' },
+  { id: 'altars', label: 'The Altars', glyph: G.tabAltars, bg: '/assets/bg_altars.jpg', pose: 'meditating' },
+  { id: 'root', label: 'The Rootwork', glyph: G.tabRoot, bg: '/assets/bg_sanctuary.jpg', pose: 'working' },
+  { id: 'pool', label: 'The Scrying Pool', glyph: G.tabPool, bg: '/assets/bg_sanctuary.jpg', pose: 'scrying' },
+  { id: 'tome', label: 'The Shadow Tome', glyph: G.tabTome, bg: '/assets/bg_sanctuary.jpg', pose: 'reading' }
 ];
 
 function getRitualDate() {
@@ -145,10 +145,10 @@ export default function App() {
     const hasAvatar = !!localStorage.getItem('avatar_config');
 
     if (!profile && !hasAvatar) {
-      document.body.style.backgroundImage = `url('/assets/room_land.jpg')`;
+      document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
       setCurrentScreen('avatar');
     } else if (!isCompletedLocally && (!profile || !profile.intake_completed)) {
-      document.body.style.backgroundImage = `url('/assets/room_land.jpg')`;
+      document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
       setCurrentScreen('intake');
     } else {
       setCurrentScreen('app');
@@ -163,7 +163,7 @@ export default function App() {
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
     if (tabId === 'home') {
-      document.body.style.backgroundImage = `url('/assets/room_land.jpg')`;
+      document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
       return;
     }
     const tab = TABS.find(t => t.id === tabId);
@@ -214,7 +214,7 @@ export default function App() {
 
       {currentScreen === 'avatar' && (
         <div id="s-av" className="land">
-          <AvatarBuilder onComplete={() => { setCurrentScreen('app'); handleTabClick('home'); }} />
+          <ConjureVisage onComplete={() => { setCurrentScreen('app'); handleTabClick('home'); }} />
         </div>
       )}
 
