@@ -213,12 +213,6 @@ export default function Rootwork({ pose }) {
         </div>
       </div>
       
-      <div className="card mb-4" style={{textAlign: 'center'}}>
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Silver Toll</h3>
-        <div className="mt">Estimated Monthly Routine Cost</div>
-        <div style={{fontSize: '2rem', fontFamily: "'Cormorant Garamond', serif", color: 'var(--gold)', marginTop: '1rem'}}>$0.00</div>
-      </div>
 
       {showAddModal && (
         <div className="modal" style={{display: 'block'}}>
