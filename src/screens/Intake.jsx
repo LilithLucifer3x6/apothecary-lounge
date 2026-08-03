@@ -203,9 +203,9 @@ export default function Intake({ onComplete }) {
           className="btn sm" 
           onClick={() => setPath('ai')}
           style={{ 
-            background: path === 'ai' ? 'var(--plum)' : 'transparent', 
+            background: path === 'ai' ? 'rgba(138,0,32,0.6)' : 'transparent', 
             color: path === 'ai' ? 'var(--white)' : 'var(--parch)', 
-            border: '1px solid var(--plum)'
+            border: path === 'ai' ? '1px solid var(--crimson)' : '1px solid var(--border)'
           }}
         >
           The Guardian's Inquiry
@@ -214,9 +214,9 @@ export default function Intake({ onComplete }) {
           className="btn sm" 
           onClick={() => setPath('fast')}
           style={{ 
-            background: path === 'fast' ? 'var(--plum)' : 'transparent', 
+            background: path === 'fast' ? 'rgba(138,0,32,0.6)' : 'transparent', 
             color: path === 'fast' ? 'var(--white)' : 'var(--parch)',
-            border: '1px solid var(--plum)'
+            border: path === 'fast' ? '1px solid var(--crimson)' : '1px solid var(--border)'
           }}
         >
           The Fast Route
@@ -516,7 +516,7 @@ export default function Intake({ onComplete }) {
                     width: '8px', 
                     height: '8px', 
                     borderRadius: '50%', 
-                    background: i === currentStep ? 'var(--plum)' : 'var(--border)' 
+                    background: i === currentStep ? 'var(--crimson)' : 'var(--border)' 
                   }}
                 />
               );
