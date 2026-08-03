@@ -26,7 +26,7 @@
 
 body {
   background-color: var(--bg);
-  color: #0b090e;
+  color: var(--white);
   font-family: system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
