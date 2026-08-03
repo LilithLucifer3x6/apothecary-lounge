@@ -209,10 +209,10 @@ export default function Rites({ pose }) {
         {getRitualDate()}
       </div>
 
-      <div className="card mt-4">
+      <div className="card" style={{ margin: '1.5rem auto', width: 'fit-content', maxWidth: '100%' }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Long Hours <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Long Hours') }} /></h3>
-        <div className="mt mb-4">The Daily Schedule</div>
+        <div className="mt mb-4" style={{ textAlign: 'center' }}>The Daily Schedule</div>
         
         {renderScheduleStep('8:00 AM - The Awakening', 'Wake up and perform The Morning Invocation', 'var(--crimson-b)')}
         {renderScheduleStep('8:15 AM - 5:00 PM - The Labors', 'Work hours', 'var(--silver)')}
