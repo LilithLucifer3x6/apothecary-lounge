@@ -81,7 +81,7 @@ When you believe you have gathered enough information across these categories (o
       'anthropic-dangerous-direct-browser-access': 'true'
     },
     body: JSON.stringify({
-      model: 'claude-3-haiku-20240307',
+      model: 'claude-3-5-sonnet-20241022',
       max_tokens: 1000,
       system: systemPrompt,
       messages: messageHistory,
@@ -138,7 +138,7 @@ export async function parseProductImage(base64Image, mediaType) {
   ];
 
   const response = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20240620',
+    model: 'claude-3-5-sonnet-20241022',
     max_tokens: 1024,
     messages: [
       {
@@ -197,7 +197,7 @@ ${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}
 `;
 
   const response = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20240620',
+    model: 'claude-3-5-sonnet-20241022',
     max_tokens: 1024,
     system: systemPrompt,
     messages: [
@@ -246,7 +246,7 @@ export async function analyzeProduct(name, category, ingredients) {
   }];
 
   const response = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20240620',
+    model: 'claude-3-5-sonnet-20241022',
     max_tokens: 500,
     tools: tools,
     tool_choice: { type: 'tool', name: 'save_product_analysis' },
