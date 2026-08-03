@@ -10,11 +10,24 @@ export async function generateConcerns() {
   await delay();
   return [
     { id: 'acne', label: 'Acne & Breakouts' },
-    { id: 'scarring', label: 'Hyperpigmentation & Scarring' },
-    { id: 'dryness', label: 'Barrier Damage & Dryness' },
-    { id: 'aging', label: 'Fine Lines & Elasticity' },
-    { id: 'psoriasis', label: 'Sebopsoriasis / Flaking' },
-    { id: 'moisture', label: 'Hair Moisture Retention' }
+    { id: 'cystic_acne', label: 'Cystic Acne' },
+    { id: 'hyperpigmentation', label: 'Hyperpigmentation & Dark Spots' },
+    { id: 'pih', label: 'Post-Inflammatory Hyperpigmentation' },
+    { id: 'scarring', label: 'Acne Scarring (Atrophic/Hypertrophic)' },
+    { id: 'rosacea', label: 'Rosacea / Persistent Redness' },
+    { id: 'eczema', label: 'Eczema (Atopic Dermatitis)' },
+    { id: 'psoriasis', label: 'Psoriasis / Sebopsoriasis' },
+    { id: 'dryness', label: 'Barrier Damage & Flaking' },
+    { id: 'dehydration', label: 'Dehydration (Tightness)' },
+    { id: 'oiliness', label: 'Excessive Sebum & Oiliness' },
+    { id: 'pores', label: 'Enlarged or Congested Pores' },
+    { id: 'texture', label: 'Uneven Texture / Roughness' },
+    { id: 'dullness', label: 'Dullness & Lack of Radiance' },
+    { id: 'aging', label: 'Fine Lines & Loss of Elasticity' },
+    { id: 'dark_circles', label: 'Dark Circles / Under Eye Bags' },
+    { id: 'keratosis', label: 'Keratosis Pilaris (Strawberry Skin)' },
+    { id: 'moisture', label: 'Hair Moisture Retention' },
+    { id: 'scalp_flaking', label: 'Scalp Flaking / Dandruff' }
   ];
 }
 
@@ -22,11 +35,23 @@ export async function generateConditions() {
   await delay();
   return [
     { id: 'adhd', label: 'ADHD (Executive Function)' },
+    { id: 'autism', label: 'Autism Spectrum / Sensory Overload' },
     { id: 'arthritis', label: 'Rheumatoid Arthritis' },
     { id: 'osteo', label: 'Osteoarthritis' },
+    { id: 'spondylo', label: 'Spondyloarthritis' },
     { id: 'fibro', label: 'Fibromyalgia' },
+    { id: 'lupus', label: 'Lupus (SLE)' },
+    { id: 'pcos', label: 'PCOS (Hormonal Fluctuations)' },
+    { id: 'endo', label: 'Endometriosis' },
+    { id: 'ehlers', label: 'Ehlers-Danlos Syndrome (EDS)' },
+    { id: 'pots', label: 'POTS / Dysautonomia' },
+    { id: 'cfs', label: 'Chronic Fatigue Syndrome (ME/CFS)' },
+    { id: 'migraine', label: 'Chronic Migraines' },
+    { id: 'asthma', label: 'Asthma' },
+    { id: 'diabetes', label: 'Diabetes' },
+    { id: 'thyroid', label: 'Thyroid Conditions (Hypo/Hyper)' },
     { id: 'mobility', label: 'General Mobility Limits' },
-    { id: 'sensory', label: 'Sensory Overload' }
+    { id: 'dexterity', label: 'Fine Motor / Dexterity Issues' }
   ];
 }
 

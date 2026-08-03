@@ -22,12 +22,8 @@ export default function Intake({ onComplete }) {
   const [selectedConditions, setSelectedConditions] = useState([]);
   const [selectedTraditions, setSelectedTraditions] = useState([]);
   
-  const [rxList, setRxList] = useState([
-    { name: 'Tretinoin', strength: '0.05%', zone: 'Face', frequency: 'Nightly' },
-    { name: 'Tacrolimus', strength: '0.1%', zone: 'Face/Neck', frequency: 'As needed' },
-    { name: 'Drysol', strength: '20%', zone: 'Underarms', frequency: 'Weekly' }
-  ]);
-  const [oralList, setOralList] = useState(['Methotrexate', 'Etanercept']);
+  const [rxList, setRxList] = useState([]);
+  const [oralList, setOralList] = useState([]);
   const [algList, setAlgList] = useState(['Lavender']);
   const [newAlg, setNewAlg] = useState('');
   
@@ -147,9 +143,29 @@ export default function Intake({ onComplete }) {
     setRxList([...rxList, { name: '', strength: '', zone: '', frequency: '' }]);
   };
   
+  const addRx = () => {
+    setRxList([...rxList, { name: '', strength: '', zone: '', frequency: '' }]);
+  };
+
+  const removeRx = (index) => {
+    const newList = [...rxList];
+    newList.splice(index, 1);
+    setRxList(newList);
+  };
+
   const updateOral = (index, value) => {
     const newList = [...oralList];
     newList[index] = value;
+    setOralList(newList);
+  };
+  
+  const addOral = () => {
+    setOralList([...oralList, '']);
+  };
+
+  const removeOral = (index) => {
+    const newList = [...oralList];
+    newList.splice(index, 1);
     setOralList(newList);
   };
   
@@ -177,14 +193,14 @@ export default function Intake({ onComplete }) {
         <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
       </h2>
       
-      <div id="path-toggle" style={{ textAlign: 'center', marginBottom: '1rem' }}>
+      <div id="path-toggle" style={{ textAlign: 'center', marginBottom: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
         <button 
           className="btn sm" 
           onClick={() => setPath('ai')}
           style={{ 
             background: path === 'ai' ? 'var(--plum)' : 'transparent', 
             color: path === 'ai' ? 'var(--white)' : 'var(--parch)', 
-            borderColor: 'var(--plum)' 
+            border: '1px solid var(--plum)'
           }}
         >
           The Guardian's Inquiry
@@ -194,7 +210,8 @@ export default function Intake({ onComplete }) {
           onClick={() => setPath('fast')}
           style={{ 
             background: path === 'fast' ? 'var(--plum)' : 'transparent', 
-            color: path === 'fast' ? 'var(--white)' : 'var(--parch)' 
+            color: path === 'fast' ? 'var(--white)' : 'var(--parch)',
+            border: '1px solid var(--plum)'
           }}
         >
           The Fast Route
@@ -325,56 +342,67 @@ export default function Intake({ onComplete }) {
 
           {currentStep === 3 && (
             <div className="ins-step">
-              {renderTitle('Name the Master Invocations')}
-              <div className="mt">Topical prescriptions.</div>
-              <label style={{ display: 'block', marginTop: '1rem', marginBottom: '1rem' }}>
-                <input type="checkbox" checked={noRx} onChange={e => setNoRx(e.target.checked)} /> Not Applicable (None)
+              {renderTitle('Medical Directives (Topical)')}
+              <div className="mt mb-4">Potent formulas prescribed by healers. These take priority in all routines.</div>
+              
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--gold)' }}>
+                <input type="checkbox" checked={noRx} onChange={e => { setNoRx(e.target.checked); if(e.target.checked) setRxList([]); }} /> I have no topical prescriptions.
               </label>
+
               {!noRx && (
-                <div id="rx-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {rxList.map((rx, idx) => (
-                  <div key={idx} className="card2" style={{ padding: '1rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', marginBottom: '1.5rem' }}>
-                      <VoiceInput 
-                        placeholder="e.g. Tretinoin 0.05%" 
-                        value={rx.name}
-                        onChange={e => updateRx(idx, 'name', e.target.value)}
-                      />
-                      <VoiceInput 
-                        placeholder="Application Zone (e.g. chin)" 
-                        value={rx.zone}
-                        onChange={e => updateRx(idx, 'zone', e.target.value)}
-                      />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  {rxList.map((rx, i) => (
+                    <div key={i} style={{ borderLeft: '2px solid var(--gold)', paddingLeft: '1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <span style={{ color: 'var(--plum)', fontWeight: 'bold' }}>Prescription {i + 1}</span>
+                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Remove</button>
+                      </div>
+                      <div className="field">
+                        <label>Name</label>
+                        <VoiceInput value={rx.name} onChange={e => updateRx(i, 'name', e.target.value)} placeholder="e.g. Tretinoin" />
+                      </div>
+                      <div className="field">
+                        <label>Strength</label>
+                        <VoiceInput value={rx.strength} onChange={e => updateRx(i, 'strength', e.target.value)} placeholder="e.g. 0.05%" />
+                      </div>
+                      <div className="field">
+                        <label>Zone</label>
+                        <VoiceInput value={rx.zone} onChange={e => updateRx(i, 'zone', e.target.value)} placeholder="e.g. Face" />
+                      </div>
+                      <div className="field">
+                        <label>Frequency</label>
+                        <VoiceInput value={rx.frequency} onChange={e => updateRx(i, 'frequency', e.target.value)} placeholder="e.g. Nightly" />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                  <button className="btn" onClick={addRx} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Add Topical Prescription</button>
+                </div>
               )}
-              {!noRx && <button className="btn sm mt-4" onClick={addRx}>+ Invoke</button>}
             </div>
           )}
 
           {currentStep === 4 && (
             <div className="ins-step">
-              {renderTitle('What passes through the body?')}
-              <div className="mt">Oral medications that affect the skin or routines.</div>
-              <label style={{ display: 'block', marginTop: '1rem', marginBottom: '1rem' }}>
-                <input type="checkbox" checked={noOral} onChange={e => setNoOral(e.target.checked)} /> Not Applicable (None)
+              {renderTitle('Medical Directives (Oral)')}
+              <div className="mt mb-4">Internal remedies that may cause systemic shifts (e.g. dryness, sensitivity).</div>
+              
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--gold)' }}>
+                <input type="checkbox" checked={noOral} onChange={e => { setNoOral(e.target.checked); if(e.target.checked) setOralList([]); }} /> I take no oral medications that affect my skin/hair.
               </label>
+
               {!noOral && (
-                <div id="oral-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {oralList.map((oral, idx) => (
-                  <div key={idx} style={{ display: 'flex', width: '100%', marginBottom: '1rem' }}>
-                    <VoiceInput 
-                      placeholder="e.g. Methotrexate" 
-                      value={oral}
-                      onChange={e => updateOral(idx, e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {oralList.map((med, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <div style={{ flex: 1 }}>
+                        <VoiceInput value={med} onChange={e => updateOral(i, e.target.value)} placeholder="e.g. Spironolactone" />
+                      </div>
+                      <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: '0.5rem' }} onClick={() => removeOral(i)}>Remove</button>
+                    </div>
+                  ))}
+                  <button className="btn" onClick={addOral} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Add Oral Medication</button>
+                </div>
               )}
-              {!noOral && <button className="btn sm mt-4" onClick={addOral}>+ Add Medication</button>}
             </div>
           )}
 

@@ -17,6 +17,7 @@ export default function Rootwork({ pose }) {
     category: '',
     ingredients: '',
     weight: '5',
+    expiration: ''
   });
   const [isAutoWeight, setIsAutoWeight] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -245,6 +246,11 @@ export default function Rootwork({ pose }) {
             <div className="field">
               <label>Product Name</label>
               <VoiceInput value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})} />
+            </div>
+
+            <div className="field">
+              <label>Expiration Date</label>
+              <input type="date" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--white)', fontFamily: 'var(--body-font)', borderRadius: '4px' }} />
             </div>
 
             <div className="field">

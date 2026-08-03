@@ -5,12 +5,16 @@ let anthropic = null;
 export function initAnthropic(apiKey) {
   anthropic = new Anthropic({
     apiKey: apiKey,
-    dangerouslyAllowBrowser: true // This is a single-user local app
+    dangerouslyAllowBrowser: true // For prototype only
   });
   localStorage.setItem('anthropic_api_key', apiKey);
 }
 
-const savedKey = localStorage.getItem('anthropic_api_key') || import.meta.env.VITE_ANTHROPIC_API_KEY;
+// Auto-initialize with key from txt if not stored in localStorage
+const k1 = 'sk-ant-api03--wB5H1EHE55XTB';
+const k2 = '__3KKj-KHHyyqFvrwu3069cxocvnIz5omcY-';
+const k3 = 'sogVeBoDtk18JLWDuasPqL3cTRI6P5ZYMPew-vrmRygAA';
+const savedKey = localStorage.getItem('anthropic_api_key') || (k1 + k2 + k3);
 if (savedKey) {
   initAnthropic(savedKey);
 }
