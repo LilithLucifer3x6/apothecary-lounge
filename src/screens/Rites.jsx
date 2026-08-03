@@ -135,7 +135,7 @@ export default function Rites({ pose }) {
           </div>
         </div>
         
-        <div className="step" style={{ borderLeft: '3px solid var(--gold)' }}>
+        <div className="step" style={{ borderLeft: '3px solid var(--silver)' }}>
           <input type="checkbox" /> 
           <div style={{ flex: 1 }}>
             <div className="nm">8:15 AM - 5:00 PM - The Labors</div>
