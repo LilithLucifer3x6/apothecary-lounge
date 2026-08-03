@@ -311,3 +311,81 @@ Ingredients: ${ingredients.join(', ')}` }
   
   throw new Error("Failed to extract product analysis.");
 }
+
+/**
+ * Parses a tea image (loose leaf or box) using Claude Vision and extracts details.
+ * @param {string} base64Image - The base64 string of the image
+ * @param {string} mediaType - e.g. "image/jpeg"
+ * @returns {Promise<Object>}
+ */
+export async function parseTeaImage(base64Image, mediaType) {
+  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
+
+  const tools = [
+    {
+      name: 'extract_tea_details',
+      description: 'Extract herbal elixir/tea details from the image',
+      input_schema: {
+        type: 'object',
+        properties: {
+          brand: { type: 'string', description: 'Brand or maker (if identifiable)' },
+          name: { type: 'string', description: 'Name of the blend' },
+          ingredients: { type: 'array', items: { type: 'string' }, description: 'List of herbs/ingredients identified from shapes/colors or read from the box label' },
+          caffeine_content: { type: 'string', enum: ['High', 'Medium', 'Low', 'None'], description: 'Estimated caffeine content based on ingredients' },
+          steep_time: { type: 'string', description: 'Recommended steeping time and temperature (e.g. "5 mins at 212°F")' },
+          circadian_alignment: { type: 'string', enum: ['Daytime', 'Nighttime', 'Anytime'], description: 'Best time of day to consume based on ingredients' }
+        },
+        required: ['name', 'ingredients', 'caffeine_content', 'steep_time', 'circadian_alignment']
+      }
+    }
+  ];
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': anthropicApiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-3-5-sonnet-20241022',
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: mediaType,
+                data: base64Image
+              }
+            },
+            {
+              type: 'text',
+              text: 'You are analyzing an image of a tea or herbal elixir. It might be a photo of loose leaf herbs, or a photo of a tea box/label. If it is loose leaf, analyze the shapes, sizes, and colors of the leaves, flowers, and bits to divine the ingredients. If it is a box, read the label. Extract the brand, blend name, ingredients list, estimated caffeine content, recommended steeping parameters, and circadian alignment (daytime vs nighttime use).'
+            }
+          ]
+        }
+      ],
+      tools: tools,
+      tool_choice: { type: 'tool', name: 'extract_tea_details' }
+    })
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
+  }
+  const response = await res.json();
+
+  for (const block of response.content) {
+    if (block.type === 'tool_use' && block.name === 'extract_tea_details') {
+      return block.input;
+    }
+  }
+
+  throw new Error("Failed to extract tea details from image");
+}

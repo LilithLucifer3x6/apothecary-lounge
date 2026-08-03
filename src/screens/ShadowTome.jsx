@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase.js';
 import { ic, G } from '../lib/icons.js';
 import { attachVoice } from '../lib/voice.js';
 import * as AI from '../lib/ai-service.js';
+import { parseTeaImage } from '../lib/ai-engine.js';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
 
@@ -22,6 +23,17 @@ export default function ShadowTome({ pose }) {
   const [breathCircle, setBreathCircle] = useState({ transform: 'scale(1)', borderColor: 'var(--plum)' });
   
   const [history, setHistory] = useState([]);
+  
+  // Herbal Pantry State
+  const [pantry, setPantry] = useState([]);
+  const [showTeaModal, setShowTeaModal] = useState(false);
+  const [teaModalState, setTeaModalState] = useState('photo'); // photo, manual, confirm
+  const [teaStatus, setTeaStatus] = useState('Upload or Scan Photo');
+  const [isSavingTea, setIsSavingTea] = useState(false);
+  const [teaForm, setTeaForm] = useState({
+    brand: '', name: '', ingredients: '', caffeine_content: '', steep_time: '', circadian_alignment: ''
+  });
+
   const breathTimeout1Ref = useRef(null);
   const breathTimeout2Ref = useRef(null);
   const breathCycleRef = useRef(null);
@@ -29,6 +41,7 @@ export default function ShadowTome({ pose }) {
   useEffect(() => {
     AI.generateMoods().then(list => setMoodsList(list || [])).catch(console.error);
     loadHistory();
+    loadPantry();
     
     return () => {
       clearBreathTimers();
@@ -39,6 +52,15 @@ export default function ShadowTome({ pose }) {
     try {
       const { data } = await supabase.from('journal_entries').select('*').order('created_at', { ascending: false }).limit(5);
       if (data) setHistory(data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadPantry = async () => {
+    try {
+      const { data } = await supabase.from('shadowtome_elixirs').select('*').order('name');
+      if (data) setPantry(data);
     } catch (e) {
       console.error(e);
     }
@@ -80,6 +102,73 @@ export default function ShadowTome({ pose }) {
       await supabase.from('journal_entries').delete().eq('id', id);
       loadHistory();
     }
+  };
+
+  const handleBanishTea = async (id, name) => {
+    if (window.confirm(`Cast ${name} into the void? It cannot be recovered.`)) {
+      await supabase.from('shadowtome_elixirs').delete().eq('id', id);
+      loadPantry();
+    }
+  };
+
+  const handleTeaUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setTeaStatus('Divining the leaves...');
+    setShowTeaModal(true);
+    setTeaModalState('photo');
+    
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result;
+      const base64 = dataUrl.split(',')[1];
+      const mime = dataUrl.split(';')[0].split(':')[1];
+      
+      try {
+        const details = await parseTeaImage(base64, mime);
+        setTeaForm(prev => ({
+          ...prev,
+          brand: details.brand || prev.brand,
+          name: details.name || prev.name,
+          ingredients: Array.isArray(details.ingredients) ? details.ingredients.join(', ') : details.ingredients,
+          caffeine_content: details.caffeine_content || prev.caffeine_content,
+          steep_time: details.steep_time || prev.steep_time,
+          circadian_alignment: details.circadian_alignment || prev.circadian_alignment
+        }));
+        setTeaStatus('Vision extracted.');
+        setTeaModalState('confirm');
+      } catch (err) {
+        console.error(err);
+        setTeaStatus('Failed to divine image. ' + err.message);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveTea = async () => {
+    if (!teaForm.name) return;
+    setIsSavingTea(true);
+    
+    try {
+      await supabase.from('shadowtome_elixirs').insert([{
+        brand: teaForm.brand,
+        name: teaForm.name,
+        ingredients: JSON.stringify(teaForm.ingredients.split(',').map(s => s.trim()).filter(Boolean)),
+        caffeine_content: teaForm.caffeine_content,
+        steep_time: teaForm.steep_time,
+        circadian_alignment: teaForm.circadian_alignment
+      }]);
+    } catch (err) {
+      console.error("Save failed", err);
+    }
+    
+    setIsSavingTea(false);
+    setShowTeaModal(false);
+    setTeaForm({ brand: '', name: '', ingredients: '', caffeine_content: '', steep_time: '', circadian_alignment: '' });
+    setTeaStatus('Upload or Scan Photo');
+    setTeaModalState('photo');
+    loadPantry();
   };
 
   const startMeditation = () => {
@@ -208,11 +297,40 @@ export default function ShadowTome({ pose }) {
             <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px', marginTop: '1rem' }}>
               <Icon name="ph-camera" /> 
               <span style={{ marginTop: '0.5rem', textAlign: 'center', fontSize: '1rem' }}>Divine the Ingredients</span>
-              <input type="file" accept="image/*" capture="environment" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={() => alert('AI Tea Vision Scanner will open here.')} />
+              <input type="file" accept="image/*" capture="environment" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={handleTeaUpload} />
             </div>
             
             <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-              <button className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>Inscribe by Hand</button>
+              <button className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }} onClick={() => { setShowTeaModal(true); setTeaModalState('manual'); }}>Inscribe by Hand</button>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3 style={{ fontSize: '1.5rem' }}>Herbal Pantry</h3>
+            <div className="mt mb-4">Your stored teas and elixirs.</div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {pantry.length > 0 ? pantry.map(tea => (
+                <div className="row" key={tea.id} style={{ alignItems: 'flex-start' }}>
+                  <div className="tg">
+                    <Icon name="ph-leaf" />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div className="nm">{tea.name}</div>
+                    <div className="mt">{tea.brand} &bull; {tea.circadian_alignment}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginTop: '0.2rem' }}>
+                      <span style={{ color: 'var(--rose)' }}>The Steeping:</span> {tea.steep_time} <br/>
+                      <span style={{ color: 'var(--rose)' }}>Caffeine:</span> {tea.caffeine_content}
+                    </div>
+                  </div>
+                  <div className="acts">
+                    <button className="btn sm g" onClick={() => handleBanishTea(tea.id, tea.name)}>Banish</button>
+                  </div>
+                </div>
+              )) : (
+                <div className="empty">No elixirs in the pantry.</div>
+              )}
             </div>
           </div>
 
@@ -270,6 +388,129 @@ export default function ShadowTome({ pose }) {
         </div>
 
       </div>
+
+      {/* Tea Scanner Modal */}
+      {showTeaModal && (
+        <div className="modal" style={{display: 'block'}}>
+          <div className="modal-content card" style={{maxWidth: '500px'}}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
+              <div>
+                <h3 style={{color: 'var(--rose)'}}>Inscribe Herbal Elixir</h3>
+                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Add a new tea blend to your pantry.</div>
+              </div>
+              {teaModalState !== 'manual' && (
+                <button className="btn sm" style={{background: 'transparent', padding: '0.4rem', color: 'var(--rose)'}} onClick={() => setTeaModalState('manual')} title="Manual Inscription">
+                  <Icon name="ph-dots-three" />
+                </button>
+              )}
+            </div>
+
+            {teaModalState === 'photo' && (
+              <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+                  <Icon name="ph-leaf" /> 
+                  <span style={{marginTop: '1rem', textAlign: 'center', fontSize: '1.2rem'}}>{teaStatus}</span>
+                  <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleTeaUpload} />
+                </div>
+                
+                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+                  <Icon name="ph-images" />
+                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Bulk Upload</span>
+                  <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleTeaUpload} />
+                </div>
+
+                <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '1rem'}}>
+                  <button className="btn" onClick={() => setShowTeaModal(false)}>Cancel</button>
+                </div>
+              </div>
+            )}
+
+            {teaModalState === 'confirm' && (
+              <div style={{textAlign: 'center', padding: '1rem'}}>
+                <div style={{color: 'var(--rose)', fontStyle: 'italic', marginBottom: '1rem'}}>I divined:</div>
+                <h2 style={{fontFamily: "'Cormorant Garamond', serif", color: 'var(--rose)', marginBottom: '0.5rem'}}>
+                  {teaForm.brand ? `${teaForm.brand} ` : ''}{teaForm.name}
+                </h2>
+                <div style={{color: 'var(--dim)', marginBottom: '1rem'}}>
+                  The Steeping: {teaForm.steep_time} <br/>
+                  Circadian Alignment: {teaForm.circadian_alignment} <br/>
+                  Caffeine: {teaForm.caffeine_content}
+                </div>
+                
+                <div style={{display: 'flex', justifyContent: 'center', gap: '1rem'}}>
+                  <button className="btn" onClick={() => setTeaModalState('photo')}>Discard</button>
+                  <button className="btn plum" onClick={handleSaveTea} disabled={isSavingTea}>
+                    {isSavingTea ? 'Inscribing...' : 'Seal in Pantry'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {teaModalState === 'manual' && (
+              <>
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Photo Scan (Optional Override)</label>
+                  <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer'}}>
+                    <Icon name="ph-camera" /> 
+                    <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{teaStatus}</span>
+                    <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleTeaUpload} />
+                  </div>
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Brand (Optional)</label>
+                  <VoiceInput value={teaForm.brand} onChange={e => setTeaForm({...teaForm, brand: e.target.value})} />
+                </div>
+                
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Blend Name</label>
+                  <VoiceInput value={teaForm.name} onChange={e => setTeaForm({...teaForm, name: e.target.value})} />
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>The Steeping (Time & Temp)</label>
+                  <VoiceInput value={teaForm.steep_time} onChange={e => setTeaForm({...teaForm, steep_time: e.target.value})} />
+                </div>
+                
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Circadian Alignment</label>
+                  <select value={teaForm.circadian_alignment} onChange={e => setTeaForm({...teaForm, circadian_alignment: e.target.value})} style={{color: 'var(--rose)'}}>
+                    <option value="">Select...</option>
+                    <option value="Daytime">Daytime</option>
+                    <option value="Nighttime">Nighttime</option>
+                    <option value="Anytime">Anytime</option>
+                  </select>
+                </div>
+                
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Caffeine</label>
+                  <select value={teaForm.caffeine_content} onChange={e => setTeaForm({...teaForm, caffeine_content: e.target.value})} style={{color: 'var(--rose)'}}>
+                    <option value="">Select...</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                    <option value="None">None</option>
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Ingredients</label>
+                  <VoiceInput isTextArea={true} placeholder="Paste ingredients list..." value={teaForm.ingredients} onChange={e => setTeaForm({...teaForm, ingredients: e.target.value})} />
+                </div>
+                
+                <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem'}}>
+                  <button className="btn" onClick={() => setShowTeaModal(false)}>Cancel</button>
+                  <button className="btn plum" onClick={handleSaveTea} disabled={isSavingTea || !teaForm.name}>
+                    {isSavingTea ? 'Inscribing...' : 'Seal in Pantry'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
