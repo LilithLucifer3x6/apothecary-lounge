@@ -100,8 +100,8 @@ export default function App() {
       else window.speechSynthesis.onvoiceschanged = populateVoices;
     }
     
-    const initScreen = sessionStorage.getItem('al_currentScreen') || 'splash';
-    const initTab = sessionStorage.getItem('al_activeTab') || 'rites';
+    const initScreen = sessionStorage.getItem('al_currentScreen') ||const initScreen = localStorage.getItem('avatar_config') ? (sessionStorage.getItem('al_currentScreen') || 'splash') : 'splash';
+    const initTab = localStorage.getItem('avatar_config') ? (sessionStorage.getItem('al_activeTab') || 'rites') : 'rites';
     if (initScreen === 'app') {
       if (initTab === 'home') {
         document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
@@ -330,7 +330,7 @@ export default function App() {
                   <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
                     <option value="IM Fell English">IM Fell English</option>
                     <option value="Cormorant Garamond">Cormorant Garamond</option>
-                    <option value="Pinyon Script">Pinyon Script</option>
+                    <option value="Great Vibes">Great Vibes</option>
                     <option value="Playfair Display">Playfair Display</option>
                     <option value="Lora">Lora</option>
                     <option value="Merriweather">Merriweather</option>
@@ -469,6 +469,7 @@ export default function App() {
                   <button onClick={() => {
                     if (window.confirm("Are you sure you want to completely erase all local settings, saved routines, and Supabase data? This cannot be undone.")) {
                       localStorage.clear();
+                      sessionStorage.clear();
                       window.location.reload();
                     }
                   }} className="btn g" style={{ width: '100%' }}>Erase the Entire Codex</button>

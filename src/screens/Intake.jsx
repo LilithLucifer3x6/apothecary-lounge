@@ -194,7 +194,7 @@ export default function Intake({ onComplete }) {
   return (
     <div className="card" style={{ maxWidth: '700px', margin: '2rem auto', minHeight: '580px', display: 'flex', flexDirection: 'column' }}>
       <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-      <h2 style={{ textAlign: 'center', fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', color: 'var(--rose)' }}>
+      <h2 style={{ textAlign: 'center', fontFamily: "'Great Vibes', cursive", fontSize: '2.5rem', color: 'var(--rose)' }}>
         <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
       </h2>
       
@@ -482,7 +482,7 @@ export default function Intake({ onComplete }) {
 
           {currentStep === 7 && (
             <div className="ins-step" style={{ textAlign: 'center', margin: 'auto' }}>
-              <h3 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3rem', color: 'var(--rose)' }}>The First Inscription is sealed</h3>
+              <h3 style={{ fontFamily: "'Great Vibes', cursive", fontSize: '3rem', color: 'var(--rose)' }}>The First Inscription is sealed</h3>
               <div className="mt" style={{ fontSize: '1.2rem', marginTop: '2rem' }}>Your chamber awaits.</div>
             </div>
           )}

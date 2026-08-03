@@ -33,7 +33,7 @@ export default function ConjureVisage({ onComplete }) {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', color: 'var(--rose)' }}>
-      <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3.5rem', textAlign: 'center', color: 'var(--rose)', marginBottom: '2rem' }}>
+      <h2 style={{ fontFamily: "'Great Vibes', cursive", fontSize: '3.5rem', textAlign: 'center', color: 'var(--rose)', marginBottom: '2rem' }}>
         Conjure Your Visage
       </h2>
 
