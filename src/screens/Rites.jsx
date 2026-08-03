@@ -17,6 +17,42 @@ export default function Rites({ pose }) {
   const [pmSaving, setPmSaving] = useState(false);
   const [pmSaved, setPmSaved] = useState(false);
 
+  const todayKey = new Date().toISOString().split('T')[0];
+  const [scheduleChecked, setScheduleChecked] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`schedule_${todayKey}`);
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch(e) { return new Set(); }
+  });
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      const { data } = await supabase
+        .from('items')
+        .select('*')
+        .in('lifecycle_state', ['stocked', 'ebbing', 'enshrined'])
+        .order('category', { ascending: true });
+        
+      const itemsArr = data || [];
+      setItems(itemsArr);
+      
+      const mockWearables = {
+        sleepDuration: 5.5,
+        heavySweat: true
+      };
+      
+      const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
+      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, mockWearables);
+      setAmItems(am);
+      setPmItems(pm);
+      setConflicts(checkConflicts(itemsArr));
+      setLoading(false);
+    }
+    
+    fetchData();
+  }, []);
+
   const handleSaveAm = async () => {
     setAmSaving(true);
     const amChecked = amItems.filter(i => checkedIds.has(i.id)).map(i => i.id);
@@ -61,14 +97,6 @@ export default function Rites({ pose }) {
       </div>
     );
   }
-
-  const todayKey = new Date().toISOString().split('T')[0];
-  const [scheduleChecked, setScheduleChecked] = useState(() => {
-    try {
-      const saved = localStorage.getItem(`schedule_${todayKey}`);
-      return saved ? new Set(JSON.parse(saved)) : new Set();
-    } catch(e) { return new Set(); }
-  });
 
   const handleScheduleCheck = (time) => {
     const newChecked = new Set(scheduleChecked);
@@ -126,34 +154,6 @@ export default function Rites({ pose }) {
     setPmSaved(true);
     setPmSaving(false);
   };
-
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const { data } = await supabase
-        .from('items')
-        .select('*')
-        .in('lifecycle_state', ['stocked', 'ebbing', 'enshrined'])
-        .order('category', { ascending: true });
-        
-      const itemsArr = data || [];
-      setItems(itemsArr);
-      
-      const mockWearables = {
-        sleepDuration: 5.5,
-        heavySweat: true
-      };
-      
-      const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
-      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, mockWearables);
-      setAmItems(am);
-      setPmItems(pm);
-      setConflicts(checkConflicts(itemsArr));
-      setLoading(false);
-    }
-    
-    fetchData();
-  }, []);
 
   const renderScheduleStep = (time, desc, color) => (
     <div className="step" style={{ borderLeft: `3px solid ${color}` }}>
