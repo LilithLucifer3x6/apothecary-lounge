@@ -211,7 +211,7 @@ export default function Rites({ pose }) {
         fontFamily: "'Cormorant Garamond', serif", 
         fontStyle: 'italic', 
         fontSize: '1.6rem',
-        fontWeight: 'bold',
+        fontWeight: 'normal',
         color: 'var(--rose)',
         textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 4px #000'
       }}>

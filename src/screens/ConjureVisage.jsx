@@ -61,7 +61,7 @@ export default function ConjureVisage({ onComplete }) {
             >
               <img src={av.img} alt={av.label} style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover' }} />
               <div style={{ padding: '1rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.2rem', color: 'var(--rose)', fontWeight: 'bold', marginBottom: '0.5rem' }}>{av.label}</div>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.2rem', color: 'var(--rose)', fontWeight: 'normal', marginBottom: '0.5rem' }}>{av.label}</div>
                 <div className="mt" style={{ fontSize: '0.85rem', color: 'var(--rose)' }}>{av.desc}</div>
               </div>
             </div>
@@ -99,7 +99,7 @@ export default function ConjureVisage({ onComplete }) {
               }}
             >
               <img src={f.img} alt={f.label} style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
-              <div style={{ padding: '0.5rem', textAlign: 'center', fontFamily: "'Cormorant Garamond', serif", fontWeight: 'bold', color: 'var(--rose)', fontSize: '0.9rem' }}>
+              <div style={{ padding: '0.5rem', textAlign: 'center', fontFamily: "'Cormorant Garamond', serif", fontWeight: 'normal', color: 'var(--rose)', fontSize: '0.9rem' }}>
                 {f.label}
               </div>
             </div>

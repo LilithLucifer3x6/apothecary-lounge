@@ -359,7 +359,7 @@ export default function Intake({ onComplete }) {
                   {rxList.map((rx, i) => (
                     <div key={i} style={{ borderLeft: '2px solid var(--gold)', paddingLeft: '1rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <span style={{ color: 'var(--rose)', fontWeight: 'bold' }}>Prescription {i + 1}</span>
+                        <span style={{ color: 'var(--rose)', fontWeight: 'normal' }}>Prescription {i + 1}</span>
                         <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Banish</button>
                       </div>
                       <div className="field">

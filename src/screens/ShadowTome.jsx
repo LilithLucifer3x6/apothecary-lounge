@@ -369,7 +369,7 @@ export default function ShadowTome({ pose }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', borderTop: '1px dashed var(--border)', paddingTop: '1rem' }}>
               <div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--dim)' }}>Total Yield</div>
-                <div style={{ fontSize: '1.5rem', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontWeight: 'bold' }}>{thcTotal}mg</div>
+                <div style={{ fontSize: '1.5rem', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontWeight: 'normal' }}>{thcTotal}mg</div>
               </div>
               <button className="btn" onClick={appendThcNote} style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>
                 Append to Journal

@@ -52,7 +52,7 @@ export default function App() {
   // Settings state
   const [settings, setSettings] = useState({
     fontSize: '16',
-    fontFamily: 'IM Fell English',
+    fontFamily: 'Lora',
     tts: false,
     health: false,
     cal: false,
@@ -230,7 +230,7 @@ export default function App() {
       {currentScreen === 'splash' && (
         <div id="s-splash" className="land" style={{ justifyContent: 'space-between', padding: '10vh 2rem 5vh 2rem' }}>
           <div style={{ textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '4.5rem', fontWeight: 'bold', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: '#800020', margin: '0' }}>Shadow & Sanctuary</h1>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '4.5rem', fontWeight: 'normal', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: '#800020', margin: '0' }}>Shadow & Sanctuary</h1>
             <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--rose)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '1rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
           </div>
           <button onClick={handleEnter} className="btn" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.1rem', padding: '0.4rem 1rem', background: 'rgba(5, 3, 10, 0.85)', borderColor: 'var(--crimson)', color: 'var(--rose)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginBottom: '3vh', width: '150px', whiteSpace: 'normal', lineHeight: '1.2' }}>
@@ -370,7 +370,7 @@ export default function App() {
                 <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Integrations & Voice</h3>
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'normal' }}>
                     <input type="checkbox" checked={settings.tts} 
                          onChange={e => {
                            setSettings({...settings, tts: e.target.checked});
@@ -416,7 +416,7 @@ export default function App() {
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
-                    <label style={{ color: 'var(--crimson)', fontWeight: 'bold' }}>
+                    <label style={{ color: 'var(--crimson)', fontWeight: 'normal' }}>
                       <input type="checkbox" checked={settings.health}
                              onChange={async (e) => {
                                const checked = e.target.checked;
@@ -436,7 +436,7 @@ export default function App() {
                       </div>
                     )}
                     
-                    <label style={{ color: 'var(--crimson)', fontWeight: 'bold', marginTop: '1rem' }}>
+                    <label style={{ color: 'var(--crimson)', fontWeight: 'normal', marginTop: '1rem' }}>
                       <input type="checkbox" checked={settings.cal}
                              onChange={e => setSettings({...settings, cal: e.target.checked})} /> Google Calendar
                     </label>

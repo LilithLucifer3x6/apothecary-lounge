@@ -147,7 +147,7 @@ export default function Scrying({ pose }) {
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <div style={{ fontSize: '3rem', fontFamily: "'IM Fell English', serif", color: 'var(--rose)', minWidth: '40px', textAlign: 'center' }}>{readiness.score}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <div style={{ fontWeight: 'bold', color: 'var(--rose)' }}>Readiness: {readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
+              <div style={{ fontWeight: 'normal', color: 'var(--rose)' }}>Readiness: {readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
               <div style={{ fontSize: '0.9rem', color: 'var(--rose)' }}>Data from Android Health Connect</div>
             </div>
           </div>
@@ -190,7 +190,7 @@ export default function Scrying({ pose }) {
           </div>
           <button className="btn plum" onClick={handleScry} style={{ minWidth: '120px' }}>Divine Synergies</button>
         </div>
-        <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'bold' }}>
+        <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'normal' }}>
           {scryStatus}
         </div>
         <div style={{ marginTop: '1rem', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
