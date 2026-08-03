@@ -36,6 +36,7 @@ function buildAppShell() {
       <h1 style="text-shadow: 0 0 20px rgba(0,0,0,0.8);">The Apothecary Lounge</h1>
       <div class="tag" style="text-shadow: 0 0 10px rgba(0,0,0,0.8);">A sanctuary of self-care.</div>
       <button id="btn-enter" class="btn" style="font-size:1.1rem; padding: 0.8rem 1.5rem; margin-top:2rem;">Approach the Cottage ➔</button>
+      <button id="btn-reset" class="btn g sm" style="margin-top:2rem; font-size:0.7rem; opacity:0.6;">Reset Avatar</button>
     </div>
     <div id="s-av" class="land" style="display: none;"></div>
     <div id="s-land" class="land" style="display: none;"></div>
@@ -128,11 +129,41 @@ function buildAppShell() {
     });
   });
 
-  document.getElementById('btn-enter').addEventListener('click', () => {
-    setRoomBackground('/assets/room_dress.jpg');
-    const avContainer = document.getElementById('s-av');
-    renderAvatar(avContainer);
-    go('s-av');
+  document.getElementById('btn-enter').addEventListener('click', async () => {
+    // Check auth/intake status on click
+    const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
+    let avatarConfigStr = localStorage.getItem('avatar_config');
+    let avatarConfig = avatarConfigStr ? JSON.parse(avatarConfigStr) : null;
+    
+    if (avatarConfig && !avatarConfig.fam) {
+      localStorage.removeItem('avatar_config');
+      avatarConfig = null;
+    }
+
+    if (!profile && !avatarConfig) {
+      setRoomBackground('/assets/room_dress.jpg');
+      const avContainer = document.getElementById('s-av');
+      renderAvatar(avContainer);
+      go('s-av');
+    } else if (!profile && avatarConfig) {
+      setRoomBackground('/assets/room_land.jpg');
+      const landContainer = document.getElementById('s-land');
+      renderLanding(landContainer);
+      go('s-land');
+    } else if (profile && !profile.intake_completed) {
+      setRoomBackground('/assets/room_land.jpg');
+      const insContainer = document.getElementById('s-ins');
+      renderIntake(insContainer);
+      go('s-ins');
+    } else {
+      go('s-app');
+      document.querySelector('.tb[data-target="rites"]')?.click();
+    }
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    localStorage.removeItem('avatar_config');
+    alert('Avatar data cleared! You can now approach the cottage to build a new one.');
   });
 
   // Settings Modal
@@ -242,37 +273,10 @@ export function go(screenId) {
 async function start() {
   verifyGlyphs();
   buildAppShell();
-
-  // Check auth/intake status
-  const { data: profile, error } = await supabase.from('user_profile').select('*').maybeSingle();
-  if (error) console.error("Profile fetch error:", error);
   
-  let avatarConfigStr = localStorage.getItem('avatar_config');
-  let avatarConfig = avatarConfigStr ? JSON.parse(avatarConfigStr) : null;
-  
-  if (avatarConfig && !avatarConfig.fam) {
-    localStorage.removeItem('avatar_config');
-    avatarConfig = null;
-  }
-  
-  if (!profile && !avatarConfig) {
-    setRoomBackground('/assets/app_bg.jpg');
-    go('s-splash');
-  } else if (!profile && avatarConfig) {
-    setRoomBackground('/assets/room_land.jpg');
-    const landContainer = document.getElementById('s-land');
-    renderLanding(landContainer);
-    go('s-land');
-  } else if (!profile.intake_completed) {
-    setRoomBackground('/assets/room_land.jpg');
-    const insContainer = document.getElementById('s-ins');
-    renderIntake(insContainer);
-    go('s-ins');
-  } else {
-    go('s-app');
-    // Click first tab
-    document.querySelector('.tb[data-target="rites"]')?.click();
-  }
+  // Always boot to the splash screen
+  setRoomBackground('/assets/app_bg.jpg');
+  go('s-splash');
 }
 
 document.addEventListener('DOMContentLoaded', start);
