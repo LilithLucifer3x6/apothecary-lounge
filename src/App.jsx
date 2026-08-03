@@ -152,17 +152,20 @@ export default function App() {
       setCurrentScreen('intake');
     } else {
       setCurrentScreen('app');
-      handleTabClick('rites');
+      handleTabClick('home');
     }
   };
 
   const handleReturnToCottage = () => {
-    document.body.style.backgroundImage = `url('/assets/room_land.jpg')`;
-    setCurrentScreen('landing');
+    handleTabClick('home');
   };
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
+    if (tabId === 'home') {
+      document.body.style.backgroundImage = `url('/assets/room_land.jpg')`;
+      return;
+    }
     const tab = TABS.find(t => t.id === tabId);
     if (tab) {
       document.body.style.backgroundImage = `url('${tab.bg}')`;
@@ -186,6 +189,7 @@ export default function App() {
     const pose = tab ? tab.pose : 'working';
     
     switch (activeTab) {
+      case 'home': return <div style={{ minHeight: 'calc(100vh - 120px)' }}><Landing onProceed={() => setCurrentScreen('intake')} /></div>;
       case 'rites': return <div><Rites pose={pose} /></div>;
       case 'grim': return <div><Grimoire pose={pose} /></div>;
       case 'altars': return <div><Altars pose={pose} /></div>;
@@ -200,7 +204,7 @@ export default function App() {
     <>
       {currentScreen === 'splash' && (
         <div id="s-splash" className="land">
-          <h1 style={{ textShadow: '0 0 20px rgba(0,0,0,0.8)' }}>The Apothecary Lounge</h1>
+          <h1 style={{ textShadow: '0 0 20px rgba(0,0,0,0.8)' }}>Shadow & Sanctuary</h1>
           <div className="tag" style={{ textShadow: '0 0 10px rgba(0,0,0,0.8)' }}>A sanctuary of self-care.</div>
           <button onClick={handleEnter} className="btn" style={{ fontSize: '1.1rem', padding: '0.8rem 1.5rem', marginTop: '2rem' }}>
             Approach the Cottage <Icon name="arrow-right" />
@@ -210,13 +214,7 @@ export default function App() {
 
       {currentScreen === 'avatar' && (
         <div id="s-av" className="land">
-          <AvatarBuilder onComplete={() => setCurrentScreen('landing')} />
-        </div>
-      )}
-
-      {currentScreen === 'landing' && (
-        <div id="s-land" className="land">
-          <Landing onProceed={(hasProfile) => setCurrentScreen(hasProfile ? 'app' : 'intake')} />
+          <AvatarBuilder onComplete={() => { setCurrentScreen('app'); handleTabClick('home'); }} />
         </div>
       )}
 
@@ -231,14 +229,18 @@ export default function App() {
           <div style={{ position: 'relative', zIndex: 5 }}>
             <div className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '33%' }}>
-                <button onClick={handleReturnToCottage} className="btn sm" title="Return to Cottage">
-                  <Icon name={G.tabRoot} />
-                </button>
+                {activeTab !== 'home' ? (
+                  <button onClick={handleReturnToCottage} className="btn sm" title="Return to Sanctuary">
+                    <Icon name={G.tabRoot} />
+                  </button>
+                ) : (
+                  <div style={{ width: '40px' }}></div>
+                )}
                 <div className="datemark" style={{ position: 'static' }}>{dateStr}</div>
               </div>
               
               <div className="brand" style={{ position: 'static', padding: 0, width: '33%', textAlign: 'center' }}>
-                <h1 style={{ fontSize: '1.8rem', margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>The Apothecary Lounge</h1>
+                <h1 style={{ fontSize: '1.8rem', margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Shadow & Sanctuary</h1>
               </div>
 
               <div style={{ width: '33%', display: 'flex', justifyContent: 'flex-end' }}>

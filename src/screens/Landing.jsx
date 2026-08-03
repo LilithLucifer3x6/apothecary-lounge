@@ -50,15 +50,17 @@ export default function Landing({ onProceed }) {
           {drawCottage()}
         </svg>
       </div>
-      <h1 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3.1em', margin: '.7rem 0 .1rem', color: 'var(--parch)' }}>
-        The Apothecary Lounge
+      <h1 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3.1em', margin: '.7rem 0 .1rem', color: 'var(--white)' }}>
+        Shadow & Sanctuary
       </h1>
       <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', color: 'var(--silver)', fontSize: '1.06em', marginBottom: '1.2rem' }}>
         a place to keep the work of caring for yourself
       </div>
-      <button className="btn plum" onClick={() => onProceed(hasProfile)}>
-        <Icon name={hasProfile ? (G.door || 'door-open') : (G.sparkles || 'sparkles')} /> {hasProfile ? 'Enter the Lounge' : 'The First Inscription'}
-      </button>
+      {!hasProfile && (
+        <button className="btn plum" onClick={() => onProceed(false)}>
+          <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
+        </button>
+      )}
     </div>
   );
 }
