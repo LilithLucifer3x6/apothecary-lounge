@@ -58,6 +58,7 @@ export function render(container) {
 
   document.getElementById('btn-save-av').addEventListener('click', () => {
     localStorage.setItem('avatar_config', JSON.stringify(currentConfig));
+    import('../main.js').then(({ setRoomBackground }) => setRoomBackground('/assets/room_land.jpg'));
     renderLanding(document.getElementById('s-land'));
     go('s-land');
   });

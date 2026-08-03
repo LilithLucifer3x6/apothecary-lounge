@@ -190,5 +190,64 @@ ${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}
     ]
   });
 
-  return response.content.map(b => b.text).join('\\n');
+  return response.content.map(b => b.text).join('\n');
+}
+
+/**
+ * Analyzes a product and determines its glyph and flags.
+ * @param {string} name 
+ * @param {string} category 
+ * @param {Array<string>} ingredients 
+ */
+export async function analyzeProduct(name, category, ingredients) {
+  if (!anthropic) throw new Error('AI not configured.');
+
+  const tools = [{
+    name: 'save_product_analysis',
+    description: 'Save the analyzed details of the product.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        glyph: { type: 'string', description: 'Phosphor icon name without the ph- prefix (e.g. flask, test-tube, spray-bottle, drop). MUST BE a valid Phosphor icon name that best represents the physical nature of the object.' },
+        risk_flags: {
+          type: 'object',
+          properties: {
+            acid: { type: 'boolean' },
+            retinoid: { type: 'boolean' },
+            vitamin_c: { type: 'boolean' },
+            exfoliant: { type: 'boolean' }
+          }
+        },
+        behavior_flags: {
+          type: 'object',
+          properties: {
+            requires_rinse: { type: 'boolean' },
+            layering_weight: { type: 'integer', description: '1 (watery) to 10 (heavy balm/oil)' }
+          }
+        }
+      },
+      required: ['glyph', 'risk_flags', 'behavior_flags']
+    }
+  }];
+
+  const response = await anthropic.messages.create({
+    model: 'claude-3-5-sonnet-20240620',
+    max_tokens: 500,
+    tools: tools,
+    tool_choice: { type: 'tool', name: 'save_product_analysis' },
+    messages: [
+      { role: 'user', content: `Analyze this cosmetic product:
+Name: ${name}
+Category: ${category}
+Ingredients: ${ingredients.join(', ')}` }
+    ]
+  });
+
+  for (const block of response.content) {
+    if (block.type === 'tool_use' && block.name === 'save_product_analysis') {
+      return block.input;
+    }
+  }
+  
+  throw new Error("Failed to extract product analysis.");
 }

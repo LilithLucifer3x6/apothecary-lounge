@@ -287,8 +287,8 @@ export function render(container) {
       const traditions = Array.from(document.querySelectorAll('#ins-trad .chip.active')).map(c => c.dataset.val);
 
       const avatarConfig = JSON.parse(localStorage.getItem('avatar_config') || '{}');
+      await supabase.from('user_profile').delete().neq('intake_completed', null);
       await supabase.from('user_profile').insert({
-        id: 'default-user',
         intake_completed: true,
         intake_answers: { concerns, conditions, traditions },
         avatar_config: avatarConfig
@@ -346,8 +346,8 @@ export function render(container) {
           status.textContent = 'The Keeper has finished divining your answers.';
           // Save and route automatically
           const avatarConfig = JSON.parse(localStorage.getItem('avatar_config') || '{}');
+          await supabase.from('user_profile').delete().neq('intake_completed', null);
           await supabase.from('user_profile').insert({
-            id: 'default-user',
             intake_completed: true,
             intake_answers: extractedData,
             avatar_config: avatarConfig

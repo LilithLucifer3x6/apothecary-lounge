@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabase.js';
 import { ic, G } from '../lib/icons.js';
 import { speakerMarkup } from '../lib/tts.js';
+import { buildRoutines, checkConflicts } from '../lib/routine-engine.js';
 
 export async function render(container) {
   // Show loading
@@ -27,9 +28,9 @@ export async function render(container) {
     return;
   }
 
-  // Simple mock engine for sorting into am/pm
-  const amItems = itemsArr.filter(i => !['Retinoid', 'Sleeping Mask'].includes(i.category));
-  const pmItems = itemsArr.filter(i => !['Sunscreen'].includes(i.category));
+  // Use the engine to build routines and check for conflicts
+  const { amItems, pmItems } = buildRoutines(itemsArr);
+  const conflicts = checkConflicts(itemsArr);
 
   function renderStep(item, isOpt = false, isRx = false, isAid = false) {
     const rxClass = isRx ? 'rx' : '';
@@ -60,27 +61,34 @@ export async function render(container) {
       </div>
 
       <div class="rites2">
-        <div class="ritecol card">
-          <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-          <h3>The Waking Rite ${speakerMarkup('The Waking Rite')}</h3>
-          <div class="mt mb-4">Greet the sun.</div>
-          
-          <div class="rite-steps" id="am-steps">
-            ${amItems.map(i => renderStep(i, i.category === 'Mask')).join('')}
-          </div>
-          <button class="btn plum full mt-4 btn-seal" data-rite="am">Seal the Waking Rite</button>
+        <div class="card mt-4">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <h3>Morning Invocation ${speakerMarkup('Morning Invocation')}</h3>
+        <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem;">
+          ${amItems.length > 0 ? amItems.map(i => renderStep(i)).join('') : '<div class="empty">No morning rites.</div>'}
         </div>
+      </div>
+      
+      <div class="card mt-4">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <h3>Evening Invocation ${speakerMarkup('Evening Invocation')}</h3>
+        <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem;">
+          ${pmItems.length > 0 ? pmItems.map(i => renderStep(i)).join('') : '<div class="empty">No evening rites.</div>'}
+        </div>
+      </div>
+      
+      ${conflicts.length > 0 ? `
+      <div class="card mt-4" style="background:var(--card-bg-alt, rgba(100,20,20,0.5)); border-color:#882222;">
+        <h3 style="color:#ff8888;">Keeper's Warning</h3>
+        <ul style="margin-top:0.5rem; color:#ffcccc; padding-left:1.5rem;">
+          ${conflicts.map(c => `<li>${c}</li>`).join('')}
+        </ul>
+      </div>
+      ` : ''}
 
-        <div class="ritecol card">
-          <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-          <h3>The Closing Rite ${speakerMarkup('The Closing Rite')}</h3>
-          <div class="mt mb-4">Banish the day.</div>
-          
-          <div class="rite-steps" id="pm-steps">
-            ${pmItems.map(i => renderStep(i, i.category === 'Spot Treatment', i.is_prescription, i.zone === 'Back')).join('')}
-          </div>
-          <button class="btn plum full mt-4 btn-seal" data-rite="pm">Seal the Closing Rite</button>
-        </div>
+      <div style="margin-top:2rem; text-align:center;">
+        <button id="btn-save-rite" class="btn plum" style="font-size:1.2rem; padding:1rem 2rem;">Conclude the Rite</button>
+      </div>
       </div>
       
       <div class="card mt-4">
@@ -95,13 +103,24 @@ export async function render(container) {
     </div>
   `;
 
-  document.querySelectorAll('.btn-seal').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.target.textContent = 'Rite Sealed';
-      e.target.classList.replace('plum', 'g');
-      e.target.disabled = true;
+  const btnSave = document.getElementById('btn-save-rite');
+  if (btnSave) {
+    btnSave.addEventListener('click', async (e) => {
+      btnSave.textContent = 'Rite Concluded';
+      btnSave.classList.replace('plum', 'g');
+      btnSave.disabled = true;
+
+      // Collect checked item IDs
+      const checkedIds = Array.from(document.querySelectorAll('.step-chk:checked')).map(chk => chk.dataset.id);
+      
+      if (checkedIds.length > 0) {
+        await supabase.from('routine_history').insert({
+          completed_at: new Date().toISOString(),
+          items_used: checkedIds
+        });
+      }
     });
-  });
+  }
 }
 
 function getRitualDate() {

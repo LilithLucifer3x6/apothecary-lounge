@@ -16,10 +16,11 @@ export async function render(container) {
     let statusPill = '';
     if (item.lifecycle_state === 'ebbing') statusPill = '<span class="pill eb">Ebbing</span>';
     if (item.lifecycle_state === 'hollow') statusPill = '<span class="pill ho">Hollow</span>';
+    const glyph = item.glyph ? ic(item.glyph) : ic(G.tabRoot);
     
     return `
       <div class="row">
-        <div class="tg">${ic(G.tabRoot)}</div>
+        <div class="tg">${glyph}</div>
         <div style="flex:1;">
           <div class="nm">${item.name} ${statusPill}</div>
           <div class="mt">${item.brand} &bull; ${item.category}</div>
@@ -107,14 +108,27 @@ export async function render(container) {
         <div class="field">
           <label>Domain</label>
           <select id="add-domain">
-            <option value="skin">Skin</option>
-            <option value="hair">Hair</option>
-            <option value="body">Body</option>
+            <option value="Crown">Crown (Hair & Scalp)</option>
+            <option value="Visage">Visage (Face)</option>
+            <option value="Gaze">Gaze (Eyes)</option>
+            <option value="Grin">Grin (Mouth & Teeth)</option>
+            <option value="Vessel">Vessel (Body)</option>
           </select>
         </div>
         <div class="field">
           <label>Category</label>
-          <div class="ip mic"><input type="text" id="add-cat"></div>
+          <div class="ip mic"><input type="text" id="add-cat" placeholder="e.g. Cleanser, Serum, Mask"></div>
+        </div>
+        <div class="field">
+          <label>Ingredients (Optional)</label>
+          <div class="ip"><textarea id="add-ingredients" rows="3" placeholder="Paste ingredients list..."></textarea></div>
+        </div>
+        <div class="field">
+          <label>Layering Weight (1=Lightest, 10=Heaviest) - Optional Override</label>
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <input type="range" id="add-weight" min="1" max="10" step="1" style="flex:1;" value="5">
+            <span id="add-weight-val" style="width:20px; text-align:center;">Auto</span>
+          </div>
         </div>
         
         <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
@@ -133,6 +147,10 @@ export async function render(container) {
     document.getElementById('add-modal').style.display = 'block';
   });
   
+  document.getElementById('add-weight').addEventListener('input', (e) => {
+    document.getElementById('add-weight-val').textContent = e.target.value;
+  });
+  
   document.getElementById('btn-add-cancel').addEventListener('click', () => {
     document.getElementById('add-modal').style.display = 'none';
   });
@@ -142,16 +160,51 @@ export async function render(container) {
     const name = document.getElementById('add-name').value;
     const domain = document.getElementById('add-domain').value;
     const category = document.getElementById('add-cat').value;
+    const ingredientsRaw = document.getElementById('add-ingredients').value;
+    
+    // Parse manual slider override: "Auto" if untouched, else number
+    const weightVal = document.getElementById('add-weight-val').textContent;
+    const manualWeight = weightVal === 'Auto' ? null : parseInt(document.getElementById('add-weight').value);
     
     if (name) {
-      await supabase.from('items').insert([{
-        brand,
-        name,
-        domain,
-        category,
-        type: 'product',
-        lifecycle_state: 'stocked'
-      }]);
+      document.getElementById('btn-add-save').textContent = 'Divining...';
+      document.getElementById('btn-add-save').disabled = true;
+      
+      try {
+        const { analyzeProduct } = await import('../lib/ai-engine.js');
+        // Parse ingredients into array
+        const ingArray = ingredientsRaw.split(',').map(s=>s.trim()).filter(Boolean);
+        
+        const aiResult = await analyzeProduct(name, category, ingArray);
+        
+        let bFlags = aiResult.behavior_flags || {};
+        if (manualWeight) {
+          bFlags.layering_weight = manualWeight;
+        }
+        
+        await supabase.from('items').insert([{
+          brand,
+          name,
+          domain,
+          category,
+          ingredients: JSON.stringify(ingArray),
+          risk_flags: JSON.stringify(aiResult.risk_flags || {}),
+          behavior_flags: JSON.stringify(bFlags),
+          glyph: aiResult.glyph,
+          type: 'product',
+          lifecycle_state: 'stocked'
+        }]);
+      } catch (err) {
+        console.error("AI Analysis failed", err);
+        // Fallback insert if AI fails
+        await supabase.from('items').insert([{
+          brand, name, domain, category, type: 'product', lifecycle_state: 'stocked'
+        }]);
+      }
+      
+      document.getElementById('btn-add-save').textContent = 'Enshrine';
+      document.getElementById('btn-add-save').disabled = false;
+      document.getElementById('add-modal').style.display = 'none';
       render(container); // Re-render to show new item
     }
   });

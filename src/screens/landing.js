@@ -34,6 +34,7 @@ export function render(container) {
   `;
 
   document.getElementById('btn-cross').addEventListener('click', () => {
+    import('../main.js').then(({ setRoomBackground }) => setRoomBackground('/assets/room_land.jpg'));
     renderIntake(document.getElementById('s-ins'));
     go('s-ins');
   });

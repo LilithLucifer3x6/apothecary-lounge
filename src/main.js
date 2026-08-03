@@ -4,6 +4,7 @@ import { supabase } from './lib/supabase.js';
 import { ic, G, cor, verifyGlyphs } from './lib/icons.js';
 
 import { getAvatarConfig, generateAvatarSVG } from './lib/avatar.js';
+import { getTtsEnabled, getTtsRate, getTtsPitch, getTtsVoiceURI, setTtsEnabled, setTtsRate, setTtsPitch, setTtsVoiceURI, getFeminineVoices } from './lib/tts.js';
 import { render as renderAvatar } from './screens/avatar-builder.js';
 import { render as renderLanding } from './screens/landing.js';
 import { render as renderIntake } from './screens/intake.js';
@@ -72,7 +73,6 @@ function buildAppShell() {
             <option value="system-ui">System</option>
           </select>
         </div>
-        </div>
         <div class="field">
           <label>Voice (TTS)</label>
           <input type="checkbox" id="setting-tts"> Enable Voice
@@ -132,6 +132,11 @@ function buildAppShell() {
   document.getElementById('btn-enter').addEventListener('click', async () => {
     // Check auth/intake status on click
     const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
+    
+    if (profile && profile.avatar_config) {
+      localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
+    }
+
     let avatarConfigStr = localStorage.getItem('avatar_config');
     let avatarConfig = avatarConfigStr ? JSON.parse(avatarConfigStr) : null;
     
@@ -214,17 +219,31 @@ function buildAppShell() {
   const healthCheckbox = document.getElementById('setting-health');
   const calCheckbox = document.getElementById('setting-cal');
 
+  // Load settings async in the background
+  supabase.from('user_profile').select('*').maybeSingle().then(({ data: profile }) => {
+    if (profile && profile.settings) {
+      localStorage.setItem('app_settings', JSON.stringify(profile.settings));
+    }
+    if (profile && profile.avatar_config) {
+      localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
+    }
+  });
+  
   // Load Settings
   const settings = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"IM Fell English","tts":false,"health":false,"cal":false}');
-  fontSizeInput.value = settings.fontSize;
-  fontSelect.value = settings.fontFamily;
-  healthCheckbox.checked = settings.health;
-  calCheckbox.checked = settings.cal;
+  fontSizeInput.value = settings.fontSize || '16';
+  fontSelect.value = settings.fontFamily || 'IM Fell English';
+  healthCheckbox.checked = settings.health || false;
+  calCheckbox.checked = settings.cal || false;
+  if (settings.tts !== undefined) {
+    ttsCheckbox.checked = settings.tts;
+    setTtsEnabled(settings.tts);
+  }
 
   applySettings(settings);
 
   btnSet.addEventListener('click', () => modal.style.display = 'block');
-  btnClose.addEventListener('click', () => {
+  btnClose.addEventListener('click', async () => {
     modal.style.display = 'none';
     const newSettings = {
       fontSize: fontSizeInput.value,
@@ -235,10 +254,19 @@ function buildAppShell() {
     };
     localStorage.setItem('app_settings', JSON.stringify(newSettings));
     applySettings(newSettings);
+    
+    // Save to Supabase
+    if (profile) {
+      await supabase.from('user_profile').update({ settings: newSettings }).eq('id', profile.id);
+    }
   });
 
   // Update date
   document.getElementById('top-date').textContent = getRitualDate();
+  
+  // Always boot to the splash screen
+  setRoomBackground('/assets/app_bg.jpg');
+  go('s-splash');
 }
 
 function applySettings(settings) {
@@ -279,4 +307,8 @@ async function start() {
   go('s-splash');
 }
 
-document.addEventListener('DOMContentLoaded', start);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', start);
+} else {
+  start();
+}
