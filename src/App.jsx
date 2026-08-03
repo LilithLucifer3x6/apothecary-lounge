@@ -81,7 +81,7 @@ export default function App() {
     verifyGlyphs();
     
     // Load Settings
-    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"IM Fell English","tts":false,"health":false,"cal":false}');
+    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"Lora","tts":false,"health":false,"cal":false}');
     setSettings(saved);
     applySettings(saved);
     
