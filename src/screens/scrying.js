@@ -51,8 +51,10 @@ export async function render(container) {
       <div class="card mt-4">
         <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
         <h3>Crypt of Ashes</h3>
-        <div class="mt mb-4">Banished formulas.</div>
-        <div class="empty">No formulas have been banished yet.</div>
+        <div class="mt mb-4">Permanently Banished Ingredients.</div>
+        <div id="ashes-list">
+          <div class="empty">No formulas have been banished yet.</div>
+        </div>
       </div>
     </div>
   `;
@@ -101,8 +103,25 @@ export async function render(container) {
           <div class="nm">${item.name}</div>
           <div class="mt">${item.brand} &bull; ${item.lifecycle_state}</div>
         </div>
-        <div style="color:var(--crimson-b); font-weight:bold;">Prepare Replacement</div>
+        <button class="btn sm">Order</button>
       </div>
     `).join('');
+  }
+
+  // Crypt of Ashes logic (from intake conditions/allergies)
+  const ashesList = document.getElementById('ashes-list');
+  const allergies = profile?.intake_answers?.conditions?.filter(c => c.type === 'allergy') || [];
+  // Also check if any inventory items were banished
+  const banishedItems = inventory.filter(i => i.lifecycle_state === 'banished');
+  
+  if (allergies.length > 0 || banishedItems.length > 0) {
+    let html = '';
+    allergies.forEach(a => {
+      html += `<div class="row" style="opacity:0.8;"><div style="flex:1;"><div class="nm" style="color:var(--rose);">${a.value}</div><div class="mt">Allergy / Sensitivity</div></div></div>`;
+    });
+    banishedItems.forEach(item => {
+      html += `<div class="row" style="opacity:0.8;"><div style="flex:1;"><div class="nm" style="color:var(--rose);">${item.name}</div><div class="mt">${item.brand} &bull; Banished</div></div></div>`;
+    });
+    ashesList.innerHTML = html;
   }
 }

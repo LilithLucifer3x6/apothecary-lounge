@@ -77,7 +77,7 @@ export async function render(container) {
         <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
         <h3>The Silver Toll</h3>
         <div class="mt">Estimated Monthly Routine Cost</div>
-        <div style="font-size:2rem; font-family:'Cormorant Garamond', serif; color:var(--gold); margin-top:1rem;">$124.50</div>
+        <div style="font-size:2rem; font-family:'Cormorant Garamond', serif; color:var(--gold); margin-top:1rem;">$0.00</div>
       </div>
 
     </div>

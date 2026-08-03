@@ -20,8 +20,14 @@ export async function render(container) {
   
   for(let i=1; i<=daysInMonth; i++) {
     const isToday = i === d.getDate() ? 'today' : '';
-    const hasEvent = appointments.some(app => new Date(app.date).getDate() === i) ? `<div class="ce" title="Appointment">${ic(G.tabAltars)}</div>` : '';
-    calHTML += `<div class="cd ${isToday}">${i}${hasEvent}</div>`;
+    let events = [];
+    if (appointments.some(app => new Date(app.date).getDate() === i && app.type === 'retie')) {
+      events.push(`<div class="ce" title="Root Weaving" style="color:var(--plum-b); font-size:1.2rem;">⚝</div>`);
+    }
+    if (appointments.some(app => new Date(app.date).getDate() === i && app.type === 'nails')) {
+      events.push(`<div class="ce" title="Talon Honing" style="color:var(--rose); font-size:1.2rem;">✧</div>`);
+    }
+    calHTML += `<div class="cd ${isToday}">${i}${events.join('')}</div>`;
   }
 
   container.innerHTML = `
@@ -33,14 +39,14 @@ export async function render(container) {
         <h3>The Turning Week ${speakerMarkup('The Turning Week')}</h3>
         <div class="mt mb-4">Rhythms and cycles.</div>
         
-        <div class="wheel">
-          <div class="d"><div class="dn">Mon</div><div class="tg">${ic(G.tabAltars)}</div></div>
+        <div class="wheel" style="display:flex; justify-content:space-between; text-align:center;">
+          <div class="d"><div class="dn">Mon</div><div class="tg" title="Rootwork">${ic(G.tabRoot)}<div style="font-size:0.6rem; margin-top:2px;">Rootwork</div></div></div>
           <div class="d"><div class="dn">Tue</div><div class="tg"></div></div>
-          <div class="d"><div class="dn">Wed</div><div class="tg">${ic(G.tabGrim)}</div></div>
+          <div class="d"><div class="dn">Wed</div><div class="tg" title="Grimoire">${ic(G.tabGrim)}<div style="font-size:0.6rem; margin-top:2px;">Grimoire</div></div></div>
           <div class="d"><div class="dn">Thu</div><div class="tg"></div></div>
-          <div class="d"><div class="dn">Fri</div><div class="tg">${ic(G.tabPool)}</div></div>
+          <div class="d"><div class="dn">Fri</div><div class="tg" title="Scrying Pool">${ic(G.tabPool)}<div style="font-size:0.6rem; margin-top:2px;">Scrying</div></div></div>
           <div class="d"><div class="dn">Sat</div><div class="tg"></div></div>
-          <div class="d"><div class="dn">Sun</div><div class="tg">${ic(G.tabRites)}</div></div>
+          <div class="d"><div class="dn">Sun</div><div class="tg" title="Mortal Rites">${ic(G.tabRites)}<div style="font-size:0.6rem; margin-top:2px;">Rites</div></div></div>
         </div>
       </div>
 
@@ -63,17 +69,23 @@ export async function render(container) {
         <div style="display:flex; flex-direction:column; gap:1rem;">
           <div class="row">
             <div style="flex:1;">
-              <div class="nm">Root Weaving (Retie)</div>
+              <div class="nm">Root Weaving (Retie) ⚝</div>
               <div class="mt">Every 8 weeks. Scheduled for ${appointments.find(a => a.type === 'retie')?.date ? new Date(appointments.find(a => a.type === 'retie').date).toLocaleDateString() : 'Unknown'}.</div>
             </div>
-            <button class="btn sm plum btn-appt" data-type="retie">Kept</button>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <button class="btn sm plum btn-appt" data-type="retie">Kept</button>
+              <button class="spk btn-override" title="Manual Override"><i class="ph-duotone ph-dots-three-vertical"></i></button>
+            </div>
           </div>
           <div class="row">
             <div style="flex:1;">
-              <div class="nm">Talon Honing (Nails)</div>
+              <div class="nm">Talon Honing (Nails) ✧</div>
               <div class="mt">Every 2 weeks. Scheduled for ${appointments.find(a => a.type === 'nails')?.date ? new Date(appointments.find(a => a.type === 'nails').date).toLocaleDateString() : 'Unknown'}.</div>
             </div>
-            <button class="btn sm btn-appt" data-type="nails">Kept</button>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <button class="btn sm plum btn-appt" data-type="nails">Kept</button>
+              <button class="spk btn-override" title="Manual Override"><i class="ph-duotone ph-dots-three-vertical"></i></button>
+            </div>
           </div>
         </div>
       </div>
@@ -86,6 +98,16 @@ export async function render(container) {
       await markAppointmentDone(type);
       e.target.textContent = 'Marked';
       e.target.style.opacity = '0.5';
+    });
+  });
+
+  document.querySelectorAll('.btn-override').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const date = prompt('Enter the date you last completed this rite (YYYY-MM-DD):');
+      if (date && !isNaN(new Date(date).getTime())) {
+        alert('Predictive schedule overridden with ' + date);
+        // Refresh component or sync data here in real app
+      }
     });
   });
 }

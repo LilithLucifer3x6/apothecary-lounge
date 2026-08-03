@@ -32,8 +32,15 @@ export function setTtsVoiceURI(uri) {
 export function getFeminineVoices() {
   if (!window.speechSynthesis) return [];
   const voices = window.speechSynthesis.getVoices();
-  // Try to filter for voices that sound feminine or are default English
-  return voices.filter(v => /en-US|en-GB/.test(v.lang) && !/male/i.test(v.name));
+  // Filter out definitely male voices and clearly label female ones
+  return voices
+    .filter(v => /en-US|en-GB/.test(v.lang) && !/male|david|mark/i.test(v.name))
+    .map(v => {
+      let displayName = v.name;
+      if (/zira|female|susan|hazel/i.test(v.name)) displayName += ' (Female)';
+      else displayName += ' (Standard)';
+      return { ...v, displayName, voiceURI: v.voiceURI };
+    });
 }
 
 export function speak(text) {

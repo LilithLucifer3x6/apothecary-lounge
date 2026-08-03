@@ -5,16 +5,24 @@ import * as AI from '../lib/ai-service.js';
 import { getReadiness } from '../lib/health-connect.js';
 
 export async function render(container) {
-  const readiness = await getReadiness();
+  const settingsStr = localStorage.getItem('app_settings');
+  const settings = settingsStr ? JSON.parse(settingsStr) : {};
   let readinessMarkup = '';
-  if (readiness) {
+  if (settings.health) {
+    const readiness = await getReadiness();
     readinessMarkup = `
       <div style="margin-top:1rem; padding:1rem; background:var(--card3); border-radius:8px; display:flex; align-items:center; gap:1rem;">
-        <div style="font-size:2rem;">${readiness.score}</div>
+        <div style="font-size:2rem; font-family:'IM Fell English', serif;">${readiness.score}</div>
         <div>
           <div style="font-weight:bold; color:var(--gold);">Readiness: ${readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
           <div style="font-size:0.9rem; color:var(--dim);">Data from Android Health Connect</div>
         </div>
+      </div>
+    `;
+  } else {
+    readinessMarkup = `
+      <div style="margin-top:1rem; padding:1rem; background:rgba(17,14,21,0.5); border:1px dashed var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; gap:1rem; color:var(--dim);">
+        Enable Health Connect in Settings to divine your physical readiness.
       </div>
     `;
   }
@@ -40,7 +48,7 @@ export async function render(container) {
         <div class="field mt-4">
           <label>The Entry</label>
           <div class="ip mic" style="height:auto;">
-            <textarea id="tome-entry" rows="6" style="width:100%; background:transparent; border:none; color:var(--white); font-family:'IM Fell English', serif; font-size:1.1rem; padding:0.5rem; resize:vertical; outline:none;" placeholder="Inscribe your thoughts..."></textarea>
+            <textarea id="tome-entry" rows="12" style="width:100%; min-height:200px; background:transparent; border:none; color:var(--white); font-family:'IM Fell English', serif; font-size:1.1rem; padding:0.5rem; resize:vertical; outline:none;" placeholder="Inscribe your thoughts..."></textarea>
           </div>
         </div>
         
@@ -108,6 +116,7 @@ export async function render(container) {
       isBreathing = false;
       btnBreath.textContent = 'Begin Breathwork';
       circle.style.transform = 'scale(1)';
+      circle.style.borderColor = 'var(--plum)';
       inst.textContent = '';
       return;
     }
@@ -115,32 +124,33 @@ export async function render(container) {
     isBreathing = true;
     btnBreath.textContent = 'End Breathwork';
     
-    async function cycle() {
+    function breathCycle() {
       if (!isBreathing) return;
       
       // Inhale 4s
-      inst.textContent = 'Inhale...';
-      circle.style.transition = 'transform 4s ease-in-out';
-      circle.style.transform = 'scale(2)';
-      await new Promise(r => setTimeout(r, 4000));
+      inst.textContent = 'Inhale deeply...';
+      circle.style.transition = 'transform 4s ease-in-out, border-color 4s ease';
+      circle.style.transform = 'scale(2.5)';
+      circle.style.borderColor = 'var(--rose)';
       
-      if (!isBreathing) return;
       // Hold 7s
-      inst.textContent = 'Hold...';
-      circle.style.transition = 'none';
-      await new Promise(r => setTimeout(r, 7000));
+      setTimeout(() => {
+        if (!isBreathing) return;
+        inst.textContent = 'Hold the breath...';
+      }, 4000);
       
-      if (!isBreathing) return;
       // Exhale 8s
-      inst.textContent = 'Exhale...';
-      circle.style.transition = 'transform 8s ease-in-out';
-      circle.style.transform = 'scale(1)';
-      await new Promise(r => setTimeout(r, 8000));
-      
-      if (isBreathing) cycle();
+      setTimeout(() => {
+        if (!isBreathing) return;
+        inst.textContent = 'Exhale slowly...';
+        circle.style.transition = 'transform 8s ease-in-out, border-color 8s ease';
+        circle.style.transform = 'scale(1)';
+        circle.style.borderColor = 'var(--plum)';
+      }, 11000);
     }
     
-    cycle();
+    breathCycle();
+    breathInterval = setInterval(breathCycle, 19000); // 4 + 7 + 8
   });
 
   async function loadHistory() {

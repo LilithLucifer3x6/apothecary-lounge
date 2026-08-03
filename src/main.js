@@ -44,7 +44,6 @@ function buildAppShell() {
     <div id="s-ins" class="land" style="display: none;"></div>
     
     <div id="s-app" style="display: none; position: relative; min-height: 100vh;">
-      <div id="global-avatar" style="position: absolute; right: -20px; bottom: 0; width: 280px; height: 380px; pointer-events: none; z-index: 1;"></div>
       <div style="position: relative; z-index: 5;">
         <div class="topbar">
           <div class="brand">The Apothecary Lounge</div>
@@ -120,10 +119,6 @@ function buildAppShell() {
       const tab = TABS.find(t => t.id === targetId);
       if (tab) {
         setRoomBackground(tab.bg);
-        const avCfg = getAvatarConfig();
-        if(avCfg) {
-          document.getElementById('global-avatar').innerHTML = `<svg viewBox="0 0 200 320" width="100%" height="100%" style="overflow:visible;"><g transform="translate(-10, 0) scale(0.9)">${generateAvatarSVG(avCfg, tab.pose)}</g></svg>`;
-        }
         tab.render(document.getElementById('main-content'), tab.pose);
       }
     });
@@ -193,7 +188,7 @@ function buildAppShell() {
   // Populate voices when they load
   function populateVoices() {
     const voices = getFeminineVoices();
-    ttsVoice.innerHTML = voices.map(v => `<option value="${v.voiceURI}">${v.name}</option>`).join('');
+    ttsVoice.innerHTML = voices.map(v => `<option value="${v.voiceURI}">${v.displayName}</option>`).join('');
     const currentUri = getTtsVoiceURI();
     if (currentUri && voices.some(v => v.voiceURI === currentUri)) {
       ttsVoice.value = currentUri;
@@ -242,6 +237,18 @@ function buildAppShell() {
 
   applySettings(settings);
 
+  healthCheckbox.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      alert("Opening Android Health Connect permission flow...\\n(Simulated: Authorization granted to read Readiness Data)");
+    }
+  });
+
+  calCheckbox.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      alert("Opening Google Calendar OAuth flow...\\n(Simulated: Access granted to read/write Appointments)");
+    }
+  });
+
   btnSet.addEventListener('click', () => modal.style.display = 'block');
   btnClose.addEventListener('click', async () => {
     modal.style.display = 'none';
@@ -270,8 +277,8 @@ function buildAppShell() {
 }
 
 function applySettings(settings) {
-  document.documentElement.style.setProperty('--base-font-size', settings.fontSize + 'px');
-  document.documentElement.style.setProperty('--font-body', `"${settings.fontFamily}", serif`);
+  document.documentElement.style.setProperty('--fs', settings.fontSize + 'px');
+  document.documentElement.style.setProperty('--ff', `"${settings.fontFamily}", serif`);
   
   if (settings.tts) {
     document.body.classList.remove('tts-disabled');
