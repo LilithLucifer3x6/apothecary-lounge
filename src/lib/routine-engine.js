@@ -105,19 +105,8 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
   amItems.sort((a, b) => getWeight(a) - getWeight(b));
   pmItems.sort((a, b) => getWeight(a) - getWeight(b));
   
-  // Inject fixed sequences for the evening wind-down
-  const fixedEveningSteps = [
-    { id: 'winddown-1', name: 'Shower', category: 'cleanser', domain: 'vessel', weight: 0.1, isInjected: true },
-    { id: 'winddown-2', name: 'Dry Off', category: 'towel', domain: 'vessel', weight: 0.2, isInjected: true },
-    { id: 'winddown-3', name: 'Extractions & Heated Eye Mask', desc: 'Submerge tools in 70% isopropyl alcohol for 5-10 mins before and after.', category: 'tool', domain: 'visage', weight: 0.3, isInjected: true }
-  ];
-  
-  if (isWeekend) {
-    fixedEveningSteps.unshift({ id: 'bath-ritual-engine', name: 'The Bath Ritual', desc: 'Every 2 Weeks. Milk powder, orange peel, rose petals, epsom salts.', category: 'soak', domain: 'vessel', weight: 0.05, isInjected: true });
-  }
-
-  // Prepend fixed evening steps to pmItems
-  pmItems.unshift(...fixedEveningSteps);
+  // No hardcoded evening steps. All steps must come from the Rootwork inventory.
+  // This allows the user to track stock levels for contact solution, body wash, etc.
 
   return { amItems, pmItems, getWeight };
 }
