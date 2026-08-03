@@ -5,10 +5,10 @@
 
 :root{
     --bg:#0b090e; --card:rgba(0,0,0,0.2); --card2:rgba(0,0,0,0.3); --border:rgba(255,255,255,0.15);
-    --crimson:#d41c3c; --crimson-b:#8a0020; --plum:transparent; --plum-b:transparent;
-    --rose:#d41c3c; --parch:#d41c3c; --silver:#d41c3c; --gold:#d41c3c;
-    --moss:#3d4438; --ink:#d41c3c;
-    --white:#d41c3c; --ash:#d41c3c; --dim:#d41c3c;
+    --crimson:#800020; --crimson-b:#4a0012; --plum:transparent; --plum-b:transparent;
+    --rose:#800020; --parch:#800020; --silver:#800020; --gold:#800020;
+    --moss:#3d4438; --ink:#800020;
+    --white:#800020; --ash:#800020; --dim:#800020;
     --fs:1rem; --ff:-apple-system,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;}
@@ -61,10 +61,10 @@
   .tabs{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:none;padding:.5rem .6rem .65rem;justify-content:center;}
   .tabs::-webkit-scrollbar{display:none;}
   .tb{flex:0 0 auto;display:flex;align-items:center;gap:.38rem;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
-    border:1px solid rgba(212, 28, 60, 0.2);color:var(--white);font-weight:600;font-size:.82em;padding:.48rem .8rem;
+    border:1px solid rgba(128, 0, 32, 0.2);color:var(--white);font-weight:600;font-size:.82em;padding:.48rem .8rem;
     border-radius:9px;white-space:nowrap;cursor:pointer;font-family:inherit;transition:0.2s;}
-  .tb:hover{border-color:rgba(212, 28, 60, 0.6);color:var(--parch);}
-  .tb.on{background:rgba(138, 0, 32, 0.7);border-color:var(--crimson);color:var(--parch);box-shadow:0 0 12px rgba(212, 28, 60, 0.4);}
+  .tb:hover{border-color:rgba(128, 0, 32, 0.6);color:var(--parch);}
+  .tb.on{background:#000000;border-color:var(--crimson);color:var(--parch);box-shadow:inset 0 0 15px rgba(128,0,32,0.6);}
 
   .rites2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start;}
   @media(max-width:700px){.rites2{grid-template-columns:1fr;}}
@@ -137,7 +137,7 @@
     padding:.58rem .25rem;text-align:center;cursor:pointer;}
   .st .g{font-size:1.4em;display:block;margin-bottom:.12rem;}
   .st .l{font-size:.68em;font-weight:600;color:var(--ash);}
-  .st.on{border-color:var(--crimson);background:rgba(138,0,32,.5);}
+  .st.on{border-color:var(--crimson);background:#000000;box-shadow:inset 0 0 15px rgba(128,0,32,0.6);}
   .st.on .l{color:var(--parch);}
 
   label.fl{font-size:.74em;color:var(--silver);display:block;margin-bottom:.2rem;font-weight:700;
@@ -153,7 +153,7 @@
   .chips{display:flex;flex-wrap:wrap;gap:.36rem;}
   .chip{background:var(--card2);border:1.5px solid var(--border);color:var(--ash);border-radius:999px;
     padding:.34rem .72rem;font-size:.78em;cursor:pointer;font-family:inherit;}
-  .chip.on{background:rgba(138,0,32,.7);border-color:var(--crimson);color:var(--parch);}
+  .chip.on{background:#000000;border-color:var(--crimson);color:var(--parch);box-shadow:inset 0 0 15px rgba(128,0,32,0.6);}
   .note{font-size:.78em;color:var(--dim);margin-top:.45rem;font-style:italic;font-family:'Cormorant Garamond',serif;}
   .bubble{background:var(--card2);border:1px solid var(--border);border-left:3px solid var(--silver);
     border-radius:9px;padding:.72rem .9rem;margin-bottom:.65rem;font-family:'IM Fell English',serif;font-size:1.05em;color:var(--parch);}
@@ -165,10 +165,10 @@
   .dotsnav i{width:7px;height:7px;border-radius:50%;background:var(--border);display:block;}
   .dotsnav i.on{background:var(--silver);}
   .opts{display:flex;flex-wrap:wrap;gap:.32rem;margin-bottom:.75rem;}
-  .opt2{background:rgba(0,0,0,0.65);border:1.5px solid rgba(212, 28, 60, 0.2);border-radius:8px;padding:.32rem .62rem;
+  .opt2{background:rgba(0,0,0,0.65);border:1.5px solid rgba(128,0,32,0.2);border-radius:8px;padding:.32rem .62rem;
     font-size:.76em;cursor:pointer;color:var(--ash);font-family:inherit;transition:0.2s;}
-  .opt2:hover{border-color:rgba(212, 28, 60, 0.5);box-shadow:0 0 10px rgba(212, 28, 60, 0.2);}
-  .opt2.on{border-color:var(--crimson);color:var(--parch);background:rgba(138,0,32,.6);box-shadow:0 0 12px rgba(212, 28, 60, 0.4);}
+  .opt2:hover{border-color:rgba(128,0,32,0.5);box-shadow:0 0 10px rgba(128,0,32,0.2);}
+  .opt2.on{border-color:var(--crimson);color:var(--parch);background:#000000;box-shadow:inset 0 0 15px rgba(128,0,32,0.6);}
   .land{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.3rem;text-align:center;background:transparent;}
   .scene{width:100%;max-width:560px;border:1.5px solid rgba(255,255,255,0.15);border-radius:13px;overflow:hidden;
     background:rgba(13,10,16,0.5);box-shadow:0 12px 38px rgba(0,0,0,.9);}
