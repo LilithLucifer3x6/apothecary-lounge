@@ -21,7 +21,8 @@ export default function Rootwork({ pose }) {
   });
   const [isAutoWeight, setIsAutoWeight] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [photoStatus, setPhotoStatus] = useState('Upload or take a photo');
+  const [photoStatus, setPhotoStatus] = useState('Upload or Scan Photo');
+  const [modalState, setModalState] = useState('photo');
 
   const fetchItems = async () => {
     setLoading(true);
@@ -62,6 +63,7 @@ export default function Rootwork({ pose }) {
         }));
         
         setPhotoStatus('Vision extracted.');
+        setModalState('confirm');
       } catch (err) {
         console.error(err);
         setPhotoStatus('Failed to divine image.');
@@ -114,9 +116,10 @@ export default function Rootwork({ pose }) {
     
     setIsSaving(false);
     setShowAddModal(false);
-    setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5' });
+    setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
     setIsAutoWeight(true);
-    setPhotoStatus('Upload or take a photo');
+    setPhotoStatus('Upload or Scan Photo');
+    setModalState('photo');
     fetchItems();
   };
 
@@ -153,8 +156,16 @@ export default function Rootwork({ pose }) {
 
   return (
     <div style={{padding: '1rem', maxWidth: '900px', margin: '0 auto'}}>
-      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem', gap: '1rem'}}>
-        <button className="btn plum" onClick={() => setShowAddModal(true)}>+ Add to Inventory</button>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem'}}>
+        <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3rem', margin: 0, color: 'var(--rose)' }}>The Rootwork</h2>
+        <button className="btn plum sm" onClick={() => {
+          setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
+          setPhotoStatus('Upload or Scan Photo');
+          setModalState('photo');
+          setShowAddModal(true);
+        }}>
+          <Icon name="ph-plus" /> Inscribe Item
+        </button>
       </div>
 
       {ebbing.length > 0 && (
@@ -218,68 +229,119 @@ export default function Rootwork({ pose }) {
         <div className="modal" style={{display: 'block'}}>
           <div className="modal-content card" style={{maxWidth: '500px'}}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>Add to Rootwork</h3>
-            <div className="mt mb-4">Inscribe a new item into the codex.</div>
             
-            <div className="field">
-              <label>Photo Scan</label>
-              <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer'}}>
-                <Icon name={G.tabPool} /> 
-                <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{photoStatus}</span>
-                <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
+              <div>
+                <h3 style={{color: 'var(--rose)'}}>Inscribe Rootwork</h3>
+                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Introduce a new item to your codex.</div>
               </div>
+              {modalState !== 'manual' && (
+                <button className="btn sm" style={{background: 'transparent', padding: '0.4rem', color: 'var(--rose)'}} onClick={() => setModalState('manual')} title="Manual Inscription">
+                  <Icon name="ph-dots-three" />
+                </button>
+              )}
             </div>
 
-            <div className="field">
-              <label>Brand (Optional)</label>
-              <VoiceInput value={addForm.brand} onChange={e => setAddForm({...addForm, brand: e.target.value})} />
-            </div>
-            
-            <div className="field">
-              <label>Product Name</label>
-              <VoiceInput value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})} />
-            </div>
+            {modalState === 'photo' && (
+              <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+                  <Icon name={G.tabPool} /> 
+                  <span style={{marginTop: '1rem', textAlign: 'center', fontSize: '1.2rem'}}>{photoStatus}</span>
+                  <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
+                </div>
+                
+                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+                  <Icon name="ph-images" />
+                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Bulk Upload</span>
+                  <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
+                </div>
 
-            <div className="field">
-              <label>Expiration Date</label>
-              <input type="date" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: 'var(--body-font)', borderRadius: '4px' }} />
-            </div>
-
-            <div className="field">
-              <label>Domain</label>
-              <select value={addForm.domain} onChange={e => setAddForm({...addForm, domain: e.target.value})}>
-                <option value="Crown">Crown (Hair & Scalp)</option>
-                <option value="Visage">Visage (Face)</option>
-                <option value="Gaze">Gaze (Eyes)</option>
-                <option value="Grin">Grin (Mouth & Teeth)</option>
-                <option value="Vessel">Vessel (Body)</option>
-              </select>
-            </div>
-
-            <div className="field">
-              <label>Category</label>
-              <VoiceInput placeholder="e.g. Cleanser, Serum, Mask" value={addForm.category} onChange={e => setAddForm({...addForm, category: e.target.value})} />
-            </div>
-
-            <div className="field">
-              <label>Ingredients</label>
-              <VoiceInput isTextArea={true} placeholder="Paste ingredients list..." value={addForm.ingredients} onChange={e => setAddForm({...addForm, ingredients: e.target.value})} />
-            </div>
-
-            <div className="field">
-              <label>Layering Weight (1=Lightest, 10=Heaviest) - Optional Override</label>
-              <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                <input type="range" min="1" max="10" step="1" style={{flex: 1}} value={addForm.weight} onChange={e => { setAddForm({...addForm, weight: e.target.value}); setIsAutoWeight(false); }} />
-                <span style={{width: '20px', textAlign: 'center'}}>{isAutoWeight ? 'Auto' : addForm.weight}</span>
+                <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '1rem'}}>
+                  <button className="btn" onClick={() => setShowAddModal(false)}>Cancel</button>
+                </div>
               </div>
-            </div>
-            
-            <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem'}}>
-              <button className="btn" onClick={() => setShowAddModal(false)}>Cancel</button>
-              <button className="btn plum" onClick={handleSave} disabled={isSaving || !addForm.name}>
-                {isSaving ? 'Divining...' : 'Enshrine'}
-              </button>
-            </div>
+            )}
+
+            {modalState === 'confirm' && (
+              <div style={{textAlign: 'center', padding: '1rem'}}>
+                <div style={{color: 'var(--rose)', fontStyle: 'italic', marginBottom: '1rem'}}>I divined:</div>
+                <h2 style={{fontFamily: "'Cormorant Garamond', serif", color: 'var(--rose)', marginBottom: '0.5rem'}}>
+                  {addForm.brand ? `${addForm.brand} ` : ''}{addForm.name}
+                </h2>
+                <div style={{color: 'var(--dim)', marginBottom: '2rem'}}>{addForm.category}</div>
+                
+                <div style={{display: 'flex', justifyContent: 'center', gap: '1rem'}}>
+                  <button className="btn" onClick={() => setModalState('photo')}>Discard</button>
+                  <button className="btn plum" onClick={handleSave} disabled={isSaving}>
+                    {isSaving ? 'Inscribing...' : 'Inscribe'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {modalState === 'manual' && (
+              <>
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Photo Scan (Optional Override)</label>
+                  <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer'}}>
+                    <Icon name={G.tabPool} /> 
+                    <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{photoStatus}</span>
+                    <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
+                  </div>
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Brand (Optional)</label>
+                  <VoiceInput value={addForm.brand} onChange={e => setAddForm({...addForm, brand: e.target.value})} />
+                </div>
+                
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Product Name</label>
+                  <VoiceInput value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})} />
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Expiration Date</label>
+                  <input type="date" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: 'var(--body-font)', borderRadius: '4px' }} />
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Domain</label>
+                  <select value={addForm.domain} onChange={e => setAddForm({...addForm, domain: e.target.value})} style={{color: 'var(--rose)'}}>
+                    <option value="Crown">Crown (Hair & Scalp)</option>
+                    <option value="Visage">Visage (Face)</option>
+                    <option value="Gaze">Gaze (Eyes)</option>
+                    <option value="Grin">Grin (Mouth & Teeth)</option>
+                    <option value="Vessel">Vessel (Body)</option>
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Category</label>
+                  <VoiceInput placeholder="e.g. Cleanser, Serum, Mask" value={addForm.category} onChange={e => setAddForm({...addForm, category: e.target.value})} />
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Ingredients</label>
+                  <VoiceInput isTextArea={true} placeholder="Paste ingredients list..." value={addForm.ingredients} onChange={e => setAddForm({...addForm, ingredients: e.target.value})} />
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Layering Weight (1=Lightest, 10=Heaviest) - Optional Override</label>
+                  <div style={{display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)'}}>
+                    <input type="range" min="1" max="10" step="1" style={{flex: 1}} value={addForm.weight} onChange={e => { setAddForm({...addForm, weight: e.target.value}); setIsAutoWeight(false); }} />
+                    <span style={{width: '20px', textAlign: 'center'}}>{isAutoWeight ? 'Auto' : addForm.weight}</span>
+                  </div>
+                </div>
+                
+                <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem'}}>
+                  <button className="btn" onClick={() => setShowAddModal(false)}>Cancel</button>
+                  <button className="btn plum" onClick={handleSave} disabled={isSaving || !addForm.name}>
+                    {isSaving ? 'Inscribing...' : 'Inscribe'}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
