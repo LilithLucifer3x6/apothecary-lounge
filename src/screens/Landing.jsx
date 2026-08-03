@@ -25,14 +25,14 @@ export default function Landing({ onProceed, onOpenAvatar }) {
 
   return (
     <div className="land">
-      <div className="scene" style={{ borderRadius: '4px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
-        <img src="/assets/cottage_room.jpg" alt="Sanctuary Room" style={{ width: '100%', display: 'block' }} />
-      </div>
       <h1 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', lineHeight: '1.2', padding: '0.1em', margin: '.7rem 0 .1rem', color: 'var(--white)' }}>
         Shadow & Sanctuary
       </h1>
       <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', color: 'var(--silver)', fontSize: '1.06em', marginBottom: '1.2rem' }}>
         a place to keep the work of caring for yourself
+      </div>
+      <div className="scene" style={{ borderRadius: '4px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
+        <img src="/assets/cottage_room.jpg" alt="Sanctuary Room" style={{ width: '100%', display: 'block' }} />
       </div>
       {!hasProfile && (
         <button className="btn plum" onClick={() => onProceed(false)}>
