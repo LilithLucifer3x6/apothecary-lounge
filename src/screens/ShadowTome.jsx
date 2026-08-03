@@ -136,7 +136,7 @@ export default function ShadowTome({ pose }) {
             
             {healthEnabled ? (
               readiness ? (
-                <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1.5rem', border: '1px solid var(--border)' }}>
+                <div style={{ marginTop: '2.5rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1.5rem', border: '1px solid var(--border)' }}>
                   <div style={{ fontSize: '3rem', fontFamily: "'IM Fell English', serif", color: 'var(--rose)', minWidth: '40px', textAlign: 'center' }}>{readiness.score}</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                     <div style={{ fontWeight: 'bold', color: 'var(--rose)' }}>Readiness: {readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
@@ -144,17 +144,17 @@ export default function ShadowTome({ pose }) {
                   </div>
                 </div>
               ) : (
-                <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)' }}>
+                <div style={{ marginTop: '2.5rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)' }}>
                   Divining readiness...
                 </div>
               )
             ) : (
-              <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(17,14,21,0.5)', border: '1px dashed var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: 'var(--rose)' }}>
+              <div style={{ marginTop: '2.5rem', padding: '1rem', background: 'rgba(17,14,21,0.5)', border: '1px dashed var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: 'var(--rose)' }}>
                 Enable Health Connect in Settings to divine your physical readiness.
               </div>
             )}
             
-            <div className="field mt-4">
+            <div className="field" style={{ marginTop: '2.5rem' }}>
               <label>The Mood</label>
               <div className="chips" id="tome-moods">
                 {moodsList.length === 0 ? (
@@ -173,7 +173,7 @@ export default function ShadowTome({ pose }) {
               </div>
             </div>
             
-            <div className="field mt-4">
+            <div className="field" style={{ marginTop: '2.5rem' }}>
               <label>The Entry</label>
               <VoiceInput 
                 isTextArea={true}
@@ -184,7 +184,7 @@ export default function ShadowTome({ pose }) {
               />
             </div>
             
-            <div style={{ textAlign: 'right', marginTop: '1rem' }}>
+            <div style={{ textAlign: 'right', marginTop: '2rem' }}>
               <button id="btn-save-tome" className="btn plum" onClick={handleSave}>
                 Seal the Page
               </button>
@@ -218,17 +218,16 @@ export default function ShadowTome({ pose }) {
           
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>Herbal Elixirs & Teas</h3>
-            <div className="mt mb-4">Add loose leaf blends to your pantry.</div>
+            <h3 style={{ fontSize: '1.5rem' }}>Herbal Elixirs</h3>
             
-            <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px' }}>
+            <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px', marginTop: '1rem' }}>
               <Icon name="ph-camera" /> 
-              <span style={{ marginTop: '0.5rem', textAlign: 'center', fontSize: '1rem' }}>Scan Tea Leaves</span>
+              <span style={{ marginTop: '0.5rem', textAlign: 'center', fontSize: '1rem' }}>Divine the Ingredients</span>
               <input type="file" accept="image/*" capture="environment" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={() => alert('AI Tea Vision Scanner will open here.')} />
             </div>
             
             <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-              <button className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>Add Manually</button>
+              <button className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>Inscribe by Hand</button>
             </div>
           </div>
 
@@ -260,8 +259,8 @@ export default function ShadowTome({ pose }) {
 
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>Breathing Space</h3>
-            <div className="mt mb-4" style={{ fontSize: '0.85rem' }}>Automated 4-7-8 mindful meditation.</div>
+            <h3 style={{ fontSize: '1.5rem' }}>The Centering Wind</h3>
+            <div className="mt mb-4" style={{ fontSize: '0.85rem' }}>A 4-7-8 cycle to calm the spirit.</div>
             
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', padding: '1.5rem 0' }}>
               <div 
@@ -278,7 +277,7 @@ export default function ShadowTome({ pose }) {
                 {breathInst}
               </div>
               <button id="btn-breath" className="btn plum" onClick={startMeditation} disabled={isBreathing} style={{ width: '100%' }}>
-                {isBreathing ? 'Meditating...' : 'Begin Meditation'}
+                {isBreathing ? 'Meditating...' : 'Draw Breath'}
               </button>
             </div>
           </div>
