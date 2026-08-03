@@ -209,20 +209,10 @@ export default function Rites({ pose }) {
         {getRitualDate()}
       </div>
 
-      <div className="card" style={{ margin: '1.5rem auto', width: 'fit-content', maxWidth: '100%' }}>
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Long Hours <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Long Hours') }} /></h3>
-        <div className="mt mb-4" style={{ textAlign: 'center' }}>The Daily Schedule</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', alignItems: 'start', marginTop: '1.5rem' }}>
         
-        {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift before performing The Morning Invocation.', 'var(--crimson-b)')}
-        {renderScheduleStep('The Morning Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
-        {renderScheduleStep('The Midday Sustenance', 'A 45-minute pause for nourishment. Engage in gentle movement to stir stagnant energies.', 'var(--rose)')}
-        {renderScheduleStep('The Afternoon Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
-        {renderScheduleStep('The Descent', 'The day\'s labors conclude. Begin the grounding process to sever ties with the work.', 'var(--plum)')}
-      </div>
-
-      <div className="rites2">
-        <div className="card mt-4">
+        {/* Left Column: Morning Invocation */}
+        <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>Morning Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Morning Invocation') }} /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
@@ -241,8 +231,22 @@ export default function Rites({ pose }) {
             )}
           </div>
         </div>
-        
-        <div className="card mt-4">
+
+        {/* Center Column: The Long Hours */}
+        <div className="card">
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3>The Long Hours <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Long Hours') }} /></h3>
+          <div className="mt mb-4" style={{ textAlign: 'center' }}>The Daily Schedule</div>
+          
+          {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift before performing The Morning Invocation.', 'var(--crimson-b)')}
+          {renderScheduleStep('The Morning Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
+          {renderScheduleStep('The Midday Sustenance', 'A 45-minute pause for nourishment. Engage in gentle movement to stir stagnant energies.', 'var(--rose)')}
+          {renderScheduleStep('The Afternoon Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
+          {renderScheduleStep('The Descent', 'The day\'s labors conclude. Begin the grounding process to sever ties with the work.', 'var(--plum)')}
+        </div>
+
+        {/* Right Column: Evening Invocation */}
+        <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>Evening Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Evening Invocation') }} /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
@@ -262,19 +266,21 @@ export default function Rites({ pose }) {
           </div>
         </div>
         
-        {conflicts.length > 0 && (
-          <div className="card mt-4" style={{ background: 'var(--card-bg-alt, rgba(100,20,20,0.5))', borderColor: '#882222' }}>
-            <h3 style={{ color: '#ff8888' }}>Keeper's Warning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Keeper's Warning") }} /></h3>
-            <ul style={{ marginTop: '0.5rem', color: '#ffcccc', paddingLeft: '1.5rem' }}>
-              {conflicts.map((c, idx) => (
-                <li key={idx}>
-                  {c} <span dangerouslySetInnerHTML={{ __html: speakerMarkup(c) }} style={{ marginLeft: '0.4rem', verticalAlign: 'middle' }} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
+
+      {/* Keeper's Warning (Full Width Below) */}
+      {conflicts.length > 0 && (
+        <div className="card mt-4" style={{ background: 'var(--card-bg-alt, rgba(100,20,20,0.5))', borderColor: '#882222' }}>
+          <h3 style={{ color: '#ff8888' }}>Keeper's Warning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Keeper's Warning") }} /></h3>
+          <ul style={{ marginTop: '0.5rem', color: '#ffcccc', paddingLeft: '1.5rem' }}>
+            {conflicts.map((c, idx) => (
+              <li key={idx}>
+                {c} <span dangerouslySetInnerHTML={{ __html: speakerMarkup(c) }} style={{ marginLeft: '0.4rem', verticalAlign: 'middle' }} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
