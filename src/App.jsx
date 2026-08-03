@@ -20,9 +20,9 @@ const TABS = [
   { id: 'rites', label: 'The Mortal Rites', glyph: G.tabRites, bg: '/assets/bg_sanctuary.jpg', pose: 'working' },
   { id: 'grim', label: 'The Grimoire', glyph: G.tabGrim, bg: '/assets/bg_grimoire.jpg', pose: 'reading' },
   { id: 'altars', label: 'The Altars', glyph: G.tabAltars, bg: '/assets/bg_altars.jpg', pose: 'meditating' },
-  { id: 'root', label: 'The Rootwork', glyph: G.tabRoot, bg: '/assets/bg_sanctuary.jpg', pose: 'working' },
-  { id: 'pool', label: 'The Scrying Pool', glyph: G.tabPool, bg: '/assets/bg_sanctuary.jpg', pose: 'scrying' },
-  { id: 'tome', label: 'The Shadow Tome', glyph: G.tabTome, bg: '/assets/bg_sanctuary.jpg', pose: 'reading' }
+  { id: 'root', label: 'The Rootwork', glyph: G.tabRoot, bg: '/assets/bg_rootwork.jpg', pose: 'working' },
+  { id: 'pool', label: 'The Scrying Pool', glyph: G.tabPool, bg: '/assets/bg_scrying.jpg', pose: 'scrying' },
+  { id: 'tome', label: 'The Shadow Tome', glyph: G.tabTome, bg: '/assets/bg_shadowtome.jpg', pose: 'reading' }
 ];
 
 function getRitualDate() {
