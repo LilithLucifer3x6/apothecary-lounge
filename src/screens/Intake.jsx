@@ -335,14 +335,12 @@ export default function Intake({ onComplete }) {
                   {rxList.map((rx, idx) => (
                   <div key={idx} className="card2" style={{ padding: '1rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', marginBottom: '1.5rem' }}>
-                      <input 
-                        type="text" 
+                      <VoiceInput 
                         placeholder="e.g. Tretinoin 0.05%" 
                         value={rx.name}
                         onChange={e => updateRx(idx, 'name', e.target.value)}
                       />
-                      <input 
-                        type="text" 
+                      <VoiceInput 
                         placeholder="Application Zone (e.g. chin)" 
                         value={rx.zone}
                         onChange={e => updateRx(idx, 'zone', e.target.value)}
@@ -367,8 +365,7 @@ export default function Intake({ onComplete }) {
                 <div id="oral-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {oralList.map((oral, idx) => (
                   <div key={idx} style={{ display: 'flex', width: '100%', marginBottom: '1rem' }}>
-                    <input 
-                      type="text" 
+                    <VoiceInput 
                       placeholder="e.g. Methotrexate" 
                       value={oral}
                       onChange={e => updateOral(idx, e.target.value)}
@@ -406,9 +403,8 @@ export default function Intake({ onComplete }) {
                 ))}
               </div>
               <div className="field mt-4">
-                <div className="ip mic">
-                  <input 
-                    type="text" 
+                <div className="ip mic" style={{ width: '100%' }}>
+                  <VoiceInput 
                     placeholder="Type an allergy and press Enter..." 
                     value={newAlg}
                     onKeyDown={e => {

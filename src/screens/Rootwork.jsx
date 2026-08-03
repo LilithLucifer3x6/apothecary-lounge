@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.js';
 import Icon from '../components/Icon.jsx';
+import VoiceInput from '../components/VoiceInput.jsx';
 import { attachVoice } from '../lib/voice.js';
 import { buildRoutines } from '../lib/routine-engine.js';
 
@@ -237,17 +238,15 @@ export default function Rootwork({ pose }) {
             </div>
 
             <div className="field">
-              <label>Brand</label>
-              <div className="ip mic">
-                <input type="text" value={addForm.brand} onChange={e => setAddForm({...addForm, brand: e.target.value})} />
-              </div>
+              <label>Brand (Optional)</label>
+              <VoiceInput value={addForm.brand} onChange={e => setAddForm({...addForm, brand: e.target.value})} />
             </div>
+            
             <div className="field">
-              <label>Name</label>
-              <div className="ip mic">
-                <input type="text" value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})} />
-              </div>
+              <label>Product Name</label>
+              <VoiceInput value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})} />
             </div>
+
             <div className="field">
               <label>Domain</label>
               <select value={addForm.domain} onChange={e => setAddForm({...addForm, domain: e.target.value})}>
@@ -258,18 +257,17 @@ export default function Rootwork({ pose }) {
                 <option value="Vessel">Vessel (Body)</option>
               </select>
             </div>
+
             <div className="field">
               <label>Category</label>
-              <div className="ip mic">
-                <input type="text" placeholder="e.g. Cleanser, Serum, Mask" value={addForm.category} onChange={e => setAddForm({...addForm, category: e.target.value})} />
-              </div>
+              <VoiceInput placeholder="e.g. Cleanser, Serum, Mask" value={addForm.category} onChange={e => setAddForm({...addForm, category: e.target.value})} />
             </div>
+
             <div className="field">
-              <label>Ingredients (Optional)</label>
-              <div className="ip">
-                <textarea rows="3" placeholder="Paste ingredients list..." value={addForm.ingredients} onChange={e => setAddForm({...addForm, ingredients: e.target.value})}></textarea>
-              </div>
+              <label>Ingredients</label>
+              <VoiceInput isTextArea={true} placeholder="Paste ingredients list..." value={addForm.ingredients} onChange={e => setAddForm({...addForm, ingredients: e.target.value})} />
             </div>
+
             <div className="field">
               <label>Layering Weight (1=Lightest, 10=Heaviest) - Optional Override</label>
               <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>

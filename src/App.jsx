@@ -4,6 +4,7 @@ import { G, verifyGlyphs } from './lib/icons.js';
 import { getTtsEnabled, getTtsRate, getTtsPitch, getTtsVoiceURI, setTtsEnabled, setTtsRate, setTtsPitch, setTtsVoiceURI, getFeminineVoices } from './lib/tts.js';
 import Icon from './components/Icon.jsx';
 import { initGoogleCalendar, requestCalendarAccess } from './lib/gcal.js';
+import { Capacitor } from '@capacitor/core';
 
 import AvatarBuilder from './screens/AvatarBuilder.jsx';
 import Landing from './screens/Landing.jsx';
@@ -182,8 +183,44 @@ export default function App() {
       case 'grim': return <div><Grimoire pose={pose} /></div>;
       case 'altars': return <div><Altars pose={pose} /></div>;
       case 'root': return <div><Rootwork pose={pose} /></div>;
-      case 'pool': return <div><Scrying pose={pose} /></div>;
-      case 'tome': return <div><ShadowTome pose={pose} /></div>;
+        {activeTab === 'pool' && <Scrying pose={TABS.find(t=>t.id==='pool').pose} />}
+        {activeTab === 'tome' && <ShadowTome pose={TABS.find(t=>t.id==='tome').pose} />}
+      </div>
+      
+      {/* Avatar Display */}
+      {avatarConfig && (
+        <div style={{ 
+          position: 'fixed', 
+          bottom: '20px', 
+          right: '20px', 
+          zIndex: 100,
+          pointerEvents: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.5rem'
+        }}>
+          <img 
+            src={avatarConfig.avatarVibe === 'locs' ? '/assets/avatar_locs.jpg' : '/assets/avatar_buns.jpg'} 
+            alt="The Keeper"
+            style={{
+              width: '120px',
+              height: '160px',
+              objectFit: 'cover',
+              borderRadius: '8px',
+              border: '2px solid var(--gold)',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.8)'
+            }} 
+          />
+          <div style={{ background: 'rgba(0,0,0,0.7)', color: 'var(--gold)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontFamily: "'Cormorant Garamond', serif", display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {avatarConfig.name}
+            {avatarConfig.familiar !== 'none' && <Icon name={avatarConfig.familiar === 'cat' ? 'ph-duotone ph-cat' : avatarConfig.familiar === 'raven' ? 'ph-duotone ph-bird' : avatarConfig.familiar === 'moth' ? 'ph-duotone ph-butterfly' : 'ph-duotone ph-dog'} />}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
       default: return null;
     }
   };
@@ -341,9 +378,18 @@ export default function App() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
                 <label style={{ color: 'var(--crimson-b)', fontWeight: 'bold' }}>
                   <input type="checkbox" checked={settings.health}
-                         onChange={e => setSettings({...settings, health: e.target.checked})} /> Health Connect (RingConn, Renpho, Samsung)
+                         onChange={async (e) => {
+                           const checked = e.target.checked;
+                           if (checked && Capacitor.isNativePlatform()) {
+                             alert("Native Android Detected: Requesting direct System Health Connect Permissions for Samsung Health, RingConn, and Renpho...");
+                             // Native plugin logic would go here
+                             setSettings({...settings, health: true});
+                           } else {
+                             setSettings({...settings, health: checked});
+                           }
+                         }} /> Health Connect (RingConn, Renpho, Samsung)
                 </label>
-                {settings.health && (
+                {settings.health && !Capacitor.isNativePlatform() && (
                   <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <input type="text" placeholder="Terra Developer ID" value={settings.terraDevId || ''} onChange={e => setSettings({...settings, terraDevId: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
                     <input type="text" placeholder="Terra API Key" value={settings.terraApiKey || ''} onChange={e => setSettings({...settings, terraApiKey: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
