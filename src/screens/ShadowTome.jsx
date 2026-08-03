@@ -5,6 +5,7 @@ import { attachVoice } from '../lib/voice.js';
 import * as AI from '../lib/ai-service.js';
 import { getReadiness } from '../lib/health-connect.js';
 import Icon from '../components/Icon.jsx';
+import VoiceInput from '../components/VoiceInput.jsx';
 
 export default function ShadowTome({ pose }) {
   const [readiness, setReadiness] = useState(null);
@@ -24,11 +25,6 @@ export default function ShadowTome({ pose }) {
   const breathTimeout2Ref = useRef(null);
 
   useEffect(() => {
-    // Attach voice for mic elements
-    setTimeout(() => {
-      try { attachVoice(); } catch (e) { console.error(e); }
-    }, 100);
-    
     const settingsStr = localStorage.getItem('app_settings');
     const settings = settingsStr ? JSON.parse(settingsStr) : {};
     

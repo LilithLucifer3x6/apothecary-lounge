@@ -32,7 +32,6 @@ export default function Rootwork({ pose }) {
 
   useEffect(() => {
     fetchItems();
-    attachVoice();
   }, []);
 
   const ebbing = items.filter(i => i.lifecycle_state === 'ebbing' || i.lifecycle_state === 'hollow');
