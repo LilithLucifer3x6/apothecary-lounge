@@ -317,14 +317,18 @@ Ingredients: ${ingredients.join(', ')}` }
  * @param {string} base64Image - The base64 string of the image
  * @param {string} mediaType - e.g. "image/jpeg"
  * @returns {Promise<Object>}
+/**
+ * Parses one or more tea images (loose leaf or box) using Claude Vision and extracts details.
+ * @param {Array<{base64: string, mediaType: string}>} images
+ * @returns {Promise<Object>}
  */
-export async function parseTeaImage(base64Image, mediaType) {
+export async function parseTeaImage(images) {
   if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
 
   const tools = [
     {
       name: 'extract_tea_details',
-      description: 'Extract herbal elixir/tea details from the image',
+      description: 'Extract herbal elixir/tea details from the image(s)',
       input_schema: {
         type: 'object',
         properties: {
@@ -340,6 +344,20 @@ export async function parseTeaImage(base64Image, mediaType) {
     }
   ];
 
+  const contentBlocks = images.map(img => ({
+    type: 'image',
+    source: {
+      type: 'base64',
+      media_type: img.mediaType,
+      data: img.base64
+    }
+  }));
+
+  contentBlocks.push({
+    type: 'text',
+    text: 'You are analyzing images of a tea or herbal elixir. It might be photos of loose leaf herbs, or photos of the front and back of a tea box/label. If it is loose leaf, analyze the shapes, sizes, and colors of the leaves, flowers, and bits to divine the ingredients. If it is a box, read the label (e.g. use the front for the name and the back for the ingredients). Extract the brand, blend name, ingredients list, estimated caffeine content, recommended steeping parameters, and circadian alignment (daytime vs nighttime use).'
+  });
+
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -354,20 +372,7 @@ export async function parseTeaImage(base64Image, mediaType) {
       messages: [
         {
           role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: {
-                type: 'base64',
-                media_type: mediaType,
-                data: base64Image
-              }
-            },
-            {
-              type: 'text',
-              text: 'You are analyzing an image of a tea or herbal elixir. It might be a photo of loose leaf herbs, or a photo of a tea box/label. If it is loose leaf, analyze the shapes, sizes, and colors of the leaves, flowers, and bits to divine the ingredients. If it is a box, read the label. Extract the brand, blend name, ingredients list, estimated caffeine content, recommended steeping parameters, and circadian alignment (daytime vs nighttime use).'
-            }
-          ]
+          content: contentBlocks
         }
       ],
       tools: tools,

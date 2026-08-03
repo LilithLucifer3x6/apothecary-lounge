@@ -29,6 +29,7 @@ export default function ShadowTome({ pose }) {
   const [showTeaModal, setShowTeaModal] = useState(false);
   const [teaModalState, setTeaModalState] = useState('photo'); // photo, manual, confirm
   const [teaStatus, setTeaStatus] = useState('Upload or Scan Photo');
+  const [teaImages, setTeaImages] = useState([]);
   const [isSavingTea, setIsSavingTea] = useState(false);
   const [teaForm, setTeaForm] = useState({
     brand: '', name: '', ingredients: '', caffeine_content: '', steep_time: '', circadian_alignment: ''
@@ -112,38 +113,57 @@ export default function ShadowTome({ pose }) {
   };
 
   const handleTeaUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
     
-    setTeaStatus('Divining the leaves...');
+    setTeaStatus('Staging photos...');
     setShowTeaModal(true);
     setTeaModalState('photo');
     
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const dataUrl = ev.target.result;
+    const newImages = [];
+    for (const file of files) {
+      const dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => resolve(ev.target.result);
+        reader.readAsDataURL(file);
+      });
       const base64 = dataUrl.split(',')[1];
       const mime = dataUrl.split(';')[0].split(':')[1];
-      
-      try {
-        const details = await parseTeaImage(base64, mime);
-        setTeaForm(prev => ({
-          ...prev,
-          brand: details.brand || prev.brand,
-          name: details.name || prev.name,
-          ingredients: Array.isArray(details.ingredients) ? details.ingredients.join(', ') : details.ingredients,
-          caffeine_content: details.caffeine_content || prev.caffeine_content,
-          steep_time: details.steep_time || prev.steep_time,
-          circadian_alignment: details.circadian_alignment || prev.circadian_alignment
-        }));
-        setTeaStatus('Vision extracted.');
-        setTeaModalState('confirm');
-      } catch (err) {
-        console.error(err);
-        setTeaStatus('Failed to divine image. ' + err.message);
-      }
-    };
-    reader.readAsDataURL(file);
+      newImages.push({ base64, mediaType: mime, dataUrl });
+    }
+    
+    setTeaImages(prev => [...prev, ...newImages]);
+    setTeaStatus('Add more photos, or Cast Vision.');
+  };
+
+  const handleCastVision = async () => {
+    if (teaImages.length === 0) return;
+    setTeaStatus('Divining the leaves...');
+    try {
+      const details = await parseTeaImage(teaImages);
+      setTeaForm(prev => ({
+        ...prev,
+        brand: details.brand || prev.brand,
+        name: details.name || prev.name,
+        ingredients: Array.isArray(details.ingredients) ? details.ingredients.join(', ') : details.ingredients,
+        caffeine_content: details.caffeine_content || prev.caffeine_content,
+        steep_time: details.steep_time || prev.steep_time,
+        circadian_alignment: details.circadian_alignment || prev.circadian_alignment
+      }));
+      setTeaStatus('Vision extracted.');
+      setTeaModalState('confirm');
+    } catch (err) {
+      console.error(err);
+      setTeaStatus('Failed to divine image. ' + err.message);
+    }
+  };
+
+  const closeTeaModal = () => {
+    setShowTeaModal(false);
+    setTeaImages([]);
+    setTeaForm({ brand: '', name: '', ingredients: '', caffeine_content: '', steep_time: '', circadian_alignment: '' });
+    setTeaStatus('Upload or Scan Photo');
+    setTeaModalState('photo');
   };
 
   const handleSaveTea = async () => {
@@ -164,10 +184,7 @@ export default function ShadowTome({ pose }) {
     }
     
     setIsSavingTea(false);
-    setShowTeaModal(false);
-    setTeaForm({ brand: '', name: '', ingredients: '', caffeine_content: '', steep_time: '', circadian_alignment: '' });
-    setTeaStatus('Upload or Scan Photo');
-    setTeaModalState('photo');
+    closeTeaModal();
     loadPantry();
   };
 
@@ -410,19 +427,32 @@ export default function ShadowTome({ pose }) {
             {teaModalState === 'photo' && (
               <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                 <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
-                  <Icon name="ph-leaf" /> 
-                  <span style={{marginTop: '1rem', textAlign: 'center', fontSize: '1.2rem'}}>{teaStatus}</span>
+                  <Icon name="ph-camera" /> 
+                  <span style={{marginTop: '1rem', textAlign: 'center', fontSize: '1.2rem'}}>{teaImages.length > 0 ? 'Snap another photo' : 'Snap front of box / leaves'}</span>
                   <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleTeaUpload} />
                 </div>
                 
                 <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name="ph-images" />
-                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Bulk Upload</span>
+                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Upload multiple from gallery</span>
                   <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleTeaUpload} />
                 </div>
 
-                <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '1rem'}}>
-                  <button className="btn" onClick={() => setShowTeaModal(false)}>Cancel</button>
+                {teaImages.length > 0 && (
+                  <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', padding: '0.5rem 0' }}>
+                    {teaImages.map((img, i) => (
+                      <img key={i} src={img.dataUrl} alt={`Staged ${i}`} style={{ height: '60px', width: '60px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                    ))}
+                  </div>
+                )}
+                
+                {teaImages.length > 0 && <div style={{textAlign: 'center', color: 'var(--rose)', fontStyle: 'italic'}}>{teaStatus}</div>}
+
+                <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
+                  <button className="btn" onClick={closeTeaModal}>Cancel</button>
+                  <button className="btn plum" disabled={teaImages.length === 0 || teaStatus === 'Divining the leaves...'} onClick={handleCastVision}>
+                    {teaStatus === 'Divining the leaves...' ? 'Divining...' : 'Cast Vision'}
+                  </button>
                 </div>
               </div>
             )}
@@ -501,7 +531,7 @@ export default function ShadowTome({ pose }) {
                 </div>
                 
                 <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem'}}>
-                  <button className="btn" onClick={() => setShowTeaModal(false)}>Cancel</button>
+                  <button className="btn" onClick={closeTeaModal}>Cancel</button>
                   <button className="btn plum" onClick={handleSaveTea} disabled={isSavingTea || !teaForm.name}>
                     {isSavingTea ? 'Inscribing...' : 'Seal in Pantry'}
                   </button>
