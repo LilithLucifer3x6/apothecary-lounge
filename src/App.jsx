@@ -38,8 +38,8 @@ function getRitualDate() {
 }
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('splash');
-  const [activeTab, setActiveTab] = useState('rites');
+  const [currentScreen, setCurrentScreen] = useState(() => sessionStorage.getItem('al_currentScreen') || 'splash');
+  const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('al_activeTab') || 'rites');
   const [showSettings, setShowSettings] = useState(false);
   const [dateStr, setDateStr] = useState(getRitualDate());
   
@@ -62,6 +62,14 @@ export default function App() {
   });
 
   const [availableVoices, setAvailableVoices] = useState([]);
+
+  useEffect(() => {
+    sessionStorage.setItem('al_currentScreen', currentScreen);
+  }, [currentScreen]);
+
+  useEffect(() => {
+    sessionStorage.setItem('al_activeTab', activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     verifyGlyphs();
@@ -92,24 +100,35 @@ export default function App() {
       else window.speechSynthesis.onvoiceschanged = populateVoices;
     }
     
-    // Set exterior background for splash
-    document.body.style.backgroundImage = `url('/assets/app_bg.jpg')`;
+    const initScreen = sessionStorage.getItem('al_currentScreen') || 'splash';
+    const initTab = sessionStorage.getItem('al_activeTab') || 'rites';
+    if (initScreen === 'app') {
+      if (initTab === 'home') {
+        document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
+      } else {
+        const tab = TABS.find(t => t.id === initTab);
+        if (tab) document.body.style.backgroundImage = `url('${tab.bg}')`;
+      }
+    } else {
+      document.body.style.backgroundImage = `url('/assets/app_bg.jpg')`;
+    }
     
     // Sync settings with profile in background
     supabase.from('user_profile').select('*').maybeSingle().then(({ data: profile }) => {
       if (profile && profile.settings) {
-     const stored = localStorage.getItem('al_settings');
-    if (stored) {
-      const s = JSON.parse(stored);
-      setSettings(s);
-      if (s.tts) setTtsEnabled(true);
-      
-      if (s.gcalClientId) {
-        initGoogleCalendar(s.gcalClientId, (token) => {
-          console.log("Google Calendar Authenticated!");
-        });
-      }
-    }    applySettings(profile.settings);
+        const stored = localStorage.getItem('al_settings');
+        if (stored) {
+          const s = JSON.parse(stored);
+          setSettings(s);
+          if (s.tts) setTtsEnabled(true);
+          
+          if (s.gcalClientId) {
+            initGoogleCalendar(s.gcalClientId, (token) => {
+              console.log("Google Calendar Authenticated!");
+            });
+          }
+        }    
+        applySettings(profile.settings);
       }
       if (profile && profile.avatar_config) {
         localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
