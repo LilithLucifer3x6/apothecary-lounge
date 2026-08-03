@@ -115,7 +115,7 @@ export default function Scrying({ pose }) {
         
         <div className="field" style={{ marginBottom: '1rem' }}>
           <label>Photo Scan</label>
-          <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--dim)', cursor: 'pointer', borderRadius: '8px'}}>
+          <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
             <Icon name={G.tabPool} /> 
             <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Upload or take a photo of the product</span>
             <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
@@ -129,7 +129,7 @@ export default function Scrying({ pose }) {
               placeholder="Or enter formula name/ingredients..."
               value={scryInput}
               onChange={(e) => setScryInput(e.target.value)}
-              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--white)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem' }}
+              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem' }}
             />
           </div>
           <button className="btn plum" onClick={handleScry} style={{ minWidth: '120px' }}>Divine Synergies</button>
@@ -137,7 +137,7 @@ export default function Scrying({ pose }) {
         <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'bold' }}>
           {scryStatus}
         </div>
-        <div style={{ marginTop: '1rem', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--parch)', whiteSpace: 'pre-wrap' }}>
+        <div style={{ marginTop: '1rem', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
           {scryResult}
         </div>
       </div>
@@ -160,7 +160,7 @@ export default function Scrying({ pose }) {
               <div key={item.id || item.name} className="row" style={{ flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: '200px' }}>
                   <div className="nm">{item.name}</div>
-                  <div className="mt">{item.brand} &bull; {item.isExpired ? <span style={{color:'var(--rose)'}}>Expired!</span> : item.lifecycle_state}</div>
+                  <div className="mt">{item.brand} &bull; {item.isExpired ? <span style={{color: 'var(--rose)'}}>Expired!</span> : item.lifecycle_state}</div>
                 </div>
                 <button className="btn sm">Summon</button>
               </div>

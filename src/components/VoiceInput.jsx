@@ -24,7 +24,7 @@ export default function VoiceInput({ className = '', value, onChange, placeholde
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
-        style={{ ...style, width: '100%', padding: '1rem 3rem 1rem 1.25rem', fontSize: '1.1rem', borderRadius: '8px', border: '2px solid var(--border)', background: 'var(--card2)', color: 'var(--white)' }}
+        style={{ ...style, width: '100%', padding: '1rem 3rem 1rem 1.25rem', fontSize: '1.1rem', borderRadius: '8px', border: '2px solid var(--border)', background: 'var(--card2)', color: 'var(--rose)' }}
         onKeyDown={onKeyDown}
         rows={isTextArea ? 3 : undefined}
       />
@@ -35,7 +35,7 @@ export default function VoiceInput({ className = '', value, onChange, placeholde
           right: '8px',
           top: isTextArea ? '8px' : '50%',
           transform: isTextArea ? 'none' : 'translateY(-50%)',
-          color: 'var(--plum)',
+          color: 'var(--rose)',
           opacity: 0.7,
           pointerEvents: 'none'
         }}

@@ -119,17 +119,17 @@ export default function ShadowTome({ pose }) {
             <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{ fontSize: '2rem', fontFamily: "'IM Fell English', serif" }}>{readiness.score}</div>
               <div>
-                <div style={{ fontWeight: 'bold', color: 'var(--gold)' }}>Readiness: {readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
-                <div style={{ fontSize: '0.9rem', color: 'var(--dim)' }}>Data from Android Health Connect</div>
+                <div style={{ fontWeight: 'bold', color: 'var(--rose)' }}>Readiness: {readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--rose)' }}>Data from Android Health Connect</div>
               </div>
             </div>
           ) : (
-            <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--dim)' }}>
+            <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)' }}>
               Divining readiness...
             </div>
           )
         ) : (
-          <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(17,14,21,0.5)', border: '1px dashed var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: 'var(--dim)' }}>
+          <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(17,14,21,0.5)', border: '1px dashed var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: 'var(--rose)' }}>
             Enable Health Connect in Settings to divine your physical readiness.
           </div>
         )}
@@ -160,7 +160,7 @@ export default function ShadowTome({ pose }) {
             placeholder="Inscribe your thoughts..."
             value={entryText}
             onChange={(e) => setEntryText(e.target.value)}
-            style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--white)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem' }}
+            style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem' }}
           />
         </div>
         

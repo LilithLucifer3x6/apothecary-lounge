@@ -25,10 +25,10 @@ export default function Landing({ onProceed, onOpenAvatar }) {
 
   return (
     <div className="land">
-      <h1 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '2.8rem', lineHeight: '1.5', padding: '0.2em 0.2em 0.4em 0.2em', margin: '0', color: 'var(--white)' }}>
+      <h1 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '2.8rem', lineHeight: '1.5', padding: '0.2em 0.2em 0.4em 0.2em', margin: '0', color: 'var(--rose)' }}>
         Shadow & Sanctuary
       </h1>
-      <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', color: 'var(--silver)', fontSize: '1.06em', marginBottom: '1.2rem' }}>
+      <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', color: 'var(--rose)', fontSize: '1.06em', marginBottom: '1.2rem' }}>
         a place to keep the work of caring for yourself
       </div>
       <div className="scene" style={{ borderRadius: '4px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
@@ -40,7 +40,7 @@ export default function Landing({ onProceed, onOpenAvatar }) {
         </button>
       )}
       {hasProfile && (
-        <button className="btn sm" onClick={onOpenAvatar} style={{ marginTop: '1.5rem', background: 'transparent', border: '1px solid var(--border)', color: 'var(--ash)' }}>
+        <button className="btn sm" onClick={onOpenAvatar} style={{ marginTop: '1.5rem', background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)' }}>
           <Icon name="ph-user" /> Avatar Builder
         </button>
       )}

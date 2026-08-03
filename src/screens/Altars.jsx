@@ -34,7 +34,7 @@ export default function Altars({ pose }) {
             key={altar.id}
             className={`btn ${activeAltarId === altar.id ? 'plum' : ''}`}
             onClick={() => handleTabClick(altar.id, altar.name)}
-            style={{ textAlign: 'left', padding: '0.8rem 1rem', fontSize: '1.1rem', background: activeAltarId === altar.id ? 'var(--plum)' : 'rgba(0,0,0,0.5)', color: 'var(--white)', width: '100%' }}
+            style={{ textAlign: 'left', padding: '0.8rem 1rem', fontSize: '1.1rem', background: activeAltarId === altar.id ? 'var(--plum)' : 'rgba(0,0,0,0.5)', color: 'var(--rose)', width: '100%' }}
           >
             <Icon name={altar.icon} /> {`The ${altar.name}`}
           </button>

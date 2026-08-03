@@ -194,7 +194,7 @@ export default function Intake({ onComplete }) {
   return (
     <div className="card" style={{ maxWidth: '700px', margin: '2rem auto', minHeight: '580px', display: 'flex', flexDirection: 'column' }}>
       <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-      <h2 style={{ textAlign: 'center', fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', color: 'var(--parch)' }}>
+      <h2 style={{ textAlign: 'center', fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', color: 'var(--rose)' }}>
         <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
       </h2>
       
@@ -270,7 +270,7 @@ export default function Intake({ onComplete }) {
             {aiStatus ? (
               aiStatus
             ) : !isReady ? (
-              <>AI key missing. <a href="#" onClick={handleSetAiKey} style={{ color: 'var(--parch)', textDecoration: 'underline' }}>Set API Key</a></>
+              <>AI key missing. <a href="#" onClick={handleSetAiKey} style={{ color: 'var(--rose)', textDecoration: 'underline' }}>Set API Key</a></>
             ) : null}
           </div>
         </div>
@@ -350,7 +350,7 @@ export default function Intake({ onComplete }) {
               {renderTitle('Medical Directives (Topical)')}
               <div className="mt mb-4">Potent formulas prescribed by healers. These take priority in all routines.</div>
               
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--gold)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>
                 <input type="checkbox" checked={noRx} onChange={e => { setNoRx(e.target.checked); if(e.target.checked) setRxList([]); }} /> I have no topical prescriptions.
               </label>
 
@@ -359,7 +359,7 @@ export default function Intake({ onComplete }) {
                   {rxList.map((rx, i) => (
                     <div key={i} style={{ borderLeft: '2px solid var(--gold)', paddingLeft: '1rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <span style={{ color: 'var(--plum)', fontWeight: 'bold' }}>Prescription {i + 1}</span>
+                        <span style={{ color: 'var(--rose)', fontWeight: 'bold' }}>Prescription {i + 1}</span>
                         <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Banish</button>
                       </div>
                       <div className="field">
@@ -391,7 +391,7 @@ export default function Intake({ onComplete }) {
               {renderTitle('Medical Directives (Oral)')}
               <div className="mt mb-4">Internal remedies that may cause systemic shifts (e.g. dryness, sensitivity).</div>
               
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--gold)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>
                 <input type="checkbox" checked={noOral} onChange={e => { setNoOral(e.target.checked); if(e.target.checked) setOralList([]); }} /> I take no oral medications that affect my skin/hair.
               </label>
 
@@ -415,7 +415,7 @@ export default function Intake({ onComplete }) {
             <div className="ins-step">
               {renderTitle('The ingredients to never touch')}
               <div className="mt mb-4">Allergies and sensitivities.</div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--gold)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>
                 <input type="checkbox" checked={noAlg} onChange={e => { setNoAlg(e.target.checked); if(e.target.checked) setAlgList(['Lavender']); }} /> I have no other allergies.
               </label>
               {!noAlg && (
@@ -482,7 +482,7 @@ export default function Intake({ onComplete }) {
 
           {currentStep === 7 && (
             <div className="ins-step" style={{ textAlign: 'center', margin: 'auto' }}>
-              <h3 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3rem', color: 'var(--parch)' }}>The First Inscription is sealed</h3>
+              <h3 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3rem', color: 'var(--rose)' }}>The First Inscription is sealed</h3>
               <div className="mt" style={{ fontSize: '1.2rem', marginTop: '2rem' }}>Your chamber awaits.</div>
             </div>
           )}

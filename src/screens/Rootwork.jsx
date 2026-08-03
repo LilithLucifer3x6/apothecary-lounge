@@ -173,7 +173,7 @@ export default function Rootwork({ pose }) {
         <h3>The Silver Toll</h3>
         <div className="mt mb-4">Estimated monthly cost of your active routines.</div>
         <div>
-          <div style={{ fontSize: '2rem', fontFamily: "'Pinyon Script', cursive", color: 'var(--candle)' }}>
+          <div style={{ fontSize: '2rem', fontFamily: "'Pinyon Script', cursive", color: 'var(--rose)' }}>
             ${(() => {
               const { amItems, pmItems } = buildRoutines(items, {}, {});
               const activeIds = new Set([...amItems.map(i=>i.id), ...pmItems.map(i=>i.id)]);
@@ -223,7 +223,7 @@ export default function Rootwork({ pose }) {
             
             <div className="field">
               <label>Photo Scan</label>
-              <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--dim)', cursor: 'pointer'}}>
+              <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer'}}>
                 <Icon name={G.tabPool} /> 
                 <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{photoStatus}</span>
                 <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
@@ -242,7 +242,7 @@ export default function Rootwork({ pose }) {
 
             <div className="field">
               <label>Expiration Date</label>
-              <input type="date" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--white)', fontFamily: 'var(--body-font)', borderRadius: '4px' }} />
+              <input type="date" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: 'var(--body-font)', borderRadius: '4px' }} />
             </div>
 
             <div className="field">

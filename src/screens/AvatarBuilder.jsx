@@ -28,7 +28,7 @@ export default function AvatarBuilder({ onComplete }) {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
-      <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3.5rem', textAlign: 'center', color: 'var(--parch)', marginBottom: '2rem' }}>
+      <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '3.5rem', textAlign: 'center', color: 'var(--rose)', marginBottom: '2rem' }}>
         Who enters the Lounge?
       </h2>
 
@@ -55,7 +55,7 @@ export default function AvatarBuilder({ onComplete }) {
             >
               <img src={av.img} alt={av.label} style={{ width: '120px', height: '160px', objectFit: 'cover' }} />
               <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', color: 'var(--crimson)', fontWeight: 'bold' }}>{av.label}</div>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', color: 'var(--rose)', fontWeight: 'bold' }}>{av.label}</div>
                 <div className="mt">{av.desc}</div>
               </div>
             </div>

@@ -280,13 +280,13 @@ export default function App() {
             <div className="mt">Adjust the chamber's atmosphere.</div>
             
             <div className="field" style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--gold)' }}>Font Size ({settings.fontSize}px)</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Font Size ({settings.fontSize}px)</label>
               <input type="range" min="12" max="32" value={settings.fontSize} 
                      onChange={e => setSettings({...settings, fontSize: e.target.value})} />
             </div>
             
             <div className="field" style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--gold)' }}>Typeface</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Typeface</label>
               <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
                 <option value="IM Fell English">IM Fell English</option>
                 <option value="Cormorant Garamond">Cormorant Garamond</option>
@@ -301,7 +301,7 @@ export default function App() {
             </div>
             
             <div className="field" style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--gold)' }}>Voice (TTS)</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Voice (TTS)</label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <input type="checkbox" checked={settings.tts} 
                      onChange={e => {
@@ -347,9 +347,9 @@ export default function App() {
             </div>
             
             <div className="field" style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--gold)' }}>Integrations</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Integrations</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
-                <label style={{ color: 'var(--crimson-b)', fontWeight: 'bold' }}>
+                <label style={{ color: 'var(--rose)', fontWeight: 'bold' }}>
                   <input type="checkbox" checked={settings.health}
                          onChange={async (e) => {
                            const checked = e.target.checked;
@@ -370,7 +370,7 @@ export default function App() {
                   </div>
                 )}
                 
-                <label style={{ color: 'var(--crimson-b)', fontWeight: 'bold', marginTop: '1rem' }}>
+                <label style={{ color: 'var(--rose)', fontWeight: 'bold', marginTop: '1rem' }}>
                   <input type="checkbox" checked={settings.cal}
                          onChange={e => setSettings({...settings, cal: e.target.checked})} /> Google Calendar
                 </label>
@@ -391,7 +391,7 @@ export default function App() {
             </div>
 
             <div className="field" style={{ marginBottom: '1.5rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--crimson-b)' }}>Danger Zone</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--rose)' }}>Danger Zone</label>
               
               <button onClick={async () => {
                 if (window.confirm("Are you sure you want to reset the First Inscription? This will take you back to the intake questionnaire.")) {

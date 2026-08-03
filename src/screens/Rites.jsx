@@ -212,7 +212,7 @@ export default function Rites({ pose }) {
         fontStyle: 'italic', 
         fontSize: '1.6rem',
         fontWeight: 'bold',
-        color: '#ffffff',
+        color: 'var(--rose)',
         textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 4px #000'
       }}>
         {getRitualDate()}
@@ -282,8 +282,8 @@ export default function Rites({ pose }) {
       {/* Keeper's Warning (Full Width Below) */}
       {conflicts.length > 0 && (
         <div className="card mt-4" style={{ background: 'var(--card-bg-alt, rgba(100,20,20,0.5))', borderColor: '#882222' }}>
-          <h3 style={{ color: '#ff8888' }}>Keeper's Warning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Keeper's Warning") }} /></h3>
-          <ul style={{ marginTop: '0.5rem', color: '#ffcccc', paddingLeft: '1.5rem' }}>
+          <h3 style={{ color: 'var(--rose)' }}>Keeper's Warning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Keeper's Warning") }} /></h3>
+          <ul style={{ marginTop: '0.5rem', color: 'var(--rose)', paddingLeft: '1.5rem' }}>
             {conflicts.map((c, idx) => (
               <li key={idx}>
                 {c} <span dangerouslySetInnerHTML={{ __html: speakerMarkup(c) }} style={{ marginLeft: '0.4rem', verticalAlign: 'middle' }} />

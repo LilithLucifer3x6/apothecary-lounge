@@ -63,7 +63,7 @@ export default function Grimoire({ pose }) {
     calDays.push(
       <div key={`day-${i}`} className={`cd ${isToday}`}>
         {i}
-        {hasRetie && <div className="ce" title="Root Weaving" style={{ color: 'var(--plum-b)', fontSize: '1.2rem' }}><Icon name="star-four" /></div>}
+        {hasRetie && <div className="ce" title="Root Weaving" style={{ color: 'var(--rose)', fontSize: '1.2rem' }}><Icon name="star-four" /></div>}
         {hasNails && <div className="ce" title="Talon Honing" style={{ color: 'var(--rose)', fontSize: '1.2rem' }}><Icon name="sparkle" /></div>}
       </div>
     );
