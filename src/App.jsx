@@ -38,7 +38,7 @@ function getRitualDate() {
 }
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('loading');
+  const [currentScreen, setCurrentScreen] = useState('splash');
   const [activeTab, setActiveTab] = useState('rites');
   const [showSettings, setShowSettings] = useState(false);
   const [dateStr, setDateStr] = useState(getRitualDate());
@@ -92,8 +92,8 @@ export default function App() {
       else window.speechSynthesis.onvoiceschanged = populateVoices;
     }
     
-    // Boot automatically
-    handleEnter();
+    // Set exterior background for splash
+    document.body.style.backgroundImage = `url('/assets/app_bg.jpg')`;
     
     // Sync settings with profile in background
     supabase.from('user_profile').select('*').maybeSingle().then(({ data: profile }) => {
@@ -202,13 +202,23 @@ export default function App() {
 
   return (
     <>
+      {currentScreen === 'splash' && (
+        <div id="s-splash" className="land">
+          <h1 style={{ textShadow: '0 0 20px rgba(0,0,0,0.8)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
+          <div className="tag" style={{ textShadow: '0 0 10px rgba(0,0,0,0.8)', color: 'var(--rose)', marginTop: '0.5rem', marginBottom: '2rem' }}>A sanctuary of self-care.</div>
+          <button onClick={handleEnter} className="btn plum" style={{ fontSize: '1.2rem', padding: '1rem 2rem' }}>
+            Approach the Cottage <Icon name="arrow-right" />
+          </button>
+        </div>
+      )}
+
       {currentScreen === 'loading' && (
         <div id="s-loading" className="land">
           <div className="tag" style={{ textShadow: '0 0 10px rgba(0,0,0,0.8)', color: 'var(--rose)' }}>Consulting the rites...</div>
         </div>
       )}
 
-      {(currentScreen !== 'app' || activeTab !== 'home') && currentScreen !== 'loading' && (
+      {(currentScreen !== 'app' || activeTab !== 'home') && currentScreen !== 'loading' && currentScreen !== 'splash' && (
         <div className="blur-overlay"></div>
       )}
 
