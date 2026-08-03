@@ -3,11 +3,14 @@ import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.js';
 import Icon from '../components/Icon.jsx';
 import { evaluateScryingPool, parseProductImage } from '../lib/ai-engine.js';
+import { getReadiness } from '../lib/health-connect.js';
 import VoiceInput from '../components/VoiceInput.jsx';
 
 export default function Scrying({ pose }) {
   const [inventory, setInventory] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [readiness, setReadiness] = useState(null);
+  const [healthEnabled, setHealthEnabled] = useState(false);
   const [scryInput, setScryInput] = useState('');
   const [scryStatus, setScryStatus] = useState('');
   const [scryResult, setScryResult] = useState('');
@@ -25,6 +28,16 @@ export default function Scrying({ pose }) {
       setProfile(userProfile);
     }
     fetchData();
+
+    const settingsStr = localStorage.getItem('app_settings');
+    const settings = settingsStr ? JSON.parse(settingsStr) : {};
+    
+    if (settings.health) {
+      setHealthEnabled(true);
+      getReadiness().then(res => {
+        if (res) setReadiness(res);
+      }).catch(console.error);
+    }
   }, []);
 
   const handleScry = async () => {
@@ -127,6 +140,30 @@ export default function Scrying({ pose }) {
 
   return (
     <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto' }}>
+      
+      {healthEnabled ? (
+        readiness ? (
+          <div className="card mt-4" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'var(--card3)', borderColor: 'var(--border)' }}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <div style={{ fontSize: '3rem', fontFamily: "'IM Fell English', serif", color: 'var(--rose)', minWidth: '40px', textAlign: 'center' }}>{readiness.score}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <div style={{ fontWeight: 'bold', color: 'var(--rose)' }}>Readiness: {readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
+              <div style={{ fontSize: '0.9rem', color: 'var(--rose)' }}>Data from Android Health Connect</div>
+            </div>
+          </div>
+        ) : (
+          <div className="card mt-4" style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)', background: 'var(--card3)' }}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            Divining readiness...
+          </div>
+        )
+      ) : (
+        <div className="card mt-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: 'var(--rose)', background: 'rgba(17,14,21,0.5)', borderStyle: 'dashed' }}>
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          Enable Health Connect in Settings to divine your physical readiness.
+        </div>
+      )}
+
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Echo</h3>

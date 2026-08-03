@@ -3,14 +3,10 @@ import { supabase } from '../lib/supabase.js';
 import { ic, G } from '../lib/icons.js';
 import { attachVoice } from '../lib/voice.js';
 import * as AI from '../lib/ai-service.js';
-import { getReadiness } from '../lib/health-connect.js';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
 
 export default function ShadowTome({ pose }) {
-  const [readiness, setReadiness] = useState(null);
-  const [healthEnabled, setHealthEnabled] = useState(false);
-  
   const [moodsList, setMoodsList] = useState([]);
   const [selectedMoods, setSelectedMoods] = useState(new Set());
   const [entryText, setEntryText] = useState('');
@@ -31,16 +27,6 @@ export default function ShadowTome({ pose }) {
   const breathCycleRef = useRef(null);
 
   useEffect(() => {
-    const settingsStr = localStorage.getItem('app_settings');
-    const settings = settingsStr ? JSON.parse(settingsStr) : {};
-    
-    if (settings.health) {
-      setHealthEnabled(true);
-      getReadiness().then(res => {
-        if (res) setReadiness(res);
-      }).catch(console.error);
-    }
-    
     AI.generateMoods().then(list => setMoodsList(list || [])).catch(console.error);
     loadHistory();
     
@@ -140,26 +126,6 @@ export default function ShadowTome({ pose }) {
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <h3>The Inner Sanctum</h3>
             <div className="note mb-4">"The ink is your own. Nothing written here is read by any other part of this place."</div>
-            
-            {healthEnabled ? (
-              readiness ? (
-                <div style={{ marginTop: '2.5rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1.5rem', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: '3rem', fontFamily: "'IM Fell English', serif", color: 'var(--rose)', minWidth: '40px', textAlign: 'center' }}>{readiness.score}</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                    <div style={{ fontWeight: 'bold', color: 'var(--rose)' }}>Readiness: {readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
-                    <div style={{ fontSize: '0.9rem', color: 'var(--rose)' }}>Data from Android Health Connect</div>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ marginTop: '2.5rem', padding: '1rem', background: 'var(--card3)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)' }}>
-                  Divining readiness...
-                </div>
-              )
-            ) : (
-              <div style={{ marginTop: '2.5rem', padding: '1rem', background: 'rgba(17,14,21,0.5)', border: '1px dashed var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: 'var(--rose)' }}>
-                Enable Health Connect in Settings to divine your physical readiness.
-              </div>
-            )}
             
             <div className="field" style={{ marginTop: '2.5rem' }}>
               <label>The Mood</label>
