@@ -190,13 +190,8 @@ export default function App() {
       case 'grim': return <div><Grimoire pose={pose} /></div>;
       case 'altars': return <div><Altars pose={pose} /></div>;
       case 'root': return <div><Rootwork pose={pose} /></div>;
-        {activeTab === 'pool' && <Scrying pose={TABS.find(t=>t.id==='pool').pose} />}
-        {activeTab === 'tome' && <ShadowTome pose={TABS.find(t=>t.id==='tome').pose} />}
-      </div>
-      </div>
-    </div>
-  );
-}
+      case 'pool': return <div><Scrying pose={pose} /></div>;
+      case 'tome': return <div><ShadowTome pose={pose} /></div>;
       default: return null;
     }
   };

@@ -214,7 +214,6 @@ export default function Grimoire({ pose }) {
         </div>
       </div>
 
-        </div>
       </div>
       </div>
     </div>

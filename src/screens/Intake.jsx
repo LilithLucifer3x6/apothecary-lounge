@@ -149,10 +149,6 @@ export default function Intake({ onComplete }) {
   const addRx = () => {
     setRxList([...rxList, { name: '', strength: '', zone: '', frequency: '' }]);
   };
-  
-  const addRx = () => {
-    setRxList([...rxList, { name: '', strength: '', zone: '', frequency: '' }]);
-  };
 
   const removeRx = (index) => {
     const newList = [...rxList];
@@ -174,10 +170,6 @@ export default function Intake({ onComplete }) {
     const newList = [...oralList];
     newList.splice(index, 1);
     setOralList(newList);
-  };
-  
-  const addOral = () => {
-    setOralList([...oralList, '']);
   };
 
   const addAlg = () => {
