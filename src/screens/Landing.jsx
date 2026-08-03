@@ -36,35 +36,6 @@ export default function Landing({ onProceed, onOpenAvatar }) {
       
       <div style={{ marginTop: '2rem' }}></div>
 
-      {avatarConfig && (
-        <div className="card" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '2rem', padding: '1.5rem', background: 'var(--card2)', border: '1px solid var(--border)' }}>
-          <img 
-            src={`/assets/avatar_${avatarConfig.avatarVibe}.jpg`} 
-            alt="Avatar" 
-            style={{ width: '120px', height: '160px', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }} 
-          />
-          <div style={{ flex: 1 }}>
-            <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontSize: '2.5rem', color: 'var(--rose)', margin: 0, lineHeight: 1.2 }}>
-              {avatarConfig.name || 'The Keeper'}
-            </h2>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.2rem', color: 'var(--ash)', fontStyle: 'italic' }}>
-              The {avatarConfig.avatarVibe.charAt(0).toUpperCase() + avatarConfig.avatarVibe.slice(1)}
-            </div>
-          </div>
-          {avatarConfig.familiar && avatarConfig.familiar !== 'none' && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <img 
-                src={`/assets/fam_${avatarConfig.familiar}.jpg`} 
-                alt="Familiar" 
-                style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '50%', border: '2px solid var(--border)', boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }} 
-              />
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", color: 'var(--ash)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                Familiar
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       {!hasProfile && (
         <button className="btn plum" onClick={() => onProceed(false)}>
