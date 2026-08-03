@@ -203,10 +203,12 @@ export default function App() {
   return (
     <>
       {currentScreen === 'splash' && (
-        <div id="s-splash" className="land" style={{ justifyContent: 'flex-start', paddingTop: '15vh' }}>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '5rem', fontWeight: 'bold', textShadow: '0 4px 20px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,1)', color: '#4a0012', margin: '0', padding: '0.2em' }}>Shadow & Sanctuary</h1>
-          <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.5rem', textShadow: '0 2px 10px rgba(0,0,0,0.9)', color: '#d41c3c', marginTop: '0.5rem', marginBottom: '20vh' }}>A sanctuary of self-care.</div>
-          <button onClick={handleEnter} className="btn" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.4rem', padding: '0.6rem 1.5rem', background: 'linear-gradient(180deg, #4a0012, #1a0204)', borderColor: '#8a0020' }}>
+        <div id="s-splash" className="land" style={{ justifyContent: 'space-between', padding: '10vh 2rem 5vh 2rem' }}>
+          <div style={{ textAlign: 'center', background: 'rgba(5, 3, 10, 0.65)', backdropFilter: 'blur(6px)', padding: '1.5rem 3rem', borderRadius: '16px', border: '1px solid rgba(212, 28, 60, 0.3)', boxShadow: '0 8px 32px rgba(0,0,0,0.8)' }}>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '4.5rem', fontWeight: 'bold', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: '#d41c3c', margin: '0' }}>Shadow & Sanctuary</h1>
+            <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: '#d41c3c', marginTop: '0.5rem' }}>A sanctuary of self-care.</div>
+          </div>
+          <button onClick={handleEnter} className="btn" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.2rem', padding: '0.4rem 1.5rem', background: 'rgba(5, 3, 10, 0.85)', borderColor: '#d41c3c', color: '#d41c3c', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginBottom: '3vh' }}>
             Approach the Cottage
           </button>
         </div>
