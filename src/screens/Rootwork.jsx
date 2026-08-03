@@ -123,6 +123,13 @@ export default function Rootwork({ pose }) {
     fetchItems();
   };
 
+  const handleBanishItem = async (id, name) => {
+    if (window.confirm(`Cast ${name} into the void? This cannot be undone.`)) {
+      await supabase.from('items').delete().eq('id', id);
+      fetchItems();
+    }
+  };
+
   const renderRow = (item) => {
     let statusPill = null;
     if (item.lifecycle_state === 'ebbing') {
@@ -143,8 +150,8 @@ export default function Rootwork({ pose }) {
           <div className="mt">{item.brand} &bull; {item.category}</div>
         </div>
         <div className="acts">
-          <button className="btn sm">Amend</button>
-          <button className="btn sm g">Banish</button>
+          <button className="btn sm" onClick={() => alert('Amending will be built soon.')}>Amend</button>
+          <button className="btn sm g" onClick={() => handleBanishItem(item.id, item.name)}>Banish</button>
         </div>
       </div>
     );
