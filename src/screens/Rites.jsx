@@ -214,11 +214,11 @@ export default function Rites({ pose }) {
         <h3>The Long Hours <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Long Hours') }} /></h3>
         <div className="mt mb-4" style={{ textAlign: 'center' }}>The Daily Schedule</div>
         
-        {renderScheduleStep('8:00 AM - The Awakening', 'Wake up and perform The Morning Invocation', 'var(--crimson-b)')}
-        {renderScheduleStep('The Morning Respite', '15-minute break. Hydrate (16oz water)', 'var(--rose)')}
-        {renderScheduleStep('The Midday Sustenance', '45-minute lunch break. Gentle Movement (Walk/Stretch)', 'var(--rose)')}
-        {renderScheduleStep('The Afternoon Respite', '15-minute break. Hydrate (16oz water)', 'var(--rose)')}
-        {renderScheduleStep('5:00 PM onwards - The Descent', 'Work ends. The Evening Invocation', 'var(--plum)')}
+        {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift before performing The Morning Invocation.', 'var(--crimson-b)')}
+        {renderScheduleStep('The Morning Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
+        {renderScheduleStep('The Midday Sustenance', 'A 45-minute pause for nourishment. Engage in gentle movement to stir stagnant energies.', 'var(--rose)')}
+        {renderScheduleStep('The Afternoon Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
+        {renderScheduleStep('The Descent', 'The day\'s labors conclude. Begin the grounding process to sever ties with the work.', 'var(--plum)')}
       </div>
 
       <div className="rites2">
