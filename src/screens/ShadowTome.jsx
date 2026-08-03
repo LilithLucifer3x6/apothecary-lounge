@@ -89,6 +89,13 @@ export default function ShadowTome({ pose }) {
     if (breathCycleRef.current) clearTimeout(breathCycleRef.current);
   };
 
+  const handleBanish = async (id) => {
+    if (window.confirm("Banish this inscription to the void? It cannot be recovered.")) {
+      await supabase.from('journal_entries').delete().eq('id', id);
+      loadHistory();
+    }
+  };
+
   const startMeditation = () => {
     if (isBreathing) return;
     setIsBreathing(true);
@@ -196,9 +203,21 @@ export default function ShadowTome({ pose }) {
               <div className="empty">No pages have been inscribed.</div>
             ) : (
               history.map(entry => (
-                <div key={entry.id || entry.created_at} className="card mb-4">
+                <div key={entry.id || entry.created_at} className="card mb-4" style={{ position: 'relative' }}>
                   <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-                  <div className="mt mb-2">{new Date(entry.created_at).toLocaleDateString()}</div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <div className="mt" style={{ margin: 0 }}>{new Date(entry.created_at).toLocaleDateString()}</div>
+                    <button 
+                      onClick={() => handleBanish(entry.id)} 
+                      className="btn sm" 
+                      style={{ background: 'transparent', border: '1px dashed rgba(212,28,60,0.4)', color: 'var(--dim)', fontSize: '0.7rem' }}
+                      title="Banish from the tome"
+                    >
+                      <Icon name="ph-trash" /> Banish
+                    </button>
+                  </div>
+
                   {entry.moods?.length > 0 && (
                     <div className="mb-2" style={{ color: 'var(--rose)', fontSize: '0.9rem' }}>
                       {entry.moods.join(' \u2022 ')}
