@@ -104,9 +104,14 @@ export default function Landing({ onProceed, onOpenAvatar }) {
       )}
 
       {!hasProfile && (
-        <button className="btn plum" onClick={() => onProceed(false)}>
-          <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
+          <button className="btn plum" onClick={onOpenAvatar}>
+            <Icon name="ph-user" /> Conjure Your Visage
+          </button>
+          <button className="btn" onClick={() => onProceed(false)}>
+            <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
+          </button>
+        </div>
       )}
     </div>
   );

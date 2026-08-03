@@ -38,8 +38,14 @@ function getRitualDate() {
 }
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState(() => sessionStorage.getItem('al_currentScreen') || 'splash');
-  const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('al_activeTab') || 'rites');
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    if (!localStorage.getItem('avatar_config')) return 'splash';
+    return sessionStorage.getItem('al_currentScreen') || 'splash';
+  });
+  const [activeTab, setActiveTab] = useState(() => {
+    if (!localStorage.getItem('avatar_config')) return 'rites';
+    return sessionStorage.getItem('al_activeTab') || 'rites';
+  });
   const [showSettings, setShowSettings] = useState(false);
   const [dateStr, setDateStr] = useState(getRitualDate());
   
