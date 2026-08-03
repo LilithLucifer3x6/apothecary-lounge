@@ -1,6 +1,8 @@
 import { go } from '../main.js';
+import { getAvatarConfig, generateAvatarSVG } from '../lib/avatar.js';
 
 export function render(container) {
+  const avatarConfig = getAvatarConfig();
   container.innerHTML = `
     <div class="scene">
       <svg viewBox="0 0 520 340" class="cottage-scene" preserveAspectRatio="xMidYMid meet">
@@ -51,22 +53,10 @@ export function render(container) {
         <rect x="50" y="220" width="60" height="40" fill="#111" />
         <circle cx="80" cy="210" r="10" fill="none" stroke="var(--silver)" stroke-width="2" />
         
-        <!-- Avatar Silhouette (Microlocs & Book) -->
-        <g transform="translate(240, 230)">
-          <!-- Body -->
-          <path d="M -15 40 C -15 10, 15 10, 15 40 Z" fill="var(--crimson-b)" />
-          <!-- Head -->
-          <circle cx="0" cy="0" r="10" fill="#3a251e" />
-          <!-- Microlocs -->
-          <path d="M -12 -5 Q 0 -15 12 -5 Q 15 10 8 15 Q 0 10 -8 15 Q -15 10 -12 -5" fill="#111" />
-          <!-- Book -->
-          <rect x="-8" y="15" width="16" height="12" fill="var(--parch)" rx="1"/>
+        <!-- Dynamic Avatar and Familiar -->
+        <g transform="translate(220, 200)">
+          ${generateAvatarSVG(avatarConfig, 0.4)}
         </g>
-        
-        <!-- Cat Familiar -->
-        <path d="M 320 280 Q 325 270 330 280 L 335 285 L 315 285 Z" fill="#111" />
-        <circle cx="321" cy="278" r="1" fill="var(--gold)" />
-        <circle cx="329" cy="278" r="1" fill="var(--gold)" />
         
         <!-- Candles -->
         <g id="candles">

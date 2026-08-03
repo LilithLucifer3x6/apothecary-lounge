@@ -3,6 +3,7 @@ import { go } from '../main.js';
 import { ic, G } from '../lib/icons.js';
 import { speakerMarkup } from '../lib/tts.js';
 import { attachVoice } from '../lib/voice.js';
+import { generateAvatarSVG } from '../lib/avatar.js';
 
 export function render(container) {
   container.innerHTML = `
@@ -90,62 +91,10 @@ export function render(container) {
     const garment = garmentSel.value;
     const familiar = familiarSel.value;
 
-    let hairSVG = '';
-    if (hair === 'shoulder') {
-      hairSVG = `<path d="M 45 40 Q 30 70 40 100 Q 50 110 50 80 Z M 105 40 Q 120 70 110 100 Q 100 110 100 80 Z" fill="#111" stroke="#222" stroke-width="2"/>`;
-    } else if (hair === 'waist') {
-      hairSVG = `<path d="M 45 40 Q 20 90 35 150 Q 50 140 50 80 Z M 105 40 Q 130 90 115 150 Q 100 140 100 80 Z" fill="#111" stroke="#222" stroke-width="2"/>`;
-    } else if (hair === 'buns') {
-      hairSVG = `<circle cx="45" cy="40" r="20" fill="#111" /><circle cx="105" cy="40" r="20" fill="#111" />`;
-    } else if (hair === 'updo') {
-      hairSVG = `<ellipse cx="75" cy="20" rx="30" ry="20" fill="#111" />`;
-    } else if (hair === 'short') {
-      hairSVG = `<path d="M 50 40 Q 75 10 100 40 Q 75 25 50 40 Z" fill="#111" stroke="#222" stroke-width="2" />`;
-    } else if (hair === 'wrapped') {
-      hairSVG = `<path d="M 40 50 Q 75 0 110 50 Z" fill="${garment}" />`;
-    }
-
-    let familiarSVG = '';
-    if (familiar === 'cat') {
-      familiarSVG = `<path d="M 120 160 Q 125 140 135 150 L 140 160 Z" fill="#111"/><circle cx="128" cy="152" r="2" fill="var(--gold)"/>`;
-    } else if (familiar === 'raven') {
-      familiarSVG = `<path d="M 120 150 L 135 140 L 140 160 Z" fill="#111"/>`;
-    } else if (familiar === 'toad') {
-      familiarSVG = `<ellipse cx="130" cy="170" rx="10" ry="8" fill="#3d4438"/>`;
-    } else if (familiar === 'moth') {
-      familiarSVG = `<path d="M 120 140 L 130 130 L 140 140 L 130 150 Z" fill="var(--silver)"/>`;
-    } else if (familiar === 'snake') {
-      familiarSVG = `<path d="M 120 170 Q 130 160 140 170 Q 135 180 120 175" fill="#3d4438" stroke="var(--gold)" stroke-width="1"/>`;
-    }
-
     preview.innerHTML = `
       <!-- Background / Base -->
       <rect width="150" height="195" fill="var(--card2)" />
-      
-      <!-- Hair Back -->
-      ${hairSVG}
-
-      <!-- Body / Garment -->
-      <path d="M 40 100 C 40 90, 110 90, 110 100 L 140 195 L 10 195 Z" fill="${garment}" />
-      
-      <!-- Head / Skin -->
-      <circle cx="75" cy="65" r="30" fill="${skin}" />
-      <path d="M 65 90 L 75 110 L 85 90 Z" fill="${skin}" /> <!-- Neck -->
-
-      <!-- Eyes -->
-      <circle cx="62" cy="60" r="4" fill="${eyes}" />
-      <circle cx="88" cy="60" r="4" fill="${eyes}" />
-      <!-- Slit pupils for default red cat eyes, else round -->
-      ${eyes === '#c4243a' ? `
-        <ellipse cx="62" cy="60" rx="1" ry="3" fill="#000" />
-        <ellipse cx="88" cy="60" rx="1" ry="3" fill="#000" />
-      ` : `
-        <circle cx="62" cy="60" r="2" fill="#000" />
-        <circle cx="88" cy="60" r="2" fill="#000" />
-      `}
-      
-      <!-- Familiar -->
-      ${familiarSVG}
+      ${generateAvatarSVG({ skin, hair, eyes, garment, familiar }, 1)}
     `;
   }
 

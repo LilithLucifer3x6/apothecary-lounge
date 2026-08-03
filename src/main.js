@@ -174,10 +174,16 @@ async function start() {
   const { data: profile, error } = await supabase.from('user_profile').select('*').maybeSingle();
   if (error) console.error("Profile fetch error:", error);
   
-  if (!profile) {
+  const avatarConfig = localStorage.getItem('avatar_config');
+  
+  if (!profile && !avatarConfig) {
     const avContainer = document.getElementById('s-av');
     renderAvatar(avContainer);
     go('s-av');
+  } else if (!profile && avatarConfig) {
+    const landContainer = document.getElementById('s-land');
+    renderLanding(landContainer);
+    go('s-land');
   } else if (!profile.intake_completed) {
     const insContainer = document.getElementById('s-ins');
     renderIntake(insContainer);
