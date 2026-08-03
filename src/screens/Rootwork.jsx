@@ -183,7 +183,7 @@ export default function Rootwork({ pose }) {
               activeItems.forEach(item => {
                 if (item.price && item.pao_months) {
                   // Rough estimate: Price / PAO months
-                  const price = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+                  const price = parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
                   const months = parseInt(item.pao_months, 10) || 1;
                   totalMonthly += (price / months);
                 }

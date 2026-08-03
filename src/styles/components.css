@@ -6,7 +6,7 @@
   background: linear-gradient(var(--crimson), var(--crimson-b));
   color: var(--white);
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.8rem 1.2rem;
   font-family: 'Cormorant Garamond', serif;
   font-size: 1rem;
   border-radius: 4px;
@@ -15,8 +15,8 @@
   text-decoration: none;
 }
 .btn:hover { opacity: 0.9; }
-.btn.g { background: transparent; border: 1px solid var(--crimson); }
-.btn.sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; }
+.btn.g { background: transparent; border: 2px solid var(--crimson-b); color: var(--crimson-b); font-weight: bold; }
+.btn.sm { padding: 0.4rem 0.8rem; font-size: 1rem; }
 .btn.full { width: 100%; }
 .btn.plum { background: linear-gradient(var(--plum), var(--plum-b)); }
 
@@ -24,13 +24,13 @@
 .topbar {
   position: sticky;
   top: 0;
-  background: linear-gradient(to bottom, var(--card), var(--bg));
-  border-bottom: 1px solid var(--crimson);
+  background: rgba(255,255,255,0.9);
+  border-bottom: 1px solid var(--crimson-b);
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
+  padding: 0.8rem 1rem;
 }
 .brand {
   display: flex;
@@ -48,23 +48,25 @@
 }
 .tb {
   padding: 0.75rem 1rem;
-  color: var(--ash);
+  color: #000000;
   cursor: pointer;
   white-space: nowrap;
   font-family: 'Cormorant Garamond', serif;
+  background: rgba(255,255,255,0.7);
+  font-weight: 700;
 }
 .tb.on {
-  background: linear-gradient(to top, var(--plum), transparent);
-  border-bottom: 2px solid var(--gold);
-  color: var(--parch);
+  background: var(--crimson-b);
+  border-bottom: 2px solid var(--crimson-b);
+  color: #ffffff;
 }
 
 /* Steps */
-.step { display: flex; align-items: flex-start; padding: 1rem 0; border-bottom: 1px solid var(--border); }
+.step { display: flex; align-items: flex-start; padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
 .step .body { flex: 1; margin-left: 1rem; }
-.step .nm { font-family: 'Cormorant Garamond', serif; font-size: 1.125rem; color: var(--parch); }
-.step .mt { font-size: 0.875rem; color: var(--ash); }
-.step .rx { font-family: 'IM Fell English', serif; color: var(--rose); font-style: italic; }
+.step .nm { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--crimson-b); font-weight: bold; }
+.step .mt { font-size: 1rem; color: #000000; margin-top: 0.25rem; }
+.step .rx { font-family: 'IM Fell English', serif; color: var(--plum-b); font-style: italic; }
 .step .aid { display: inline-block; background: var(--plum); color: var(--white); font-size: 0.75rem; padding: 0.125rem 0.375rem; border-radius: 12px; margin-left: 0.5rem; }
 
 /* Opt */
@@ -75,8 +77,8 @@
 .sw.on .sl { left: 21px; background: var(--white); }
 
 /* Rows */
-.row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
-.acts { display: flex; gap: 0.5rem; }
+.row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--border); gap: 1rem; }
+.acts { display: flex; gap: 1rem; }
 .act { background: var(--bg); border: 1px solid var(--border); color: var(--ash); padding: 0.25rem; cursor: pointer; border-radius: 4px; }
 .act.pri { border-color: var(--crimson); color: var(--crimson-b); }
 

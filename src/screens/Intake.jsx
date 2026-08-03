@@ -468,7 +468,7 @@ export default function Intake({ onComplete }) {
           <button 
             className="btn" 
             onClick={() => {
-              if (currentStep === 5 && selectedConcerns.includes('relaxation')) {
+              if (currentStep === 3 && selectedConcerns.includes('relaxation')) {
                 setCurrentStep(1);
               } else {
                 setCurrentStep(prev => Math.max(1, prev - 1));
@@ -503,7 +503,7 @@ export default function Intake({ onComplete }) {
             style={{ opacity: canProceed() ? 1 : 0.5, cursor: canProceed() ? 'pointer' : 'not-allowed' }}
             onClick={() => {
               if (currentStep === 1 && selectedConcerns.includes('relaxation')) {
-                setCurrentStep(5); // Skip clinical questions, go to Allergies
+                setCurrentStep(3); // Skip conditions, go to Rx
               } else if (currentStep < totalSteps) {
                 setCurrentStep(prev => prev + 1);
               } else {

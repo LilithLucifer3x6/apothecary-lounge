@@ -1,16 +1,16 @@
 :root {
   --bg: #0b090e; 
-  --card: #17131c; 
-  --card2: #110e15; 
-  --border: #332b3a;
-  --crimson: #5a0a10; 
-  --crimson-b: #c4243a; 
+  --card: #f9f6f0; 
+  --card2: #efe9e0; 
+  --border: #d4ccb8;
+  --crimson: #8b0000; 
+  --crimson-b: #5a0a10; 
   --plum: #3a1148; 
-  --plum-b: #5e2a75;
+  --plum-b: #280a33;
   --rose: #b08494; 
-  --parch: #e6dcc3; 
-  --silver: #b9bcc4; 
-  --gold: #a9adb8;
+  --parch: #0b090e; 
+  --silver: #2a2a2a; 
+  --gold: #806015;
   --moss: #3d4438; 
   --ink: #0a0810;
   --white: #efe9f0; 
@@ -26,7 +26,7 @@
 
 body {
   background-color: var(--bg);
-  color: var(--parch);
+  color: #0b090e;
   font-family: system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -38,9 +38,9 @@ body {
 
 h1, h2, h3 { font-weight: normal; }
 
-h1 { font-family: 'Pinyon Script', cursive; font-size: 2.5rem; color: var(--gold); }
-h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; color: var(--silver); }
-h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--rose); }
+h1 { font-family: 'Pinyon Script', cursive; font-size: 2.8rem; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 4px #000; }
+h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: var(--crimson-b); font-weight: 700; text-shadow: 0 0 5px rgba(255,255,255,0.9); }
+h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: #000000; font-weight: 700; text-shadow: 0 0 5px rgba(255,255,255,0.9); }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -88,11 +88,12 @@ h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--
 /* Card */
 .card {
   background: linear-gradient(to bottom, var(--card), var(--card2));
-  border: 1px solid var(--crimson);
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.3);
+  border: 1px solid var(--gold);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
   position: relative;
-  padding: 1.5rem;
-  border-radius: 4px;
+  padding: 2.5rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2.5rem;
 }
 .corner { position: absolute; width: 10px; height: 10px; border: 1px solid var(--gold); }
 .corner.tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }

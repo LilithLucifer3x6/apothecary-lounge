@@ -361,12 +361,24 @@ export default function App() {
 
             <div className="field" style={{ marginBottom: '1.5rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--crimson-b)' }}>Danger Zone</label>
+              
+              <button onClick={async () => {
+                if (window.confirm("Are you sure you want to reset the First Inscription? This will take you back to the intake questionnaire.")) {
+                  const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
+                  if (profile) {
+                    await supabase.from('user_profile').update({ intake_completed: false }).eq('id', profile.id);
+                  }
+                  setShowSettings(false);
+                  setCurrentScreen('intake');
+                }
+              }} className="btn g" style={{ width: '100%', marginBottom: '0.5rem' }}>Reset First Inscription</button>
+
               <button onClick={() => {
                 if (window.confirm("Are you sure you want to completely erase all local settings, saved routines, and Supabase data? This cannot be undone.")) {
                   localStorage.clear();
                   window.location.reload();
                 }
-              }} className="btn" style={{ background: 'var(--card)', borderColor: 'var(--crimson-b)', color: 'var(--crimson-b)', width: '100%' }}>Reset Entire App Data</button>
+              }} className="btn g" style={{ width: '100%' }}>Reset Entire App Data</button>
             </div>
             
             <button onClick={() => saveSettings(settings)} className="btn full plum" style={{ marginTop: '2rem', padding: '0.8rem' }}>Save Settings</button>
