@@ -147,8 +147,8 @@ export default function Grimoire({ pose }) {
   ];
 
   return (
-    <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto' }}>
-      <div className="grim-grid mt-2">
+    <div style={{ padding: '1rem', maxWidth: '1100px', margin: '0 auto' }}>
+      <div className="grim-layout mt-2">
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
@@ -170,48 +170,6 @@ export default function Grimoire({ pose }) {
             </div>
           </div>
         )}
-      </div>
-
-      <div className="card mt-4">
-        <div className="corner tl"></div><div className="corner tr"></div>
-        <div className="corner bl"></div><div className="corner br"></div>
-        <h3>
-          The Weekly Wheel{' '}
-          <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Weekly Wheel') }} />
-        </h3>
-        <div className="mt mb-4">Rhythms and cycles.</div>
-        
-        <div className="wheel-container">
-          <div className="wheel">
-            {wheelDays.map(day => {
-              const isFriday = day.num === 5;
-              const isSunday = day.num === 0;
-              const hasIso = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
-              const hasDrysol = profile?.intake_answers?.rxList?.some(r => r.name.toLowerCase().includes('drysol'));
-              
-              return (
-                <div key={day.name} className="d">
-                  <div className="dn">{day.name}</div>
-                  <div className="tg" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
-                    {hasIso && (
-                      <span className="pill" style={{ color: 'var(--parch)' }}>Isotretinoin 40/80mg</span>
-                    )}
-                    {isFriday && (
-                      <>
-                        <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Methotrexate 15mg</span>
-                        <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Wegovy 2.4mg</span>
-                        <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Enbrel</span>
-                      </>
-                    )}
-                    {hasDrysol && (
-                      <span className="pill" style={{ color: 'var(--rose)', borderColor: 'var(--rose)' }}>Drysol (Nightly)</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
       </div>
 
         <div className="card mt-4" style={{ alignSelf: 'flex-start' }}>
@@ -274,6 +232,48 @@ export default function Grimoire({ pose }) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="card" style={{ marginTop: 0, marginBottom: '1.5rem' }}>
+          <div className="corner tl"></div><div className="corner tr"></div>
+          <div className="corner bl"></div><div className="corner br"></div>
+          <h3>
+            The Weekly Wheel{' '}
+            <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Weekly Wheel') }} />
+          </h3>
+          <div className="mt mb-4">Rhythms and cycles.</div>
+          
+          <div className="wheel-container">
+            <div className="wheel">
+              {wheelDays.map(day => {
+                const isFriday = day.num === 5;
+                const isSunday = day.num === 0;
+                const hasIso = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
+                const hasDrysol = profile?.intake_answers?.rxList?.some(r => r.name.toLowerCase().includes('drysol'));
+                
+                return (
+                  <div key={day.name} className="d">
+                    <div className="dn">{day.name}</div>
+                    <div className="tg" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
+                      {hasIso && (
+                        <span className="pill" style={{ color: 'var(--parch)' }}>Isotretinoin 40/80mg</span>
+                      )}
+                      {isFriday && (
+                        <>
+                          <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Methotrexate 15mg</span>
+                          <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Wegovy 2.4mg</span>
+                          <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Enbrel</span>
+                        </>
+                      )}
+                      {hasDrysol && (
+                        <span className="pill" style={{ color: 'var(--rose)', borderColor: 'var(--rose)' }}>Drysol (Nightly)</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
         <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div>
         <div className="corner bl"></div><div className="corner br"></div>
