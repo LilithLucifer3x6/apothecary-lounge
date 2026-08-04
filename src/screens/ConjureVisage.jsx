@@ -43,7 +43,7 @@ export default function ConjureVisage({ onComplete }) {
         <h3 style={{ color: 'var(--rose)' }}>The Keeper's Form</h3>
         <div className="mt mb-4" style={{ color: 'var(--rose)' }}>Select the visage that best reflects your practice.</div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '0.8rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '1rem' }}>
           {avatars.map(av => (
             <div 
               key={av.id}
@@ -63,9 +63,9 @@ export default function ConjureVisage({ onComplete }) {
                 textAlign: 'center'
               }}
             >
-              <img src={av.img} alt={av.label} style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginBottom: '0.5rem' }} />
+              <img src={av.img} alt={av.label} style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', marginBottom: '0.5rem' }} />
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{ fontSize: '0.9rem', color: 'var(--rose)', lineHeight: '1.2' }}>{av.label}</div>
+                <div style={{ fontSize: '1rem', color: 'var(--rose)', lineHeight: '1.2' }}>{av.label}</div>
               </div>
             </div>
           ))}
@@ -84,7 +84,7 @@ export default function ConjureVisage({ onComplete }) {
 
         <h3 style={{ marginTop: '2rem', color: 'var(--rose)' }}>The Familiar</h3>
         <div className="mt mb-4" style={{ color: 'var(--rose)' }}>Select a companion to share your sanctuary.</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '0.8rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '1rem' }}>
           {familiars.map(f => (
             <div 
               key={f.id}
@@ -102,8 +102,8 @@ export default function ConjureVisage({ onComplete }) {
                 padding: '0.5rem'
               }}
             >
-              <img src={f.img} alt={f.label} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', marginBottom: '0.4rem' }} />
-              <div style={{ textAlign: 'center', color: 'var(--rose)', fontSize: '0.8rem', lineHeight: '1.2' }}>
+              <img src={f.img} alt={f.label} style={{ width: '75px', height: '75px', borderRadius: '50%', objectFit: 'cover', marginBottom: '0.5rem' }} />
+              <div style={{ textAlign: 'center', color: 'var(--rose)', fontSize: '0.9rem', lineHeight: '1.2' }}>
                 {f.label}
               </div>
             </div>
