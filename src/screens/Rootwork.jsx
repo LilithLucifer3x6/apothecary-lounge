@@ -63,9 +63,11 @@ export default function Rootwork({ pose }) {
     fetchItems();
   }, []);
 
+  const waning = items.filter(i => i.lifecycle_state === 'waning');
   const ebbing = items.filter(i => i.lifecycle_state === 'ebbing' || i.lifecycle_state === 'hollow');
-  const apothecary = items.filter(i => i.type === 'product' && !['ebbing', 'hollow', 'banished'].includes(i.lifecycle_state));
-  const arsenal = items.filter(i => i.type === 'tool' && i.lifecycle_state !== 'banished');
+  const banished = items.filter(i => i.lifecycle_state === 'banished');
+  const apothecary = items.filter(i => i.type === 'product' && !['ebbing', 'hollow', 'banished', 'waning'].includes(i.lifecycle_state));
+  const arsenal = items.filter(i => i.type === 'tool' && !['ebbing', 'hollow', 'banished', 'waning'].includes(i.lifecycle_state));
 
   const handlePhotoUpload = async (e) => {
     const file = e.target.files[0];
@@ -395,15 +397,15 @@ export default function Rootwork({ pose }) {
               placeholder="Or inscribe the formula's true name..."
               value={echoInput}
               onChange={(e) => setEchoInput(e.target.value)}
-              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}
+              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1.1rem' }}
             />
           </div>
           <button className="btn plum" onClick={handleEchoScry} style={{ minWidth: '120px' }}>Divine Synergies</button>
         </div>
-        <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'normal' }}>
+        <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', }}>
           {echoStatus}
         </div>
-        <div style={{ marginTop: '1rem', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
+        <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
           {echoResult}
         </div>
       </div>
@@ -424,7 +426,7 @@ export default function Rootwork({ pose }) {
         <h3>The Silver Toll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Silver Toll") }} /></h3>
         <div className="mt mb-4">The material cost of your active rituals, calculated by the waning of your provisions.</div>
         <div>
-          <div style={{ fontSize: '2rem', fontFamily: "'Allura', cursive", color: 'var(--rose)' }}>
+          <div style={{ fontSize: '2rem', color: 'var(--rose)' }}>
             ${(() => {
               const { amItems, pmItems } = buildRoutines(items, {}, {});
               const activeIds = new Set([...amItems.map(i=>i.id), ...pmItems.map(i=>i.id)]);
@@ -504,8 +506,8 @@ export default function Rootwork({ pose }) {
 
             {modalState === 'confirm' && (
               <div style={{textAlign: 'center', padding: '1rem'}}>
-                <div style={{color: 'var(--rose)', fontStyle: 'italic', marginBottom: '1rem'}}>I divined:</div>
-                <h2 style={{fontFamily: "'Cormorant Garamond', serif", color: 'var(--rose)', marginBottom: '0.5rem'}}>
+                <div style={{color: 'var(--rose)', marginBottom: '1rem'}}>I divined:</div>
+                <h2 style={{color: 'var(--rose)', marginBottom: '0.5rem'}}>
                   {addForm.brand ? `${addForm.brand} ` : ''}{addForm.name}
                 </h2>
                 <div style={{color: 'var(--dim)', marginBottom: '2rem'}}>{addForm.category}</div>
@@ -542,7 +544,7 @@ export default function Rootwork({ pose }) {
 
                 <div className="field">
                   <label style={{color: 'var(--rose)'}}>Expiration Date</label>
-                  <input type="date" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: 'var(--body-font)', borderRadius: '4px' }} />
+                  <input type="date" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }} />
                 </div>
 
                 <div className="field">
@@ -568,7 +570,7 @@ export default function Rootwork({ pose }) {
 
                 <div className="field">
                   <label style={{color: 'var(--rose)'}}>Price (For The Silver Toll)</label>
-                  <input type="number" step="0.01" placeholder="0.00" value={addForm.price} onChange={e => setAddForm({...addForm, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: 'var(--body-font)', borderRadius: '4px' }} />
+                  <input type="number" step="0.01" placeholder="0.00" value={addForm.price} onChange={e => setAddForm({...addForm, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }} />
                 </div>
 
                 <div className="field">

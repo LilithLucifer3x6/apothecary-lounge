@@ -101,6 +101,24 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
       isAm = false; // Drysol at bedtime only
     }
 
+    // Mask scheduling logic based on time availability
+    if (cat.includes('mask')) {
+      const requiresRinse = item.behavior_flags?.requires_rinse;
+      if (requiresRinse) {
+        // Rinse-off masks require more time, routed to weekends
+        if (!isWeekend) {
+          isAm = false;
+          isPm = false;
+        }
+      } else {
+        // Leave-on masks are scheduled for the rest of the week
+        if (isWeekend) {
+          isAm = false;
+          isPm = false;
+        }
+      }
+    }
+
     // Wearables adaptation: 
     // Poor sleep (under 6 hours) -> De-puffing eye products in AM
     if (sleepDuration < 6 && (cat.includes('eye') && cat.includes('de-puff'))) {

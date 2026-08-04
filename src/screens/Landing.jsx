@@ -46,7 +46,7 @@ export default function Landing({ onProceed, onOpenAvatar }) {
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           </div>
-          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.6rem', color: 'var(--gold)', fontStyle: 'italic', textShadow: '0 2px 5px rgba(0,0,0,0.9)' }}>
+          <div style={{ fontSize: '1.6rem', color: 'var(--gold)', textShadow: '0 2px 5px rgba(0,0,0,0.9)' }}>
             Welcome back, {avatarConfig.name}.
           </div>
         </div>

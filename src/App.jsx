@@ -48,7 +48,6 @@ export default function App() {
   // Settings state
   const [settings, setSettings] = useState({
     fontSize: '16',
-    fontFamily: 'Lora',
     tts: false,
     health: false,
     cal: false,
@@ -226,10 +225,10 @@ export default function App() {
       {currentScreen === 'splash' && (
         <div id="s-splash" className="land" style={{ justifyContent: 'center', padding: '10vh 2rem 5vh 2rem', height: '100vh', overflow: 'hidden' }}>
           <div style={{ textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "var(--ff)", fontSize: '10vw', fontWeight: 'normal', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
-            <div className="tag" style={{ fontFamily: "var(--ff)", fontStyle: 'italic', fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--rose)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '1rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
+            <h1 style={{ fontSize: '10vw', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
+            <div className="tag" style={{ fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--rose)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '1rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
           </div>
-          <button onClick={handleEnter} className="btn" style={{ fontFamily: "var(--ff)", fontStyle: 'italic', fontSize: '1.3rem', padding: '0.8rem 1.5rem', background: 'var(--card2)', borderColor: 'var(--rose)', color: 'var(--rose)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginTop: '4vh', width: '250px', whiteSpace: 'normal', lineHeight: '1.2' }}>
+          <button onClick={handleEnter} className="btn" style={{ fontSize: '1.3rem', padding: '0.8rem 1.5rem', background: 'var(--card2)', borderColor: 'var(--rose)', color: 'var(--rose)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginTop: '4vh', width: '250px', whiteSpace: 'normal', lineHeight: '1.2' }}>
             Enter the Sanctuary
           </button>
         </div>
@@ -387,7 +386,7 @@ export default function App() {
                 <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Integrations & Voice</h3>
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'normal' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', }}>
                     <input type="checkbox" checked={settings.tts} 
                          onChange={e => {
                            setSettings({...settings, tts: e.target.checked});
@@ -433,7 +432,7 @@ export default function App() {
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
-                    <label style={{ color: 'var(--crimson)', fontWeight: 'normal' }}>
+                    <label style={{ color: 'var(--crimson)', }}>
                       <input type="checkbox" checked={settings.health}
                              onChange={async (e) => {
                                const checked = e.target.checked;
@@ -453,7 +452,7 @@ export default function App() {
                       </div>
                     )}
                     
-                    <label style={{ color: 'var(--crimson)', fontWeight: 'normal', marginTop: '1rem' }}>
+                    <label style={{ color: 'var(--crimson)', marginTop: '1rem' }}>
                       <input type="checkbox" checked={settings.cal}
                              onChange={e => setSettings({...settings, cal: e.target.checked})} /> Google Calendar
                     </label>

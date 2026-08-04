@@ -114,8 +114,7 @@ export default function Grimoire({ pose }) {
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                fontFamily: 'var(--ff)'
-              }}>
+                }}>
                 {new Date(ev.start.dateTime || ev.start.date).toLocaleTimeString([], {hour: 'numeric', minute:'2-digit'})} - {ev.summary}
               </div>
             ))}
@@ -244,6 +243,7 @@ export default function Grimoire({ pose }) {
             <div className="wheel">
               {wheelDays.map(day => {
                 const isFriday = day.num === 5;
+                const isSaturday = day.num === 6;
                 const isSunday = day.num === 0;
                 const hasIso = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
                 const hasDrysol = profile?.intake_answers?.rxList?.some(r => r.name.toLowerCase().includes('drysol'));
@@ -265,6 +265,7 @@ export default function Grimoire({ pose }) {
                       {hasDrysol && (
                         <span className="pill" style={{ color: 'var(--rose)', borderColor: 'var(--rose)' }}>Drysol (Nightly)</span>
                       )}
+
                     </div>
                   </div>
                 );
@@ -282,7 +283,7 @@ export default function Grimoire({ pose }) {
         </h3>
         <div className="mt mb-4">The long count.</div>
         
-        <h2 style={{ fontFamily: "'Allura', cursive", fontSize: '2.5rem', color: 'var(--rose)', textAlign: 'center', margin: '1rem 0' }}>
+        <h2 style={{ fontSize: '2.5rem', color: 'var(--rose)', textAlign: 'center', margin: '1rem 0' }}>
           {new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}
         </h2>
         

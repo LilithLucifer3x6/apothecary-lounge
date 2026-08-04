@@ -215,9 +215,10 @@ export default function Rites({ pose }) {
           />
         )}
         <div style={{ flex: 1 }}>
-          <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.4rem' }}>
+            <span style={{ color: 'var(--silver)' }}><Icon name={item.glyph || 'plant'} /></span>
             {displayName} 
-            <span style={{ marginLeft: '0.4rem' }} dangerouslySetInnerHTML={{ __html: speakerMarkup(displayName) }} />
+            <span dangerouslySetInnerHTML={{ __html: speakerMarkup(displayName) }} />
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
           </div>
           {item.isInjected ? (
@@ -235,10 +236,7 @@ export default function Rites({ pose }) {
       <div style={{ 
         textAlign: 'center', 
         marginBottom: '2rem', 
-        fontFamily: "'Cormorant Garamond', serif", 
-        fontStyle: 'italic', 
         fontSize: '1.6rem',
-        fontWeight: 'normal',
         color: 'var(--rose)',
         textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 4px #000'
       }}>

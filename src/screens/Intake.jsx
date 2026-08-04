@@ -196,7 +196,7 @@ export default function Intake({ onComplete }) {
       <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
       
       <div style={{ flexShrink: 0 }}>
-        <h2 style={{ textAlign: 'center', fontFamily: "'Allura', cursive", fontSize: '2.5rem', color: 'var(--rose)' }}>
+        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'var(--rose)' }}>
           <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
         </h2>
         
@@ -239,7 +239,6 @@ export default function Intake({ onComplete }) {
               marginBottom: '1rem', 
               background: 'rgba(0,0,0,0.1)', 
               borderRadius: '4px', 
-              fontFamily: "'Cormorant Garamond', serif", 
               fontSize: '1.1rem', 
               lineHeight: '1.5' 
             }}
@@ -361,7 +360,7 @@ export default function Intake({ onComplete }) {
                   {rxList.map((rx, i) => (
                     <div key={i} style={{ borderLeft: '2px solid var(--gold)', paddingLeft: '1rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <span style={{ color: 'var(--rose)', fontWeight: 'normal' }}>Prescription {i + 1}</span>
+                        <span style={{ color: 'var(--rose)', }}>Prescription {i + 1}</span>
                         <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Shatter</button>
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -486,7 +485,7 @@ export default function Intake({ onComplete }) {
 
           {currentStep === 7 && (
             <div className="ins-step" style={{ textAlign: 'center', margin: 'auto' }}>
-              <h3 style={{ fontFamily: "'Allura', cursive", fontSize: '3rem', color: 'var(--rose)' }}>The First Inscription is sealed</h3>
+              <h3 style={{ fontSize: '3rem', color: 'var(--rose)' }}>The First Inscription is sealed</h3>
               <div className="mt" style={{ fontSize: '1.2rem', marginTop: '2rem' }}>Your chamber awaits.</div>
             </div>
           )}

@@ -306,7 +306,7 @@ export default function ShadowTome({ pose }) {
                 placeholder="Etch your reflections..."
                 value={entryText}
                 onChange={(e) => setEntryText(e.target.value)}
-                style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}
+                style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1.1rem' }}
               />
             </div>
             
@@ -342,7 +342,7 @@ export default function ShadowTome({ pose }) {
                       {entry.moods.join(' \u2022 ')}
                     </div>
                   )}
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
+                  <div style={{ fontSize: '1.1rem', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
                     {entry.body_text}
                   </div>
                 </div>
@@ -416,7 +416,7 @@ export default function ShadowTome({ pose }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', borderTop: '1px dashed var(--border)', paddingTop: '1rem' }}>
               <div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--dim)' }}>The Harvest</div>
-                <div style={{ fontSize: '1.5rem', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontWeight: 'normal' }}>{thcTotal}mg</div>
+                <div style={{ fontSize: '1.5rem', color: 'var(--rose)', }}>{thcTotal}mg</div>
               </div>
               <button className="btn" onClick={appendThcNote} style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>
                 Etch into Ledger
@@ -442,7 +442,7 @@ export default function ShadowTome({ pose }) {
                   ...breathCircle 
                 }}
               ></div>
-              <div id="breath-inst" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.2rem', color: 'var(--rose)', height: '1.5rem', textAlign: 'center' }}>
+              <div id="breath-inst" style={{ fontSize: '1.2rem', color: 'var(--rose)', height: '1.5rem', textAlign: 'center' }}>
                 {breathInst}
               </div>
               <button id="btn-breath" className="btn plum" onClick={startMeditation} disabled={isBreathing} style={{ width: '100%' }}>
@@ -495,7 +495,7 @@ export default function ShadowTome({ pose }) {
                   </div>
                 )}
                 
-                {teaImages.length > 0 && <div style={{textAlign: 'center', color: 'var(--rose)', fontStyle: 'italic'}}>{teaStatus}</div>}
+                {teaImages.length > 0 && <div style={{textAlign: 'center', color: 'var(--rose)', }}>{teaStatus}</div>}
 
                 <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
                   <button className="btn" onClick={closeTeaModal}>Abandon</button>
@@ -508,8 +508,8 @@ export default function ShadowTome({ pose }) {
 
             {teaModalState === 'confirm' && (
               <div style={{textAlign: 'center', padding: '1rem'}}>
-                <div style={{color: 'var(--rose)', fontStyle: 'italic', marginBottom: '1rem'}}>I divined:</div>
-                <h2 style={{fontFamily: "'Cormorant Garamond', serif", color: 'var(--rose)', marginBottom: '0.5rem'}}>
+                <div style={{color: 'var(--rose)', marginBottom: '1rem'}}>I divined:</div>
+                <h2 style={{color: 'var(--rose)', marginBottom: '0.5rem'}}>
                   {teaForm.brand ? `${teaForm.brand} ` : ''}{teaForm.name}
                 </h2>
                 <div style={{color: 'var(--dim)', marginBottom: '1rem'}}>

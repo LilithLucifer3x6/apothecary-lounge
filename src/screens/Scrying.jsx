@@ -109,29 +109,24 @@ export default function Scrying({ pose }) {
   const localBanished = banishedItems.some(i => i.name.toLowerCase().includes('lavender')) ? banishedItems : [...banishedItems, { name: 'Lavender', brand: 'Universal', lifecycle_state: 'banished'}];
 
   return (
-    <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto' }}>
-      <div className="rw-grid">
-        <div className="rw-col">
-
-
-        <div className="card mt-4">
+    <div style={{ padding: '1rem', maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
+        <div className="card mt-4" style={{ height: '100%' }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3><span className="g">{Icon({name: G.tabPool})}</span>What the Water Shows <span dangerouslySetInnerHTML={{ __html: speakerMarkup("What the Water Shows") }} /></h3>
           <div className="mt mb-4">A holistic divination of your routine, reactions, and trajectory.</div>
           
           <button className="btn full plum" onClick={handleDivineAfflictions}>Divine Afflictions</button>
           
-          <div style={{ marginTop: '1rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'normal' }}>
+          <div style={{ marginTop: '1rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', }}>
             {evaluationStatus}
           </div>
-          <div style={{ marginTop: '1rem', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
+          <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
             {evaluationResult || <div className="empty" style={{textAlign: 'left', margin: 0}}>The water is still. Inscribe your ledger, then seek the water's counsel.</div>}
           </div>
         </div>
 
-        </div>
-        <div className="rw-col">
-      <div className="card mt-4">
+        <div className="card mt-4" style={{ height: '100%' }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Ledger of Afflictions <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Ledger of Afflictions") }} /></h3>
         <div className="mt mb-4">Has something turned against you? Speak of it — what, and where, and how sorely.</div>
@@ -215,7 +210,7 @@ export default function Scrying({ pose }) {
 
       </div>
 
-      <div className="card mt-4">
+      <div className="card mt-4" style={{ height: '100%' }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Crypt of Ashes <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Crypt of Ashes") }} /></h3>
         <div className="mt mb-4">Elements forever sealed away.</div>
@@ -244,8 +239,7 @@ export default function Scrying({ pose }) {
           )}
         </div>
       </div>
-        </div>
-      </div>
     </div>
+  </div>
   );
 }
