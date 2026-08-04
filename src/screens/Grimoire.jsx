@@ -147,7 +147,7 @@ export default function Grimoire({ pose }) {
 
   return (
     <div style={{ padding: '1rem', maxWidth: '1100px', margin: '0 auto' }}>
-      <div className="grim-layout mt-2">
+      <div className="grim-grid mt-2">
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
