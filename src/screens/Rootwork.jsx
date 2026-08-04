@@ -219,7 +219,7 @@ export default function Rootwork({ pose }) {
           <div className="mt">{item.brand} &bull; {item.category}</div>
         </div>
         <div className="acts">
-          <button className="btn sm" onClick={() => handleAmendItem(item)}>Amend</button>
+          <button className="btn sm" onClick={() => handleAmendItem(item)}>Transmute</button>
           <button className="btn sm g" onClick={() => handleBanishItem(item.id, item.name)}>Banish</button>
         </div>
       </div>

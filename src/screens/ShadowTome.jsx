@@ -117,7 +117,7 @@ export default function ShadowTome({ pose }) {
   };
 
   const handleBanish = async (id) => {
-    if (window.confirm("Burn this page from the tome? It cannot be recovered.")) {
+    if (window.confirm("Burn this echo from the tome? It cannot be recovered.")) {
       await supabase.from('journal_entries').delete().eq('id', id);
       loadHistory();
     }
@@ -330,9 +330,9 @@ export default function ShadowTome({ pose }) {
                       onClick={() => handleBanish(entry.id)} 
                       className="btn sm" 
                       style={{ background: 'transparent', border: '1px dashed rgba(212,28,60,0.4)', color: 'var(--dim)', fontSize: '0.7rem' }}
-                      title="Burn the page"
+                      title="Burn the echo"
                     >
-                      <Icon name="ph-fire" /> Burn
+                      <Icon name="ph-fire" /> Burn Echo
                     </button>
                   </div>
 
