@@ -278,8 +278,8 @@ export default function Grimoire({ pose }) {
         <div className="corner tl"></div><div className="corner tr"></div>
         <div className="corner bl"></div><div className="corner br"></div>
         <h3>
-          The Almanac{' '}
-          <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Almanac') }} />
+          The Ephemeris{' '}
+          <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Ephemeris') }} />
         </h3>
         <div className="mt mb-4">The long count.</div>
         
