@@ -91,11 +91,11 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
     let isPm = true;
 
     // Master Invocations & Time-of-day parsing
-    if (item.risk_flags.retinoid || cat.includes('sleeping mask') || name.includes('night') || name.includes('tretinoin')) {
-      isAm = false; // Retinoids at night
+    if (cat.includes('sleeping mask') || name.includes('night')) {
+      isAm = false; // Night-specific items
     }
-    if (cat.includes('sunscreen') || cat.includes('spf')) {
-      isPm = false;
+    if (cat.includes('sunscreen') || name.includes('spf') || name.includes('day')) {
+      isPm = false; // Day-specific items
     }
     if (name.includes('drysol')) {
       isAm = false; // Drysol at bedtime only

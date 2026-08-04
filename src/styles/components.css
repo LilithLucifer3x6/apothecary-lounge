@@ -306,3 +306,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .card { max-width: 600px; width: 100%; margin: 1rem auto; }
 .card-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: flex-start; }
 .card-grid .card { margin: 0; }
+
+.tome-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; width: 100%; }
+@media (min-width: 900px) {
+  .tome-grid { grid-template-columns: 1.5fr 1fr; }
+}

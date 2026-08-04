@@ -16,8 +16,6 @@ export default function Rites({ pose }) {
   const [amSaved, setAmSaved] = useState(false);
   const [pmSaving, setPmSaving] = useState(false);
   const [pmSaved, setPmSaved] = useState(false);
-  const [showTitration, setShowTitration] = useState(false);
-  const [titrationResponse, setTitrationResponse] = useState(null);
 
   const todayKey = new Date().toISOString().split('T')[0];
   const [scheduleChecked, setScheduleChecked] = useState(() => {
@@ -49,11 +47,6 @@ export default function Rites({ pose }) {
       setAmItems(am);
       setPmItems(pm);
       setConflicts(checkConflicts(itemsArr, userProfile || {}));
-      
-      const hasTret = pm.some(i => (i.name || '').toLowerCase().includes('tretinoin') || (i.category || '').toLowerCase().includes('retinoid'));
-      if (hasTret && !localStorage.getItem('titration_checked_today')) {
-        setShowTitration(true);
-      }
       
       setLoading(false);
     }
@@ -322,43 +315,6 @@ export default function Rites({ pose }) {
               </li>
             ))}
           </ul>
-        </div>
-        </div>
-      )}
-
-      {/* Titration Modal */}
-      {showTitration && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card" style={{ maxWidth: '500px', width: '90%' }}>
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>Master Invocation: Titration <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Master Invocation: Titration") }} /></h3>
-            <div className="mt mb-4" style={{ color: 'var(--rose)' }}>
-              You've been at your current frequency of Tretinoin/Retinoid for a fortnight. Are you experiencing any redness, peeling, or blistering?
-            </div>
-            
-            {!titrationResponse ? (
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                <button className="btn plum" style={{ flex: 1 }} onClick={() => setTitrationResponse('yes')}>
-                  Yes, I am
-                </button>
-                <button className="btn plum" style={{ flex: 1 }} onClick={() => setTitrationResponse('no')}>
-                  No, I'm fine
-                </button>
-              </div>
-            ) : (
-              <div style={{ marginTop: '1rem', color: 'var(--rose)' }}>
-                {titrationResponse === 'yes' 
-                  ? "The Keeper advises you hold your current frequency and do not increase usage. Consider skipping a night if irritation worsens."
-                  : "Excellent. The Keeper permits you to increase your frequency by one additional night per week."}
-                <div style={{ marginTop: '2rem', textAlign: 'right' }}>
-                  <button className="btn plum sm" onClick={() => {
-                    localStorage.setItem('titration_checked_today', todayKey);
-                    setShowTitration(false);
-                  }}>Acknowledge</button>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       )}
 

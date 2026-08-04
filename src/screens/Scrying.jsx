@@ -111,20 +111,6 @@ export default function Scrying({ pose }) {
   };
 
   const now = new Date();
-  const waningItems = inventory.filter(i => {
-    if (i.lifecycle_state === 'ebbing' || i.lifecycle_state === 'hollow') return true;
-    if (i.pao_months && i.opened_date) {
-      const opened = new Date(i.opened_date);
-      const expires = new Date(opened.setMonth(opened.getMonth() + parseInt(i.pao_months, 10)));
-      const daysLeft = (expires - now) / (1000 * 60 * 60 * 24);
-      if (daysLeft < 0) {
-        i.isExpired = true;
-        return true;
-      }
-      if (daysLeft <= 30) return true;
-    }
-    return false;
-  });
 
   const toggleReaction = (itemId, reaction) => {
     setReactions(prev => {
@@ -184,30 +170,8 @@ export default function Scrying({ pose }) {
           {scryResult}
         </div>
       </div>
-
-      <div className="card mt-4">
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
-        <div className="mt mb-4">Formulas nearing expiration or running low.</div>
-        <div>
-          {waningItems.length > 0 ? (
-            waningItems.map(item => (
-              <div key={item.id || item.name} className="row" style={{ flexWrap: 'wrap' }}>
-                <div style={{ flex: 1, minWidth: '200px' }}>
-                  <div className="nm">{item.name}</div>
-                  <div className="mt">{item.brand} &bull; {item.isExpired ? <span style={{color: 'var(--rose)'}}>Expired!</span> : item.lifecycle_state}</div>
-                </div>
-                <button className="btn sm">Summon</button>
-              </div>
-            ))
-          ) : (
-            <div className="empty">No formulas are currently waning.</div>
-          )}
-        </div>
-      </div>
         </div>
         <div className="rw-col">
-
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Ledger of Afflictions <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Ledger of Afflictions") }} /></h3>
@@ -276,7 +240,7 @@ export default function Scrying({ pose }) {
           )}
         </div>
       </div>
-      </div>
+        </div>
       </div>
     </div>
   );

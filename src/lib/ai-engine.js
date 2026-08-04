@@ -77,7 +77,7 @@ When you believe you have gathered enough information across these categories (o
     apiMessages.unshift({ role: 'user', content: "I am ready to begin." });
   }
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('/api/anthropic/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ export async function parseProductImage(base64Image, mediaType) {
     }
   ];
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('/api/anthropic/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ Current Inventory:
 ${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}
 `;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('/api/anthropic/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -291,7 +291,7 @@ export async function analyzeProduct(name, category, ingredients) {
     }
   }];
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('/api/anthropic/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -374,7 +374,7 @@ export async function parseTeaImage(images) {
     text: 'You are analyzing images of a tea or herbal elixir. It might be photos of loose leaf herbs, or photos of the front and back of a tea box/label. If it is loose leaf, analyze the shapes, sizes, and colors of the leaves, flowers, and bits to divine the ingredients. If it is a box, read the label (e.g. use the front for the name and the back for the ingredients). Extract the brand, blend name, ingredients list, estimated caffeine content, recommended steeping parameters, and circadian alignment (daytime vs nighttime use).'
   });
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('/api/anthropic/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -280,6 +280,17 @@ export default function Rootwork({ pose }) {
       <div className="rw-grid">
         <div className="rw-col">
 
+      {waning.length > 0 && (
+        <div className="card mb-4" style={{ borderColor: 'var(--gold)' }}>
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3 style={{ color: 'var(--gold)' }}>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
+          <div className="mt mb-4" style={{ color: 'var(--gold)' }}>Items nearing the end of their potency.</div>
+          <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+            {waning.map(renderRow)}
+          </div>
+        </div>
+      )}
+
       {ebbing.length > 0 && (
         <div className="card mb-4">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
