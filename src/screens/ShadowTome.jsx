@@ -286,13 +286,13 @@ export default function ShadowTome({ pose }) {
                   <div style={{ opacity: 0.5 }}>Divining moods...</div>
                 ) : (
                   moodsList.map(m => (
-                    <div 
+                    <span 
                       key={m.id} 
                       className={`chip ${selectedMoods.has(m.id) ? 'on' : ''}`} 
                       onClick={() => toggleMood(m.id)}
                     >
                       {m.label}
-                    </div>
+                    </span>
                   ))
                 )}
               </div>
