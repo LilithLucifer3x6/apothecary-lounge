@@ -213,7 +213,8 @@ If they have banished items or reacted poorly (peeling, redness, burning), deduc
 Perform a Redundancy Guard: compare the prospective item's primary actives against their current inventory. If they already own a formula that serves the exact same purpose or uses the same actives, explicitly warn them to guard against redundant spending.
 If you detect a safety conflict or redundancy, generate 1 or 2 valid alternative product recommendations (real-world products).
 Speak in a mystical, cottagecore-goth tone ("ritual voice"). Be concise but insightful.
-Do not use gendered language or pronouns.`;
+Do not use gendered language or pronouns.
+
 User Profile:
 ${JSON.stringify(userProfile, null, 2)}
 
@@ -307,7 +308,6 @@ ${JSON.stringify(banishedItems.map(i => {
 
 Ledger of Afflictions (Reactions):
 ${JSON.stringify(ledgerEntries, null, 2)}
-`;
 Please divine the truth in the water.`;
 
   const res = await fetch('/api/anthropic/v1/messages', {

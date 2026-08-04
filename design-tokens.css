@@ -4,11 +4,27 @@
    is not covered here, match the nearest one that is. */
 
 :root{
-    --bg:#f2eff4; --card:rgba(255,255,255,0.8); --card2:rgba(240,238,245,0.9); --border:rgba(0,0,0,0.15);
-    --crimson:#7a1a2b; --crimson-b:#4a0d16; --plum:#422a3e; --plum-b:rgba(66, 42, 62, 0.3);
-    --rose:#1a1a1a; --parch:#111111; --silver:#333333; --gold:#222222;
-    --moss:#1a2415; --ink:#111111;
-    --white:#1a1a1a; --ash:#444444; --dim:#444444;
+    --bg:#09040d; 
+    --card:rgba(20, 10, 25, 0.85); 
+    --card2:rgba(30, 15, 38, 0.9); 
+    --border:rgba(180, 40, 80, 0.4);
+    
+    --crimson:#ff2e5c; 
+    --crimson-b:#b31739; 
+    --plum:#8c308c; 
+    --plum-b:#4a1b4a; 
+    
+    --rose:#ff9eb5; 
+    --parch:#dcbfe3; 
+    --silver:#b899b8; 
+    --gold:#ff5277; 
+    
+    --moss:#382238; 
+    --ink:#000000;
+    
+    --white:#f5eaf7; 
+    --ash:#c2a3c2; 
+    --dim:#9c7a9c;
     --fs:1rem; --ff:-apple-system,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;}
@@ -40,14 +56,15 @@
     display:flex;align-items:center;}
   h3 .g{margin-right:.35em;}
 
-  .btn{background:#110e15;color:var(--crimson);
-    border:1.5px solid var(--crimson-b);border-radius:8px;padding:.58rem 1rem;
-    font-size:.85em;cursor:pointer;font-family:inherit;}
-  .btn:hover{background:#1a1520;color:var(--crimson);box-shadow:0 0 15px rgba(128,0,32,0.6);transform:translateY(-1px);transition:0.2s;}
-  .btn.g{background:rgba(20,20,25,0.8);color:var(--crimson);border-color:var(--crimson-b);}
+  .btn{background:var(--plum-b);color:var(--white);
+    border:1.5px solid var(--plum);border-radius:8px;padding:.58rem 1rem;
+    font-size:.85em;cursor:pointer;font-family:inherit;text-shadow:0 1px 2px rgba(0,0,0,0.5);}
+  .btn:hover{background:var(--plum);color:var(--white);box-shadow:0 0 15px rgba(140,48,140,0.6);transform:translateY(-1px);transition:0.2s;}
+  .btn.g{background:rgba(20,20,25,0.8);color:var(--rose);border-color:var(--plum-b);}
   .btn.sm{padding:.3rem .6rem;font-size:.72em;}
   .btn.full{width:100%;margin-top:.55rem;}
-  .btn.plum{background:#110e15;border-color:var(--crimson-b);color:var(--crimson);}
+  .btn.plum{background:var(--crimson-b);border-color:var(--crimson);color:var(--white);}
+  .btn.plum:hover{background:var(--crimson);color:var(--white);box-shadow:0 0 15px rgba(255,46,92,0.6);}
 
   /* topbar */
   .topbar{position:sticky;top:0;z-index:40;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
