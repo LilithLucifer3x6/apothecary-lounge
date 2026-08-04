@@ -431,7 +431,7 @@ export default function Rootwork({ pose }) {
           <div className="mt mb-4">Reveal the hidden nature of a formula.</div>
           
           <div className="field" style={{ marginBottom: '1rem' }}>
-            <label>Photo Scan</label>
+            <label>Divine by Visage</label>
             <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
               <Icon name={G.tabPool} /> 
               <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Offer an image to the pool</span>
@@ -519,7 +519,7 @@ export default function Rootwork({ pose }) {
             {modalState === 'manual' && (
               <>
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Photo Scan (Optional Override)</label>
+                  <label style={{color: 'var(--rose)'}}>Divine by Visage (Optional)</label>
                   <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer'}}>
                     <Icon name={G.tabPool} /> 
                     <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{photoStatus}</span>
@@ -528,12 +528,12 @@ export default function Rootwork({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Brand (Optional)</label>
+                  <label style={{color: 'var(--rose)'}}>Lineage or House (Optional)</label>
                   <VoiceInput value={addForm.brand} onChange={e => setAddForm({...addForm, brand: e.target.value})} />
                 </div>
                 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Product Name</label>
+                  <label style={{color: 'var(--rose)'}}>Name of the Relic</label>
                   <VoiceInput value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})} />
                 </div>
 
@@ -555,12 +555,12 @@ export default function Rootwork({ pose }) {
 
                 <div className="field">
                   <label style={{color: 'var(--rose)'}}>Elixir Classification</label>
-                  <VoiceInput placeholder="e.g. Cleanser, Serum, Mask" value={addForm.category} onChange={e => setAddForm({...addForm, category: e.target.value})} />
+                  <VoiceInput placeholder="e.g. Purifier, Tincture, Veil" value={addForm.category} onChange={e => setAddForm({...addForm, category: e.target.value})} />
                 </div>
 
                 <div className="field">
                   <label style={{color: 'var(--rose)'}}>Botanical Components & Herbs</label>
-                  <VoiceInput isTextArea={true} placeholder="Paste ingredients list..." value={addForm.ingredients} onChange={e => setAddForm({...addForm, ingredients: e.target.value})} />
+                  <VoiceInput isTextArea={true} placeholder="Transcribe the sacred components..." value={addForm.ingredients} onChange={e => setAddForm({...addForm, ingredients: e.target.value})} />
                 </div>
 
                 <div className="field">
@@ -577,13 +577,13 @@ export default function Rootwork({ pose }) {
 
                 {addForm.is_composite && (
                   <div className="field">
-                    <label style={{color: 'var(--rose)'}}>Components (What is this made of?)</label>
-                    <VoiceInput isTextArea={true} placeholder="e.g. Epsom Salt, Lavender Oil" value={addForm.components} onChange={e => setAddForm({...addForm, components: e.target.value})} />
+                    <label style={{color: 'var(--rose)'}}>Base Elements (What binds this alchemy?)</label>
+                    <VoiceInput isTextArea={true} placeholder="e.g. Dead Sea Salt, Oil of Rose" value={addForm.components} onChange={e => setAddForm({...addForm, components: e.target.value})} />
                   </div>
                 )}
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Layering Weight (1=Lightest, 10=Heaviest) - Optional Override</label>
+                  <label style={{color: 'var(--rose)'}}>Aetheric Density (1=Fleeting, 10=Anchoring) - Override</label>
                   <div style={{display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)'}}>
                     <input type="range" min="1" max="10" step="1" style={{flex: 1}} value={addForm.weight} onChange={e => { setAddForm({...addForm, weight: e.target.value}); setIsAutoWeight(false); }} />
                     <span style={{width: '20px', textAlign: 'center'}}>{isAutoWeight ? 'Auto' : addForm.weight}</span>

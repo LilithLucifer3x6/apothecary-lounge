@@ -154,7 +154,7 @@ export default function Scrying({ pose }) {
         {inventory.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="field">
-              <label>The Offending Formula</label>
+              <label>The Offending Elixir</label>
               <select value={reactionForm.productId} onChange={(e) => setReactionForm({...reactionForm, productId: e.target.value})} style={{width: '100%'}}>
                 <option value="">Select a formula...</option>
                 {inventory.map(item => (
@@ -164,7 +164,7 @@ export default function Scrying({ pose }) {
             </div>
             
             <div className="field">
-              <label>The Affected Zone</label>
+              <label>The Afflicted Realm</label>
               <select value={reactionForm.zone} onChange={(e) => setReactionForm({...reactionForm, zone: e.target.value})} style={{width: '100%'}}>
                 {zoneOptions.map(z => <option key={z} value={z}>{z}</option>)}
               </select>
@@ -188,7 +188,7 @@ export default function Scrying({ pose }) {
             </div>
 
             <div className="field">
-              <label>How Sorely (1-5)</label>
+              <label>The Weight of the Affliction (1-5)</label>
               <div className="chips" style={{ display: 'flex', gap: '0.5rem' }}>
                 {[1, 2, 3, 4, 5].map(n => (
                   <button 

@@ -58,7 +58,7 @@ export default function Intake({ onComplete }) {
 
   const handleSetAiKey = async (e) => {
     e.preventDefault();
-    const key = prompt('Enter Anthropic API Key:');
+    const key = prompt('Offer the Key of Anthropic:');
     if (key) {
       const { initAnthropic } = await import('../lib/ai-engine.js');
       initAnthropic(key);
@@ -221,7 +221,7 @@ export default function Intake({ onComplete }) {
               border: path === 'fast' ? '1px solid var(--crimson)' : '1px solid var(--border)'
             }}
           >
-            The Fast Route
+            The Direct Path
           </button>
         </div>
       </div>
@@ -272,7 +272,7 @@ export default function Intake({ onComplete }) {
             {aiStatus ? (
               aiStatus
             ) : !isReady ? (
-              <>AI key missing. <a href="#" onClick={handleSetAiKey} style={{ color: 'var(--rose)', textDecoration: 'underline' }}>Set API Key</a></>
+              <>The Key of Anthropic is missing. <a href="#" onClick={handleSetAiKey} style={{ color: 'var(--rose)', textDecoration: 'underline' }}>Offer the Key</a></>
             ) : null}
           </div>
         </div>
@@ -352,7 +352,7 @@ export default function Intake({ onComplete }) {
               <div className="mt mb-4">Potent formulas prescribed by healers. These take priority in all routines.</div>
               
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>
-                <input type="checkbox" checked={noRx} onChange={e => { setNoRx(e.target.checked); if(e.target.checked) setRxList([]); }} /> I have no topical prescriptions.
+                <input type="checkbox" checked={noRx} onChange={e => { setNoRx(e.target.checked); if(e.target.checked) setRxList([]); }} /> I am burdened by no topical prescriptions.
               </label>
 
               {!noRx && (
@@ -395,7 +395,7 @@ export default function Intake({ onComplete }) {
               <div className="mt mb-4">Internal remedies that may cause systemic shifts (e.g. dryness, sensitivity).</div>
               
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>
-                <input type="checkbox" checked={noOral} onChange={e => { setNoOral(e.target.checked); if(e.target.checked) setOralList([]); }} /> I take no oral medications that affect my skin/hair.
+                <input type="checkbox" checked={noOral} onChange={e => { setNoOral(e.target.checked); if(e.target.checked) setOralList([]); }} /> I consume no internal remedies that alter my vessel.
               </label>
 
               {!noOral && (
@@ -419,7 +419,7 @@ export default function Intake({ onComplete }) {
               {renderTitle('The ingredients to never touch')}
               <div className="mt mb-4">Allergies and sensitivities.</div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>
-                <input type="checkbox" checked={noAlg} onChange={e => { setNoAlg(e.target.checked); if(e.target.checked) setAlgList(['Lavender']); }} /> I have no other allergies.
+                <input type="checkbox" checked={noAlg} onChange={e => { setNoAlg(e.target.checked); if(e.target.checked) setAlgList(['Lavender']); }} /> I hold no other aversions.
               </label>
               {!noAlg && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -505,7 +505,7 @@ export default function Intake({ onComplete }) {
             }}
             style={{ visibility: currentStep === 1 ? 'hidden' : 'visible' }}
           >
-            Step Back
+            Step Backwards
           </button>
           
           <div id="ins-dots" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>

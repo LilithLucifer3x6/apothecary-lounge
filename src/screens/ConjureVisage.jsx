@@ -33,8 +33,8 @@ export default function ConjureVisage({ onComplete }) {
   };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', color: 'var(--rose)' }}>
-      <h2 style={{ fontSize: '3.5rem', textAlign: 'center', color: 'var(--rose)', marginBottom: '2rem' }}>
+    <div style={{ padding: '1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--rose)' }}>
+      <h2 style={{ fontSize: '2.5rem', textAlign: 'center', color: 'var(--rose)', marginBottom: '1rem' }}>
         Conjure Your Visage
       </h2>
 
@@ -43,7 +43,7 @@ export default function ConjureVisage({ onComplete }) {
         <h3 style={{ color: 'var(--rose)' }}>The Keeper's Form</h3>
         <div className="mt mb-4" style={{ color: 'var(--rose)' }}>Select the visage that best reflects your practice.</div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '0.8rem' }}>
           {avatars.map(av => (
             <div 
               key={av.id}
@@ -57,13 +57,15 @@ export default function ConjureVisage({ onComplete }) {
                 background: 'var(--card2)',
                 boxShadow: avatarVibe === av.id ? '0 0 15px rgba(176,132,148,0.4)' : 'none',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: '0.5rem',
+                textAlign: 'center'
               }}
             >
-              <img src={av.img} alt={av.label} style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover' }} />
-              <div style={{ padding: '1rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ fontSize: '1.2rem', color: 'var(--rose)', marginBottom: '0.5rem' }}>{av.label}</div>
-                <div className="mt" style={{ fontSize: '0.85rem', color: 'var(--rose)' }}>{av.desc}</div>
+              <img src={av.img} alt={av.label} style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginBottom: '0.5rem' }} />
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ fontSize: '0.9rem', color: 'var(--rose)', lineHeight: '1.2' }}>{av.label}</div>
               </div>
             </div>
           ))}
@@ -82,7 +84,7 @@ export default function ConjureVisage({ onComplete }) {
 
         <h3 style={{ marginTop: '2rem', color: 'var(--rose)' }}>The Familiar</h3>
         <div className="mt mb-4" style={{ color: 'var(--rose)' }}>Select a companion to share your sanctuary.</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '0.8rem' }}>
           {familiars.map(f => (
             <div 
               key={f.id}
@@ -95,21 +97,23 @@ export default function ConjureVisage({ onComplete }) {
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                boxShadow: familiar === f.id ? '0 0 10px rgba(176,132,148,0.3)' : 'none'
+                boxShadow: familiar === f.id ? '0 0 10px rgba(176,132,148,0.3)' : 'none',
+                alignItems: 'center',
+                padding: '0.5rem'
               }}
             >
-              <img src={f.img} alt={f.label} style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
-              <div style={{ padding: '0.5rem', textAlign: 'center', color: 'var(--rose)', fontSize: '0.9rem' }}>
+              <img src={f.img} alt={f.label} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', marginBottom: '0.4rem' }} />
+              <div style={{ textAlign: 'center', color: 'var(--rose)', fontSize: '0.8rem', lineHeight: '1.2' }}>
                 {f.label}
               </div>
             </div>
           ))}
         </div>
 
-        <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+        <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
           <button 
             className="btn plum" 
-            style={{ fontSize: '1.5rem', padding: '1rem 3rem' }} 
+            style={{ fontSize: '1.2rem', padding: '0.8rem 2rem' }} 
             onClick={handleFinish}
             disabled={!avatarVibe || !familiar}
           >

@@ -76,7 +76,7 @@ export default function App() {
     verifyGlyphs();
     
     // Load Settings
-    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"Lora","tts":false,"health":false,"cal":false}');
+    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"Parisienne","tts":false,"health":false,"cal":false}');
     setSettings(saved);
     applySettings(saved);
     
@@ -125,7 +125,7 @@ export default function App() {
           
           if (s.gcalClientId) {
             initGoogleCalendar(s.gcalClientId, (token) => {
-              console.log("Google Calendar Authenticated!");
+              console.log("The Solar Almanac is Bound!");
             });
           }
         }    
@@ -140,7 +140,7 @@ export default function App() {
 
   const applySettings = (s) => {
     document.documentElement.style.setProperty('--fs', s.fontSize + 'px');
-    document.documentElement.style.setProperty('--ff', `"${s.fontFamily}", serif`);
+    document.documentElement.style.setProperty('--ff', `"${s.fontFamily}", cursive`);
     if (s.tts) {
       document.body.classList.remove('tts-disabled');
       setTtsEnabled(true);
@@ -225,8 +225,8 @@ export default function App() {
       {currentScreen === 'splash' && (
         <div id="s-splash" className="land" style={{ justifyContent: 'center', padding: '10vh 2rem 5vh 2rem', height: '100vh', overflow: 'hidden' }}>
           <div style={{ textAlign: 'center' }}>
-            <h1 style={{ fontSize: '10vw', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
-            <div className="tag" style={{ fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--rose)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '1rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
+            <h1 style={{ fontSize: 'clamp(2rem, 10vw, 3.5rem)', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
+            <div className="tag" style={{ fontSize: '1rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--rose)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '0.6rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
           </div>
           <button onClick={handleEnter} className="btn" style={{ fontSize: '1.3rem', padding: '0.8rem 1.5rem', background: 'var(--card2)', borderColor: 'var(--rose)', color: 'var(--rose)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginTop: '4vh', width: '250px', whiteSpace: 'normal', lineHeight: '1.2' }}>
             Enter the Sanctuary
@@ -373,7 +373,7 @@ export default function App() {
                 }}>
                   <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginBottom: '0.5rem' }}>Scrying Glimpse:</div>
                   <div style={{ 
-                    fontFamily: `"${settings.fontFamily}", serif`, 
+                    fontFamily: `"${settings.fontFamily}", cursive`, 
                     fontSize: `${settings.fontSize}px`,
                     color: 'var(--crimson)'
                   }}>
@@ -438,7 +438,7 @@ export default function App() {
                              onChange={async (e) => {
                                const checked = e.target.checked;
                                if (checked && Capacitor.isNativePlatform()) {
-                                 alert("Native Android Detected: Requesting direct System Health Connect Permissions for Samsung Health, RingConn, and Renpho...");
+                                 alert("The System calls upon Native Android to weave corporeal data from Samsung Health, RingConn, and Renpho...");
                                  setSettings({...settings, health: true});
                                } else {
                                  setSettings({...settings, health: checked});
@@ -449,7 +449,7 @@ export default function App() {
                       <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         <input type="text" placeholder="Terra Developer ID" value={settings.terraDevId || ''} onChange={e => setSettings({...settings, terraDevId: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
                         <input type="text" placeholder="Terra API Key" value={settings.terraApiKey || ''} onChange={e => setSettings({...settings, terraApiKey: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
-                        <div className="mt" style={{ fontSize: '0.8rem' }}>Enter your Terra credentials to pull sleep & readiness data.</div>
+                        <div className="mt" style={{ fontSize: '0.8rem' }}>Offer your Terra seals to draw upon visions of sleep & readiness.</div>
                       </div>
                     )}
                     
@@ -463,11 +463,11 @@ export default function App() {
                                onChange={e => {
                                  setSettings({...settings, gcalClientId: e.target.value});
                                  if (e.target.value) {
-                                   initGoogleCalendar(e.target.value, () => alert("Google Calendar Authenticated!"));
+                                   initGoogleCalendar(e.target.value, () => alert("The Solar Almanac is Bound!"));
                                  }
                                }} style={{ padding: '0.5rem', width: '100%' }} />
-                        <button className="btn sm g" onClick={() => requestCalendarAccess()} style={{ width: 'fit-content' }}>Bind Google Calendar</button>
-                        <div className="mt" style={{ fontSize: '0.8rem' }}>Enter your Client ID and log in to fetch events.</div>
+                        <button className="btn sm g" onClick={() => requestCalendarAccess()} style={{ width: 'fit-content' }}>Bind Solar Almanac</button>
+                        <div className="mt" style={{ fontSize: '0.8rem' }}>Offer the Celestial ID to chart the wheel of the year.</div>
                       </div>
                     )}
                   </div>
@@ -480,7 +480,7 @@ export default function App() {
                   <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--crimson)' }}>Danger Zone</h3>
                   
                   <button onClick={async () => {
-                    if (window.confirm("Are you sure you want to reset the First Inscription? This will take you back to the intake questionnaire.")) {
+                    if (window.confirm("Do you truly wish to shatter the First Inscription? You will be cast back to the initial inquiry.")) {
                       const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
                       if (profile) {
                         await supabase.from('user_profile').update({ intake_completed: false }).eq('id', profile.id);
@@ -491,7 +491,7 @@ export default function App() {
                   }} className="btn g" style={{ width: '100%', marginBottom: '1rem' }}>Shatter the First Inscription</button>
 
                   <button onClick={() => {
-                    if (window.confirm("Are you sure you want to completely erase all local settings, saved routines, and Supabase data? This cannot be undone.")) {
+                    if (window.confirm("Do you truly wish to raze this Sanctuary to ash? All saved rites, items, and settings shall be lost to the void. This cannot be undone.")) {
                       localStorage.clear();
                       sessionStorage.clear();
                       window.location.reload();

@@ -26,6 +26,7 @@
 }
 
 body {
+  font-family: var(--ff);
   background-color: var(--bg);
   color: var(--rose);
   
@@ -33,6 +34,10 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-align: center;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
 }
 
 h1, h2, h3, .title { font-weight: normal; }

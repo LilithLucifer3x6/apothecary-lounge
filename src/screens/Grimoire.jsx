@@ -55,9 +55,9 @@ export default function Grimoire({ pose }) {
   };
 
   const handleOverride = () => {
-    const date = prompt('Enter the date you last completed this rite (YYYY-MM-DD):');
+    const date = prompt('Inscribe the date this rite was last fulfilled (YYYY-MM-DD):');
     if (date && !isNaN(new Date(date).getTime())) {
-      alert('Predictive schedule overridden with ' + date);
+      alert('Fate has been rewritten to ' + date);
     }
   };
 
