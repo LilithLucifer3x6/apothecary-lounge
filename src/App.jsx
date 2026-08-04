@@ -357,8 +357,9 @@ export default function App() {
                     <option value="Parisienne">Parisienne</option>
                     <option value="Allura">Allura</option>
                     <option value="Great Vibes">Great Vibes</option>
+                    <option value="Elsie">Elsie</option>
+                    <option value="Lora">Lora</option>
                     <option value="Cinzel Decorative">Cinzel Decorative</option>
-                    <option value="Cormorant Garamond">Cormorant Garamond</option>
                     <option value="system-ui">System</option>
                   </select>
                 </div>
