@@ -52,3 +52,26 @@ export async function fetchTodayEvents() {
     return [];
   }
 }
+
+export async function fetchMonthEvents(year, month) {
+  const token = accessToken || localStorage.getItem('gcal_token');
+  if (!token) return [];
+  
+  try {
+    const start = new Date(year, month, 1);
+    const end = new Date(year, month + 1, 0, 23, 59, 59, 999);
+    
+    const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${start.toISOString()}&timeMax=${end.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=2500`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!response.ok) throw new Error("Failed to fetch month events");
+    const data = await response.json();
+    return data.items || [];
+  } catch (err) {
+    console.error("Google Calendar month fetch error:", err);
+    return [];
+  }
+}

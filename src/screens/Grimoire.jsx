@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.js';
 import Icon from '../components/Icon.jsx';
-import { fetchTodayEvents } from '../lib/gcal.js';
+import { fetchTodayEvents, fetchMonthEvents } from '../lib/gcal.js';
 import { speakerMarkup } from '../lib/tts.js';
 import { syncAppointments, markAppointmentDone } from '../lib/calendar.js';
 
@@ -11,6 +11,7 @@ export default function Grimoire({ pose }) {
   const [marked, setMarked] = useState({});
   const [history, setHistory] = useState([]);
   const [realEvents, setRealEvents] = useState([]);
+  const [monthEvents, setMonthEvents] = useState([]);
 
   const [profile, setProfile] = useState(null);
 
@@ -27,6 +28,11 @@ export default function Grimoire({ pose }) {
       
     fetchTodayEvents().then(events => {
       if (mounted) setRealEvents(events);
+    });
+    
+    const currDate = new Date();
+    fetchMonthEvents(currDate.getFullYear(), currDate.getMonth()).then(events => {
+      if (mounted) setMonthEvents(events);
     });
 
     supabase.from('user_profile').select('*').maybeSingle().then(({data}) => {
@@ -74,6 +80,13 @@ export default function Grimoire({ pose }) {
     const hasIsotretinoin = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
     const hasFridayInjections = dayOfWeek === 5 && profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('enbrel') || o.name.toLowerCase().includes('wegovy') || o.name.toLowerCase().includes('methotrexate'));
 
+    const dayEvents = monthEvents.filter(ev => {
+      if (!ev.start) return false;
+      const evDate = new Date(ev.start.dateTime || ev.start.date);
+      // Ensure the event falls on this exact day of this month/year
+      return evDate.getDate() === i && evDate.getMonth() === month && evDate.getFullYear() === year;
+    });
+
     calDays.push(
       <div key={`day-${i}`} className={`cd ${isToday}`}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -83,6 +96,26 @@ export default function Grimoire({ pose }) {
             {hasNails && <span title="Talon Honing" style={{ color: 'var(--gold)' }}><Icon name="sparkle" /></span>}
           </div>
         </div>
+        
+        {dayEvents.length > 0 && (
+          <div style={{ marginTop: '0.2rem', display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
+            {dayEvents.map((ev, idx) => (
+              <div key={idx} style={{ 
+                fontSize: '0.65rem', 
+                background: 'var(--plum-b)', 
+                color: 'var(--parch)', 
+                padding: '2px 4px', 
+                borderRadius: '4px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontFamily: 'var(--ff)'
+              }}>
+                {new Date(ev.start.dateTime || ev.start.date).toLocaleTimeString([], {hour: 'numeric', minute:'2-digit'})} - {ev.summary}
+              </div>
+            ))}
+          </div>
+        )}
         
         <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
           {hasIsotretinoin && (
