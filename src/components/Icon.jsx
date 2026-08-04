@@ -6,5 +6,5 @@ export default function Icon({ name }) {
   
   // Fix missing ph-gear
   let finalName = name === 'ph-gear' || name === 'gear' ? 'gear' : name;
-  return <span style={{ display: 'inline-flex', alignItems: 'center' }} dangerouslySetInnerHTML={{ __html: ic(finalName) }} />;
+  return <span style={{ display: 'inline-flex', alignItems: 'center', filter: 'drop-shadow(1px 1px 0 #000) drop-shadow(-1px -1px 0 #000) drop-shadow(1px -1px 0 #000) drop-shadow(-1px 1px 0 #000)' }} dangerouslySetInnerHTML={{ __html: ic(finalName) }} />;
 }
