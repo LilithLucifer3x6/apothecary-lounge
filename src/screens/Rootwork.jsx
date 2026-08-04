@@ -29,6 +29,23 @@ export default function Rootwork({ pose }) {
   const fetchItems = async () => {
     setLoading(true);
     const { data } = await supabase.from('items').select('*').order('name');
+    
+    if (data) {
+      const now = new Date();
+      for (const item of data) {
+        if (item.lifecycle_state === 'stocked' && item.opened_date) {
+          const opened = new Date(item.opened_date);
+          const daysOpen = (now - opened) / (1000 * 60 * 60 * 24);
+          
+          // Predictive Restocking: If open for more than 60 days, predict it is ebbing
+          if (daysOpen > 60) {
+            await supabase.from('items').update({ lifecycle_state: 'ebbing' }).eq('id', item.id);
+            item.lifecycle_state = 'ebbing';
+          }
+        }
+      }
+    }
+    
     setItems(data || []);
     setLoading(false);
   };
@@ -103,7 +120,11 @@ export default function Rootwork({ pose }) {
           ingredients: ingStr,
           risk_flags: riskFlagsStr,
           behavior_flags: bFlagsStr,
-          glyph: aiResult.glyph
+          glyph: aiResult.glyph,
+          pao_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          price: addForm.price ? parseFloat(addForm.price) : null,
+          is_composite: addForm.is_composite || false,
+          components: addForm.is_composite ? addForm.components : null
         }).eq('id', addForm.id);
       } else {
         await supabase.from('items').insert([{
@@ -114,9 +135,13 @@ export default function Rootwork({ pose }) {
           ingredients: ingStr,
           risk_flags: riskFlagsStr,
           behavior_flags: bFlagsStr,
-          glyph: aiResult.glyph,
           type: 'product',
-          lifecycle_state: 'stocked'
+          lifecycle_state: 'stocked',
+          pao_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          price: addForm.price ? parseFloat(addForm.price) : null,
+          is_composite: addForm.is_composite || false,
+          components: addForm.is_composite ? addForm.components : null,
+          opened_date: new Date().toISOString()
         }]);
       }
     } catch (err) {
@@ -127,7 +152,11 @@ export default function Rootwork({ pose }) {
           brand: addForm.brand,
           name: addForm.name,
           domain: addForm.domain,
-          category: addForm.category
+          category: addForm.category,
+          pao_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          price: addForm.price ? parseFloat(addForm.price) : null,
+          is_composite: addForm.is_composite || false,
+          components: addForm.is_composite ? addForm.components : null
         }).eq('id', addForm.id);
       } else {
         await supabase.from('items').insert([{
@@ -136,14 +165,19 @@ export default function Rootwork({ pose }) {
           domain: addForm.domain, 
           category: addForm.category, 
           type: 'product', 
-          lifecycle_state: 'stocked'
+          lifecycle_state: 'stocked',
+          pao_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          price: addForm.price ? parseFloat(addForm.price) : null,
+          is_composite: addForm.is_composite || false,
+          components: addForm.is_composite ? addForm.components : null,
+          opened_date: new Date().toISOString()
         }]);
       }
     }
     
     setIsSaving(false);
     setShowAddModal(false);
-    setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
+    setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '', price: '', is_composite: false, components: '' });
     setIsAutoWeight(true);
     setPhotoStatus('Upload or Scan Photo');
     setModalState('photo');
@@ -243,6 +277,8 @@ export default function Rootwork({ pose }) {
           <Icon name="ph-plus" /> Inscribe Relic
         </button>
       </div>
+      <div className="rw-grid">
+        <div className="rw-col">
 
       {ebbing.length > 0 && (
         <div className="card mb-4">
@@ -254,6 +290,17 @@ export default function Rootwork({ pose }) {
           </div>
         </div>
       )}
+
+        <div className="card mb-4">
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3>The Crypt of Ashes <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Crypt of Ashes") }} /></h3>
+          <div className="mt mb-4">Banished formulas and incompatible provisions.</div>
+          <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+            {banished.length === 0 ? <div className="mt">The crypt is empty.</div> : banished.map(renderRow)}
+          </div>
+        </div>
+      </div>
+      <div className="rw-col">
 
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
@@ -298,7 +345,8 @@ export default function Rootwork({ pose }) {
           {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">Your Reliquary contains no instruments.</div>}
         </div>
       </div>
-      
+      </div>
+      </div>
 
       {showAddModal && (
         <div className="modal" style={{display: 'block'}}>
@@ -307,7 +355,7 @@ export default function Rootwork({ pose }) {
             
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
               <div>
-                <h3 style={{color: 'var(--rose)'}}>Inscribe Relic</h3>
+                <h3 style={{color: 'var(--rose)'}}>The Relic Inscription</h3>
                 <div className="mt mb-4" style={{color: 'var(--rose)'}}>Commit a new vessel or tool to your apothecary.</div>
               </div>
               {modalState !== 'manual' && (
@@ -402,6 +450,25 @@ export default function Rootwork({ pose }) {
                 </div>
 
                 <div className="field">
+                  <label style={{color: 'var(--rose)'}}>Price (For The Silver Toll)</label>
+                  <input type="number" step="0.01" placeholder="0.00" value={addForm.price} onChange={e => setAddForm({...addForm, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: 'var(--body-font)', borderRadius: '4px' }} />
+                </div>
+
+                <div className="field">
+                  <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--rose)', cursor: 'pointer'}}>
+                    <input type="checkbox" checked={addForm.is_composite} onChange={e => setAddForm({...addForm, is_composite: e.target.checked})} style={{accentColor: 'var(--rose)'}} />
+                    This is a Composite Item / DIY Blend
+                  </label>
+                </div>
+
+                {addForm.is_composite && (
+                  <div className="field">
+                    <label style={{color: 'var(--rose)'}}>Components (What is this made of?)</label>
+                    <VoiceInput isTextArea={true} placeholder="e.g. Epsom Salt, Lavender Oil" value={addForm.components} onChange={e => setAddForm({...addForm, components: e.target.value})} />
+                  </div>
+                )}
+
+                <div className="field">
                   <label style={{color: 'var(--rose)'}}>Layering Weight (1=Lightest, 10=Heaviest) - Optional Override</label>
                   <div style={{display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)'}}>
                     <input type="range" min="1" max="10" step="1" style={{flex: 1}} value={addForm.weight} onChange={e => { setAddForm({...addForm, weight: e.target.value}); setIsAutoWeight(false); }} />
@@ -425,7 +492,7 @@ export default function Rootwork({ pose }) {
         <div className="modal" style={{display: 'block'}}>
           <div className="modal-content card" style={{maxWidth: '500px'}}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{color: 'var(--rose)'}}>Banish {banishState.name}</h3>
+            <h3 style={{color: 'var(--rose)'}}>The Banishment of {banishState.name}</h3>
             <div className="mt mb-4" style={{color: 'var(--rose)'}}>
               Why are you banishing this from the rootwork? (e.g. Adverse reaction, discontinued, ineffective)
             </div>

@@ -152,7 +152,7 @@ export default function Grimoire({ pose }) {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>Today's Appointed Times <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Today's Appointed Times") }} /></h3>
+        <h3>The Appointed Times of Today <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Appointed Times of Today") }} /></h3>
         
         {realEvents.length > 0 ? realEvents.map((ev, i) => (
           <div key={i} className="step">
@@ -253,13 +253,13 @@ export default function Grimoire({ pose }) {
                     <div className="dn">{day.name}</div>
                     <div className="tg" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
                       {hasIso && (
-                        <span className="pill" style={{ color: 'var(--parch)' }}>Isotretinoin 40/80mg</span>
+                        <span className="pill" style={{ color: 'var(--silver)' }}>Isotretinoin 40/80mg</span>
                       )}
                       {isFriday && (
                         <>
-                          <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Methotrexate 15mg</span>
-                          <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Wegovy 2.4mg</span>
-                          <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Enbrel</span>
+                          <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Methotrexate 15mg</span>
+                          <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Wegovy 2.4mg</span>
+                          <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Enbrel</span>
                         </>
                       )}
                       {hasDrysol && (

@@ -69,7 +69,14 @@ export default function Scrying({ pose }) {
     setScryResult('');
     
     try {
-      const reply = await evaluateScryingPool(scryInput.trim(), profile?.intake_answers || {}, inventory);
+      // Serialize reactions Set into Array for AI
+      const serializedReactions = Object.entries(reactions).reduce((acc, [id, rSet]) => {
+        const item = inventory.find(i => i.id === id);
+        if (item) acc[item.name] = Array.from(rSet);
+        return acc;
+      }, {});
+      
+      const reply = await evaluateScryingPool(scryInput.trim(), profile?.intake_answers || {}, inventory, serializedReactions);
       setScryStatus('');
       setScryResult(reply);
     } catch (err) {
@@ -141,8 +148,8 @@ export default function Scrying({ pose }) {
 
   return (
     <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto' }}>
-      
-
+      <div className="rw-grid">
+        <div className="rw-col">
 
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
@@ -177,6 +184,29 @@ export default function Scrying({ pose }) {
           {scryResult}
         </div>
       </div>
+
+      <div className="card mt-4">
+        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+        <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
+        <div className="mt mb-4">Formulas nearing expiration or running low.</div>
+        <div>
+          {waningItems.length > 0 ? (
+            waningItems.map(item => (
+              <div key={item.id || item.name} className="row" style={{ flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: '200px' }}>
+                  <div className="nm">{item.name}</div>
+                  <div className="mt">{item.brand} &bull; {item.isExpired ? <span style={{color: 'var(--rose)'}}>Expired!</span> : item.lifecycle_state}</div>
+                </div>
+                <button className="btn sm">Summon</button>
+              </div>
+            ))
+          ) : (
+            <div className="empty">No formulas are currently waning.</div>
+          )}
+        </div>
+      </div>
+        </div>
+        <div className="rw-col">
 
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
@@ -217,28 +247,6 @@ export default function Scrying({ pose }) {
         )}
       </div>
 
-
-      <div className="card mt-4">
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
-        <div className="mt mb-4">Formulas nearing expiration or running low.</div>
-        <div>
-          {waningItems.length > 0 ? (
-            waningItems.map(item => (
-              <div key={item.id || item.name} className="row" style={{ flexWrap: 'wrap' }}>
-                <div style={{ flex: 1, minWidth: '200px' }}>
-                  <div className="nm">{item.name}</div>
-                  <div className="mt">{item.brand} &bull; {item.isExpired ? <span style={{color: 'var(--rose)'}}>Expired!</span> : item.lifecycle_state}</div>
-                </div>
-                <button className="btn sm">Summon</button>
-              </div>
-            ))
-          ) : (
-            <div className="empty">No formulas are currently waning.</div>
-          )}
-        </div>
-      </div>
-
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Crypt of Ashes <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Crypt of Ashes") }} /></h3>
@@ -267,6 +275,8 @@ export default function Scrying({ pose }) {
             <div className="empty">No formulas have been banished yet.</div>
           )}
         </div>
+      </div>
+      </div>
       </div>
     </div>
   );

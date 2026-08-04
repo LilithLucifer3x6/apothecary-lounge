@@ -277,7 +277,7 @@ export default function ShadowTome({ pose }) {
         <div className="tome-main-col">
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>The Somatic Ledger <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Somatic Ledger") }} /></h3>
+            <h3>The Inner Sanctum <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Inner Sanctum") }} /></h3>
             <div className="note mb-4">"The ink is your own."</div>
             
             <div className="field" style={{ marginTop: '2.5rem' }}>
@@ -356,7 +356,7 @@ export default function ShadowTome({ pose }) {
           
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>Chronicle Botanical Infusions <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Chronicle Botanical Infusions") }} /></h3>
+            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Elixirs <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Herbal Elixirs") }} /></h3>
             
             <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px', marginTop: '1rem' }}>
               <Icon name="ph-camera" /> 
@@ -400,7 +400,7 @@ export default function ShadowTome({ pose }) {
 
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>Chronicle THC Infusions <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Chronicle T H C Infusions") }} /></h3>
+            <h3 style={{ fontSize: '1.5rem' }}>The Ethereal Vapors <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Ethereal Vapors") }} /></h3>
             <div className="mt mb-4">Document the potency of infused provisions.</div>
             
             <div className="field">
@@ -463,7 +463,7 @@ export default function ShadowTome({ pose }) {
             
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
               <div>
-                <h3 style={{color: 'var(--rose)'}}>Inscribe Herbal Elixir</h3>
+                <h3 style={{color: 'var(--rose)'}}>The Herbal Elixir Inscription</h3>
                 <div className="mt mb-4" style={{color: 'var(--rose)'}}>Add a new tea blend to your pantry.</div>
               </div>
               {teaModalState !== 'manual' && (

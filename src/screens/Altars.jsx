@@ -94,21 +94,21 @@ export default function Altars({ pose }) {
   };
 
   return (
-    <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-      <div className="sub" style={{ width: '220px', display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: '1 1 200px' }}>
+    <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+      <div className="sub" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: '0.8rem', width: '100%' }}>
         {ALTARS.map(altar => (
           <button
             key={altar.id}
             className="btn"
             onClick={() => handleTabClick(altar.id, altar.name)}
             style={{ 
-              textAlign: 'left', 
-              padding: '0.8rem 1rem', 
+              textAlign: 'center', 
+              padding: '0.6rem 1.2rem', 
               fontSize: '1.2rem', 
               background: activeAltarId === altar.id ? 'var(--parch)' : 'transparent', 
               color: activeAltarId === altar.id ? 'var(--plum)' : 'var(--rose)',
               border: activeAltarId === altar.id ? '1px solid var(--plum)' : '1px solid var(--border)',
-              width: '100%',
+              width: 'fit-content',
               transition: 'all 0.2s',
               fontWeight: activeAltarId === altar.id ? 'bold' : 'normal'
             }}
@@ -118,7 +118,7 @@ export default function Altars({ pose }) {
         ))}
       </div>
       
-      <div className="card" style={{ flex: '1 1 400px', minHeight: '300px', transition: 'opacity 0.3s ease', opacity }}>
+      <div className="card" style={{ width: '100%', minHeight: '300px', transition: 'opacity 0.3s ease', opacity }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The {displayedAltar} <span dangerouslySetInnerHTML={{ __html: speakerMarkup(`The ${displayedAltar}`) }} /></h3>
         {renderAltarContent()}

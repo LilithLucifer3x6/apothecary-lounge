@@ -16,6 +16,8 @@ export default function Rites({ pose }) {
   const [amSaved, setAmSaved] = useState(false);
   const [pmSaving, setPmSaving] = useState(false);
   const [pmSaved, setPmSaved] = useState(false);
+  const [showTitration, setShowTitration] = useState(false);
+  const [titrationResponse, setTitrationResponse] = useState(null);
 
   const todayKey = new Date().toISOString().split('T')[0];
   const [scheduleChecked, setScheduleChecked] = useState(() => {
@@ -46,7 +48,13 @@ export default function Rites({ pose }) {
       const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, mockWearables);
       setAmItems(am);
       setPmItems(pm);
-      setConflicts(checkConflicts(itemsArr));
+      setConflicts(checkConflicts(itemsArr, userProfile || {}));
+      
+      const hasTret = pm.some(i => (i.name || '').toLowerCase().includes('tretinoin') || (i.category || '').toLowerCase().includes('retinoid'));
+      if (hasTret && !localStorage.getItem('titration_checked_today')) {
+        setShowTitration(true);
+      }
+      
       setLoading(false);
     }
     
@@ -249,7 +257,7 @@ export default function Rites({ pose }) {
         {/* Left Column: Morning Invocation */}
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>Morning Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Morning Invocation') }} /></h3>
+          <h3>The Morning Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Morning Invocation') }} /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
             {amItems.length > 0 ? amItems.map(i => renderStep(i)) : <div className="empty">The altar is bare. No morning rites are required.</div>}
             {amItems.length > 0 && (
@@ -283,7 +291,7 @@ export default function Rites({ pose }) {
         {/* Right Column: Evening Invocation */}
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>Evening Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('Evening Invocation') }} /></h3>
+          <h3>The Evening Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Evening Invocation') }} /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
             {pmItems.length > 0 ? pmItems.map(i => renderStep(i)) : <div className="empty">The altar is bare. No evening rites are required.</div>}
             {pmItems.length > 0 && (
@@ -306,7 +314,7 @@ export default function Rites({ pose }) {
       {/* Keeper's Warning (Full Width Below) */}
       {conflicts.length > 0 && (
         <div className="card mt-4" style={{ background: 'var(--card-bg-alt, rgba(100,20,20,0.5))', borderColor: '#882222' }}>
-          <h3 style={{ color: 'var(--rose)' }}>Keeper's Warning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Keeper's Warning") }} /></h3>
+          <h3 style={{ color: 'var(--rose)' }}>The Keeper's Warning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Keeper's Warning") }} /></h3>
           <ul style={{ marginTop: '0.5rem', color: 'var(--rose)', paddingLeft: '1.5rem' }}>
             {conflicts.map((c, idx) => (
               <li key={idx}>
@@ -315,7 +323,45 @@ export default function Rites({ pose }) {
             ))}
           </ul>
         </div>
+        </div>
       )}
+
+      {/* Titration Modal */}
+      {showTitration && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="card" style={{ maxWidth: '500px', width: '90%' }}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3>Master Invocation: Titration <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Master Invocation: Titration") }} /></h3>
+            <div className="mt mb-4" style={{ color: 'var(--rose)' }}>
+              You've been at your current frequency of Tretinoin/Retinoid for a fortnight. Are you experiencing any redness, peeling, or blistering?
+            </div>
+            
+            {!titrationResponse ? (
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                <button className="btn plum" style={{ flex: 1 }} onClick={() => setTitrationResponse('yes')}>
+                  Yes, I am
+                </button>
+                <button className="btn plum" style={{ flex: 1 }} onClick={() => setTitrationResponse('no')}>
+                  No, I'm fine
+                </button>
+              </div>
+            ) : (
+              <div style={{ marginTop: '1rem', color: 'var(--rose)' }}>
+                {titrationResponse === 'yes' 
+                  ? "The Keeper advises you hold your current frequency and do not increase usage. Consider skipping a night if irritation worsens."
+                  : "Excellent. The Keeper permits you to increase your frequency by one additional night per week."}
+                <div style={{ marginTop: '2rem', textAlign: 'right' }}>
+                  <button className="btn plum sm" onClick={() => {
+                    localStorage.setItem('titration_checked_today', todayKey);
+                    setShowTitration(false);
+                  }}>Acknowledge</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

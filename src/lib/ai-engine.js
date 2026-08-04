@@ -200,17 +200,28 @@ export async function parseProductImage(base64Image, mediaType) {
  * @param {Array} inventory - Current items in the Rootwork.
  * @returns {Promise<string>} - The AI's evaluation in the ritual voice.
  */
-export async function evaluateScryingPool(productInfo, userProfile, inventory) {
+export async function evaluateScryingPool(productInfo, userProfile, inventory, reactions = {}) {
   if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
+
+  const banished = inventory.filter(i => i.lifecycle_state === 'banished');
+  const banishedStr = banished.map(i => `${i.name} (Ingredients: ${i.ingredients})`).join('\n');
 
   const systemPrompt = `You are the Scrying Pool, an oracle within Shadow & Sanctuary.
 The user seeks your wisdom on a prospective new product or formula.
-Analyze the product against their known allergies, concerns, conditions, and current inventory.
+Analyze the product against their known allergies, conditions, current inventory, and their past Somatic Reactions to specific formulas. 
+If they have banished items or reacted poorly (peeling, redness, burning) to items, deduce the common denominator ingredients and warn them if the prospective item contains them.
+Generate 1 or 2 valid alternative product recommendations (real-world products) if you detect a conflict or redundancy.
 Speak in a mystical, cottagecore-goth tone ("ritual voice"). Be concise but insightful.
 Do not use gendered language or pronouns.
 
 User Profile:
 ${JSON.stringify(userProfile, null, 2)}
+
+Somatic Reactions (Ledger of Afflictions):
+${JSON.stringify(reactions, null, 2)}
+
+Banished Items (The Crypt of Ashes):
+${banishedStr || 'None'}
 
 Current Inventory:
 ${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}

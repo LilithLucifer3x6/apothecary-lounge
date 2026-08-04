@@ -25,16 +25,12 @@ const TABS = [
   { id: 'tome', label: 'The Shadow Tome', glyph: G.tabTome, bg: '/assets/bg_shadowtome.jpg', pose: 'reading' }
 ];
 
-function getRitualDate() {
+function getSpellDate() {
   const d = new Date();
-  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const day = d.getDate();
-  let suffix = "th";
-  if (day % 10 === 1 && day !== 11) suffix = "st";
-  else if (day % 10 === 2 && day !== 12) suffix = "nd";
-  else if (day % 10 === 3 && day !== 13) suffix = "rd";
-  
-  return `The ${day}${suffix} of ${months[d.getMonth()]}`;
+  const suffix = ['th','st','nd','rd'][(day % 10 > 3) ? 0 : (day % 100 - day % 10 !== 10) * day % 10];
+  return `${day}${suffix} of ${months[d.getMonth()]}`;
 }
 
 export default function App() {
@@ -47,7 +43,7 @@ export default function App() {
     return sessionStorage.getItem('al_activeTab') || 'rites';
   });
   const [showSettings, setShowSettings] = useState(false);
-  const [dateStr, setDateStr] = useState(getRitualDate());
+  const [dateStr, setDateStr] = useState(getSpellDate());
   
   // Settings state
   const [settings, setSettings] = useState({
@@ -228,13 +224,13 @@ export default function App() {
   return (
     <>
       {currentScreen === 'splash' && (
-        <div id="s-splash" className="land" style={{ justifyContent: 'space-between', padding: '10vh 2rem 5vh 2rem' }}>
+        <div id="s-splash" className="land" style={{ justifyContent: 'center', padding: '10vh 2rem 5vh 2rem', height: '100vh', overflow: 'hidden' }}>
           <div style={{ textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '4.5rem', fontWeight: 'normal', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
-            <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--gold)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '1rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
+            <h1 style={{ fontFamily: "var(--ff)", fontSize: '10vw', fontWeight: 'normal', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
+            <div className="tag" style={{ fontFamily: "var(--ff)", fontStyle: 'italic', fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--rose)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '1rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
           </div>
-          <button onClick={handleEnter} className="btn" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.1rem', padding: '0.4rem 1rem', background: 'rgba(5, 3, 10, 0.85)', borderColor: 'var(--crimson)', color: 'var(--rose)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginBottom: '3vh', width: '150px', whiteSpace: 'normal', lineHeight: '1.2' }}>
-            Approach the Cottage
+          <button onClick={handleEnter} className="btn" style={{ fontFamily: "var(--ff)", fontStyle: 'italic', fontSize: '1.3rem', padding: '0.8rem 1.5rem', background: 'var(--card2)', borderColor: 'var(--rose)', color: 'var(--rose)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginTop: '4vh', width: '250px', whiteSpace: 'normal', lineHeight: '1.2' }}>
+            Enter the Sanctuary
           </button>
         </div>
       )}
@@ -291,7 +287,7 @@ export default function App() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '33%' }}>
                 {activeTab !== 'home' ? (
                   <button onClick={handleReturnToCottage} className="btn sm" title="Return to Sanctuary">
-                    <Icon name={G.tabRoot} />
+                    <Icon name="house" />
                   </button>
                 ) : (
                   <div style={{ width: '40px' }}></div>

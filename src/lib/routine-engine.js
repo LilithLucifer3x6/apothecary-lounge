@@ -116,6 +116,35 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
     if (isPm) pmItems.push(item);
   });
 
+  // Zone-based Conflict Rescheduling
+  // If Retinoid is in PM, move Vitamin C and Exfoliating Acids to AM
+  const pmRetinoids = pmItems.filter(i => i.risk_flags?.retinoid || (i.name || '').toLowerCase().includes('tretinoin'));
+  if (pmRetinoids.length > 0) {
+    // Find all Vit C and Acids in PM that share a zone with the retinoid
+    for (let i = pmItems.length - 1; i >= 0; i--) {
+      const item = pmItems[i];
+      const isVitC = item.risk_flags?.vitamin_c;
+      const isAcid = item.risk_flags?.acid || item.risk_flags?.exfoliant;
+      
+      if (isVitC || isAcid) {
+        // Check zone overlap
+        const itemZone = (item.application_zone || 'full-face').toLowerCase();
+        const overlaps = pmRetinoids.some(r => {
+          const rZone = (r.application_zone || 'full-face').toLowerCase();
+          return rZone === itemZone || rZone === 'full-face' || itemZone === 'full-face';
+        });
+        
+        if (overlaps) {
+          // Reschedule to AM
+          pmItems.splice(i, 1);
+          if (!amItems.find(a => a.id === item.id)) {
+            amItems.push(item);
+          }
+        }
+      }
+    }
+  }
+
   const getWeight = (item) => {
     if (item.behavior_flags && item.behavior_flags.layering_weight) {
       return item.behavior_flags.layering_weight;
