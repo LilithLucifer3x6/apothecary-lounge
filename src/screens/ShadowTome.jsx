@@ -117,7 +117,7 @@ export default function ShadowTome({ pose }) {
   };
 
   const handleBanish = async (id) => {
-    if (window.confirm("Burn this echo from the tome? It cannot be recovered.")) {
+    if (window.confirm("Unweave this spell from the tome? It cannot be recovered.")) {
       await supabase.from('journal_entries').delete().eq('id', id);
       loadHistory();
     }
@@ -330,9 +330,9 @@ export default function ShadowTome({ pose }) {
                       onClick={() => handleBanish(entry.id)} 
                       className="btn sm" 
                       style={{ background: 'transparent', border: '1px dashed rgba(212,28,60,0.4)', color: 'var(--dim)', fontSize: '0.7rem' }}
-                      title="Burn the echo"
+                      title="Unweave the spell"
                     >
-                      <Icon name="ph-fire" /> Burn Echo
+                      <Icon name="ph-sparkle" /> Unweave
                     </button>
                   </div>
 
