@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '../components/Icon.jsx';
+import VoiceInput from '../components/VoiceInput.jsx';
 
 export default function ConjureVisage({ onComplete }) {
   const [name, setName] = useState('The Keeper');
@@ -72,11 +73,10 @@ export default function ConjureVisage({ onComplete }) {
       <div className="card">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3 style={{ color: 'var(--rose)' }}>The Name</h3>
-        <input 
-          type="text" 
+        <VoiceInput 
           value={name} 
-          onChange={e => setName(e.target.value)}
-          placeholder="By what name are you known?" 
+          onChange={e => setName(e.target.value)} 
+          placeholder="By what name shall the lounge address you?" 
           style={{ width: '100%', padding: '1rem', marginTop: '1rem', color: 'var(--rose)' }}
         />
 

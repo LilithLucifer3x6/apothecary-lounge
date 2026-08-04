@@ -277,7 +277,7 @@ export default function ShadowTome({ pose }) {
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <h3>The Inner Sanctum</h3>
-            <div className="note mb-4">"The ink is your own. Nothing written here is read by any other part of this place."</div>
+            <div className="note mb-4">"The ink is your own."</div>
             
             <div className="field" style={{ marginTop: '2.5rem' }}>
               <label>The Mood</label>
@@ -318,7 +318,7 @@ export default function ShadowTome({ pose }) {
 
           <div id="tome-history" className="mt-4">
             {history.length === 0 ? (
-              <div className="empty">No pages have been inscribed.</div>
+              <div className="empty">The pages remain unmarked. No thoughts have been inscribed.</div>
             ) : (
               history.map(entry => (
                 <div key={entry.id || entry.created_at} className="card mb-4" style={{ position: 'relative' }}>
@@ -370,8 +370,7 @@ export default function ShadowTome({ pose }) {
 
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>Herbal Pantry</h3>
-            <div className="mt mb-4">Your stored teas and elixirs.</div>
+            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Pantry</h3>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {pantry.length > 0 ? pantry.map(tea => (
@@ -400,8 +399,8 @@ export default function ShadowTome({ pose }) {
 
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>THC Infusions</h3>
-            <div className="mt mb-4">Track infused honey dosages.</div>
+            <h3 style={{ fontSize: '1.5rem' }}>The THC Infusions</h3>
+            <div className="mt mb-4">Document the potency of infused provisions.</div>
             
             <div className="field">
               <label>Concentration (mg/ml)</label>
@@ -464,7 +463,7 @@ export default function ShadowTome({ pose }) {
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
               <div>
                 <h3 style={{color: 'var(--rose)'}}>Inscribe Herbal Elixir</h3>
-                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Add a new tea blend to your pantry.</div>
+                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Introduce a new blend to your pantry.</div>
               </div>
               {teaModalState !== 'manual' && (
                 <button className="btn sm" style={{background: 'transparent', padding: '0.4rem', color: 'var(--rose)'}} onClick={() => setTeaModalState('manual')} title="Manual Inscription">

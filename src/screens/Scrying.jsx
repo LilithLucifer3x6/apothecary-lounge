@@ -43,9 +43,9 @@ export default function Scrying({ pose }) {
   const handleScry = async () => {
     if (!scryInput.trim()) return;
     
-    // LAVENDER HARD BAN
+    // LAVENDER BAN
     if (scryInput.toLowerCase().includes('lavender')) {
-      setScryStatus(<span><Icon name="warning" /> WARNING: Lavender detected. This formula is permanently banished.</span>);
+      setScryStatus(<span><Icon name="warning" /> WARNING: Lavender detected. This formula is sealed in the Crypt of Ashes.</span>);
       setScryResult('Lavender is strictly forbidden from your routine. It has been sealed in the Crypt of Ashes.');
       
       // Add to banished items if not already there
@@ -141,39 +141,18 @@ export default function Scrying({ pose }) {
   return (
     <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto' }}>
       
-      {healthEnabled ? (
-        readiness ? (
-          <div className="card mt-4" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'var(--card3)', borderColor: 'var(--border)' }}>
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <div style={{ fontSize: '3rem', fontFamily: "'IM Fell English', serif", color: 'var(--rose)', minWidth: '40px', textAlign: 'center' }}>{readiness.score}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <div style={{ fontWeight: 'normal', color: 'var(--rose)' }}>Readiness: {readiness.state.charAt(0).toUpperCase() + readiness.state.slice(1)}</div>
-              <div style={{ fontSize: '0.9rem', color: 'var(--rose)' }}>Data from Android Health Connect</div>
-            </div>
-          </div>
-        ) : (
-          <div className="card mt-4" style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)', background: 'var(--card3)' }}>
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            Divining readiness...
-          </div>
-        )
-      ) : (
-        <div className="card mt-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: 'var(--rose)', background: 'rgba(17,14,21,0.5)', borderStyle: 'dashed' }}>
-          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          Enable Health Connect in Settings to divine your physical readiness.
-        </div>
-      )}
+
 
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Echo</h3>
-        <div className="mt mb-4">Prospective formula analysis. Present a formula to check for overlap with your current inventory and avoid over-purchasing.</div>
+        <div className="mt mb-4">Reveal the hidden nature of a formula. Present a label to divine its synergies with your current provisions.</div>
         
         <div className="field" style={{ marginBottom: '1rem' }}>
           <label>Photo Scan</label>
           <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
             <Icon name={G.tabPool} /> 
-            <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Upload or take a photo of the product</span>
+            <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Offer an image to the pool</span>
             <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
           </div>
         </div>
@@ -182,7 +161,7 @@ export default function Scrying({ pose }) {
           <div style={{ flex: 1 }}>
             <VoiceInput 
               isTextArea={true}
-              placeholder="Or enter formula name/ingredients..."
+              placeholder="Or inscribe the formula's true name..."
               value={scryInput}
               onChange={(e) => setScryInput(e.target.value)}
               style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem' }}
@@ -200,7 +179,7 @@ export default function Scrying({ pose }) {
 
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Somatic Ledger</h3>
+        <h3>The Ledger of Afflictions</h3>
         <div className="mt mb-4">Log bodily responses to active ingredients.</div>
         
         {inventory.length > 0 ? (
@@ -261,8 +240,8 @@ export default function Scrying({ pose }) {
 
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>Crypt of Ashes</h3>
-        <div className="mt mb-4">Permanently Banished Ingredients.</div>
+        <h3>The Crypt of Ashes</h3>
+        <div className="mt mb-4">Elements forever sealed away.</div>
         <div>
           {allergies.length > 0 || localBanished.length > 0 ? (
             <>
@@ -278,7 +257,7 @@ export default function Scrying({ pose }) {
                 <div key={`banished-${i}`} className="row" style={{ opacity: 0.8 }}>
                   <div style={{ flex: 1 }}>
                     <div className="nm" style={{ color: 'var(--rose)' }}>{item.name}</div>
-                    <div className="mt">{item.brand} &bull; Banished (Hard Ban)</div>
+                    <div className="mt">{item.brand} &bull; Banished</div>
                   </div>
                 </div>
               ))}

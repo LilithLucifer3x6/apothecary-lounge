@@ -232,15 +232,14 @@ export default function Rootwork({ pose }) {
 
   return (
     <div style={{padding: '1rem', maxWidth: '900px', margin: '0 auto'}}>
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem'}}>
-        <h2 style={{ fontFamily: "'Allura', cursive", fontSize: '3rem', margin: 0, color: 'var(--rose)' }}>The Rootwork</h2>
-        <button className="btn plum sm" onClick={() => {
+      <div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '2rem'}}>
+        <button className="btn plum" onClick={() => {
           setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
           setPhotoStatus('Upload or Scan Photo');
           setModalState('photo');
           setShowAddModal(true);
         }}>
-          <Icon name="ph-plus" /> Inscribe Item
+          <Icon name="ph-plus" /> Inscribe Relic
         </button>
       </div>
 
@@ -258,7 +257,7 @@ export default function Rootwork({ pose }) {
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Silver Toll</h3>
-        <div className="mt mb-4">Estimated monthly cost of your active routines.</div>
+        <div className="mt mb-4">The material cost of your active rituals, calculated by the waning of your provisions.</div>
         <div>
           <div style={{ fontSize: '2rem', fontFamily: "'Allura', cursive", color: 'var(--rose)' }}>
             ${(() => {
@@ -278,25 +277,24 @@ export default function Rootwork({ pose }) {
               return totalMonthly.toFixed(2);
             })()}
           </div>
-          <div className="mt" style={{opacity:0.7}}>Calculated by averaging purchase price over the formula's Period-After-Opening lifespan.</div>
         </div>
       </div>
 
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Apothecary</h3>
-        <div className="mt mb-4">Consumable preparations.</div>
+        <div className="mt mb-4">Your sacred elixirs and treatments.</div>
         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-          {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">No active preparations.</div>}
+          {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
         </div>
       </div>
 
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Arsenal</h3>
-        <div className="mt mb-4">Durable tools.</div>
+        <h3>The Reliquary</h3>
+        <div className="mt mb-4">Your instruments of ritual and restorative tools.</div>
         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-          {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">No tools gathered.</div>}
+          {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">Your Reliquary contains no instruments.</div>}
         </div>
       </div>
       
@@ -308,12 +306,12 @@ export default function Rootwork({ pose }) {
             
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
               <div>
-                <h3 style={{color: 'var(--rose)'}}>Inscribe Rootwork</h3>
-                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Introduce a new item to your codex.</div>
+                <h3 style={{color: 'var(--rose)'}}>Inscribe Relic</h3>
+                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Commit a new vessel or tool to your apothecary.</div>
               </div>
               {modalState !== 'manual' && (
-                <button className="btn sm" style={{background: 'transparent', padding: '0.4rem', color: 'var(--rose)'}} onClick={() => setModalState('manual')} title="Manual Inscription">
-                  <Icon name="ph-dots-three" />
+                <button className="btn sm" style={{padding: '0.4rem 1rem'}} onClick={() => setModalState('manual')} title="Manual Inscription">
+                  Write Manually
                 </button>
               )}
             </div>

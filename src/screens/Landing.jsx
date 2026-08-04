@@ -27,15 +27,10 @@ export default function Landing({ onProceed, onOpenAvatar }) {
 
   return (
     <div className="land" style={{ paddingBottom: '2rem' }}>
-      <h1 style={{ fontFamily: "'Allura', cursive", fontSize: '2.8rem', lineHeight: '1.5', padding: '0.2em 0.2em 0.4em 0.2em', margin: '0', color: 'var(--rose)' }}>
-        Shadow & Sanctuary
-      </h1>
-      <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', color: 'var(--rose)', fontSize: '1.06em', marginBottom: '1.2rem' }}>
-        a place to keep the work of caring for yourself
-      </div>
+
       
       {/* Clean, elegant centered avatar badge */}
-      {hasProfile && avatarConfig && (
+      {hasProfile && avatarConfig && avatarConfig.avatarVibe && (
         <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
           <div style={{ position: 'relative', width: '120px', height: '120px' }}>
             <img 

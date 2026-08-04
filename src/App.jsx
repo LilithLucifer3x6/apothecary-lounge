@@ -230,8 +230,8 @@ export default function App() {
       {currentScreen === 'splash' && (
         <div id="s-splash" className="land" style={{ justifyContent: 'space-between', padding: '10vh 2rem 5vh 2rem' }}>
           <div style={{ textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '4.5rem', fontWeight: 'normal', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: '#800020', margin: '0' }}>Shadow & Sanctuary</h1>
-            <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--rose)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '1rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '4.5rem', fontWeight: 'normal', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--rose)', margin: '0' }}>Shadow & Sanctuary</h1>
+            <div className="tag" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.6rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--gold)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '1rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
           </div>
           <button onClick={handleEnter} className="btn" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1.1rem', padding: '0.4rem 1rem', background: 'rgba(5, 3, 10, 0.85)', borderColor: 'var(--crimson)', color: 'var(--rose)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginBottom: '3vh', width: '150px', whiteSpace: 'normal', lineHeight: '1.2' }}>
             Approach the Cottage
@@ -245,8 +245,6 @@ export default function App() {
         </div>
       )}
 
-
-
       {currentScreen === 'avatar' && (
         <div id="s-av" className="land">
           <ConjureVisage onComplete={() => { 
@@ -258,6 +256,25 @@ export default function App() {
               handleTabClick('home'); 
             }
           }} />
+        </div>
+      )}
+
+      {currentScreen === 'landing' && (
+        <div id="s-land" className="land">
+          <Landing 
+            onProceed={() => {
+              let hasAvatar = false;
+              try {
+                const conf = JSON.parse(localStorage.getItem('avatar_config'));
+                if (conf && conf.avatarVibe) hasAvatar = true;
+              } catch(e) {}
+              const hasIntake = localStorage.getItem('intake_completed') === 'true';
+              if (!hasAvatar) setCurrentScreen('avatar');
+              else if (!hasIntake) setCurrentScreen('intake');
+              else setCurrentScreen('app');
+            }} 
+            onOpenAvatar={() => setCurrentScreen('avatar')} 
+          />
         </div>
       )}
 
@@ -283,13 +300,13 @@ export default function App() {
               </div>
               
               <div className="brand" style={{ position: 'static', padding: 0, width: '33%', textAlign: 'center' }}>
-                <h1 style={{ fontSize: '2.5rem', margin: 0, color: 'var(--gold)', textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(201,155,81,0.3)', fontFamily: "'Allura', cursive" }}>Shadow & Sanctuary</h1>
+                <h1 className="title" style={{ fontSize: '1.8rem', margin: 0, color: 'var(--gold)', textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(201,155,81,0.3)', marginTop: '-0.3rem' }}>The Apothecary Lounge</h1>
               </div>
 
               <div style={{ width: '33%', display: 'flex', justifyContent: 'flex-end' }}>
-                <button onClick={() => setShowSettings(true)} className="btn sm" title="Configurations">
+                <div onClick={() => setShowSettings(true)} style={{ cursor: 'pointer', opacity: 0.8, display: 'flex', alignItems: 'center' }} title="Configurations">
                   <Icon name="ph-gear" />
-                </button>
+                </div>
               </div>
             </div>
             
@@ -346,11 +363,8 @@ export default function App() {
                     <option value="Cormorant Garamond">Cormorant Garamond</option>
                     <option value="Allura">Allura</option>
                     <option value="Parisienne">Parisienne</option>
-                    <option value="Playfair Display">Playfair Display</option>
-                    <option value="Lora">Lora</option>
-                    <option value="Merriweather">Merriweather</option>
-                    <option value="Inter">Inter</option>
-                    <option value="Outfit">Outfit</option>
+                    <option value="Great Vibes">Great Vibes</option>
+                    <option value="Cinzel Decorative">Cinzel Decorative</option>
                     <option value="system-ui">System</option>
                   </select>
                 </div>

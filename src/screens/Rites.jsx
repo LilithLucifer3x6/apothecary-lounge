@@ -220,7 +220,7 @@ export default function Rites({ pose }) {
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
           </div>
           {item.isInjected ? (
-            <div className="mt" style={{opacity: 0.8}}>{item.desc || 'Baseline Routine'}</div>
+            <div className="mt" style={{opacity: 0.8}}>{item.desc || 'The Foundation'}</div>
           ) : (
             <div className="mt">{item.brand || 'Elixir'} &bull; {item.storage_location || 'The Vanity'}</div>
           )}

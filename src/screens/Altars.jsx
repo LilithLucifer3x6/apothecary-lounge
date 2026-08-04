@@ -76,27 +76,18 @@ export default function Altars({ pose }) {
       .filter(i => (i.domain || '').toLowerCase() === activeAltarId)
       .sort((a, b) => getWeight(a) - getWeight(b));
 
-    if (domainItems.length === 0 && activeAltarId !== 'vessel') {
+    if (domainItems.length === 0) {
       return <div className="mt mb-4">No rites currently inscribed for this domain. The shelves are bare.</div>;
     }
 
     return (
       <div>
-        <div className="mt mb-4">Executable Order</div>
+        <div className="mt mb-4">The Liturgy of Sequence</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {domainItems.map(i => {
             const isOpt = i.category?.toLowerCase().includes('mask') || i.category?.toLowerCase().includes('treatment');
             return renderStep(i, isOpt);
           })}
-          
-          {activeAltarId === 'vessel' && (
-            <>
-              <div className="mt mb-4 mt-4" style={{borderTop: '1px solid var(--border)', paddingTop: '1rem'}}>
-                The Bath Ritual (Optional, Prefer Weekends)
-              </div>
-              {renderStep({ id: 'bath-ritual-1', name: 'The Bath Soak', brand: 'Every 2 Weeks', desc: 'Milk powder, orange peel powder, rose petals powder, epsom salts.' }, true)}
-            </>
-          )}
         </div>
       </div>
     );

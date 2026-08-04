@@ -151,9 +151,9 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
   ];
 
   const immutableWindDown = [
-    { id: 'wd-1', name: 'Shower', category: 'immutable', domain: 'vessel', weight: 0.1, isInjected: true },
-    { id: 'wd-2', name: 'Dry Off', desc: 'Partner Assisted', category: 'immutable', domain: 'vessel', weight: 0.2, isInjected: true },
-    { id: 'wd-3', name: 'Extractions & Heated Eye Mask', desc: 'Submerge tools in 70% isopropyl alcohol for 5-10 mins before and after.', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true }
+    { id: 'wd-1', name: 'The Cleansing Waters', category: 'immutable', domain: 'vessel', weight: 0.1, isInjected: true },
+    { id: 'wd-2', name: 'The Drying', desc: 'With the aid of another', category: 'immutable', domain: 'vessel', weight: 0.2, isInjected: true },
+    { id: 'wd-3', name: 'The Purging of Blemishes & The Warm Gaze', desc: 'Purify implements before and after.', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true }
   ];
   
   if (isWeekend) {

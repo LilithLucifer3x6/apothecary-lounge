@@ -82,6 +82,7 @@ export default function Grimoire({ pose }) {
     // Even diff = 40mg, Odd diff = 80mg
     const isIsotretinoin80 = Math.abs(diffDays) % 2 === 1; 
 
+    const dayOfWeek = new Date(year, month, i).getDay();
     const hasIsotretinoin = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
     const hasFridayInjections = dayOfWeek === 5 && profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('enbrel') || o.name.toLowerCase().includes('wegovy') || o.name.toLowerCase().includes('methotrexate'));
 
