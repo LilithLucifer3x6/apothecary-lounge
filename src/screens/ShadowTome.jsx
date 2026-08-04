@@ -21,6 +21,7 @@ export default function ShadowTome({ pose }) {
   const [isBreathing, setIsBreathing] = useState(false);
   const [breathInst, setBreathInst] = useState('');
   const [breathCircle, setBreathCircle] = useState({ transform: 'scale(1)', borderColor: 'var(--plum)' });
+  const [readiness, setReadiness] = useState('normal');
   
   const [history, setHistory] = useState([]);
   
@@ -43,6 +44,7 @@ export default function ShadowTome({ pose }) {
     AI.generateMoods().then(list => setMoodsList(list || [])).catch(console.error);
     loadHistory();
     loadPantry();
+    loadHealthData();
     
     return () => {
       clearBreathTimers();
@@ -62,6 +64,17 @@ export default function ShadowTome({ pose }) {
     try {
       const { data } = await supabase.from('shadowtome_elixirs').select('*').order('name');
       if (data) setPantry(data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadHealthData = async () => {
+    try {
+      const { data } = await supabase.from('user_profile').select('health_data').single();
+      if (data && data.health_data && data.health_data.readiness) {
+        setReadiness(data.health_data.readiness.toLowerCase());
+      }
     } catch (e) {
       console.error(e);
     }
@@ -89,6 +102,11 @@ export default function ShadowTome({ pose }) {
 
   const appendThcNote = () => {
     const note = `\u2728 Infusion: Consumed ${thcDose}ml of THC honey at ${thcStrength}mg/ml (Total Yield: ${thcTotal}mg THC).`;
+    setEntryText(prev => prev ? prev + '\n\n' + note : note);
+  };
+
+  const appendTeaNote = (tea) => {
+    const note = `\u2728 Elixir: Drank ${tea.brand ? tea.brand + ' ' : ''}${tea.name} (Caffeine: ${tea.caffeine_content || 'None'}).`;
     setEntryText(prev => prev ? prev + '\n\n' + note : note);
   };
 
@@ -191,7 +209,7 @@ export default function ShadowTome({ pose }) {
   const startMeditation = () => {
     if (isBreathing) return;
     setIsBreathing(true);
-    runMeditationCycle(3); // Run 3 cycles of 4-7-8 breathing
+    runMeditationCycle(3); // Run 3 cycles
   };
 
   const runMeditationCycle = (roundsLeft) => {
@@ -202,23 +220,51 @@ export default function ShadowTome({ pose }) {
       return;
     }
 
-    setBreathInst('Inhale deeply... (4s)');
-    setBreathCircle({ transform: 'scale(2)', borderColor: 'var(--rose)', transition: 'transform 4s linear, border-color 4s ease' });
-    
-    breathTimeout1Ref.current = setTimeout(() => {
-      setBreathInst('Hold the breath... (7s)');
-      // Keep it expanded
-      setBreathCircle(prev => ({ ...prev, transform: 'scale(2.1)', transition: 'transform 7s linear' }));
-    }, 4000);
-    
-    breathTimeout2Ref.current = setTimeout(() => {
-      setBreathInst('Exhale slowly... (8s)');
-      setBreathCircle({ transform: 'scale(1)', borderColor: 'var(--plum)', transition: 'transform 8s linear, border-color 8s ease' });
-    }, 11000);
+    if (readiness === 'low') {
+      // Gentle Box Breathing (4-4-4-4) for low readiness
+      setBreathInst('Inhale softly... (4s)');
+      setBreathCircle({ transform: 'scale(1.5)', borderColor: 'var(--rose)', transition: 'transform 4s linear, border-color 4s ease' });
+      
+      breathTimeout1Ref.current = setTimeout(() => {
+        setBreathInst('Hold gently... (4s)');
+        setBreathCircle(prev => ({ ...prev, transform: 'scale(1.55)', transition: 'transform 4s linear' }));
+      }, 4000);
+      
+      breathTimeout2Ref.current = setTimeout(() => {
+        setBreathInst('Exhale slowly... (4s)');
+        setBreathCircle({ transform: 'scale(1)', borderColor: 'var(--plum)', transition: 'transform 4s linear, border-color 4s ease' });
+      }, 8000);
 
-    breathCycleRef.current = setTimeout(() => {
-      runMeditationCycle(roundsLeft - 1);
-    }, 19000);
+      // Third timeout for the bottom hold
+      setTimeout(() => {
+        if (!isBreathing) return; // Prevent race conditions if cancelled
+        setBreathInst('Rest... (4s)');
+        setBreathCircle(prev => ({ ...prev, transform: 'scale(0.95)', transition: 'transform 4s linear' }));
+      }, 12000);
+
+      breathCycleRef.current = setTimeout(() => {
+        runMeditationCycle(roundsLeft - 1);
+      }, 16000);
+
+    } else {
+      // Standard 4-7-8 Breathing
+      setBreathInst('Inhale deeply... (4s)');
+      setBreathCircle({ transform: 'scale(2)', borderColor: 'var(--rose)', transition: 'transform 4s linear, border-color 4s ease' });
+      
+      breathTimeout1Ref.current = setTimeout(() => {
+        setBreathInst('Hold the breath... (7s)');
+        setBreathCircle(prev => ({ ...prev, transform: 'scale(2.1)', transition: 'transform 7s linear' }));
+      }, 4000);
+      
+      breathTimeout2Ref.current = setTimeout(() => {
+        setBreathInst('Exhale slowly... (8s)');
+        setBreathCircle({ transform: 'scale(1)', borderColor: 'var(--plum)', transition: 'transform 8s linear, border-color 8s ease' });
+      }, 11000);
+
+      breathCycleRef.current = setTimeout(() => {
+        runMeditationCycle(roundsLeft - 1);
+      }, 19000);
+    }
   };
 
   return (
@@ -341,7 +387,8 @@ export default function ShadowTome({ pose }) {
                       <span style={{ color: 'var(--rose)' }}>Caffeine:</span> {tea.caffeine_content}
                     </div>
                   </div>
-                  <div className="acts">
+                  <div className="acts" style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button className="btn sm" onClick={() => appendTeaNote(tea)}>Drink</button>
                     <button className="btn sm g" onClick={() => handleBanishTea(tea.id, tea.name)}>Banish</button>
                   </div>
                 </div>
@@ -380,7 +427,9 @@ export default function ShadowTome({ pose }) {
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <h3 style={{ fontSize: '1.5rem' }}>The Centering Wind</h3>
-            <div className="mt mb-4" style={{ fontSize: '0.85rem' }}>A 4-7-8 cycle to calm the spirit.</div>
+            <div className="mt mb-4" style={{ fontSize: '0.85rem' }}>
+              {readiness === 'low' ? 'Gentle 4-4-4-4 box breathing for low readiness.' : 'A 4-7-8 cycle to calm the spirit.'}
+            </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', padding: '1.5rem 0' }}>
               <div 
