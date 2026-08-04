@@ -274,12 +274,10 @@ export default function Rites({ pose }) {
           <div className="mt mb-4" style={{ textAlign: 'center' }}>The Order of the Day</div>
           
           {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift.', 'var(--crimson-b)')}
-          {renderScheduleStep('The Morning Invocation', 'Perform your morning rites to set the day\'s intentions.', 'var(--crimson-b)')}
           {renderScheduleStep('The Morning Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
           {renderScheduleStep('The Midday Sustenance', 'A 45-minute pause for nourishment. Engage in gentle movement to stir stagnant energies.', 'var(--rose)')}
           {renderScheduleStep('The Afternoon Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
           {renderScheduleStep('The Descent', 'The day\'s labors conclude. Begin the grounding process to sever ties with the work.', 'var(--plum)')}
-          {renderScheduleStep('The Evening Invocation', 'Perform your evening rites to cleanse the day\'s energies before sleep.', 'var(--plum)')}
         </div>
 
         {/* Right Column: Evening Invocation */}
