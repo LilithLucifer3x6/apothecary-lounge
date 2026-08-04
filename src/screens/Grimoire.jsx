@@ -76,6 +76,7 @@ export default function Grimoire({ pose }) {
     const anchorDate = new Date(2026, 7, 3); // Month is 0-indexed (7 = Aug)
     // Need to strip time for perfect day calculation
     const currentDayTime = new Date(year, month, i).getTime();
+    const dayOfWeek = new Date(year, month, i).getDay();
     const diffDays = Math.round((currentDayTime - anchorDate.getTime()) / (1000 * 60 * 60 * 24));
     
     // Even diff = 40mg, Odd diff = 80mg
