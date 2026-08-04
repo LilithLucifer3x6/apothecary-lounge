@@ -353,138 +353,128 @@ export default function Rootwork({ pose }) {
       </div>
       <div className="rw-grid">
         <div className="rw-col">
+          <div className="card mb-4">
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3>The Apothecary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Apothecary") }} /></h3>
+            <div className="mt mb-4">Your sacred elixirs and treatments.</div>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+              {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
+            </div>
+          </div>
 
-      {waning.length > 0 && (
-        <div className="card mb-4" style={{ borderColor: 'var(--gold)' }}>
-          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3 style={{ color: 'var(--gold)' }}>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
-          <div className="mt mb-4" style={{ color: 'var(--gold)' }}>Items nearing the end of their potency.</div>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-            {waning.map(renderRow)}
+          <div className="card mb-4">
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3>The Reliquary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Reliquary") }} /></h3>
+            <div className="mt mb-4">Your instruments of ritual and restorative tools.</div>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+              {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">Your Reliquary contains no instruments.</div>}
+            </div>
           </div>
         </div>
-      )}
+        <div className="rw-col">
+          <div className="card mb-4">
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3>The Crypt of Ashes <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Crypt of Ashes") }} /></h3>
+            <div className="mt mb-4">Banished formulas and incompatible provisions.</div>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+              {banished.length === 0 ? <div className="mt">The crypt is empty.</div> : banished.map(renderRow)}
+            </div>
+          </div>
 
-      {ebbing.length > 0 && (
+          <div className="card mb-4">
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
+            <div className="mt mb-4">Relics nearing the end of their mortal potency.</div>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+              {(() => {
+                const waningItems = apothecary.filter(i => {
+                  if (!i.period_after_opening_months) return false;
+                  const start = i.opened_date ? new Date(i.opened_date) : new Date(i.created_at);
+                  const expiry = new Date(start.setMonth(start.getMonth() + parseInt(i.period_after_opening_months, 10)));
+                  const monthsLeft = (expiry - new Date()) / (1000 * 60 * 60 * 24 * 30);
+                  return monthsLeft > 0 && monthsLeft <= 2;
+                });
+                return waningItems.length === 0 ? <div className="mt">All relics remain potent.</div> : waningItems.map(renderRow);
+              })()}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '1rem', width: '100%' }}>
+        
         <div className="card mb-4">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Summoning Scroll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Summoning Scroll") }} /></h3>
           <div className="mt mb-4">Items needing replenishment.</div>
           <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-            {ebbing.map(renderRow)}
+            {ebbing.length === 0 ? <div className="mt">No active summons.</div> : ebbing.map(renderRow)}
           </div>
         </div>
-      )}
-
-      <div className="card mb-4">
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Echo <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Echo") }} /></h3>
-        <div className="mt mb-4">Reveal the hidden nature of a formula. Present a label to divine its synergies with your current provisions.</div>
-        
-        <div className="field" style={{ marginBottom: '1rem' }}>
-          <label>Photo Scan</label>
-          <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
-            <Icon name={G.tabPool} /> 
-            <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Offer an image to the pool</span>
-            <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleEchoPhotoUpload} />
-          </div>
-        </div>
-
-        <div className="field" style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-          <div style={{ flex: 1 }}>
-            <VoiceInput 
-              isTextArea={true}
-              placeholder="Or inscribe the formula's true name..."
-              value={echoInput}
-              onChange={(e) => setEchoInput(e.target.value)}
-              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1.1rem' }}
-            />
-          </div>
-          <button className="btn plum" onClick={handleEchoScry} style={{ minWidth: '120px' }}>Divine Synergies</button>
-        </div>
-        <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', }}>
-          {echoStatus}
-        </div>
-        <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
-          {echoResult}
-        </div>
-      </div>
 
         <div className="card mb-4">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Crypt of Ashes <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Crypt of Ashes") }} /></h3>
-          <div className="mt mb-4">Banished formulas and incompatible provisions.</div>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-            {banished.length === 0 ? <div className="mt">The crypt is empty.</div> : banished.map(renderRow)}
+          <h3>The Silver Toll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Silver Toll") }} /></h3>
+          <div className="mt mb-4">The material cost of your active rituals, tied to frequency of devotion.</div>
+          <div>
+            <div style={{ fontSize: '2rem', color: 'var(--rose)' }}>
+              ${(() => {
+                const { amItems, pmItems } = buildRoutines(items, {}, {});
+                const activeIds = new Set([...amItems.map(i=>i.id), ...pmItems.map(i=>i.id)]);
+                const activeItems = items.filter(i => activeIds.has(i.id));
+                
+                let totalMonthly = 0;
+                activeItems.forEach(item => {
+                  if (item.price && item.period_after_opening_months) {
+                    const price = parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
+                    const months = parseInt(item.period_after_opening_months, 10) || 1;
+                    const usesPerWeek = item.category?.toLowerCase().includes('mask') ? (item.category?.toLowerCase().includes('rinse') ? 2 : 5) : 7;
+                    const usageFactor = usesPerWeek / 7;
+                    totalMonthly += (price / months) * usageFactor;
+                  }
+                });
+                return totalMonthly.toFixed(2);
+              })()}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="rw-col">
 
-      <div className="card mb-4">
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Silver Toll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Silver Toll") }} /></h3>
-        <div className="mt mb-4">The material cost of your active rituals, tied to frequency of devotion.</div>
-        <div>
-          <div style={{ fontSize: '2rem', color: 'var(--rose)' }}>
-            ${(() => {
-              const { amItems, pmItems } = buildRoutines(items, {}, {});
-              const activeIds = new Set([...amItems.map(i=>i.id), ...pmItems.map(i=>i.id)]);
-              const activeItems = items.filter(i => activeIds.has(i.id));
-              
-              let totalMonthly = 0;
-              activeItems.forEach(item => {
-                if (item.price && item.period_after_opening_months) {
-                  const price = parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
-                  const months = parseInt(item.period_after_opening_months, 10) || 1;
-                  const usesPerWeek = item.category?.toLowerCase().includes('mask') ? (item.category?.toLowerCase().includes('rinse') ? 2 : 5) : 7;
-                  const usageFactor = usesPerWeek / 7;
-                  totalMonthly += (price / months) * usageFactor;
-                }
-              });
-              return totalMonthly.toFixed(2);
-            })()}
+        <div className="card mb-4">
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3>The Echo <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Echo") }} /></h3>
+          <div className="mt mb-4">Reveal the hidden nature of a formula.</div>
+          
+          <div className="field" style={{ marginBottom: '1rem' }}>
+            <label>Photo Scan</label>
+            <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+              <Icon name={G.tabPool} /> 
+              <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Offer an image to the pool</span>
+              <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleEchoPhotoUpload} />
+            </div>
+          </div>
+
+          <div className="field" style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+            <div style={{ flex: 1 }}>
+              <VoiceInput 
+                isTextArea={true}
+                placeholder="Or inscribe the formula's true name..."
+                value={echoInput}
+                onChange={(e) => setEchoInput(e.target.value)}
+                style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1.1rem' }}
+              />
+            </div>
+            <button className="btn plum" onClick={handleEchoScry} style={{ minWidth: '120px' }}>Divine</button>
+          </div>
+          <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', }}>
+            {echoStatus}
+          </div>
+          <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
+            {echoResult}
           </div>
         </div>
+
       </div>
 
-      <div className="card mb-4">
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
-        <div className="mt mb-4">Relics nearing the end of their mortal potency.</div>
-        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-          {(() => {
-            const waningItems = apothecary.filter(i => {
-              if (!i.period_after_opening_months) return false;
-              const start = i.opened_date ? new Date(i.opened_date) : new Date(i.created_at);
-              const expiry = new Date(start.setMonth(start.getMonth() + parseInt(i.period_after_opening_months, 10)));
-              const monthsLeft = (expiry - new Date()) / (1000 * 60 * 60 * 24 * 30);
-              return monthsLeft > 0 && monthsLeft <= 2; // Waning if 2 months or less remain
-            });
-            return waningItems.length === 0 ? <div className="mt">All relics remain potent.</div> : waningItems.map(renderRow);
-          })()}
-        </div>
-      </div>
-
-      <div className="card mb-4">
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Apothecary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Apothecary") }} /></h3>
-        <div className="mt mb-4">Your sacred elixirs and treatments.</div>
-        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-          {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
-        </div>
-      </div>
-
-      <div className="card mb-4">
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Reliquary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Reliquary") }} /></h3>
-        <div className="mt mb-4">Your instruments of ritual and restorative tools.</div>
-        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-          {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">Your Reliquary contains no instruments.</div>}
-        </div>
-      </div>
-      </div>
-      </div>
 
       {showAddModal && (
         <div className="modal" style={{display: 'block'}}>
