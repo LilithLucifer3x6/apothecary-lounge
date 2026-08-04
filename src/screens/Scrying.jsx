@@ -40,6 +40,18 @@ export default function Scrying({ pose }) {
       
       const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
       setProfile(userProfile);
+
+      const { data: reactions } = await supabase.from('somatic_reactions').select('*, items(name, brand)');
+      const formattedLedger = (reactions || []).map(r => ({
+        productId: r.item_id,
+        zone: r.zone,
+        severity: r.severity,
+        reactions: r.symptoms || [],
+        productName: r.items?.name || 'Unknown',
+        brand: r.items?.brand || '',
+        date: r.created_at
+      }));
+      setLedgerEntries(formattedLedger);
     }
     fetchData();
 
@@ -66,15 +78,23 @@ export default function Scrying({ pose }) {
     });
   };
 
-  const handleSaveLedger = () => {
+  const handleSaveLedger = async () => {
     if (!reactionForm.productId || reactionForm.reactions.size === 0 || reactionForm.severity === 0) return;
     const item = inventory.find(i => i.id === reactionForm.productId);
+    const reactionsArr = Array.from(reactionForm.reactions);
+
+    await supabase.from('somatic_reactions').insert({
+      item_id: reactionForm.productId,
+      zone: reactionForm.zone,
+      severity: reactionForm.severity,
+      symptoms: reactionsArr
+    });
     
     setLedgerEntries(prev => [...prev, {
       ...reactionForm,
       productName: item?.name,
       brand: item?.brand,
-      reactions: Array.from(reactionForm.reactions),
+      reactions: reactionsArr,
       date: new Date().toISOString()
     }]);
     

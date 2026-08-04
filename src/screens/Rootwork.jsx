@@ -195,7 +195,7 @@ export default function Rootwork({ pose }) {
           risk_flags: riskFlagsStr,
           behavior_flags: bFlagsStr,
           glyph: aiResult.glyph,
-          pao_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
           price: addForm.price ? parseFloat(addForm.price) : null,
           is_composite: addForm.is_composite || false,
           components: addForm.is_composite ? addForm.components : null
@@ -211,7 +211,7 @@ export default function Rootwork({ pose }) {
           behavior_flags: bFlagsStr,
           type: 'product',
           lifecycle_state: 'stocked',
-          pao_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
           price: addForm.price ? parseFloat(addForm.price) : null,
           is_composite: addForm.is_composite || false,
           components: addForm.is_composite ? addForm.components : null,
@@ -227,7 +227,7 @@ export default function Rootwork({ pose }) {
           name: addForm.name,
           domain: addForm.domain,
           category: addForm.category,
-          pao_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
           price: addForm.price ? parseFloat(addForm.price) : null,
           is_composite: addForm.is_composite || false,
           components: addForm.is_composite ? addForm.components : null
@@ -240,7 +240,7 @@ export default function Rootwork({ pose }) {
           category: addForm.category, 
           type: 'product', 
           lifecycle_state: 'stocked',
-          pao_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
           price: addForm.price ? parseFloat(addForm.price) : null,
           is_composite: addForm.is_composite || false,
           components: addForm.is_composite ? addForm.components : null,
@@ -424,7 +424,7 @@ export default function Rootwork({ pose }) {
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Silver Toll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Silver Toll") }} /></h3>
-        <div className="mt mb-4">The material cost of your active rituals, calculated by the waning of your provisions.</div>
+        <div className="mt mb-4">The material cost of your active rituals, tied to frequency of devotion.</div>
         <div>
           <div style={{ fontSize: '2rem', color: 'var(--rose)' }}>
             ${(() => {
@@ -434,16 +434,35 @@ export default function Rootwork({ pose }) {
               
               let totalMonthly = 0;
               activeItems.forEach(item => {
-                if (item.price && item.pao_months) {
-                  // Rough estimate: Price / PAO months
+                if (item.price && item.period_after_opening_months) {
                   const price = parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
-                  const months = parseInt(item.pao_months, 10) || 1;
-                  totalMonthly += (price / months);
+                  const months = parseInt(item.period_after_opening_months, 10) || 1;
+                  const usesPerWeek = item.category?.toLowerCase().includes('mask') ? (item.category?.toLowerCase().includes('rinse') ? 2 : 5) : 7;
+                  const usageFactor = usesPerWeek / 7;
+                  totalMonthly += (price / months) * usageFactor;
                 }
               });
               return totalMonthly.toFixed(2);
             })()}
           </div>
+        </div>
+      </div>
+
+      <div className="card mb-4">
+        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+        <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
+        <div className="mt mb-4">Relics nearing the end of their mortal potency.</div>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+          {(() => {
+            const waningItems = apothecary.filter(i => {
+              if (!i.period_after_opening_months) return false;
+              const start = i.opened_date ? new Date(i.opened_date) : new Date(i.created_at);
+              const expiry = new Date(start.setMonth(start.getMonth() + parseInt(i.period_after_opening_months, 10)));
+              const monthsLeft = (expiry - new Date()) / (1000 * 60 * 60 * 24 * 30);
+              return monthsLeft > 0 && monthsLeft <= 2; // Waning if 2 months or less remain
+            });
+            return waningItems.length === 0 ? <div className="mt">All relics remain potent.</div> : waningItems.map(renderRow);
+          })()}
         </div>
       </div>
 
@@ -612,17 +631,21 @@ export default function Rootwork({ pose }) {
           <div className="modal-content card" style={{maxWidth: '500px'}}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <h3 style={{color: 'var(--rose)'}}>The Banishment of {banishState.name}</h3>
-            <div className="mt mb-4" style={{color: 'var(--rose)'}}>
-              Why are you banishing this from the rootwork? (e.g. Adverse reaction, discontinued, ineffective)
+            <div className="mt" style={{ marginBottom: '1rem' }}>
+              Why are you banishing this from the rootwork?
             </div>
-            <div className="field">
-              <VoiceInput 
-                isTextArea={true} 
-                value={banishState.reason} 
-                onChange={e => setBanishState({...banishState, reason: e.target.value})} 
-                placeholder="Speak your reason..."
-              />
-            </div>
+            <select 
+              value={banishState.reason} 
+              onChange={e => setBanishState({...banishState, reason: e.target.value})} 
+              style={{ width: '100%', marginBottom: '1rem', background: 'var(--card)', color: 'var(--rose)' }}
+            >
+              <option value="">Select a reason...</option>
+              <option value="Adverse reaction (Affliction)">Adverse reaction (Affliction)</option>
+              <option value="Material Toll (Cost)">Material Toll (Too Expensive)</option>
+              <option value="Elusive (Availability)">Elusive (Hard to Find)</option>
+              <option value="Hollow (Ineffective)">Hollow (Ineffective)</option>
+              <option value="Other">Other</option>
+            </select>
             <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem'}}>
               <button className="btn" onClick={() => setBanishState(null)}>Abandon</button>
               <button className="btn plum" onClick={submitBanish} disabled={!banishState.reason}>Seal in the Crypt</button>

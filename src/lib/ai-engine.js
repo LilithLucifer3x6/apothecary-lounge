@@ -207,13 +207,13 @@ export async function evaluateScryingPool(productInfo, userProfile, inventory, r
   const banishedStr = banished.map(i => `${i.name} (Ingredients: ${i.ingredients})`).join('\n');
 
   const systemPrompt = `You are the Scrying Pool, an oracle within Shadow & Sanctuary.
-The user seeks your wisdom on a prospective new product or formula.
-Analyze the product against their known allergies, conditions, current inventory, and their past Somatic Reactions to specific formulas. 
-If they have banished items or reacted poorly (peeling, redness, burning) to items, deduce the common denominator ingredients and warn them if the prospective item contains them.
-Generate 1 or 2 valid alternative product recommendations (real-world products) if you detect a conflict or redundancy.
+The user seeks your wisdom on a prospective new product or formula (The Echo).
+Perform a strict Safety Check against their known allergies (The Codex), medical conditions, and past Somatic Reactions. 
+If they have banished items or reacted poorly (peeling, redness, burning), deduce the common denominator ingredients and explicitly warn them if the prospective item contains them.
+Perform a Redundancy Guard: compare the prospective item's primary actives against their current inventory. If they already own a formula that serves the exact same purpose or uses the same actives, explicitly warn them to guard against redundant spending.
+If you detect a safety conflict or redundancy, generate 1 or 2 valid alternative product recommendations (real-world products).
 Speak in a mystical, cottagecore-goth tone ("ritual voice"). Be concise but insightful.
-Do not use gendered language or pronouns.
-
+Do not use gendered language or pronouns.`;
 User Profile:
 ${JSON.stringify(userProfile, null, 2)}
 
@@ -273,13 +273,13 @@ Output a comprehensive report formatted in Markdown that covers the following ar
 Deduce exactly what common denominator ingredients are causing their reactions across banished products and the Ledger of Afflictions. Name the suspected offending ingredients directly.
 
 ### Goal Trajectory
-Assess if their current routine is actively moving them toward their stated intake goals.
+Assess if their current routine is actively moving them toward their stated intake goals. Highlight any counterproductive habits.
 
 ### Routine Optimization
-Recommend removing steps or products they do not actually need (e.g. "you are using too many acids", or "you have overlapping moisturizers").
+Recommend removing steps or products they do not actually need (e.g. "you are using too many acids", or "you have overlapping moisturizers"). Identify any redundant steps.
 
-### Synergies
-Suggest unowned product categories or specific unused inventory that would work synergistically with their routine.
+### Replacement & Synergy Mapping
+When a product is banished or ebbing, suggest replacements first from their *owned* inventory, then from general product knowledge. Suggest unowned product categories that would work synergistically with their current routine.
 
 ### Correlations
 Point out behavioral or systemic correlations (e.g., reacting to something due to applying it too frequently, or overlapping conflicts).
@@ -296,11 +296,18 @@ Active Inventory:
 ${JSON.stringify(inventory.map(i => ({ name: i.name, category: i.category, ingredients: i.ingredients, state: i.lifecycle_state })), null, 2)}
 
 Banished Items (Crypt of Ashes):
-${JSON.stringify(banishedItems.map(i => ({ name: i.name, ingredients: i.ingredients, reason: i.banish_reason })), null, 2)}
+${JSON.stringify(banishedItems.map(i => {
+  const isCostOrAvail = i.banish_reason?.includes('Material Toll') || i.banish_reason?.includes('Elusive');
+  return { 
+    name: i.name, 
+    ingredients: isCostOrAvail ? '[EXCLUDED FROM ANALYSIS DUE TO COST/AVAILABILITY]' : i.ingredients, 
+    reason: i.banish_reason 
+  };
+}), null, 2)}
 
-Ledger of Afflictions (Somatic Reactions):
+Ledger of Afflictions (Reactions):
 ${JSON.stringify(ledgerEntries, null, 2)}
-
+`;
 Please divine the truth in the water.`;
 
   const res = await fetch('/api/anthropic/v1/messages', {
