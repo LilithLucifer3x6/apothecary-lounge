@@ -29,7 +29,7 @@ export default function ShadowTome({ pose }) {
   const [pantry, setPantry] = useState([]);
   const [showTeaModal, setShowTeaModal] = useState(false);
   const [teaModalState, setTeaModalState] = useState('photo'); // photo, manual, confirm
-  const [teaStatus, setTeaStatus] = useState('Upload or Scan Photo');
+  const [teaStatus, setTeaStatus] = useState('Present to the Scrying Glass');
   const [teaImages, setTeaImages] = useState([]);
   const [isSavingTea, setIsSavingTea] = useState(false);
   const [teaForm, setTeaForm] = useState({
@@ -180,7 +180,7 @@ export default function ShadowTome({ pose }) {
     setShowTeaModal(false);
     setTeaImages([]);
     setTeaForm({ brand: '', name: '', ingredients: '', caffeine_content: '', steep_time: '', circadian_alignment: '' });
-    setTeaStatus('Upload or Scan Photo');
+    setTeaStatus('Present to the Scrying Glass');
     setTeaModalState('photo');
   };
 
@@ -463,7 +463,7 @@ export default function ShadowTome({ pose }) {
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
               <div>
                 <h3 style={{color: 'var(--rose)'}}>Inscribe Herbal Elixir</h3>
-                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Introduce a new blend to your pantry.</div>
+                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Inscribe a new brew into the apothecary.</div>
               </div>
               {teaModalState !== 'manual' && (
                 <button className="btn sm" style={{background: 'transparent', padding: '0.4rem', color: 'var(--rose)'}} onClick={() => setTeaModalState('manual')} title="Manual Inscription">
@@ -482,7 +482,7 @@ export default function ShadowTome({ pose }) {
                 
                 <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name="ph-images" />
-                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Upload multiple from gallery</span>
+                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Draw visions from the archive</span>
                   <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleTeaUpload} />
                 </div>
 
@@ -529,7 +529,7 @@ export default function ShadowTome({ pose }) {
             {teaModalState === 'manual' && (
               <>
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Photo Scan (Optional Override)</label>
+                  <label style={{color: 'var(--rose)'}}>Capture Aura</label>
                   <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer'}}>
                     <Icon name="ph-camera" /> 
                     <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{teaStatus}</span>

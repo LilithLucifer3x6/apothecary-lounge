@@ -326,7 +326,7 @@ export default function Rootwork({ pose }) {
                 
                 <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name="ph-images" />
-                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Bulk Upload</span>
+                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Mass Conjuration</span>
                   <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
                 </div>
 
@@ -356,7 +356,7 @@ export default function Rootwork({ pose }) {
             {modalState === 'manual' && (
               <>
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Photo Scan (Optional Override)</label>
+                  <label style={{color: 'var(--rose)'}}>Reveal to the Scrying Glass</label>
                   <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer'}}>
                     <Icon name={G.tabPool} /> 
                     <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{photoStatus}</span>
