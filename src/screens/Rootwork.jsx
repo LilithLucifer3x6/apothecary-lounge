@@ -22,7 +22,7 @@ export default function Rootwork({ pose }) {
   });
   const [isAutoWeight, setIsAutoWeight] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [photoStatus, setPhotoStatus] = useState('Upload or Scan Photo');
+  const [photoStatus, setPhotoStatus] = useState('Offer or Scry Photo');
   const [modalState, setModalState] = useState('photo');
   const [banishState, setBanishState] = useState(null);
   
@@ -96,7 +96,7 @@ export default function Rootwork({ pose }) {
         setModalState('confirm');
       } catch (err) {
         console.error(err);
-        setPhotoStatus('Failed to divine image.');
+        setPhotoStatus('The vision was clouded. Offer image anew.');
       }
     };
     reader.readAsDataURL(file);
@@ -158,7 +158,7 @@ export default function Rootwork({ pose }) {
         setEchoStatus('Vision extracted. Ready to analyze.');
       } catch (err) {
         console.error(err);
-        setEchoStatus('Failed to divine image.');
+        setEchoStatus('The vision was clouded. Offer image anew.');
       }
     };
     reader.readAsDataURL(file);
@@ -253,7 +253,7 @@ export default function Rootwork({ pose }) {
     setShowAddModal(false);
     setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '', price: '', is_composite: false, components: '' });
     setIsAutoWeight(true);
-    setPhotoStatus('Upload or Scan Photo');
+    setPhotoStatus('Offer or Scry Photo');
     setModalState('photo');
     fetchItems();
   };
@@ -344,7 +344,7 @@ export default function Rootwork({ pose }) {
       <div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '2rem'}}>
         <button className="btn plum" onClick={() => {
           setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
-          setPhotoStatus('Upload or Scan Photo');
+          setPhotoStatus('Offer or Scry Photo');
           setModalState('photo');
           setShowAddModal(true);
         }}>
@@ -481,7 +481,7 @@ export default function Rootwork({ pose }) {
               </div>
               {modalState !== 'manual' && (
                 <button className="btn sm" style={{padding: '0.4rem 1rem', whiteSpace: 'nowrap', flexShrink: 0}} onClick={() => setModalState('manual')} title="Manual Inscription">
-                  Write Manually
+                  Inscribe by Hand
                 </button>
               )}
             </div>
@@ -496,7 +496,7 @@ export default function Rootwork({ pose }) {
                 
                 <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name="ph-images" />
-                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Bulk Upload</span>
+                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Summon Multiple Visions</span>
                   <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
                 </div>
 
@@ -545,12 +545,12 @@ export default function Rootwork({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Expiration Date</label>
+                  <label style={{color: 'var(--rose)'}}>Mortal Potency Expiry</label>
                   <input type="date" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }} />
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Domain</label>
+                  <label style={{color: 'var(--rose)'}}>Anatomical Realm</label>
                   <select value={addForm.domain} onChange={e => setAddForm({...addForm, domain: e.target.value})} style={{color: 'var(--rose)'}}>
                     <option value="Crown">Crown (Hair & Scalp)</option>
                     <option value="Visage">Visage (Face)</option>
@@ -561,24 +561,24 @@ export default function Rootwork({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Category</label>
+                  <label style={{color: 'var(--rose)'}}>Elixir Classification</label>
                   <VoiceInput placeholder="e.g. Cleanser, Serum, Mask" value={addForm.category} onChange={e => setAddForm({...addForm, category: e.target.value})} />
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Ingredients</label>
+                  <label style={{color: 'var(--rose)'}}>Botanical Components & Herbs</label>
                   <VoiceInput isTextArea={true} placeholder="Paste ingredients list..." value={addForm.ingredients} onChange={e => setAddForm({...addForm, ingredients: e.target.value})} />
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Price (For The Silver Toll)</label>
+                  <label style={{color: 'var(--rose)'}}>Material Offering (For The Silver Toll)</label>
                   <input type="number" step="0.01" placeholder="0.00" value={addForm.price} onChange={e => setAddForm({...addForm, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }} />
                 </div>
 
                 <div className="field">
                   <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--rose)', cursor: 'pointer'}}>
                     <input type="checkbox" checked={addForm.is_composite} onChange={e => setAddForm({...addForm, is_composite: e.target.checked})} style={{accentColor: 'var(--rose)'}} />
-                    This is a Composite Item / DIY Blend
+                    This is a Composite Brew / Handmade Alchemy
                   </label>
                 </div>
 

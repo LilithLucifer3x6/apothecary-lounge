@@ -163,7 +163,7 @@ export default function Grimoire({ pose }) {
         )) : (
           <div className="step">
             <div className="body">
-              <div className="nm">No events scheduled today.</div>
+              <div className="nm">No mortal omens foretold for today.</div>
               <div className="mt">Your day is your own.</div>
             </div>
           </div>
@@ -197,7 +197,7 @@ export default function Grimoire({ pose }) {
                 >
                   {marked['retie'] ? 'Marked' : 'Kept'}
                 </button>
-                <button className="spk btn-override" title="Manual Override" onClick={handleOverride}>
+                <button className="spk btn-override" title="Override Calendar Fate" onClick={handleOverride}>
                   <i className="ph-duotone ph-dots-three-vertical"></i>
                 </button>
               </div>
@@ -220,7 +220,7 @@ export default function Grimoire({ pose }) {
                 >
                   {marked['nails'] ? 'Marked' : 'Kept'}
                 </button>
-                <button className="spk btn-override" title="Manual Override" onClick={handleOverride}>
+                <button className="spk btn-override" title="Override Calendar Fate" onClick={handleOverride}>
                   <i className="ph-duotone ph-dots-three-vertical"></i>
                 </button>
               </div>

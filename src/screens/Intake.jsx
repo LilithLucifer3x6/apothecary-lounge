@@ -348,7 +348,7 @@ export default function Intake({ onComplete }) {
 
           {currentStep === 3 && (
             <div className="ins-step">
-              {renderTitle('Medical Directives (Topical)')}
+              {renderTitle('Sacred Healing Directives (Topical Decrees)')}
               <div className="mt mb-4">Potent formulas prescribed by healers. These take priority in all routines.</div>
               
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>

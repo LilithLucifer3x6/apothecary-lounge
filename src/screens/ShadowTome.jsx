@@ -281,7 +281,7 @@ export default function ShadowTome({ pose }) {
             <div className="note mb-4">"The ink is your own."</div>
             
             <div className="field" style={{ marginTop: '2.5rem' }}>
-              <label>The Mood</label>
+              <label>The Spirit's Temperament</label>
               <div className="chips" id="tome-moods">
                 {moodsList.length === 0 ? (
                   <div style={{ opacity: 0.5 }}>Divining moods...</div>
@@ -300,7 +300,7 @@ export default function ShadowTome({ pose }) {
             </div>
             
             <div className="field" style={{ marginTop: '2.5rem' }}>
-              <label>The Entry</label>
+              <label>The Parchment Inscription</label>
               <VoiceInput 
                 isTextArea={true}
                 placeholder="Etch your reflections..."
@@ -384,7 +384,7 @@ export default function ShadowTome({ pose }) {
                     <div className="mt">{tea.brand} &bull; {tea.circadian_alignment}</div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginTop: '0.2rem' }}>
                       <span style={{ color: 'var(--rose)' }}>The Steeping:</span> {tea.steep_time} <br/>
-                      <span style={{ color: 'var(--rose)' }}>Caffeine:</span> {tea.caffeine_content}
+                      <span style={{ color: 'var(--rose)' }}>Stimulating Vigor:</span> {tea.caffeine_content}
                     </div>
                   </div>
                   <div className="acts" style={{ display: 'flex', gap: '0.5rem' }}>
@@ -393,7 +393,7 @@ export default function ShadowTome({ pose }) {
                   </div>
                 </div>
               )) : (
-                <div className="empty">No elixirs in the pantry.</div>
+                <div className="empty">The apothecary shelves remain bare.</div>
               )}
             </div>
           </div>
@@ -515,7 +515,7 @@ export default function ShadowTome({ pose }) {
                 <div style={{color: 'var(--dim)', marginBottom: '1rem'}}>
                   The Steeping: {teaForm.steep_time} <br/>
                   Circadian Alignment: {teaForm.circadian_alignment} <br/>
-                  Caffeine: {teaForm.caffeine_content}
+                  Stimulating Vigor: {teaForm.caffeine_content}
                 </div>
                 
                 <div style={{display: 'flex', justifyContent: 'center', gap: '1rem'}}>
@@ -557,14 +557,14 @@ export default function ShadowTome({ pose }) {
                   <label style={{color: 'var(--rose)'}}>Circadian Alignment</label>
                   <select value={teaForm.circadian_alignment} onChange={e => setTeaForm({...teaForm, circadian_alignment: e.target.value})} style={{color: 'var(--rose)'}}>
                     <option value="">Select...</option>
-                    <option value="Daytime">Daytime</option>
-                    <option value="Nighttime">Nighttime</option>
-                    <option value="Anytime">Anytime</option>
+                    <option value="Solar Hours">Solar Hours</option>
+                    <option value="Nocturnal Hours">Nocturnal Hours</option>
+                    <option value="All Hours">All Hours</option>
                   </select>
                 </div>
                 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Caffeine</label>
+                  <label style={{color: 'var(--rose)'}}>Stimulating Vigor</label>
                   <select value={teaForm.caffeine_content} onChange={e => setTeaForm({...teaForm, caffeine_content: e.target.value})} style={{color: 'var(--rose)'}}>
                     <option value="">Select...</option>
                     <option value="High">High</option>

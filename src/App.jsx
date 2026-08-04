@@ -334,7 +334,7 @@ export default function App() {
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <h2>Settings</h2>
+                <h2>Sanctuary Tuning</h2>
                 <div className="mt mb-4">Adjust the chamber's atmosphere.</div>
               </div>
               <button className="btn sm" onClick={() => setShowSettings(false)}>X</button>
@@ -343,16 +343,16 @@ export default function App() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
               {/* Left Column: Appearance */}
               <div>
-                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Appearance</h3>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Aesthetic Visage</h3>
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Font Size ({settings.fontSize}px)</label>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Inscription Scale ({settings.fontSize}px)</label>
                   <input type="range" min="12" max="32" value={settings.fontSize} 
                          onChange={e => setSettings({...settings, fontSize: e.target.value})} />
                 </div>
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Typeface</label>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Ancient Script</label>
                   <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
                     <option value="Parisienne">Parisienne</option>
                     <option value="Allura">Allura</option>
@@ -360,7 +360,7 @@ export default function App() {
                     <option value="Elsie">Elsie</option>
                     <option value="Lora">Lora</option>
                     <option value="Cinzel Decorative">Cinzel Decorative</option>
-                    <option value="system-ui">System</option>
+                    <option value="system-ui">Mortal Script (System)</option>
                   </select>
                 </div>
 
@@ -371,7 +371,7 @@ export default function App() {
                   background: 'var(--bg)',
                   marginTop: '1rem'
                 }}>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginBottom: '0.5rem' }}>Preview:</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginBottom: '0.5rem' }}>Scrying Glimpse:</div>
                   <div style={{ 
                     fontFamily: `"${settings.fontFamily}", serif`, 
                     fontSize: `${settings.fontSize}px`,
@@ -384,7 +384,7 @@ export default function App() {
               
               {/* Middle Column: Voice & Integrations */}
               <div>
-                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Integrations & Voice</h3>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Ethereal Echoes & Conduits</h3>
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', }}>
@@ -392,12 +392,12 @@ export default function App() {
                          onChange={e => {
                            setSettings({...settings, tts: e.target.checked});
                            setTtsEnabled(e.target.checked);
-                         }} /> Enable Voice
+                         }} /> Awaken Ethereal Voice
                   </label>
                   
                   {settings.tts && (
                     <div style={{ display: 'flex', marginTop: '0.5rem', flexDirection: 'column', gap: '0.5rem' }}>
-                      <label style={{ fontSize: '0.8rem' }}>Voice
+                      <label style={{ fontSize: '0.8rem' }}>Incantation Voice
                         <select style={{ width: '100%', marginTop: '0.2rem' }}
                                 value={ttsOptions.voice}
                                 onChange={e => {
@@ -409,7 +409,7 @@ export default function App() {
                           ))}
                         </select>
                       </label>
-                      <label style={{ fontSize: '0.8rem' }}>Speed
+                      <label style={{ fontSize: '0.8rem' }}>Tempo of Speech
                         <input type="range" min="0.5" max="2.0" step="0.1" style={{ width: '100%' }}
                                value={ttsOptions.rate}
                                onChange={e => {
@@ -418,7 +418,7 @@ export default function App() {
                                  setTtsRate(v);
                                }} />
                       </label>
-                      <label style={{ fontSize: '0.8rem' }}>Pitch
+                      <label style={{ fontSize: '0.8rem' }}>Vocal Resonance
                         <input type="range" min="0.5" max="2.0" step="0.1" style={{ width: '100%' }}
                                value={ttsOptions.pitch}
                                onChange={e => {
@@ -443,7 +443,7 @@ export default function App() {
                                } else {
                                  setSettings({...settings, health: checked});
                                }
-                             }} /> Health Connect (RingConn, Renpho, Samsung)
+                             }} /> Corporeal Sensors (RingConn, Renpho, Samsung)
                     </label>
                     {settings.health && !Capacitor.isNativePlatform() && (
                       <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -455,7 +455,7 @@ export default function App() {
                     
                     <label style={{ color: 'var(--crimson)', marginTop: '1rem' }}>
                       <input type="checkbox" checked={settings.cal}
-                             onChange={e => setSettings({...settings, cal: e.target.checked})} /> Google Calendar
+                             onChange={e => setSettings({...settings, cal: e.target.checked})} /> Solar Almanac (Google Calendar)
                     </label>
                     {settings.cal && (
                       <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>

@@ -208,18 +208,18 @@ export default function Scrying({ pose }) {
             </button>
           </div>
         ) : (
-          <div className="empty">Your inventory is empty.</div>
+          <div className="empty">Your apothecary stands empty. Inscribe relics to record afflictions.</div>
         )}
 
         {ledgerEntries.length > 0 && (
           <div style={{ marginTop: '2rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-            <h4 style={{ color: 'var(--metal)', marginBottom: '1rem' }}>Recorded Afflictions</h4>
+            <h4 style={{ color: 'var(--metal)', marginBottom: '1rem' }}>Chamber Ledger of Ills</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {ledgerEntries.map((entry, idx) => (
                 <div key={idx} className="row" style={{ opacity: 0.8, alignItems: 'flex-start' }}>
                   <div style={{ flex: 1 }}>
                     <div className="nm" style={{ color: 'var(--rose)' }}>{entry.productName}</div>
-                    <div className="mt">{entry.zone} &bull; Severity: {entry.severity}/5</div>
+                    <div className="mt">{entry.zone} &bull; Affliction Rank: {entry.severity}/5</div>
                     <div className="mt" style={{ marginTop: '0.3rem' }}>{entry.reactions.join(', ')}</div>
                   </div>
                 </div>
@@ -255,7 +255,7 @@ export default function Scrying({ pose }) {
               ))}
             </>
           ) : (
-            <div className="empty">No formulas have been banished yet.</div>
+            <div className="empty">No formulas linger in the ashes. The crypt slumbers.</div>
           )}
         </div>
       </div>
