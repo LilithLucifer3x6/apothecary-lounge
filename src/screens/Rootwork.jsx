@@ -351,52 +351,45 @@ export default function Rootwork({ pose }) {
           <Icon name="ph-plus" /> Inscribe Relic
         </button>
       </div>
-      <div className="rw-grid">
-        <div className="rw-col">
-          <div className="card mb-4">
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>The Apothecary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Apothecary") }} /></h3>
-            <div className="mt mb-4">Your sacred elixirs and treatments.</div>
-            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-              {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
-            </div>
-          </div>
-
-          <div className="card mb-4">
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>The Reliquary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Reliquary") }} /></h3>
-            <div className="mt mb-4">Your instruments of ritual and restorative tools.</div>
-            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-              {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">Your Reliquary contains no instruments.</div>}
-            </div>
-          </div>
-        </div>
-        <div className="rw-col">
-
-
-          <div className="card mb-4">
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
-            <div className="mt mb-4">Relics nearing the end of their mortal potency.</div>
-            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-              {(() => {
-                const waningItems = apothecary.filter(i => {
-                  if (!i.period_after_opening_months) return false;
-                  const start = i.opened_date ? new Date(i.opened_date) : new Date(i.created_at);
-                  const expiry = new Date(start.setMonth(start.getMonth() + parseInt(i.period_after_opening_months, 10)));
-                  const monthsLeft = (expiry - new Date()) / (1000 * 60 * 60 * 24 * 30);
-                  return monthsLeft > 0 && monthsLeft <= 2;
-                });
-                return waningItems.length === 0 ? <div className="mt">All relics remain potent.</div> : waningItems.map(renderRow);
-              })()}
-            </div>
-          </div>
+      <div className="card mb-4">
+        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+        <h3>The Apothecary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Apothecary") }} /></h3>
+        <div className="mt mb-4">Your sacred elixirs and treatments.</div>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+          {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '1rem', width: '100%' }}>
+      <div className="card mb-4">
+        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+        <h3>The Reliquary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Reliquary") }} /></h3>
+        <div className="mt mb-4">Your instruments of ritual and restorative tools.</div>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+          {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">Your Reliquary contains no instruments.</div>}
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem', marginTop: '1rem', width: '100%' }}>
         
-        <div className="card mb-4">
+        <div className="card mb-4" style={{ marginBottom: 0 }}>
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
+          <div className="mt mb-4">Relics nearing the end of their mortal potency.</div>
+          <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+            {(() => {
+              const waningItems = apothecary.filter(i => {
+                if (!i.period_after_opening_months) return false;
+                const start = i.opened_date ? new Date(i.opened_date) : new Date(i.created_at);
+                const expiry = new Date(start.setMonth(start.getMonth() + parseInt(i.period_after_opening_months, 10)));
+                const monthsLeft = (expiry - new Date()) / (1000 * 60 * 60 * 24 * 30);
+                return monthsLeft > 0 && monthsLeft <= 2;
+              });
+              return waningItems.length === 0 ? <div className="mt">All relics remain potent.</div> : waningItems.map(renderRow);
+            })()}
+          </div>
+        </div>
+
+        <div className="card mb-4" style={{ marginBottom: 0 }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Summoning Scroll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Summoning Scroll") }} /></h3>
           <div className="mt mb-4">Items needing replenishment.</div>
@@ -405,7 +398,7 @@ export default function Rootwork({ pose }) {
           </div>
         </div>
 
-        <div className="card mb-4">
+        <div className="card mb-4" style={{ marginBottom: 0 }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Silver Toll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Silver Toll") }} /></h3>
           <div className="mt mb-4">The material cost of your active rituals, tied to frequency of devotion.</div>
@@ -432,7 +425,7 @@ export default function Rootwork({ pose }) {
           </div>
         </div>
 
-        <div className="card mb-4">
+        <div className="card mb-4" style={{ marginBottom: 0 }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Echo <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Echo") }} /></h3>
           <div className="mt mb-4">Reveal the hidden nature of a formula.</div>
