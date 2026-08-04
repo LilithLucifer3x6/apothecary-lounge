@@ -283,26 +283,20 @@ export default function App() {
       {currentScreen === 'app' && (
         <div id="s-app" style={{ position: 'relative', minHeight: '100vh' }}>
           <div style={{ position: 'relative', zIndex: 5 }}>
-            <div className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.2rem 1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '33%' }}>
-                {activeTab !== 'home' ? (
-                  <button onClick={handleReturnToCottage} className="btn sm" title="Return to Sanctuary" style={{ padding: '0.2rem 0.6rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 1rem', position: 'sticky', top: 0, zIndex: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {activeTab !== 'home' && (
+                  <button onClick={handleReturnToCottage} className="btn" title="Return to Sanctuary" style={{ padding: '0.4rem 0.6rem' }}>
                     <Icon name="house" />
                   </button>
-                ) : (
-                  <div style={{ width: '40px' }}></div>
                 )}
-                {activeTab !== 'grim' && <div className="datemark" style={{ position: 'static' }}>{dateStr}</div>}
-              </div>
-              
-              <div className="brand" style={{ position: 'static', padding: 0, width: '33%', textAlign: 'center' }}>
-                <h1 className="title" style={{ fontSize: '2.5rem', margin: 0, color: 'var(--gold)', textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(201,155,81,0.3)', marginTop: '-0.3rem' }}>Shadow & Sanctuary</h1>
+                {activeTab !== 'grim' && <div className="datemark" style={{ position: 'static', margin: 0 }}>{dateStr}</div>}
               </div>
 
-              <div style={{ width: '33%', display: 'flex', justifyContent: 'flex-end' }}>
-                <div onClick={() => setShowSettings(true)} style={{ cursor: 'pointer', opacity: 0.8, display: 'flex', alignItems: 'center' }} title="Configurations">
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button onClick={() => setShowSettings(true)} className="btn" style={{ padding: '0.4rem 0.6rem' }} title="Configurations">
                   <Icon name="ph-gear" />
-                </div>
+                </button>
               </div>
             </div>
             
