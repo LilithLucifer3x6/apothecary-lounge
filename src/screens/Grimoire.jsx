@@ -282,6 +282,10 @@ export default function Grimoire({ pose }) {
         </h3>
         <div className="mt mb-4">The long count.</div>
         
+        <h2 style={{ fontFamily: "'Allura', cursive", fontSize: '2.5rem', color: 'var(--rose)', textAlign: 'center', margin: '1rem 0' }}>
+          {new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}
+        </h2>
+        
         <div className="cal">
           <div className="ch">S</div><div className="ch">M</div><div className="ch">T</div>
           <div className="ch">W</div><div className="ch">T</div><div className="ch">F</div>

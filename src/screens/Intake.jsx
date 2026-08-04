@@ -192,44 +192,47 @@ export default function Intake({ onComplete }) {
   );
 
   return (
-    <div className="card" style={{ maxWidth: '700px', margin: '2rem auto', minHeight: '580px', display: 'flex', flexDirection: 'column' }}>
+    <div className="card" style={{ width: '100%', maxWidth: '700px', height: '650px', margin: '2rem auto', display: 'flex', flexDirection: 'column' }}>
       <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-      <h2 style={{ textAlign: 'center', fontFamily: "'Allura', cursive", fontSize: '2.5rem', color: 'var(--rose)' }}>
-        <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
-      </h2>
       
-      <div id="path-toggle" style={{ textAlign: 'center', marginBottom: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-        <button 
-          className="btn sm" 
-          onClick={() => setPath('ai')}
-          style={{ 
-            background: path === 'ai' ? 'rgba(138,0,32,0.6)' : 'transparent', 
-            color: path === 'ai' ? 'var(--white)' : 'var(--parch)', 
-            border: path === 'ai' ? '1px solid var(--crimson)' : '1px solid var(--border)'
-          }}
-        >
-          The Guardian's Inquiry
-        </button>
-        <button 
-          className="btn sm" 
-          onClick={() => setPath('fast')}
-          style={{ 
-            background: path === 'fast' ? 'rgba(138,0,32,0.6)' : 'transparent', 
-            color: path === 'fast' ? 'var(--white)' : 'var(--parch)',
-            border: path === 'fast' ? '1px solid var(--crimson)' : '1px solid var(--border)'
-          }}
-        >
-          The Fast Route
-        </button>
+      <div style={{ flexShrink: 0 }}>
+        <h2 style={{ textAlign: 'center', fontFamily: "'Allura', cursive", fontSize: '2.5rem', color: 'var(--rose)' }}>
+          <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
+        </h2>
+        
+        <div id="path-toggle" style={{ textAlign: 'center', marginBottom: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+          <button 
+            className="btn sm" 
+            onClick={() => setPath('ai')}
+            style={{ 
+              background: path === 'ai' ? 'rgba(138,0,32,0.6)' : 'transparent', 
+              color: path === 'ai' ? 'var(--white)' : 'var(--parch)', 
+              border: path === 'ai' ? '1px solid var(--crimson)' : '1px solid var(--border)'
+            }}
+          >
+            The Guardian's Inquiry
+          </button>
+          <button 
+            className="btn sm" 
+            onClick={() => setPath('fast')}
+            style={{ 
+              background: path === 'fast' ? 'rgba(138,0,32,0.6)' : 'transparent', 
+              color: path === 'fast' ? 'var(--white)' : 'var(--parch)',
+              border: path === 'fast' ? '1px solid var(--crimson)' : '1px solid var(--border)'
+            }}
+          >
+            The Fast Route
+          </button>
+        </div>
       </div>
 
       {path === 'ai' && (
-        <div id="ai-path">
+        <div id="ai-path" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div 
             id="ai-chat-log" 
             ref={chatLogRef}
             style={{ 
-              height: '350px', 
+              flex: 1, 
               overflowY: 'auto', 
               border: '1px solid var(--border)', 
               padding: '1rem', 
@@ -255,7 +258,7 @@ export default function Intake({ onComplete }) {
               </div>
             ))}
           </div>
-          <div className="field" style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
+          <div className="field" style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', flexShrink: 0 }}>
             <div className="ip mic" style={{ flex: 1 }}>
               <VoiceInput 
                 value={chatInput}
@@ -266,7 +269,7 @@ export default function Intake({ onComplete }) {
             </div>
             <button className="btn plum" onClick={sendChatMessage}>Whisper</button>
           </div>
-          <div id="ai-status" style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--rose)', height: '1rem' }}>
+          <div id="ai-status" style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--rose)', height: '1rem', flexShrink: 0 }}>
             {aiStatus ? (
               aiStatus
             ) : !isReady ? (
@@ -277,7 +280,7 @@ export default function Intake({ onComplete }) {
       )}
 
       {path === 'fast' && (
-        <div id="ins-steps">
+        <div id="ins-steps" style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem' }}>
           {currentStep === 1 && (
             <div className="ins-step">
               {renderTitle('What brings you to this place?')}
