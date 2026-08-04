@@ -202,23 +202,27 @@ export default function Intake({ onComplete }) {
         
         <div id="path-toggle" style={{ textAlign: 'center', marginBottom: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
           <button 
-            className="btn sm" 
+            className="btn" 
             onClick={() => setPath('ai')}
             style={{ 
               background: path === 'ai' ? 'rgba(138,0,32,0.6)' : 'transparent', 
               color: path === 'ai' ? 'var(--white)' : 'var(--parch)', 
-              border: path === 'ai' ? '1px solid var(--crimson)' : '1px solid var(--border)'
+              border: path === 'ai' ? '1px solid var(--crimson)' : '1px solid var(--border)',
+              fontSize: '1.3rem',
+              padding: '0.6rem 1.2rem'
             }}
           >
             The Guardian's Inquiry
           </button>
           <button 
-            className="btn sm" 
+            className="btn" 
             onClick={() => setPath('fast')}
             style={{ 
               background: path === 'fast' ? 'rgba(138,0,32,0.6)' : 'transparent', 
               color: path === 'fast' ? 'var(--white)' : 'var(--parch)',
-              border: path === 'fast' ? '1px solid var(--crimson)' : '1px solid var(--border)'
+              border: path === 'fast' ? '1px solid var(--crimson)' : '1px solid var(--border)',
+              fontSize: '1.3rem',
+              padding: '0.6rem 1.2rem'
             }}
           >
             The Direct Path
