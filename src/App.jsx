@@ -76,7 +76,7 @@ export default function App() {
     verifyGlyphs();
     
     // Load Settings
-    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"20","fontFamily":"Parisienne","tts":false,"health":false,"cal":false}');
+    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"Cormorant Garamond","tts":false,"health":false,"cal":false}');
     setSettings(saved);
     applySettings(saved);
     
@@ -141,7 +141,7 @@ export default function App() {
   const applySettings = (s) => {
     document.documentElement.style.setProperty('--fs', s.fontSize + 'px');
     document.documentElement.style.fontSize = s.fontSize + 'px';
-    document.documentElement.style.setProperty('--ff', `"${s.fontFamily}", cursive`);
+    document.documentElement.style.setProperty('--ff', `"${s.fontFamily}", serif`);
     if (s.tts) {
       document.body.classList.remove('tts-disabled');
       setTtsEnabled(true);
@@ -355,12 +355,14 @@ export default function App() {
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem' }}>Ancient Script</label>
                   <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
+                    <option value="Cormorant Garamond">Cormorant Garamond</option>
+                    <option value="Alice">Alice</option>
+                    <option value="Cinzel Decorative">Cinzel Decorative</option>
+                    <option value="Lora">Lora</option>
+                    <option value="Elsie">Elsie</option>
                     <option value="Parisienne">Parisienne</option>
                     <option value="Allura">Allura</option>
                     <option value="Great Vibes">Great Vibes</option>
-                    <option value="Elsie">Elsie</option>
-                    <option value="Lora">Lora</option>
-                    <option value="Cinzel Decorative">Cinzel Decorative</option>
                     <option value="system-ui">Mortal Script (System)</option>
                   </select>
                 </div>
@@ -374,7 +376,7 @@ export default function App() {
                 }}>
                   <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginBottom: '0.5rem' }}>Scrying Glimpse:</div>
                   <div style={{ 
-                    fontFamily: `"${settings.fontFamily}", cursive`, 
+                    fontFamily: `"${settings.fontFamily}", serif`, 
                     fontSize: `${settings.fontSize}px`,
                     color: 'var(--crimson)'
                   }}>
