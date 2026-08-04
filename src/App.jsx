@@ -106,7 +106,7 @@ export default function App() {
       else window.speechSynthesis.onvoiceschanged = populateVoices;
     }
     
-    const initScreen = sessionStorage.getItem('al_currentScreen') ||const initScreen = localStorage.getItem('avatar_config') ? (sessionStorage.getItem('al_currentScreen') || 'splash') : 'splash';
+    const initScreen = localStorage.getItem('avatar_config') ? (sessionStorage.getItem('al_currentScreen') || 'splash') : 'splash';
     const initTab = localStorage.getItem('avatar_config') ? (sessionStorage.getItem('al_activeTab') || 'rites') : 'rites';
     if (initScreen === 'app') {
       if (initTab === 'home') {
