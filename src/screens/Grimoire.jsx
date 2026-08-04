@@ -195,7 +195,7 @@ export default function Grimoire({ pose }) {
                   onClick={() => markDone('retie')}
                   style={{ opacity: marked['retie'] ? 0.5 : 1 }}
                 >
-                  {marked['retie'] ? 'Marked' : 'Kept'}
+                  {marked['retie'] ? 'Marked' : 'Inscribe'}
                 </button>
                 <button className="spk btn-override" title="Override Calendar Fate" onClick={handleOverride}>
                   <i className="ph-duotone ph-dots-three-vertical"></i>
@@ -218,7 +218,7 @@ export default function Grimoire({ pose }) {
                   onClick={() => markDone('nails')}
                   style={{ opacity: marked['nails'] ? 0.5 : 1 }}
                 >
-                  {marked['nails'] ? 'Marked' : 'Kept'}
+                  {marked['nails'] ? 'Marked' : 'Inscribe'}
                 </button>
                 <button className="spk btn-override" title="Override Calendar Fate" onClick={handleOverride}>
                   <i className="ph-duotone ph-dots-three-vertical"></i>
