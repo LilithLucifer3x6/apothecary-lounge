@@ -283,10 +283,10 @@ export default function App() {
       {currentScreen === 'app' && (
         <div id="s-app" style={{ position: 'relative', minHeight: '100vh' }}>
           <div style={{ position: 'relative', zIndex: 5 }}>
-            <div className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 1rem' }}>
+            <div className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.2rem 1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '33%' }}>
                 {activeTab !== 'home' ? (
-                  <button onClick={handleReturnToCottage} className="btn sm" title="Return to Sanctuary">
+                  <button onClick={handleReturnToCottage} className="btn sm" title="Return to Sanctuary" style={{ padding: '0.2rem 0.6rem' }}>
                     <Icon name="house" />
                   </button>
                 ) : (
@@ -296,7 +296,7 @@ export default function App() {
               </div>
               
               <div className="brand" style={{ position: 'static', padding: 0, width: '33%', textAlign: 'center' }}>
-                <h1 className="title" style={{ fontSize: '1.4rem', margin: 0, color: 'var(--gold)', textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(201,155,81,0.3)', marginTop: '-0.3rem' }}>Shadow & Sanctuary</h1>
+                <h1 className="title" style={{ fontSize: '2.5rem', margin: 0, color: 'var(--gold)', textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(201,155,81,0.3)', marginTop: '-0.3rem' }}>Shadow & Sanctuary</h1>
               </div>
 
               <div style={{ width: '33%', display: 'flex', justifyContent: 'flex-end' }}>
