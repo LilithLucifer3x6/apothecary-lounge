@@ -393,7 +393,7 @@ export default function ShadowTome({ pose }) {
                   </div>
                 </div>
               )) : (
-                <div className="empty">The apothecary shelves remain bare.</div>
+                <div className="empty">The herbal pantry remains bare.</div>
               )}
             </div>
           </div>
