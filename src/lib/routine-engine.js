@@ -54,8 +54,6 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
 
   const virtualRxItems = rxList.map((rx, idx) => {
     const rxName = (rx.name || '').toLowerCase();
-    let weight = 9;
-    if (rxName.includes('drysol')) weight = 11; // Drysol goes last, on dry skin
     
     return {
       id: `rx-${idx}`,
@@ -63,7 +61,7 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
       category: 'treatment',
       domain: rxName.includes('drysol') ? 'vessel' : 'visage',
       risk_flags: { retinoid: rxName.includes('tretinoin') },
-      behavior_flags: { layering_weight: weight },
+      behavior_flags: { layering_weight: 9 }, // Default treatment weight
       ingredients: [],
       isInjected: false,
       isRx: true,
