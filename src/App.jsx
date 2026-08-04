@@ -292,7 +292,7 @@ export default function App() {
                 ) : (
                   <div style={{ width: '40px' }}></div>
                 )}
-                <div className="datemark" style={{ position: 'static' }}>{dateStr}</div>
+                {activeTab !== 'grim' && <div className="datemark" style={{ position: 'static' }}>{dateStr}</div>}
               </div>
               
               <div className="brand" style={{ position: 'static', padding: 0, width: '33%', textAlign: 'center' }}>
