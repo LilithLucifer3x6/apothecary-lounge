@@ -23,6 +23,7 @@ export default function Rootwork({ pose }) {
   const [isSaving, setIsSaving] = useState(false);
   const [photoStatus, setPhotoStatus] = useState('Upload or Scan Photo');
   const [modalState, setModalState] = useState('photo');
+  const [banishState, setBanishState] = useState(null);
 
   const fetchItems = async () => {
     setLoading(true);
@@ -88,30 +89,55 @@ export default function Rootwork({ pose }) {
       if (manualWeight) {
         bFlags.layering_weight = manualWeight;
       }
+      const bFlagsStr = JSON.stringify(bFlags);
+      const riskFlagsStr = JSON.stringify(aiResult.risk_flags || {});
+      const ingStr = JSON.stringify(ingArray);
       
-      await supabase.from('items').insert([{
-        brand: addForm.brand,
-        name: addForm.name,
-        domain: addForm.domain,
-        category: addForm.category,
-        ingredients: JSON.stringify(ingArray),
-        risk_flags: JSON.stringify(aiResult.risk_flags || {}),
-        behavior_flags: JSON.stringify(bFlags),
-        glyph: aiResult.glyph,
-        type: 'product',
-        lifecycle_state: 'stocked'
-      }]);
+      if (addForm.id) {
+        await supabase.from('items').update({
+          brand: addForm.brand,
+          name: addForm.name,
+          domain: addForm.domain,
+          category: addForm.category,
+          ingredients: ingStr,
+          risk_flags: riskFlagsStr,
+          behavior_flags: bFlagsStr,
+          glyph: aiResult.glyph
+        }).eq('id', addForm.id);
+      } else {
+        await supabase.from('items').insert([{
+          brand: addForm.brand,
+          name: addForm.name,
+          domain: addForm.domain,
+          category: addForm.category,
+          ingredients: ingStr,
+          risk_flags: riskFlagsStr,
+          behavior_flags: bFlagsStr,
+          glyph: aiResult.glyph,
+          type: 'product',
+          lifecycle_state: 'stocked'
+        }]);
+      }
     } catch (err) {
       console.error("AI Analysis failed", err);
       // Fallback
-      await supabase.from('items').insert([{
-        brand: addForm.brand, 
-        name: addForm.name, 
-        domain: addForm.domain, 
-        category: addForm.category, 
-        type: 'product', 
-        lifecycle_state: 'stocked'
-      }]);
+      if (addForm.id) {
+        await supabase.from('items').update({
+          brand: addForm.brand,
+          name: addForm.name,
+          domain: addForm.domain,
+          category: addForm.category
+        }).eq('id', addForm.id);
+      } else {
+        await supabase.from('items').insert([{
+          brand: addForm.brand, 
+          name: addForm.name, 
+          domain: addForm.domain, 
+          category: addForm.category, 
+          type: 'product', 
+          lifecycle_state: 'stocked'
+        }]);
+      }
     }
     
     setIsSaving(false);
@@ -123,11 +149,54 @@ export default function Rootwork({ pose }) {
     fetchItems();
   };
 
-  const handleBanishItem = async (id, name) => {
-    if (window.confirm(`Cast ${name} into the void? This cannot be undone.`)) {
-      await supabase.from('items').delete().eq('id', id);
-      fetchItems();
-    }
+  const handleBanishItem = (id, name) => {
+    setBanishState({ id, name, reason: '' });
+  };
+
+  const submitBanish = async () => {
+    if (!banishState.reason) return;
+    await supabase.from('items').update({
+      lifecycle_state: 'banished',
+      banish_reason: banishState.reason
+    }).eq('id', banishState.id);
+    setBanishState(null);
+    fetchItems();
+  };
+
+  const handleAmendItem = (item) => {
+    let ingStr = '';
+    try {
+      if (item.ingredients) {
+        const parsed = typeof item.ingredients === 'string' ? JSON.parse(item.ingredients) : item.ingredients;
+        ingStr = Array.isArray(parsed) ? parsed.join(', ') : '';
+      }
+    } catch (e) { ingStr = ''; }
+    
+    let wStr = '5';
+    let isAuto = true;
+    try {
+      if (item.behavior_flags) {
+        const b = typeof item.behavior_flags === 'string' ? JSON.parse(item.behavior_flags) : item.behavior_flags;
+        if (b.layering_weight) {
+          wStr = String(b.layering_weight);
+          isAuto = false;
+        }
+      }
+    } catch (e) {}
+
+    setAddForm({
+      id: item.id,
+      brand: item.brand || '',
+      name: item.name || '',
+      domain: item.domain || 'Crown',
+      category: item.category || '',
+      ingredients: ingStr,
+      weight: wStr,
+      expiration: ''
+    });
+    setIsAutoWeight(isAuto);
+    setModalState('manual');
+    setShowAddModal(true);
   };
 
   const renderRow = (item) => {
@@ -150,7 +219,7 @@ export default function Rootwork({ pose }) {
           <div className="mt">{item.brand} &bull; {item.category}</div>
         </div>
         <div className="acts">
-          <button className="btn sm" onClick={() => alert('Amending will be built soon.')}>Amend</button>
+          <button className="btn sm" onClick={() => handleAmendItem(item)}>Amend</button>
           <button className="btn sm g" onClick={() => handleBanishItem(item.id, item.name)}>Banish</button>
         </div>
       </div>
@@ -264,7 +333,7 @@ export default function Rootwork({ pose }) {
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '1rem'}}>
-                  <button className="btn" onClick={() => setShowAddModal(false)}>Cancel</button>
+                  <button className="btn" onClick={() => setShowAddModal(false)}>Abandon</button>
                 </div>
               </div>
             )}
@@ -278,7 +347,7 @@ export default function Rootwork({ pose }) {
                 <div style={{color: 'var(--dim)', marginBottom: '2rem'}}>{addForm.category}</div>
                 
                 <div style={{display: 'flex', justifyContent: 'center', gap: '1rem'}}>
-                  <button className="btn" onClick={() => setModalState('photo')}>Discard</button>
+                  <button className="btn" onClick={() => setModalState('photo')}>Reject Vision</button>
                   <button className="btn plum" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? 'Inscribing...' : 'Inscribe'}
                   </button>
@@ -342,13 +411,37 @@ export default function Rootwork({ pose }) {
                 </div>
                 
                 <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem'}}>
-                  <button className="btn" onClick={() => setShowAddModal(false)}>Cancel</button>
+                  <button className="btn" onClick={() => setShowAddModal(false)}>Abandon</button>
                   <button className="btn plum" onClick={handleSave} disabled={isSaving || !addForm.name}>
                     {isSaving ? 'Inscribing...' : 'Inscribe'}
                   </button>
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {banishState && (
+        <div className="modal" style={{display: 'block'}}>
+          <div className="modal-content card" style={{maxWidth: '500px'}}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3 style={{color: 'var(--rose)'}}>Banish {banishState.name}</h3>
+            <div className="mt mb-4" style={{color: 'var(--rose)'}}>
+              Why are you banishing this from the rootwork? (e.g. Adverse reaction, discontinued, ineffective)
+            </div>
+            <div className="field">
+              <VoiceInput 
+                isTextArea={true} 
+                value={banishState.reason} 
+                onChange={e => setBanishState({...banishState, reason: e.target.value})} 
+                placeholder="Speak your reason..."
+              />
+            </div>
+            <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem'}}>
+              <button className="btn" onClick={() => setBanishState(null)}>Abandon</button>
+              <button className="btn plum" onClick={submitBanish} disabled={!banishState.reason}>Seal in the Crypt</button>
+            </div>
           </div>
         </div>
       )}

@@ -117,14 +117,14 @@ export default function ShadowTome({ pose }) {
   };
 
   const handleBanish = async (id) => {
-    if (window.confirm("Banish this inscription to the void? It cannot be recovered.")) {
+    if (window.confirm("Burn this page from the tome? It cannot be recovered.")) {
       await supabase.from('journal_entries').delete().eq('id', id);
       loadHistory();
     }
   };
 
   const handleBanishTea = async (id, name) => {
-    if (window.confirm(`Cast ${name} into the void? It cannot be recovered.`)) {
+    if (window.confirm(`Shatter the jar of ${name}? It cannot be recovered.`)) {
       await supabase.from('shadowtome_elixirs').delete().eq('id', id);
       loadPantry();
     }
@@ -330,9 +330,9 @@ export default function ShadowTome({ pose }) {
                       onClick={() => handleBanish(entry.id)} 
                       className="btn sm" 
                       style={{ background: 'transparent', border: '1px dashed rgba(212,28,60,0.4)', color: 'var(--dim)', fontSize: '0.7rem' }}
-                      title="Banish from the tome"
+                      title="Burn the page"
                     >
-                      <Icon name="ph-trash" /> Banish
+                      <Icon name="ph-fire" /> Burn
                     </button>
                   </div>
 
@@ -389,7 +389,7 @@ export default function ShadowTome({ pose }) {
                   </div>
                   <div className="acts" style={{ display: 'flex', gap: '0.5rem' }}>
                     <button className="btn sm" onClick={() => appendTeaNote(tea)}>Imbibe</button>
-                    <button className="btn sm g" onClick={() => handleBanishTea(tea.id, tea.name)}>Banish</button>
+                    <button className="btn sm g" onClick={() => handleBanishTea(tea.id, tea.name)}>Shatter Jar</button>
                   </div>
                 </div>
               )) : (
@@ -498,7 +498,7 @@ export default function ShadowTome({ pose }) {
                 {teaImages.length > 0 && <div style={{textAlign: 'center', color: 'var(--rose)', fontStyle: 'italic'}}>{teaStatus}</div>}
 
                 <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
-                  <button className="btn" onClick={closeTeaModal}>Cancel</button>
+                  <button className="btn" onClick={closeTeaModal}>Abandon</button>
                   <button className="btn plum" disabled={teaImages.length === 0 || teaStatus === 'Divining the leaves...'} onClick={handleCastVision}>
                     {teaStatus === 'Divining the leaves...' ? 'Divining...' : 'Cast Vision'}
                   </button>
@@ -519,7 +519,7 @@ export default function ShadowTome({ pose }) {
                 </div>
                 
                 <div style={{display: 'flex', justifyContent: 'center', gap: '1rem'}}>
-                  <button className="btn" onClick={() => setTeaModalState('photo')}>Discard</button>
+                  <button className="btn" onClick={() => setTeaModalState('photo')}>Reject Vision</button>
                   <button className="btn plum" onClick={handleSaveTea} disabled={isSavingTea}>
                     {isSavingTea ? 'Inscribing...' : 'Seal in Pantry'}
                   </button>
@@ -580,7 +580,7 @@ export default function ShadowTome({ pose }) {
                 </div>
                 
                 <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem'}}>
-                  <button className="btn" onClick={closeTeaModal}>Cancel</button>
+                  <button className="btn" onClick={closeTeaModal}>Abandon</button>
                   <button className="btn plum" onClick={handleSaveTea} disabled={isSavingTea || !teaForm.name}>
                     {isSavingTea ? 'Inscribing...' : 'Seal in Pantry'}
                   </button>

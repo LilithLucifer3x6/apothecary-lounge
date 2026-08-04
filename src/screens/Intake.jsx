@@ -362,7 +362,7 @@ export default function Intake({ onComplete }) {
                     <div key={i} style={{ borderLeft: '2px solid var(--gold)', paddingLeft: '1rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <span style={{ color: 'var(--rose)', fontWeight: 'normal' }}>Prescription {i + 1}</span>
-                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Banish</button>
+                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Shatter</button>
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div className="field">
@@ -406,7 +406,7 @@ export default function Intake({ onComplete }) {
                       <div style={{ flex: 1 }}>
                         <VoiceInput value={med} onChange={e => updateOral(i, e.target.value)} placeholder="e.g. Spironolactone" />
                       </div>
-                      <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: '0.5rem' }} onClick={() => removeOral(i)}>Banish</button>
+                      <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: '0.5rem' }} onClick={() => removeOral(i)}>Shatter</button>
                     </div>
                   ))}
                   <button className="btn" onClick={addOral} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Systemic Measure</button>
@@ -444,7 +444,7 @@ export default function Intake({ onComplete }) {
                           const newList = [...algList];
                           newList.splice(i, 1);
                           setAlgList(newList);
-                        }}>Banish</button>
+                        }}>Shatter</button>
                       )}
                     </div>
                   ))}
