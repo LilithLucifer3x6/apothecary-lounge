@@ -5,8 +5,8 @@
 
 :root{
     --bg:#0b090e; --card:rgba(0,0,0,0.2); --card2:rgba(0,0,0,0.3); --border:rgba(255,255,255,0.15);
-    --crimson:#69465c; --crimson-b:#472f3e; --plum:#422a3e; --plum-b:rgba(66, 42, 62, 0.5);
-    --rose:#c4b7cb; --parch:#eaddcf; --silver:#a99fa1; --gold:#c2a66f;
+    --crimson:#7a1a2b; --crimson-b:#4a0d16; --plum:#422a3e; --plum-b:rgba(66, 42, 62, 0.5);
+    --rose:#b3454b; --parch:#eaddcf; --silver:#a99fa1; --gold:#c99b51;
     --moss:#3d4438; --ink:#1a161b;
     --white:#f5f0f1; --ash:#8a7f82; --dim:#7a6e71;
     --fs:1rem; --ff:-apple-system,'Segoe UI',Roboto,sans-serif;
