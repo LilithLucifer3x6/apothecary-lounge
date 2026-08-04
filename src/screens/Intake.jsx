@@ -506,7 +506,7 @@ export default function Intake({ onComplete }) {
             }}
             style={{ visibility: currentStep === 1 ? 'hidden' : 'visible' }}
           >
-            Retreat
+            Step Back
           </button>
           
           <div id="ins-dots" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
@@ -541,7 +541,7 @@ export default function Intake({ onComplete }) {
               }
             }}
           >
-            {currentStep === totalSteps ? 'Cross the Threshold' : 'Step Deeper'}
+            {currentStep === totalSteps ? 'Enter the Sanctuary' : 'Step Deeper'}
           </button>
         </div>
       )}

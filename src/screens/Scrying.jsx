@@ -149,10 +149,10 @@ export default function Scrying({ pose }) {
         <div className="mt mb-4">Reveal the hidden nature of a formula. Present a label to divine its synergies with your current provisions.</div>
         
         <div className="field" style={{ marginBottom: '1rem' }}>
-          <label>Gaze into the Glass</label>
+          <label>Photo Scan</label>
           <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
             <Icon name={G.tabPool} /> 
-            <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Present a token to the Scrying Glass</span>
+            <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Offer an image to the pool</span>
             <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
           </div>
         </div>
