@@ -72,11 +72,15 @@ export default function Grimoire({ pose }) {
     const hasRetie = appointments.some(app => new Date(app.date).getDate() === i && app.type === 'retie');
     const hasNails = appointments.some(app => new Date(app.date).getDate() === i && app.type === 'nails');
     
-    // Determine meds for this specific calendar date
-    const dateObj = new Date(year, month, i);
-    const dayOfWeek = dateObj.getDay(); // 0 = Sunday, 5 = Friday
+    // Anchor date: August 3rd, 2026 (User's first dose: 40mg)
+    const anchorDate = new Date(2026, 7, 3); // Month is 0-indexed (7 = Aug)
+    // Need to strip time for perfect day calculation
+    const currentDayTime = new Date(year, month, i).getTime();
+    const diffDays = Math.round((currentDayTime - anchorDate.getTime()) / (1000 * 60 * 60 * 24));
     
-    const isIsotretinoin80 = dateObj.getTime() / (1000 * 60 * 60 * 24) % 2 < 1; // Basic alternating logic
+    // Even diff = 40mg, Odd diff = 80mg
+    const isIsotretinoin80 = Math.abs(diffDays) % 2 === 1; 
+
     const hasIsotretinoin = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
     const hasFridayInjections = dayOfWeek === 5 && profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('enbrel') || o.name.toLowerCase().includes('wegovy') || o.name.toLowerCase().includes('methotrexate'));
 
