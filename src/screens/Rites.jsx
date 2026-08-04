@@ -176,9 +176,8 @@ export default function Rites({ pose }) {
     if (item.isInjected || item.category === 'immutable') return item.name;
     
     const cat = (item.category || '').toLowerCase();
-    const isRx = item.risk_flags?.retinoid || item.name.toLowerCase().includes('tretinoin') || item.name.toLowerCase().includes('tacrolimus') || item.name.toLowerCase().includes('drysol') || item.name.toLowerCase().includes('zoryve') || item.name.toLowerCase().includes('retaine');
-    
-    if (isRx) return item.name;
+    const isRx = item.risk_flags?.retinoid || item.name.toLowerCase().includes('tacrolimus') || item.name.toLowerCase().includes('drysol');
+    if (isRx) return 'Apply Treatment (Elixir)';
 
     if (cat.includes('cleanser') || cat.includes('wash')) return 'Cleanse (' + cat + ')';
     if (cat.includes('toner') || cat.includes('essence') || cat.includes('mist')) return 'Tone (' + cat + ')';
