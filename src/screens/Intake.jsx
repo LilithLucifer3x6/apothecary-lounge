@@ -239,7 +239,7 @@ export default function Intake({ onComplete }) {
               marginBottom: '1rem', 
               background: 'rgba(0,0,0,0.1)', 
               borderRadius: '4px', 
-              fontFamily: "'IM Fell English', serif", 
+              fontFamily: "'Cormorant Garamond', serif", 
               fontSize: '1.1rem', 
               lineHeight: '1.5' 
             }}

@@ -164,7 +164,7 @@ export default function Scrying({ pose }) {
               placeholder="Or inscribe the formula's true name..."
               value={scryInput}
               onChange={(e) => setScryInput(e.target.value)}
-              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem' }}
+              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}
             />
           </div>
           <button className="btn plum" onClick={handleScry} style={{ minWidth: '120px' }}>Divine Synergies</button>
@@ -172,7 +172,7 @@ export default function Scrying({ pose }) {
         <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'normal' }}>
           {scryStatus}
         </div>
-        <div style={{ marginTop: '1rem', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
+        <div style={{ marginTop: '1rem', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
           {scryResult}
         </div>
       </div>

@@ -305,7 +305,7 @@ export default function ShadowTome({ pose }) {
                 placeholder="Inscribe your thoughts..."
                 value={entryText}
                 onChange={(e) => setEntryText(e.target.value)}
-                style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'IM Fell English', serif", fontSize: '1.1rem' }}
+                style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}
               />
             </div>
             
@@ -341,7 +341,7 @@ export default function ShadowTome({ pose }) {
                       {entry.moods.join(' \u2022 ')}
                     </div>
                   )}
-                  <div style={{ fontFamily: "'IM Fell English', serif", fontSize: '1.1rem', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
                     {entry.body_text}
                   </div>
                 </div>
