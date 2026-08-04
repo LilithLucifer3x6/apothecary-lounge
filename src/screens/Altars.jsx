@@ -105,12 +105,13 @@ export default function Altars({ pose }) {
               textAlign: 'center', 
               padding: '0.6rem 1.2rem', 
               fontSize: '1.2rem', 
-              background: activeAltarId === altar.id ? 'var(--parch)' : 'transparent', 
-              color: activeAltarId === altar.id ? 'var(--plum)' : 'var(--rose)',
+              background: activeAltarId === altar.id ? '#000000' : 'transparent', 
+              color: activeAltarId === altar.id ? 'var(--parch)' : 'var(--rose)',
               border: activeAltarId === altar.id ? '1px solid var(--plum)' : '1px solid var(--border)',
+              boxShadow: activeAltarId === altar.id ? 'inset 0 0 15px rgba(176, 136, 204, 0.3)' : 'none',
               width: 'fit-content',
               transition: 'all 0.2s',
-              fontWeight: activeAltarId === altar.id ? 'bold' : 'normal'
+              fontWeight: 'normal'
             }}
           >
             <Icon name={altar.icon} /> {`The ${altar.name}`}
