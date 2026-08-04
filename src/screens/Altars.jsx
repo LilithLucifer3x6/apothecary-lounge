@@ -13,12 +13,7 @@ const ALTARS = [
   { id: 'vessel', name: 'Vessel', icon: G.vessel },
 ];
 
-const GRIN_SEQUENCE = [
-  { id: 'grin-1', name: 'Floss Picks', desc: 'Clear the interdental spaces.', brand: 'Fixed Sequence' },
-  { id: 'grin-2', name: 'Water Pick', desc: 'Flush the gumline.', brand: 'Fixed Sequence' },
-  { id: 'grin-3', name: 'Mouthwash', desc: 'Purify the oral cavity.', brand: 'Fixed Sequence' },
-  { id: 'grin-4', name: 'Brush Teeth', desc: 'Cleanse the enamel.', brand: 'Fixed Sequence' },
-];
+
 
 export default function Altars({ pose }) {
   const [activeAltarId, setActiveAltarId] = useState('crown');
@@ -75,17 +70,6 @@ export default function Altars({ pose }) {
   );
 
   const renderAltarContent = () => {
-    if (activeAltarId === 'grin') {
-      return (
-        <div>
-          <div className="mt mb-4">The Ritual of the Grin (Fixed Sequence)</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {GRIN_SEQUENCE.map(i => renderStep(i))}
-          </div>
-        </div>
-      );
-    }
-    
     // Sort items by weight using engine logic
     const { getWeight } = buildRoutines(items, {}, {});
     const domainItems = items

@@ -172,9 +172,32 @@ export default function Rites({ pose }) {
     </div>
   );
 
+  const getDisplayName = (item) => {
+    if (item.isInjected || item.category === 'immutable') return item.name;
+    
+    const cat = (item.category || '').toLowerCase();
+    const isRx = item.risk_flags?.retinoid || item.name.toLowerCase().includes('tretinoin') || item.name.toLowerCase().includes('tacrolimus') || item.name.toLowerCase().includes('drysol') || item.name.toLowerCase().includes('zoryve') || item.name.toLowerCase().includes('retaine');
+    
+    if (isRx) return item.name;
+
+    if (cat.includes('cleanser') || cat.includes('wash')) return 'Cleanse (' + cat + ')';
+    if (cat.includes('toner') || cat.includes('essence') || cat.includes('mist')) return 'Tone (' + cat + ')';
+    if (cat.includes('serum') || cat.includes('ampoule')) return 'Treat (' + cat + ')';
+    if (cat.includes('lotion') || cat.includes('emulsion') || cat.includes('cream') || cat.includes('moisturizer')) return 'Moisturize (' + cat + ')';
+    if (cat.includes('oil')) return 'Seal (' + cat + ')';
+    if (cat.includes('sunscreen') || cat.includes('spf')) return 'Sun Protection (' + cat + ')';
+    
+    if (cat) {
+      return cat.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+    return item.name;
+  };
+
   const renderStep = (item, isOpt = false, isRx = false, isAid = false) => {
     const rxClass = isRx ? 'rx' : '';
     const optClass = isOpt ? 'opt' : '';
+    
+    const displayName = getDisplayName(item);
     
     return (
       <div key={item.id} className={`step ${optClass}`}>
@@ -193,8 +216,8 @@ export default function Rites({ pose }) {
         )}
         <div style={{ flex: 1 }}>
           <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-            {item.name} 
-            <span style={{ marginLeft: '0.4rem' }} dangerouslySetInnerHTML={{ __html: speakerMarkup(item.name) }} />
+            {displayName} 
+            <span style={{ marginLeft: '0.4rem' }} dangerouslySetInnerHTML={{ __html: speakerMarkup(displayName) }} />
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
           </div>
           {item.isInjected ? (
