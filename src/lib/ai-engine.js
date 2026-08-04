@@ -72,6 +72,11 @@ When you believe you have gathered enough information across these categories (o
     }
   ];
 
+  const apiMessages = [...messageHistory];
+  if (apiMessages.length > 0 && apiMessages[0].role === 'assistant') {
+    apiMessages.unshift({ role: 'user', content: "I am ready to begin." });
+  }
+
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -84,7 +89,7 @@ When you believe you have gathered enough information across these categories (o
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 1000,
       system: systemPrompt,
-      messages: messageHistory,
+      messages: apiMessages,
       tools: tools
     })
   });

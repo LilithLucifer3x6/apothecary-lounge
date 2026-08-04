@@ -244,7 +244,7 @@ export default function Rites({ pose }) {
         {getRitualDate()}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem', alignItems: 'start', marginTop: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'start', marginTop: '1.5rem', maxWidth: '1200px', margin: '1.5rem auto 0 auto' }}>
         
         {/* Left Column: Morning Invocation */}
         <div className="card">
