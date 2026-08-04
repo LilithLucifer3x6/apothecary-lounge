@@ -165,8 +165,8 @@ export default function Grimoire({ pose }) {
                         <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Enbrel</span>
                       </>
                     )}
-                    {isSunday && hasDrysol && (
-                      <span className="pill" style={{ color: 'var(--rose)', borderColor: 'var(--rose)' }}>Drysol</span>
+                    {hasDrysol && (
+                      <span className="pill" style={{ color: 'var(--rose)', borderColor: 'var(--rose)' }}>Drysol (Nightly)</span>
                     )}
                   </div>
                 </div>

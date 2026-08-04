@@ -48,10 +48,32 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
   
   const intake = userProfile.intake_answers || {};
   const oralsList = intake.oralList || [];
+  const rxList = intake.rxList || [];
   const orals = oralsList.map(o => (o.name || '').toLowerCase());
   const hasIsotretinoin = orals.some(m => m.includes('isotretinoin') || m.includes('accutane'));
 
-  items.forEach(rawItem => {
+  const virtualRxItems = rxList.map((rx, idx) => {
+    const rxName = (rx.name || '').toLowerCase();
+    let weight = 9;
+    if (rxName.includes('drysol')) weight = 11; // Drysol goes last, on dry skin
+    
+    return {
+      id: `rx-${idx}`,
+      name: rx.name,
+      category: 'treatment',
+      domain: rxName.includes('drysol') ? 'vessel' : 'visage',
+      risk_flags: { retinoid: rxName.includes('tretinoin') },
+      behavior_flags: { layering_weight: weight },
+      ingredients: [],
+      isInjected: false,
+      isRx: true,
+      application_zone: rx.zone || ''
+    };
+  });
+  
+  const allItems = [...items, ...virtualRxItems];
+
+  allItems.forEach(rawItem => {
     const item = parseFlags(rawItem);
     
     // THE CODEX: Absolute Ban
