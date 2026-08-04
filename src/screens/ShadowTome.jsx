@@ -388,7 +388,7 @@ export default function ShadowTome({ pose }) {
                     </div>
                   </div>
                   <div className="acts" style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className="btn sm" onClick={() => appendTeaNote(tea)}>Drink</button>
+                    <button className="btn sm" onClick={() => appendTeaNote(tea)}>Imbibe</button>
                     <button className="btn sm g" onClick={() => handleBanishTea(tea.id, tea.name)}>Banish</button>
                   </div>
                 </div>
