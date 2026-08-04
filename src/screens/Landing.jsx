@@ -34,48 +34,24 @@ export default function Landing({ onProceed, onOpenAvatar }) {
         a place to keep the work of caring for yourself
       </div>
       
-      {/* Background Avatar & Familiar Layer */}
+      {/* Clean, elegant centered avatar badge */}
       {hasProfile && avatarConfig && (
-        <div style={{ position: 'fixed', bottom: 0, right: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: -1, display: 'flex', justifyContent: 'center', alignItems: 'flex-end', opacity: 0.85 }}>
-          <div style={{ position: 'relative', width: '100%', maxWidth: '600px', height: '600px' }}>
+        <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ position: 'relative', width: '120px', height: '120px' }}>
             <img 
               src={`/assets/avatar_${avatarConfig.avatarVibe}.jpg`} 
               alt="Avatar" 
-              style={{ 
-                position: 'absolute',
-                bottom: 0,
-                right: '10%',
-                width: '350px', 
-                height: '500px', 
-                objectFit: 'cover', 
-                WebkitMaskImage: 'radial-gradient(circle at center, black 20%, rgba(0,0,0,0.6) 50%, transparent 80%)',
-                maskImage: 'radial-gradient(circle at center, black 20%, rgba(0,0,0,0.6) 50%, transparent 80%)',
-                opacity: 0.7
-              }} 
+              style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '50%', border: '2px solid var(--gold)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)' }} 
             />
             <img 
               src={`/assets/fam_${avatarConfig.familiar}.jpg`} 
               alt="Familiar" 
-              style={{ 
-                position: 'absolute', 
-                bottom: '50px', 
-                left: '20%', 
-                width: '180px', 
-                height: '180px', 
-                objectFit: 'cover', 
-                borderRadius: '50%',
-                WebkitMaskImage: 'radial-gradient(circle at center, black 40%, transparent 80%)',
-                maskImage: 'radial-gradient(circle at center, black 40%, transparent 80%)',
-                opacity: 0.8
-              }} 
+              style={{ position: 'absolute', bottom: '-10px', right: '-10px', width: '50px', height: '50px', objectFit: 'cover', borderRadius: '50%', border: '2px solid var(--bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.8)' }} 
             />
           </div>
-        </div>
-      )}
-
-      {hasProfile && avatarConfig && (
-        <div style={{ marginTop: '2rem', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', color: 'var(--rose)', fontStyle: 'italic', textShadow: '0 2px 5px rgba(0,0,0,0.9)' }}>
-          Welcome back, {avatarConfig.name}.
+          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.6rem', color: 'var(--gold)', fontStyle: 'italic', textShadow: '0 2px 5px rgba(0,0,0,0.9)' }}>
+            Welcome back, {avatarConfig.name}.
+          </div>
         </div>
       )}
       
@@ -83,19 +59,21 @@ export default function Landing({ onProceed, onOpenAvatar }) {
         <button 
           onClick={onOpenAvatar} 
           style={{ 
-            marginTop: '3rem', 
+            marginTop: '2rem', 
             background: 'transparent', 
             border: 'none', 
             color: 'var(--dim)', 
             cursor: 'pointer',
-            fontSize: '0.9rem',
+            fontSize: '1rem',
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'center',
             gap: '0.4rem',
             transition: 'color 0.2s',
+            width: '100%',
             textShadow: '0 1px 3px rgba(0,0,0,0.8)'
           }}
-          onMouseOver={e => e.currentTarget.style.color = 'var(--rose)'}
+          onMouseOver={e => e.currentTarget.style.color = 'var(--gold)'}
           onMouseOut={e => e.currentTarget.style.color = 'var(--dim)'}
           title="Reshape Your Visage"
         >
@@ -104,11 +82,11 @@ export default function Landing({ onProceed, onOpenAvatar }) {
       )}
 
       {!hasProfile && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
-          <button className="btn plum" onClick={onOpenAvatar}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem', alignItems: 'center' }}>
+          <button className="btn plum" onClick={onOpenAvatar} style={{ fontSize: '1.2rem', padding: '0.8rem 2rem' }}>
             <Icon name="ph-user" /> Conjure Your Visage
           </button>
-          <button className="btn" onClick={() => onProceed(false)}>
+          <button className="btn" onClick={() => onProceed(false)} style={{ fontSize: '1.2rem', padding: '0.8rem 2rem' }}>
             <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
           </button>
         </div>

@@ -6,9 +6,9 @@
 :root{
     --bg:#0b090e; --card:rgba(0,0,0,0.2); --card2:rgba(0,0,0,0.3); --border:rgba(255,255,255,0.15);
     --crimson:#7a1a2b; --crimson-b:#4a0d16; --plum:#422a3e; --plum-b:rgba(66, 42, 62, 0.5);
-    --rose:#b3454b; --parch:#eaddcf; --silver:#a99fa1; --gold:#c99b51;
+    --rose:#d5c7b3; --parch:#eaddcf; --silver:#a99fa1; --gold:#c99b51;
     --moss:#3d4438; --ink:#1a161b;
-    --white:#f5f0f1; --ash:#8a7f82; --dim:#7a6e71;
+    --white:#e3dcd3; --ash:#8a7f82; --dim:#7a6e71;
     --fs:1rem; --ff:-apple-system,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;}
@@ -73,14 +73,14 @@
   .tome-grid{display:grid;grid-template-columns:1fr;gap:1.5rem;align-items:start;}
   @media(min-width:800px){.tome-grid{grid-template-columns:5.5fr 4.5fr;}}
   .ritecol{background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border:1px solid rgba(212, 28, 60, 0.2);border-radius:10px;padding:.75rem .8rem;}
-  .step{border:1px solid rgba(212, 28, 60, 0.15);background:rgba(0,0,0,0.65);border-radius:9px;padding:.6rem .76rem;
-    margin-bottom:.44rem;display:flex;align-items:flex-start;gap:.6rem;}
-  .step input[type=checkbox]{width:1.15rem;height:1.15rem;accent-color:var(--crimson-b);margin-top:.12rem;flex-shrink:0;}
+  .step{border:1px solid rgba(212, 28, 60, 0.15);background:rgba(0,0,0,0.65);border-radius:9px;padding:1rem 1.2rem;
+    margin-bottom:.6rem;display:flex;align-items:flex-start;gap:.8rem;font-size:1.15rem;}
+  .step input[type=checkbox]{width:1.5rem;height:1.5rem;accent-color:var(--crimson-b);margin-top:.15rem;flex-shrink:0;}
   .step .body{flex:1;min-width:0;}
-  .nm{font-weight:600;font-size:.94em;}
-  .mt{font-size:.75em;color:var(--dim);margin-top:.08rem;font-family:'Cormorant Garamond',serif;font-style:italic;}
-  .rx{color:#eaa9b0;}
-  .aid{font-size:.62em;font-weight:700;border:1px solid var(--plum-b);color:#cfa6dd;border-radius:999px;padding:.05rem .4rem;margin-left:.3rem;}
+  .nm{font-weight:600;font-size:1.05em;color:var(--rose);}
+  .mt{font-size:.85em;color:var(--dim);margin-top:.15rem;font-family:'Cormorant Garamond',serif;font-style:italic;}
+  .rx{color:var(--gold);}
+  .aid{font-size:.7em;font-weight:700;border:1px solid var(--plum-b);color:var(--gold);border-radius:999px;padding:.1rem .5rem;margin-left:.3rem;}
   .cic{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.18em;color:var(--silver);}
   .cic svg{width:100%;height:100%;display:block;}
   .st .g .cic{width:1.6em;height:1.6em;}

@@ -249,7 +249,15 @@ export default function App() {
 
       {currentScreen === 'avatar' && (
         <div id="s-av" className="land">
-          <ConjureVisage onComplete={() => { setCurrentScreen('app'); handleTabClick('home'); }} />
+          <ConjureVisage onComplete={() => { 
+            const isCompletedLocally = localStorage.getItem('intake_completed') === 'true';
+            if (!isCompletedLocally) {
+              setCurrentScreen('intake');
+            } else {
+              setCurrentScreen('app'); 
+              handleTabClick('home'); 
+            }
+          }} />
         </div>
       )}
 
@@ -275,7 +283,7 @@ export default function App() {
               </div>
               
               <div className="brand" style={{ position: 'static', padding: 0, width: '33%', textAlign: 'center' }}>
-                <h1 style={{ fontSize: '1.8rem', margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Shadow & Sanctuary</h1>
+                <h1 style={{ fontSize: '2.5rem', margin: 0, color: 'var(--gold)', textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(201,155,81,0.3)', fontFamily: "'Allura', cursive" }}>Shadow & Sanctuary</h1>
               </div>
 
               <div style={{ width: '33%', display: 'flex', justifyContent: 'flex-end' }}>
