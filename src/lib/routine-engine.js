@@ -46,6 +46,11 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
   
   const { readiness = 100, sleepDuration = 8, heavySweat = false } = wearables;
   
+  const intake = userProfile.intake_answers || {};
+  const oralsList = intake.oralList || [];
+  const orals = oralsList.map(o => (o.name || '').toLowerCase());
+  const hasIsotretinoin = orals.some(m => m.includes('isotretinoin') || m.includes('accutane'));
+
   items.forEach(rawItem => {
     const item = parseFlags(rawItem);
     
@@ -57,6 +62,11 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
     const name = (item.name || '').toLowerCase();
     const cat = (item.category || '').toLowerCase();
     
+    // HARD MEDICAL BLOCK: Isotretinoin (Oral) + Tretinoin (Topical)
+    if (hasIsotretinoin && name.includes('tretinoin') && !name.includes('isotretinoin')) {
+      return; // Stripped entirely to prevent chemical burns
+    }
+
     let isAm = true;
     let isPm = true;
 
@@ -105,8 +115,34 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
   amItems.sort((a, b) => getWeight(a) - getWeight(b));
   pmItems.sort((a, b) => getWeight(a) - getWeight(b));
   
-  // No hardcoded evening steps. All steps must come from the Rootwork inventory.
-  // This allows the user to track stock levels for contact solution, body wash, etc.
+  // IMMUTABLE BASELINE ROUTINES (From Spec Section 21)
+  const immutableGrinAM = [
+    { id: 'grin-am-1', name: 'Floss Picks', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
+    { id: 'grin-am-2', name: 'Waterpik', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
+    { id: 'grin-am-3', name: 'Mouthwash', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
+    { id: 'grin-am-4', name: 'Brush Teeth', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
+  ];
+  
+  const immutableGrinPM = [
+    { id: 'grin-pm-1', name: 'Floss Picks', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
+    { id: 'grin-pm-2', name: 'Waterpik', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
+    { id: 'grin-pm-3', name: 'Mouthwash', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
+    { id: 'grin-pm-4', name: 'Brush Teeth', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
+  ];
+
+  const immutableWindDown = [
+    { id: 'wd-1', name: 'Shower', category: 'immutable', domain: 'vessel', weight: 0.1, isInjected: true },
+    { id: 'wd-2', name: 'Dry Off', desc: 'Partner Assisted', category: 'immutable', domain: 'vessel', weight: 0.2, isInjected: true },
+    { id: 'wd-3', name: 'Extractions & Heated Eye Mask', desc: 'Submerge tools in 70% isopropyl alcohol for 5-10 mins before and after.', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true }
+  ];
+  
+  if (isWeekend) {
+    immutableWindDown.unshift({ id: 'bath-ritual', name: 'The Bath Ritual', desc: 'Every 2 Weeks. Milk powder, orange peel, rose petals, epsom salts.', category: 'soak', domain: 'vessel', weight: 0.05, isInjected: true });
+  }
+
+  amItems.unshift(...immutableGrinAM);
+  pmItems.unshift(...immutableWindDown);
+  pmItems.push(...immutableGrinPM);
 
   return { amItems, pmItems, getWeight };
 }
@@ -114,8 +150,13 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
 export function checkConflicts(items, userProfile = {}) {
   const conflicts = [];
   
+  const intake = userProfile.intake_answers || {};
+  const oralsList = intake.oralList || [];
+  const orals = oralsList.map(o => (o.name || '').toLowerCase());
+  const hasIsotretinoin = orals.some(m => m.includes('isotretinoin') || m.includes('accutane'));
+  const hasMethotrexate = orals.some(m => m.includes('methotrexate'));
+  
   // ZONAL MAPPING
-  // Map items to their zones to check overlaps
   const zoneMap = {};
   
   items.forEach(rawItem => {
@@ -138,11 +179,20 @@ export function checkConflicts(items, userProfile = {}) {
       conflicts.push(`Zonal Conflict [${zone}]: Vitamin C and Retinoids destabilize each other. Move Vitamin C to the Morning Rite.`);
     }
     
-    // MELANIN WARD
+    // MELANIN WARD (Methotrexate is heavily photosensitizing)
     const photosensitizers = zoneItems.filter(i => i.risk_flags.photosensitizer || checkIngredients(i.ingredients, MELANIN_TRIGGERS));
-    if (photosensitizers.length > 0 && !items.some(i => i.category.toLowerCase().includes('spf') || i.category.toLowerCase().includes('sunscreen'))) {
-      conflicts.push(`Melanin Ward Warning: ${photosensitizers.map(i=>i.name).join(', ')} increases photosensitivity. Sun protection is load-bearing. Add SPF to your routine!`);
+    if (hasMethotrexate || photosensitizers.length > 0) {
+      if (!items.some(i => i.category.toLowerCase().includes('spf') || i.category.toLowerCase().includes('sunscreen'))) {
+        let source = hasMethotrexate ? "Oral Methotrexate" : photosensitizers.map(i=>i.name).join(', ');
+        conflicts.push(`Melanin Ward Warning: ${source} increases photosensitivity. Sun protection is load-bearing. Add SPF to your routine!`);
+      }
     }
+  }
+
+  // HARD MEDICAL BLOCK: Isotretinoin + Tretinoin
+  const hasTopicalTret = items.some(i => i.name.toLowerCase().includes('tretinoin') && !i.name.toLowerCase().includes('isotretinoin'));
+  if (hasIsotretinoin && hasTopicalTret) {
+    conflicts.push("CRITICAL HAZARD: Oral Isotretinoin detected. Concomitant use of topical Tretinoin causes severe chemical burns and barrier damage. Topical Tretinoin has been suspended from all Rites.");
   }
 
   // 4C HAIR & INTIMATE WARDS
@@ -171,12 +221,10 @@ export function checkConflicts(items, userProfile = {}) {
   }
 
   // ORAL MEDICATIONS (IMMUNOSUPPRESSANTS)
-  const orals = userProfile.orals || [];
-  const isImmunosuppressed = orals.some(m => m.toLowerCase().includes('methotrexate') || m.toLowerCase().includes('etanercept'));
-  const hasExtractions = items.some(i => i.name.toLowerCase().includes('extraction'));
-  
-  if (isImmunosuppressed && hasExtractions) {
-    conflicts.push("Keeper's Caution: Immunosuppressants detected (Methotrexate/Etanercept). Extractions carry high infection risk. Submerge steel tools in 70% isopropyl alcohol for 10 mins before/after use.");
+  const isImmunosuppressed = orals.some(m => m.includes('methotrexate') || m.includes('etanercept') || m.includes('enbrel'));
+  // The extractions step is immutable, so we can just assume it exists in PM, but let's check items too in case user adds tools
+  if (isImmunosuppressed) {
+    conflicts.push("Keeper's Caution: Immunosuppressants detected (Methotrexate/Enbrel). Extractions carry high infection risk. Submerge steel tools in 70% isopropyl alcohol for 10 mins before/after use.");
   }
 
   return conflicts;
