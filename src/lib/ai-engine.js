@@ -26,7 +26,7 @@ export function isAiReady() {
 export async function conductIntake(messageHistory) {
   if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
 
-  const systemPrompt = `You are the keeper of The Apothecary Lounge, an entity guiding a user through The First Inscription (an onboarding ritual).
+  const systemPrompt = `You are the keeper of Shadow & Sanctuary, an entity guiding a user through The First Inscription (an onboarding ritual).
 Speak in a respectful, slightly mystical, cottagecore-goth tone ("ritual voice"). Do not be overly verbose. Be direct but atmospheric.
 Do not use gendered language for the user. Do not assume their gender or use pronouns.
 
@@ -203,7 +203,7 @@ export async function parseProductImage(base64Image, mediaType) {
 export async function evaluateScryingPool(productInfo, userProfile, inventory) {
   if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
 
-  const systemPrompt = `You are the Scrying Pool, an oracle within The Apothecary Lounge.
+  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow & Sanctuary.
 The user seeks your wisdom on a prospective new product or formula.
 Analyze the product against their known allergies, concerns, conditions, and current inventory.
 Speak in a mystical, cottagecore-goth tone ("ritual voice"). Be concise but insightful.
