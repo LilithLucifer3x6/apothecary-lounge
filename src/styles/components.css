@@ -126,7 +126,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 
 /* Chips */
 .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.chip { border: 1px solid var(--dim); padding: 0.25rem 0.75rem; border-radius: 16px; color: var(--dim); cursor: pointer; }
+.chip { border: 1px solid var(--dim); padding: 0.25rem 0.75rem; border-radius: 16px; color: var(--dim); cursor: pointer; display: inline-block; width: fit-content; flex: 0 0 auto; }
 .chip.on { border-color: var(--crimson); color: var(--crimson-b); background: rgba(90, 10, 16, 0.2); }
 
 .note { font-style: italic; color: var(--dim); font-size: 0.875rem; margin-top: 0.25rem; }
