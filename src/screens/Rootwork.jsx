@@ -5,6 +5,7 @@ import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
 import { attachVoice } from '../lib/voice.js';
 import { buildRoutines } from '../lib/routine-engine.js';
+import { speakerMarkup } from '../lib/tts.js';
 
 export default function Rootwork({ pose }) {
   const [items, setItems] = useState([]);
@@ -246,7 +247,7 @@ export default function Rootwork({ pose }) {
       {ebbing.length > 0 && (
         <div className="card mb-4">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Summoning Scroll</h3>
+          <h3>The Summoning Scroll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Summoning Scroll") }} /></h3>
           <div className="mt mb-4">Items needing replenishment.</div>
           <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
             {ebbing.map(renderRow)}
@@ -256,7 +257,7 @@ export default function Rootwork({ pose }) {
 
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Silver Toll</h3>
+        <h3>The Silver Toll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Silver Toll") }} /></h3>
         <div className="mt mb-4">The material cost of your active rituals, calculated by the waning of your provisions.</div>
         <div>
           <div style={{ fontSize: '2rem', fontFamily: "'Allura', cursive", color: 'var(--rose)' }}>
@@ -282,7 +283,7 @@ export default function Rootwork({ pose }) {
 
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Apothecary</h3>
+        <h3>The Apothecary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Apothecary") }} /></h3>
         <div className="mt mb-4">Your sacred elixirs and treatments.</div>
         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
           {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
@@ -291,7 +292,7 @@ export default function Rootwork({ pose }) {
 
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Reliquary</h3>
+        <h3>The Reliquary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Reliquary") }} /></h3>
         <div className="mt mb-4">Your instruments of ritual and restorative tools.</div>
         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
           {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">Your Reliquary contains no instruments.</div>}
@@ -310,7 +311,7 @@ export default function Rootwork({ pose }) {
                 <div className="mt mb-4" style={{color: 'var(--rose)'}}>Commit a new vessel or tool to your apothecary.</div>
               </div>
               {modalState !== 'manual' && (
-                <button className="btn sm" style={{padding: '0.4rem 1rem'}} onClick={() => setModalState('manual')} title="Manual Inscription">
+                <button className="btn sm" style={{padding: '0.4rem 1rem', whiteSpace: 'nowrap', flexShrink: 0}} onClick={() => setModalState('manual')} title="Manual Inscription">
                   Write Manually
                 </button>
               )}

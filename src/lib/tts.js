@@ -32,13 +32,11 @@ export function setTtsVoiceURI(uri) {
 export function getFeminineVoices() {
   if (!window.speechSynthesis) return [];
   const voices = window.speechSynthesis.getVoices();
-  // Filter out definitely male voices across all English variants
+  
   return voices
-    .filter(v => /^en/i.test(v.lang) && !/male|david|mark|guy|richard|arthur|brian|george|paul|peter|william|james|john|robert|michael|thomas|charles|daniel|matthew|anthony|donald|steven/i.test(v.name))
+    .filter(v => /^en/i.test(v.lang) && !/male\b/i.test(v.name))
     .map(v => {
-      let displayName = v.name;
-      if (!/female/i.test(v.name)) displayName += ' (Female / Non-Male)';
-      return { ...v, displayName, voiceURI: v.voiceURI };
+      return { ...v, displayName: v.name, voiceURI: v.voiceURI };
     });
 }
 

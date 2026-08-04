@@ -157,7 +157,7 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
   ];
   
   if (isWeekend) {
-    immutableWindDown.unshift({ id: 'bath-ritual', name: 'The Bath Ritual', desc: 'Every 2 Weeks. Milk powder, orange peel, rose petals, epsom salts.', category: 'soak', domain: 'vessel', weight: 0.05, isInjected: true });
+    // Left intentionally blank. Rituals must be user-defined.
   }
 
   amItems.unshift(...immutableGrinAM);

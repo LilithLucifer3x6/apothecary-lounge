@@ -4,6 +4,7 @@ import { ic, G } from '../lib/icons.js';
 import { attachVoice } from '../lib/voice.js';
 import * as AI from '../lib/ai-service.js';
 import { parseTeaImage } from '../lib/ai-engine.js';
+import { speakerMarkup } from '../lib/tts.js';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
 
@@ -101,7 +102,7 @@ export default function ShadowTome({ pose }) {
   };
 
   const appendThcNote = () => {
-    const note = `\u2728 Infusion: Consumed ${thcDose}ml of THC honey at ${thcStrength}mg/ml (Total Yield: ${thcTotal}mg THC).`;
+    const note = `\u2728 Infusion: Consumed ${thcDose}ml of THC honey at ${thcStrength}mg/ml (The Harvest: ${thcTotal}mg THC).`;
     setEntryText(prev => prev ? prev + '\n\n' + note : note);
   };
 
@@ -276,7 +277,7 @@ export default function ShadowTome({ pose }) {
         <div className="tome-main-col">
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>The Inner Sanctum</h3>
+            <h3>The Somatic Ledger <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Somatic Ledger") }} /></h3>
             <div className="note mb-4">"The ink is your own."</div>
             
             <div className="field" style={{ marginTop: '2.5rem' }}>
@@ -302,7 +303,7 @@ export default function ShadowTome({ pose }) {
               <label>The Entry</label>
               <VoiceInput 
                 isTextArea={true}
-                placeholder="Inscribe your thoughts..."
+                placeholder="Etch your reflections..."
                 value={entryText}
                 onChange={(e) => setEntryText(e.target.value)}
                 style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}
@@ -311,14 +312,14 @@ export default function ShadowTome({ pose }) {
             
             <div style={{ textAlign: 'right', marginTop: '2rem' }}>
               <button id="btn-save-tome" className="btn plum" onClick={handleSave}>
-                Seal the Page
+                Bind the Parchment
               </button>
             </div>
           </div>
 
           <div id="tome-history" className="mt-4">
             {history.length === 0 ? (
-              <div className="empty">The pages remain unmarked. No thoughts have been inscribed.</div>
+              <div className="empty">The pages remain unmarked. No reflections have been etched.</div>
             ) : (
               history.map(entry => (
                 <div key={entry.id || entry.created_at} className="card mb-4" style={{ position: 'relative' }}>
@@ -355,7 +356,7 @@ export default function ShadowTome({ pose }) {
           
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>Herbal Elixirs</h3>
+            <h3 style={{ fontSize: '1.5rem' }}>Chronicle Botanical Infusions <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Chronicle Botanical Infusions") }} /></h3>
             
             <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px', marginTop: '1rem' }}>
               <Icon name="ph-camera" /> 
@@ -370,7 +371,7 @@ export default function ShadowTome({ pose }) {
 
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Pantry</h3>
+            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Pantry <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Herbal Pantry") }} /></h3>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {pantry.length > 0 ? pantry.map(tea => (
@@ -399,7 +400,7 @@ export default function ShadowTome({ pose }) {
 
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The THC Infusions</h3>
+            <h3 style={{ fontSize: '1.5rem' }}>Chronicle THC Infusions <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Chronicle T H C Infusions") }} /></h3>
             <div className="mt mb-4">Document the potency of infused provisions.</div>
             
             <div className="field">
@@ -414,11 +415,11 @@ export default function ShadowTome({ pose }) {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', borderTop: '1px dashed var(--border)', paddingTop: '1rem' }}>
               <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--dim)' }}>Total Yield</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--dim)' }}>The Harvest</div>
                 <div style={{ fontSize: '1.5rem', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontWeight: 'normal' }}>{thcTotal}mg</div>
               </div>
               <button className="btn" onClick={appendThcNote} style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>
-                Append to Journal
+                Etch into Ledger
               </button>
             </div>
           </div>

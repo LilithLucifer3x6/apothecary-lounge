@@ -35,13 +35,15 @@ export default function Landing({ onProceed, onOpenAvatar }) {
           <div style={{ position: 'relative', width: '120px', height: '120px' }}>
             <img 
               src={`/assets/avatar_${avatarConfig.avatarVibe}.jpg`} 
-              alt="Avatar" 
+              alt="" 
               style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '50%', border: '2px solid var(--gold)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)' }} 
+              onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<div style="width:120px;height:120px;border-radius:50%;border:2px solid var(--gold);background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:2rem"><i class="ph-duotone ph-user"></i></div>'; }}
             />
             <img 
               src={`/assets/fam_${avatarConfig.familiar}.jpg`} 
-              alt="Familiar" 
+              alt="" 
               style={{ position: 'absolute', bottom: '-10px', right: '-10px', width: '50px', height: '50px', objectFit: 'cover', borderRadius: '50%', border: '2px solid var(--bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.8)' }} 
+              onError={(e) => { e.target.style.display = 'none'; }}
             />
           </div>
           <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.6rem', color: 'var(--gold)', fontStyle: 'italic', textShadow: '0 2px 5px rgba(0,0,0,0.9)' }}>

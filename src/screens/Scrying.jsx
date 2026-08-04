@@ -5,6 +5,7 @@ import Icon from '../components/Icon.jsx';
 import { evaluateScryingPool, parseProductImage } from '../lib/ai-engine.js';
 import { getReadiness } from '../lib/health-connect.js';
 import VoiceInput from '../components/VoiceInput.jsx';
+import { speakerMarkup } from '../lib/tts.js';
 
 export default function Scrying({ pose }) {
   const [inventory, setInventory] = useState([]);
@@ -145,7 +146,7 @@ export default function Scrying({ pose }) {
 
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Echo</h3>
+        <h3>The Echo <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Echo") }} /></h3>
         <div className="mt mb-4">Reveal the hidden nature of a formula. Present a label to divine its synergies with your current provisions.</div>
         
         <div className="field" style={{ marginBottom: '1rem' }}>
@@ -179,7 +180,7 @@ export default function Scrying({ pose }) {
 
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Ledger of Afflictions</h3>
+        <h3>The Ledger of Afflictions <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Ledger of Afflictions") }} /></h3>
         <div className="mt mb-4">Log bodily responses to active ingredients.</div>
         
         {inventory.length > 0 ? (
@@ -219,7 +220,7 @@ export default function Scrying({ pose }) {
 
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Waning</h3>
+        <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
         <div className="mt mb-4">Formulas nearing expiration or running low.</div>
         <div>
           {waningItems.length > 0 ? (
@@ -240,7 +241,7 @@ export default function Scrying({ pose }) {
 
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Crypt of Ashes</h3>
+        <h3>The Crypt of Ashes <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Crypt of Ashes") }} /></h3>
         <div className="mt mb-4">Elements forever sealed away.</div>
         <div>
           {allergies.length > 0 || localBanished.length > 0 ? (

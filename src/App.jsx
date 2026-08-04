@@ -300,7 +300,7 @@ export default function App() {
               </div>
               
               <div className="brand" style={{ position: 'static', padding: 0, width: '33%', textAlign: 'center' }}>
-                <h1 className="title" style={{ fontSize: '1.8rem', margin: 0, color: 'var(--gold)', textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(201,155,81,0.3)', marginTop: '-0.3rem' }}>Shadow & Sanctuary</h1>
+                <h1 className="title" style={{ fontSize: '1.4rem', margin: 0, color: 'var(--gold)', textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(201,155,81,0.3)', marginTop: '-0.3rem' }}>Shadow & Sanctuary</h1>
               </div>
 
               <div style={{ width: '33%', display: 'flex', justifyContent: 'flex-end' }}>
@@ -359,15 +359,11 @@ export default function App() {
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem' }}>Typeface</label>
                   <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
-                    <option value="IM Fell English">IM Fell English</option>
-                    <option value="Cormorant Garamond">Cormorant Garamond</option>
-                    <option value="Allura">Allura</option>
                     <option value="Parisienne">Parisienne</option>
+                    <option value="Allura">Allura</option>
                     <option value="Great Vibes">Great Vibes</option>
                     <option value="Cinzel Decorative">Cinzel Decorative</option>
-                    <option value="Inter">Inter</option>
-                    <option value="Roboto">Roboto</option>
-                    <option value="Outfit">Outfit</option>
+                    <option value="Cormorant Garamond">Cormorant Garamond</option>
                     <option value="system-ui">System</option>
                   </select>
                 </div>

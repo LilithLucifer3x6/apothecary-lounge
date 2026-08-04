@@ -153,7 +153,6 @@ export default function Grimoire({ pose }) {
           <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>Today's Appointed Times <span dangerouslySetInnerHTML={{ __html: speakerMarkup("Today's Appointed Times") }} /></h3>
-        <div className="mt mb-4">From Google Calendar</div>
         
         {realEvents.length > 0 ? realEvents.map((ev, i) => (
           <div key={i} className="step">
