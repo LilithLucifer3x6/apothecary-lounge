@@ -4,27 +4,27 @@
    is not covered here, match the nearest one that is. */
 
 :root{
-    --bg:#09040d; 
-    --card:rgba(20, 10, 25, 0.85); 
-    --card2:rgba(30, 15, 38, 0.9); 
-    --border:rgba(180, 40, 80, 0.4);
+    --bg:#050208; 
+    --card:rgba(18, 5, 24, 0.85); 
+    --card2:rgba(28, 12, 36, 0.9); 
+    --border:rgba(139, 0, 0, 0.4);
     
-    --crimson:#ff2e5c; 
-    --crimson-b:#b31739; 
-    --plum:#8c308c; 
-    --plum-b:#4a1b4a; 
+    --crimson:#cc0000; 
+    --crimson-b:#730000; 
+    --plum:#5c1a5c; 
+    --plum-b:#330a33; 
     
-    --rose:#ff9eb5; 
-    --parch:#dcbfe3; 
-    --silver:#b899b8; 
-    --gold:#ff5277; 
+    --rose:#dcbfe3; 
+    --parch:#c8a2c8; 
+    --silver:#a682a6; 
+    --gold:#a30000; 
     
-    --moss:#382238; 
+    --moss:#241024; 
     --ink:#000000;
     
-    --white:#dcbfe3; /* Changed to rich purple/parch to apply everywhere */
-    --ash:#c2a3c2; 
-    --dim:#9c7a9c;
+    --white:#e6cce6; 
+    --ash:#b38fb3; 
+    --dim:#8c668c;
     --fs:1rem; --ff:-apple-system,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;}
