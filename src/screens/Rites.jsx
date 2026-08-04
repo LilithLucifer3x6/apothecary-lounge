@@ -199,6 +199,21 @@ export default function Rites({ pose }) {
     
     const displayName = getDisplayName(item);
     
+    const getGlyph = (item) => {
+      if (item.glyph) return item.glyph;
+      if (item.domain === 'grin') return 'tooth';
+      const cat = (item.category || '').toLowerCase();
+      if (cat.includes('cleanser') || cat.includes('wash')) return 'cleanser-tube';
+      if (cat.includes('toner') || cat.includes('mist')) return 'toner-bottle';
+      if (cat.includes('cream') || cat.includes('moisturizer')) return 'cream-jar';
+      if (cat.includes('sunscreen') || cat.includes('spf')) return 'sunscreen';
+      if (cat.includes('serum') || cat.includes('oil')) return 'oil-dropper';
+      if (item.isRx) return 'rx-tube';
+      if (item.domain === 'vessel') return 'body-vessel';
+      if (item.domain === 'visage') return 'visage-face';
+      return 'sparkles'; 
+    };
+    
     return (
       <div key={item.id} className={`step ${optClass}`}>
         {isOpt ? (
@@ -216,7 +231,7 @@ export default function Rites({ pose }) {
         )}
         <div style={{ flex: 1 }}>
           <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.4rem' }}>
-            <span style={{ color: 'var(--silver)' }}><Icon name={item.glyph || 'plant'} /></span>
+            <span style={{ color: 'var(--silver)' }}><Icon name={getGlyph(item)} /></span>
             {displayName} 
             <span dangerouslySetInnerHTML={{ __html: speakerMarkup(displayName) }} />
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
