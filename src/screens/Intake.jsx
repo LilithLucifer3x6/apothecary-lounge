@@ -318,28 +318,27 @@ export default function Intake({ onComplete }) {
             <div className="ins-step">
               {renderTitle('What must the Lounge protect?')}
               <div className="mt">Conditions that shape how you care for yourself.</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
-                <label>
-                  <input type="checkbox" checked={selectedConditions.includes('na')}
-                         onChange={() => setSelectedConditions(['na'])} className="cond-chk" />
+              <div className="chips" style={{ marginTop: '1rem' }}>
+                <div 
+                  className={`chip ${selectedConditions.includes('na') ? 'on' : ''}`}
+                  onClick={() => setSelectedConditions(['na'])}
+                >
                   Not Applicable
-                </label>
+                </div>
                 {conditionsOptions.length > 0 ? conditionsOptions.map(c => (
-                  <label key={c.id}>
-                    <input 
-                      type="checkbox" 
-                      value={c.id} 
-                      checked={selectedConditions.includes(c.id)}
-                      onChange={() => {
-                        if (selectedConditions.includes('na')) {
-                          setSelectedConditions([c.id]);
-                        } else {
-                          toggleSelection(setSelectedConditions, c.id);
-                        }
-                      }}
-                      className="cond-chk"
-                    /> {c.label}
-                  </label>
+                  <div 
+                    key={c.id} 
+                    className={`chip ${selectedConditions.includes(c.id) ? 'on' : ''}`}
+                    onClick={() => {
+                      if (selectedConditions.includes('na')) {
+                        setSelectedConditions([c.id]);
+                      } else {
+                        toggleSelection(setSelectedConditions, c.id);
+                      }
+                    }}
+                  >
+                    {c.label}
+                  </div>
                 )) : <div style={{ opacity: 0.5 }}>Divining conditions...</div>}
               </div>
             </div>
@@ -362,21 +361,23 @@ export default function Intake({ onComplete }) {
                         <span style={{ color: 'var(--rose)', fontWeight: 'normal' }}>Prescription {i + 1}</span>
                         <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Banish</button>
                       </div>
-                      <div className="field">
-                        <label>Name</label>
-                        <VoiceInput value={rx.name} onChange={e => updateRx(i, 'name', e.target.value)} placeholder="e.g. Tretinoin" />
-                      </div>
-                      <div className="field">
-                        <label>Strength</label>
-                        <VoiceInput value={rx.strength} onChange={e => updateRx(i, 'strength', e.target.value)} placeholder="e.g. 0.05%" />
-                      </div>
-                      <div className="field">
-                        <label>Zone</label>
-                        <VoiceInput value={rx.zone} onChange={e => updateRx(i, 'zone', e.target.value)} placeholder="e.g. Face" />
-                      </div>
-                      <div className="field">
-                        <label>Frequency</label>
-                        <VoiceInput value={rx.frequency} onChange={e => updateRx(i, 'frequency', e.target.value)} placeholder="e.g. Nightly" />
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="field">
+                          <label style={{ color: 'var(--parch)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Name</label>
+                          <VoiceInput value={rx.name} onChange={e => updateRx(i, 'name', e.target.value)} placeholder="e.g. Tretinoin" />
+                        </div>
+                        <div className="field">
+                          <label style={{ color: 'var(--parch)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Strength</label>
+                          <VoiceInput value={rx.strength} onChange={e => updateRx(i, 'strength', e.target.value)} placeholder="e.g. 0.05%" />
+                        </div>
+                        <div className="field">
+                          <label style={{ color: 'var(--parch)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Zone</label>
+                          <VoiceInput value={rx.zone} onChange={e => updateRx(i, 'zone', e.target.value)} placeholder="e.g. Face" />
+                        </div>
+                        <div className="field">
+                          <label style={{ color: 'var(--parch)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Frequency</label>
+                          <VoiceInput value={rx.frequency} onChange={e => updateRx(i, 'frequency', e.target.value)} placeholder="e.g. Nightly" />
+                        </div>
                       </div>
                     </div>
                   ))}
