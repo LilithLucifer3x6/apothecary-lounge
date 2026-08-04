@@ -372,14 +372,7 @@ export default function Rootwork({ pose }) {
           </div>
         </div>
         <div className="rw-col">
-          <div className="card mb-4">
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>The Crypt of Ashes <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Crypt of Ashes") }} /></h3>
-            <div className="mt mb-4">Banished formulas and incompatible provisions.</div>
-            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-              {banished.length === 0 ? <div className="mt">The crypt is empty.</div> : banished.map(renderRow)}
-            </div>
-          </div>
+
 
           <div className="card mb-4">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
