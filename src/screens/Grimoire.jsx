@@ -12,6 +12,8 @@ export default function Grimoire({ pose }) {
   const [history, setHistory] = useState([]);
   const [realEvents, setRealEvents] = useState([]);
 
+  const [profile, setProfile] = useState(null);
+
   useEffect(() => {
     let mounted = true;
     syncAppointments().then(data => {
@@ -25,6 +27,10 @@ export default function Grimoire({ pose }) {
       
     fetchTodayEvents().then(events => {
       if (mounted) setRealEvents(events);
+    });
+
+    supabase.from('user_profile').select('*').maybeSingle().then(({data}) => {
+      if (mounted && data) setProfile(data);
     });
 
     return () => { mounted = false; };
@@ -60,17 +66,47 @@ export default function Grimoire({ pose }) {
     const hasRetie = appointments.some(app => new Date(app.date).getDate() === i && app.type === 'retie');
     const hasNails = appointments.some(app => new Date(app.date).getDate() === i && app.type === 'nails');
     
+    // Determine meds for this specific calendar date
+    const dateObj = new Date(year, month, i);
+    const dayOfWeek = dateObj.getDay(); // 0 = Sunday, 5 = Friday
+    
+    const isIsotretinoin80 = dateObj.getTime() / (1000 * 60 * 60 * 24) % 2 < 1; // Basic alternating logic
+    const hasIsotretinoin = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
+    const hasFridayInjections = dayOfWeek === 5 && profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('enbrel') || o.name.toLowerCase().includes('wegovy') || o.name.toLowerCase().includes('methotrexate'));
+
     calDays.push(
       <div key={`day-${i}`} className={`cd ${isToday}`}>
-        {i}
-        {hasRetie && <div className="ce" title="Root Weaving" style={{ color: 'var(--rose)', fontSize: '1.2rem' }}><Icon name="star-four" /></div>}
-        {hasNails && <div className="ce" title="Talon Honing" style={{ color: 'var(--rose)', fontSize: '1.2rem' }}><Icon name="sparkle" /></div>}
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span>{i}</span>
+          <div style={{ display: 'flex', gap: '0.2rem' }}>
+            {hasRetie && <span title="Root Weaving" style={{ color: 'var(--gold)' }}><Icon name="star-four" /></span>}
+            {hasNails && <span title="Talon Honing" style={{ color: 'var(--gold)' }}><Icon name="sparkle" /></span>}
+          </div>
+        </div>
+        
+        <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          {hasIsotretinoin && (
+            <div className="pill" style={{ color: 'var(--parch)', borderColor: 'var(--border)' }}>
+              Isotretinoin {isIsotretinoin80 ? '80mg' : '40mg'}
+            </div>
+          )}
+          {hasFridayInjections && (
+            <div className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>
+              Weekly Injections
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 
   const retieAppt = appointments.find(a => a.type === 'retie');
   const nailsAppt = appointments.find(a => a.type === 'nails');
+
+  const wheelDays = [
+    { name: 'Mon', num: 1 }, { name: 'Tue', num: 2 }, { name: 'Wed', num: 3 }, 
+    { name: 'Thu', num: 4 }, { name: 'Fri', num: 5 }, { name: 'Sat', num: 6 }, { name: 'Sun', num: 0 }
+  ];
 
   return (
     <div style={{ padding: '1rem', maxWidth: '900px', margin: '0 auto' }}>
@@ -109,28 +145,36 @@ export default function Grimoire({ pose }) {
         
         <div className="wheel-container">
           <div className="wheel">
-            <div className="d">
-              <div className="dn">Mon</div>
-              <div className="tg"></div>
-            </div>
-            <div className="d"><div className="dn">Tue</div><div className="tg"></div></div>
-            <div className="d">
-              <div className="dn">Wed</div>
-              <div className="tg"></div>
-            </div>
-            <div className="d"><div className="dn">Thu</div><div className="tg"></div></div>
-            <div className="d">
-              <div className="dn">Fri</div>
-              <div className="tg"></div>
-            </div>
-            <div className="d"><div className="dn">Sat</div><div className="tg"></div></div>
-              <div className="d">
-                <div className="dn">Sun</div>
-                <div className="tg"></div>
-              </div>
-            </div>
+            {wheelDays.map(day => {
+              const isFriday = day.num === 5;
+              const isSunday = day.num === 0;
+              const hasIso = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
+              const hasDrysol = profile?.intake_answers?.rxList?.some(r => r.name.toLowerCase().includes('drysol'));
+              
+              return (
+                <div key={day.name} className="d">
+                  <div className="dn">{day.name}</div>
+                  <div className="tg" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
+                    {hasIso && (
+                      <span className="pill" style={{ color: 'var(--parch)' }}>Isotretinoin 40/80mg</span>
+                    )}
+                    {isFriday && (
+                      <>
+                        <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Methotrexate 15mg</span>
+                        <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Wegovy 2.4mg</span>
+                        <span className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>Enbrel</span>
+                      </>
+                    )}
+                    {isSunday && hasDrysol && (
+                      <span className="pill" style={{ color: 'var(--rose)', borderColor: 'var(--rose)' }}>Drysol</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
+      </div>
 
         <div className="card mt-4" style={{ alignSelf: 'flex-start' }}>
           <div className="corner tl"></div><div className="corner tr"></div>
