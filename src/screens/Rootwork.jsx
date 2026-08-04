@@ -25,6 +25,11 @@ export default function Rootwork({ pose }) {
   const [photoStatus, setPhotoStatus] = useState('Upload or Scan Photo');
   const [modalState, setModalState] = useState('photo');
   const [banishState, setBanishState] = useState(null);
+  
+  const [profile, setProfile] = useState(null);
+  const [echoInput, setEchoInput] = useState('');
+  const [echoStatus, setEchoStatus] = useState('');
+  const [echoResult, setEchoResult] = useState('');
 
   const fetchItems = async () => {
     setLoading(true);
@@ -47,6 +52,10 @@ export default function Rootwork({ pose }) {
     }
     
     setItems(data || []);
+    
+    const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
+    setProfile(userProfile);
+    
     setLoading(false);
   };
 
@@ -90,6 +99,69 @@ export default function Rootwork({ pose }) {
     };
     reader.readAsDataURL(file);
   };
+
+  const handleEchoScry = async () => {
+    if (!echoInput.trim()) return;
+    
+    // LAVENDER BAN
+    if (echoInput.toLowerCase().includes('lavender')) {
+      setEchoStatus(<span><Icon name="warning" /> WARNING: Lavender detected. This formula is sealed in the Crypt of Ashes.</span>);
+      setEchoResult('Lavender is strictly forbidden from your routine. It has been sealed in the Crypt of Ashes.');
+      
+      const isAlreadyBanished = items.some(i => i.name === 'Lavender Formula (Banished)');
+      if (!isAlreadyBanished) {
+        await supabase.from('items').insert([{
+          brand: 'Unknown',
+          name: 'Lavender Formula (Banished)',
+          type: 'product',
+          lifecycle_state: 'banished'
+        }]);
+        fetchItems();
+      }
+      return;
+    }
+
+    setEchoStatus('The Echo stirs...');
+    setEchoResult('');
+    
+    try {
+      const { evaluateScryingPool } = await import('../lib/ai-engine.js');
+      // Pass empty reactions object since Echo checks prospective items, not current reactions
+      const reply = await evaluateScryingPool(echoInput.trim(), profile?.intake_answers || {}, items, {});
+      setEchoStatus('');
+      setEchoResult(reply);
+    } catch (err) {
+      console.error(err);
+      setEchoStatus('The Echo is clouded. ' + err.message);
+    }
+  };
+
+  const handleEchoPhotoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setEchoStatus('Divining image...');
+    
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result;
+      const base64 = dataUrl.split(',')[1];
+      const mime = dataUrl.split(';')[0].split(':')[1];
+      
+      try {
+        const { parseProductImage } = await import('../lib/ai-engine.js');
+        const details = await parseProductImage(base64, mime);
+        const formulaStr = `${details.brand || ''} ${details.name || ''} ${details.category || ''}`;
+        setEchoInput(formulaStr.trim());
+        setEchoStatus('Vision extracted. Ready to analyze.');
+      } catch (err) {
+        console.error(err);
+        setEchoStatus('Failed to divine image.');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
 
   const handleSave = async () => {
     if (!addForm.name) return;
@@ -301,6 +373,40 @@ export default function Rootwork({ pose }) {
           </div>
         </div>
       )}
+
+      <div className="card mb-4">
+        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+        <h3>The Echo <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Echo") }} /></h3>
+        <div className="mt mb-4">Reveal the hidden nature of a formula. Present a label to divine its synergies with your current provisions.</div>
+        
+        <div className="field" style={{ marginBottom: '1rem' }}>
+          <label>Photo Scan</label>
+          <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+            <Icon name={G.tabPool} /> 
+            <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Offer an image to the pool</span>
+            <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleEchoPhotoUpload} />
+          </div>
+        </div>
+
+        <div className="field" style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+          <div style={{ flex: 1 }}>
+            <VoiceInput 
+              isTextArea={true}
+              placeholder="Or inscribe the formula's true name..."
+              value={echoInput}
+              onChange={(e) => setEchoInput(e.target.value)}
+              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}
+            />
+          </div>
+          <button className="btn plum" onClick={handleEchoScry} style={{ minWidth: '120px' }}>Divine Synergies</button>
+        </div>
+        <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'normal' }}>
+          {echoStatus}
+        </div>
+        <div style={{ marginTop: '1rem', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
+          {echoResult}
+        </div>
+      </div>
 
         <div className="card mb-4">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>

@@ -250,8 +250,83 @@ ${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}
     throw new Error(`Anthropic API error: ${res.status} ${errText}`);
   }
   const response = await res.json();
+  return response.content[0].text;
+}
 
-  return response.content.map(b => b.text).join('\n');
+/**
+ * Perform a comprehensive evaluation of the user's entire routine ecosystem.
+ * @param {Array} inventory - Current items in the Rootwork.
+ * @param {Array} banishedItems - Items in the Crypt of Ashes.
+ * @param {Array} ledgerEntries - Somatic reactions with zones and severities.
+ * @param {Object} intakeAnswers - The user's intake profile goals and allergies.
+ * @returns {Promise<string>} - The AI's holistic evaluation in the ritual voice (Markdown).
+ */
+export async function generateScryingEvaluation(inventory, banishedItems, ledgerEntries, intakeAnswers) {
+  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
+
+  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow & Sanctuary.
+The user seeks a holistic divination of their entire routine ecosystem.
+Analyze their active inventory, banished products, somatic reactions, and intake goals.
+Output a comprehensive report formatted in Markdown that covers the following areas:
+
+### Ingredient Patterns
+Deduce exactly what common denominator ingredients are causing their reactions across banished products and the Ledger of Afflictions. Name the suspected offending ingredients directly.
+
+### Goal Trajectory
+Assess if their current routine is actively moving them toward their stated intake goals.
+
+### Routine Optimization
+Recommend removing steps or products they do not actually need (e.g. "you are using too many acids", or "you have overlapping moisturizers").
+
+### Synergies
+Suggest unowned product categories or specific unused inventory that would work synergistically with their routine.
+
+### Correlations
+Point out behavioral or systemic correlations (e.g., reacting to something due to applying it too frequently, or overlapping conflicts).
+
+Speak in a mystical, cottagecore-goth tone ("ritual voice"). Be insightful, highly analytical, and direct.
+Do not use gendered language or pronouns.`;
+
+  const userContent = `Here is the current state of my ecosystem:
+
+Intake Profile (Goals & Allergies):
+${JSON.stringify(intakeAnswers, null, 2)}
+
+Active Inventory:
+${JSON.stringify(inventory.map(i => ({ name: i.name, category: i.category, ingredients: i.ingredients, state: i.lifecycle_state })), null, 2)}
+
+Banished Items (Crypt of Ashes):
+${JSON.stringify(banishedItems.map(i => ({ name: i.name, ingredients: i.ingredients, reason: i.banish_reason })), null, 2)}
+
+Ledger of Afflictions (Somatic Reactions):
+${JSON.stringify(ledgerEntries, null, 2)}
+
+Please divine the truth in the water.`;
+
+  const res = await fetch('/api/anthropic/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': anthropicApiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-3-5-sonnet-20241022',
+      max_tokens: 2000,
+      system: systemPrompt,
+      messages: [
+        { role: 'user', content: userContent }
+      ]
+    })
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
+  }
+  const response = await res.json();
+  return response.content[0].text;
 }
 
 /**

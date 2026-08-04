@@ -12,14 +12,27 @@ export default function Scrying({ pose }) {
   const [profile, setProfile] = useState(null);
   const [readiness, setReadiness] = useState(null);
   const [healthEnabled, setHealthEnabled] = useState(false);
-  const [scryInput, setScryInput] = useState('');
   const [scryStatus, setScryStatus] = useState('');
   const [scryResult, setScryResult] = useState('');
-  const [reactions, setReactions] = useState({});
+  const [reactionForm, setReactionForm] = useState({
+    productId: '',
+    zone: 'The visage, below — jaw and chin',
+    reactions: new Set(),
+    severity: 0
+  });
+  const [ledgerEntries, setLedgerEntries] = useState([]);
+  const [evaluationStatus, setEvaluationStatus] = useState('');
+  const [evaluationResult, setEvaluationResult] = useState('');
 
-  const reactionOptions = ['Peeling', 'Redness', 'Burning', 'Itching', 'Purging', 'Dryness'];
-
-
+  const reactionOptions = ['Peeling', 'Redness', 'Burning', 'Itching', 'Purging', 'Dryness', 'Darkening where it healed'];
+  const zoneOptions = [
+    'The visage, below — jaw and chin',
+    'The visage, midway — nose and cheek',
+    'The gaze — lid and orbit',
+    'The crown — scalp',
+    'The vessel — underarm',
+    'The vessel — chest and back'
+  ];
   useEffect(() => {
     async function fetchData() {
       const { data: items } = await supabase.from('items').select('*');
@@ -41,89 +54,52 @@ export default function Scrying({ pose }) {
     }
   }, []);
 
-  const handleScry = async () => {
-    if (!scryInput.trim()) return;
-    
-    // LAVENDER BAN
-    if (scryInput.toLowerCase().includes('lavender')) {
-      setScryStatus(<span><Icon name="warning" /> WARNING: Lavender detected. This formula is sealed in the Crypt of Ashes.</span>);
-      setScryResult('Lavender is strictly forbidden from your routine. It has been sealed in the Crypt of Ashes.');
-      
-      // Add to banished items if not already there
-      const isAlreadyBanished = inventory.some(i => i.name === 'Lavender Formula (Banished)');
-      if (!isAlreadyBanished) {
-        await supabase.from('items').insert([{
-          brand: 'Unknown',
-          name: 'Lavender Formula (Banished)',
-          type: 'product',
-          lifecycle_state: 'banished'
-        }]);
-        // Refresh inventory to show in Crypt
-        const { data: items } = await supabase.from('items').select('*');
-        setInventory(items || []);
-      }
-      return;
-    }
-
-    setScryStatus('The Pool stirs...');
-    setScryResult('');
-    
-    try {
-      // Serialize reactions Set into Array for AI
-      const serializedReactions = Object.entries(reactions).reduce((acc, [id, rSet]) => {
-        const item = inventory.find(i => i.id === id);
-        if (item) acc[item.name] = Array.from(rSet);
-        return acc;
-      }, {});
-      
-      const reply = await evaluateScryingPool(scryInput.trim(), profile?.intake_answers || {}, inventory, serializedReactions);
-      setScryStatus('');
-      setScryResult(reply);
-    } catch (err) {
-      console.error(err);
-      setScryStatus('The Pool is clouded. ' + err.message);
-    }
-  };
-
-  const handlePhotoUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    setScryStatus('Divining image...');
-    
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const dataUrl = ev.target.result;
-      const base64 = dataUrl.split(',')[1];
-      const mime = dataUrl.split(';')[0].split(':')[1];
-      
-      try {
-        const details = await parseProductImage(base64, mime);
-        const formulaStr = `${details.brand || ''} ${details.name || ''} ${details.category || ''}`;
-        setScryInput(formulaStr.trim());
-        setScryStatus('Vision extracted. Ready to analyze.');
-      } catch (err) {
-        console.error(err);
-        setScryStatus('Failed to divine image.');
-      }
-    };
-    reader.readAsDataURL(file);
-  };
 
   const now = new Date();
 
-  const toggleReaction = (itemId, reaction) => {
-    setReactions(prev => {
-      const current = prev[itemId] || new Set();
-      const next = new Set(current);
+  const toggleReaction = (reaction) => {
+    setReactionForm(prev => {
+      const next = new Set(prev.reactions);
       if (next.has(reaction)) next.delete(reaction);
       else next.add(reaction);
-      return { ...prev, [itemId]: next };
+      return { ...prev, reactions: next };
     });
   };
 
   const handleSaveLedger = () => {
-    alert("Somatic reactions saved to the Ledger.");
+    if (!reactionForm.productId || reactionForm.reactions.size === 0 || reactionForm.severity === 0) return;
+    const item = inventory.find(i => i.id === reactionForm.productId);
+    
+    setLedgerEntries(prev => [...prev, {
+      ...reactionForm,
+      productName: item?.name,
+      brand: item?.brand,
+      reactions: Array.from(reactionForm.reactions),
+      date: new Date().toISOString()
+    }]);
+    
+    setReactionForm({
+      productId: '',
+      zone: 'The visage, below — jaw and chin',
+      reactions: new Set(),
+      severity: 0
+    });
+  };
+
+  const handleDivineAfflictions = async () => {
+    setEvaluationStatus('The Pool stirs... seeking truth in the water...');
+    setEvaluationResult('');
+    
+    try {
+      const { generateScryingEvaluation } = await import('../lib/ai-engine.js');
+      // Pass the entire ecosystem
+      const reply = await generateScryingEvaluation(inventory, banishedItems, ledgerEntries, profile?.intake_answers || {});
+      setEvaluationStatus('');
+      setEvaluationResult(reply);
+    } catch (err) {
+      console.error(err);
+      setEvaluationStatus('The Pool is clouded. ' + err.message);
+    }
   };
 
   const allergies = profile?.intake_answers?.conditions?.filter(c => c.type === 'allergy') || [];
@@ -137,78 +113,106 @@ export default function Scrying({ pose }) {
       <div className="rw-grid">
         <div className="rw-col">
 
-      <div className="card mt-4">
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Echo <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Echo") }} /></h3>
-        <div className="mt mb-4">Reveal the hidden nature of a formula. Present a label to divine its synergies with your current provisions.</div>
-        
-        <div className="field" style={{ marginBottom: '1rem' }}>
-          <label>Photo Scan</label>
-          <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
-            <Icon name={G.tabPool} /> 
-            <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Offer an image to the pool</span>
-            <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
+
+        <div className="card mt-4">
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3><span className="g">{Icon({name: G.tabPool})}</span>What the Water Shows <span dangerouslySetInnerHTML={{ __html: speakerMarkup("What the Water Shows") }} /></h3>
+          <div className="mt mb-4">A holistic divination of your routine, reactions, and trajectory.</div>
+          
+          <button className="btn full plum" onClick={handleDivineAfflictions}>Divine Afflictions</button>
+          
+          <div style={{ marginTop: '1rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'normal' }}>
+            {evaluationStatus}
+          </div>
+          <div style={{ marginTop: '1rem', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
+            {evaluationResult || <div className="empty" style={{textAlign: 'left', margin: 0}}>The water is still. Inscribe your ledger, then seek the water's counsel.</div>}
           </div>
         </div>
 
-        <div className="field" style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-          <div style={{ flex: 1 }}>
-            <VoiceInput 
-              isTextArea={true}
-              placeholder="Or inscribe the formula's true name..."
-              value={scryInput}
-              onChange={(e) => setScryInput(e.target.value)}
-              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}
-            />
-          </div>
-          <button className="btn plum" onClick={handleScry} style={{ minWidth: '120px' }}>Divine Synergies</button>
-        </div>
-        <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', fontWeight: 'normal' }}>
-          {scryStatus}
-        </div>
-        <div style={{ marginTop: '1rem', fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
-          {scryResult}
-        </div>
-      </div>
         </div>
         <div className="rw-col">
       <div className="card mt-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <h3>The Ledger of Afflictions <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Ledger of Afflictions") }} /></h3>
-        <div className="mt mb-4">Log bodily responses to active ingredients.</div>
+        <div className="mt mb-4">Has something turned against you? Speak of it — what, and where, and how sorely.</div>
         
         {inventory.length > 0 ? (
-          <>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="field">
+              <label>The Offending Formula</label>
+              <select value={reactionForm.productId} onChange={(e) => setReactionForm({...reactionForm, productId: e.target.value})} style={{width: '100%'}}>
+                <option value="">Select a formula...</option>
+                {inventory.map(item => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="field">
+              <label>The Affected Zone</label>
+              <select value={reactionForm.zone} onChange={(e) => setReactionForm({...reactionForm, zone: e.target.value})} style={{width: '100%'}}>
+                {zoneOptions.map(z => <option key={z} value={z}>{z}</option>)}
+              </select>
+            </div>
+
+            <div className="field">
+              <label>The Manifestation</label>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {reactionOptions.map(r => {
+                  const isChecked = reactionForm.reactions.has(r);
+                  return (
+                    <label key={r} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.9rem', cursor: 'pointer', color: isChecked ? 'var(--rose)' : 'var(--dim)' }}>
+                      <input type="checkbox" checked={isChecked} onChange={() => toggleReaction(r)} style={{ display: 'none' }} />
+                      <div style={{ padding: '0.2rem 0.5rem', border: `1px solid ${isChecked ? 'var(--rose)' : 'var(--border)'}`, borderRadius: '12px', background: isChecked ? 'rgba(176,132,148,0.2)' : 'transparent' }}>
+                        {r}
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="field">
+              <label>How Sorely (1-5)</label>
+              <div className="chips" style={{ display: 'flex', gap: '0.5rem' }}>
+                {[1, 2, 3, 4, 5].map(n => (
+                  <button 
+                    key={n} 
+                    className={`chip ${reactionForm.severity === n ? 'on' : ''}`}
+                    onClick={() => setReactionForm({...reactionForm, severity: n})}
+                    style={{ minWidth: '40px', padding: '0.5rem' }}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <button className="btn plum" onClick={handleSaveLedger} disabled={!reactionForm.productId || reactionForm.reactions.size === 0 || reactionForm.severity === 0}>
+              Give it to the water
+            </button>
+          </div>
+        ) : (
+          <div className="empty">Your inventory is empty.</div>
+        )}
+
+        {ledgerEntries.length > 0 && (
+          <div style={{ marginTop: '2rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+            <h4 style={{ color: 'var(--metal)', marginBottom: '1rem' }}>Recorded Afflictions</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {inventory.map(item => (
-                <div key={item.id || item.name} className="row" style={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
-                  <div style={{ flex: '1 1 200px' }}>
-                    <div className="nm">{item.name}</div>
-                    <div className="mt">{item.brand}</div>
-                  </div>
-                  <div style={{ flex: '2 1 300px', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {reactionOptions.map(r => {
-                      const isChecked = (reactions[item.id] || new Set()).has(r);
-                      return (
-                        <label key={r} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.9rem', cursor: 'pointer', color: isChecked ? 'var(--rose)' : 'var(--dim)' }}>
-                          <input type="checkbox" checked={isChecked} onChange={() => toggleReaction(item.id, r)} style={{ display: 'none' }} />
-                          <div style={{ padding: '0.2rem 0.5rem', border: `1px solid ${isChecked ? 'var(--rose)' : 'var(--border)'}`, borderRadius: '12px', background: isChecked ? 'rgba(176,132,148,0.2)' : 'transparent' }}>
-                            {r}
-                          </div>
-                        </label>
-                      );
-                    })}
+              {ledgerEntries.map((entry, idx) => (
+                <div key={idx} className="row" style={{ opacity: 0.8, alignItems: 'flex-start' }}>
+                  <div style={{ flex: 1 }}>
+                    <div className="nm" style={{ color: 'var(--rose)' }}>{entry.productName}</div>
+                    <div className="mt">{entry.zone} &bull; Severity: {entry.severity}/5</div>
+                    <div className="mt" style={{ marginTop: '0.3rem' }}>{entry.reactions.join(', ')}</div>
                   </div>
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: '1rem', textAlign: 'right' }}>
-              <button className="btn plum sm" onClick={handleSaveLedger}>Inscribe Ledger</button>
-            </div>
-          </>
-        ) : (
-          <div className="empty">No somatic reactions logged. Use this ledger to record adverse reactions to specific components in your routine.</div>
+          </div>
         )}
+
       </div>
 
       <div className="card mt-4">
