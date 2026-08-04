@@ -76,7 +76,7 @@ export default function App() {
     verifyGlyphs();
     
     // Load Settings
-    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"Parisienne","tts":false,"health":false,"cal":false}');
+    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"20","fontFamily":"Parisienne","tts":false,"health":false,"cal":false}');
     setSettings(saved);
     applySettings(saved);
     
@@ -140,6 +140,7 @@ export default function App() {
 
   const applySettings = (s) => {
     document.documentElement.style.setProperty('--fs', s.fontSize + 'px');
+    document.documentElement.style.fontSize = s.fontSize + 'px';
     document.documentElement.style.setProperty('--ff', `"${s.fontFamily}", cursive`);
     if (s.tts) {
       document.body.classList.remove('tts-disabled');
