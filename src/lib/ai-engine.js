@@ -1,29 +1,14 @@
 import { supabase } from './supabase.js';
 
-let anthropicApiKey = '';
-
-export function initAnthropic(key) {
-  anthropicApiKey = key;
-  localStorage.setItem('al_anthropic_key', key);
-}
-
-const savedKey = localStorage.getItem('al_anthropic_key');
-if (savedKey) {
-  initAnthropic(savedKey);
-}
-
-
 export const ANTHROPIC_MODEL = 'claude-sonnet-5';
 
 export async function invokeAnthropicProxy(body, retries = 2) {
-  const apiKey = localStorage.getItem('al_anthropic_key') || '';
   for (let i = 0; i <= retries; i++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
       
       const { data, error } = await supabase.functions.invoke('anthropic-proxy', {
-        headers: { Authorization: `Bearer ${apiKey}` },
         body: { model: ANTHROPIC_MODEL, ...body },
         signal: controller.signal
       });
@@ -37,11 +22,6 @@ export async function invokeAnthropicProxy(body, retries = 2) {
     }
   }
 }
-
-export function isAiReady() {
-  return !!anthropicApiKey;
-}
-
 
 /**
  * Conducts the intake conversation and extracts answers when ready.

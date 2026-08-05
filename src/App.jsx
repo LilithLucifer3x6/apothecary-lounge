@@ -396,23 +396,6 @@ export default function App() {
               {/* Middle Column: Voice & Integrations */}
               <div>
                 <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Ethereal Echoes & Conduits</h3>
-                <div className="field" style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ color: 'var(--plum)' }}>Anthropic AI Conduit Key</label>
-                  <input 
-                    type="password" 
-                    placeholder="sk-ant-api..." 
-                    value={localStorage.getItem('al_anthropic_key') || ''} 
-                    onChange={e => {
-                      localStorage.setItem('al_anthropic_key', e.target.value);
-                      // Force re-render to show active status if needed
-                      setSettings({...settings}); 
-                    }} 
-                    style={{ padding: '0.8rem', width: '100%', marginTop: '0.5rem' }} 
-                  />
-                  <div className="mt" style={{ fontSize: '0.8rem', color: localStorage.getItem('al_anthropic_key') ? 'var(--emerald)' : 'var(--crimson)' }}>
-                    {localStorage.getItem('al_anthropic_key') ? '✓ AI Conduit Active' : '⚠ AI Conduit Dormant (Using fallbacks)'}
-                  </div>
-                </div>
 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', }}>

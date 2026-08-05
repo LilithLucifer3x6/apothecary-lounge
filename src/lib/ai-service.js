@@ -2,7 +2,6 @@ import { supabase } from './supabase.js';
 import { invokeAnthropicProxy } from './ai-engine.js';
 
 async function queryClaudeForList(promptText) {
-  const apiKey = localStorage.getItem('al_anthropic_key') || '';
   try {
     const { data, error } = await invokeAnthropicProxy({
         max_tokens: 1024,
