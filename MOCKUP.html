@@ -6,7 +6,7 @@
 <title>The Apothecary Lounge</title>
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/duotone/style.css">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/regular/style.css">
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0b090e; --card:#17131c; --card2:#110e15; --border:#332b3a;
@@ -145,7 +145,7 @@
   .ip{display:flex;gap:.34rem;margin-bottom:.6rem;}
   input[type=text],select,textarea{flex:1;width:100%;background:var(--card2);border:1.5px solid var(--border);
     color:var(--white);border-radius:8px;padding:.5rem .66rem;font-size:.86em;font-family:inherit;}
-  textarea{min-height:100px;resize:vertical;font-family:'IM Fell English',serif;font-size:1.02em;}
+  textarea{min-height:100px;resize:vertical;font-size:1.02em;}
   .mic{background:linear-gradient(180deg,var(--crimson),#3d0509);border:1.5px solid var(--crimson-b);
     border-radius:8px;width:2.4rem;flex-shrink:0;cursor:pointer;font-size:.95em;color:var(--parch);}
   .cb{display:flex;align-items:center;gap:.45rem;margin-bottom:.34rem;font-size:.86em;}
@@ -156,7 +156,7 @@
   .chip.on{background:linear-gradient(180deg,var(--plum),#240a2e);border-color:var(--gold);color:var(--parch);}
   .note{font-size:.78em;color:var(--dim);margin-top:.45rem;font-style:italic;font-family:'Cormorant Garamond',serif;}
   .bubble{background:var(--card2);border:1px solid var(--border);border-left:3px solid var(--gold);
-    border-radius:9px;padding:.72rem .9rem;margin-bottom:.65rem;font-family:'IM Fell English',serif;font-size:1.05em;color:var(--parch);}
+    border-radius:9px;padding:.72rem .9rem;margin-bottom:.65rem;font-size:1.05em;color:var(--parch);}
   .req{color:var(--crimson-b);font-weight:700;}
   .toll{display:flex;justify-content:space-between;align-items:baseline;padding:.6rem .8rem;
     background:var(--card2);border:1px solid var(--border);border-radius:9px;}
@@ -250,7 +250,7 @@
       <select onchange="setFf(this.value)" style="max-width:170px;">
         <option value="-apple-system,'Segoe UI',Roboto,sans-serif">Plain hand</option>
         <option value="'Cormorant Garamond',serif">Scribe's hand</option>
-        <option value="'IM Fell English',serif">Old press</option>
+        
       </select></div>
     <h3><span class="g">◈</span>The Reading Voice</h3>
     <div class="setrow"><div><div class="lbl">The reading voice</div><div class="sub2">places a small voice beside each passage</div></div>
@@ -779,3 +779,4 @@ document.addEventListener('click',e=>{if(!e.target.classList.contains('dots'))
 </script>
 </body>
 </html>
+
