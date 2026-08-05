@@ -17,13 +17,13 @@ export default function ConjureVisage({ onComplete }) {
   ];
 
   const familiars = [
-    { id: 'cat', label: 'Midnight Cat', img: '/assets/fam_cat.jpg' },
-    { id: 'raven', label: 'Watchful Raven', img: '/assets/fam_raven.jpg' },
-    { id: 'moth', label: 'Luna Moth', img: '/assets/fam_moth.jpg' },
-    { id: 'hound', label: 'Shadow Hound', img: '/assets/fam_hound.jpg' },
-    { id: 'toad', label: 'Forest Toad', img: '/assets/fam_toad.jpg' },
-    { id: 'spider', label: 'Weaver Spider', img: '/assets/fam_spider.jpg' },
-    { id: 'snake', label: 'Garden Serpent', img: '/assets/fam_snake.jpg' }
+    { id: 'cat', label: 'Midnight Cat', img: '/assets/familiar_cat.jpg' },
+    { id: 'raven', label: 'Watchful Raven', img: '/assets/familiar_raven.jpg' },
+    { id: 'moth', label: 'Luna Moth', img: '/assets/familiar_moth.jpg' },
+    { id: 'hound', label: 'Shadow Hound', img: '/assets/familiar_hound.jpg' },
+    { id: 'toad', label: 'Forest Toad', img: '/assets/familiar_toad.jpg' },
+    { id: 'spider', label: 'Weaver Spider', img: '/assets/familiar_spider.jpg' },
+    { id: 'serpent', label: 'Garden Serpent', img: '/assets/familiar_serpent.jpg' }
   ];
 
   const handleFinish = async () => {
