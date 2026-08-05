@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '../lib/supabase.js';
 
 // ── PHYSICAL BASE (hardcoded per user spec) ──────────────────────────────────
 const BASE_DESCRIPTION =
@@ -299,22 +300,43 @@ export default function ConjureVisage({ onFinish }) {
     const config = buildKeeperDescription();
     setGenerating(true);
 
-    const phases = [
-      'Binding your essence to the Sanctuary...',
-      'Weaving your Keeper into the Grimoire...',
-      'Painting your Keeper at the Altars...',
-      'Summoning your Keeper to the Rootwork...',
-      'Conjuring your Keeper at the Scrying Pool...',
-      'Inscribing your Keeper in the Shadow Tome...',
-      'The Sanctuary awakens...',
+    const rooms = [
+      { id: 'rites', title: 'Binding your essence to the Sanctuary...' },
+      { id: 'grim', title: 'Weaving your Keeper into the Grimoire...' },
+      { id: 'altars', title: 'Painting your Keeper at the Altars...' },
+      { id: 'root', title: 'Summoning your Keeper to the Rootwork...' },
+      { id: 'pool', title: 'Conjuring your Keeper at the Scrying Pool...' },
+      { id: 'tome', title: 'Inscribing your Keeper in the Shadow Tome...' },
     ];
 
-    for (let i = 0; i < phases.length; i++) {
-      setGenPhase(phases[i]);
+    const generatedBgs = {};
+
+    for (let i = 0; i < rooms.length; i++) {
+      const room = rooms[i];
+      setGenPhase(room.title);
       setGenStep(i);
-      await new Promise(r => setTimeout(r, 800));
+      
+      const prompt = ROOM_PROMPTS[room.id](config);
+      try {
+        const { data, error } = await supabase.functions.invoke('generate-room-bg', {
+          body: { prompt }
+        });
+        
+        if (error) {
+          console.warn(`Failed to generate ${room.id} bg:`, error);
+        } else if (data && data.url) {
+          generatedBgs[room.id] = data.url;
+        }
+      } catch (err) {
+        console.warn(`Failed to invoke generate-room-bg for ${room.id}:`, err);
+      }
     }
 
+    setGenPhase('The Sanctuary awakens...');
+    setGenStep(6);
+    await new Promise(r => setTimeout(r, 600));
+
+    config.generatedBgs = generatedBgs;
     localStorage.setItem('avatar_config', JSON.stringify(config));
     if (onFinish) onFinish(config);
   };
