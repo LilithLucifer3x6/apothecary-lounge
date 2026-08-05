@@ -29,7 +29,7 @@ export default function ConjureVisage({ onFinish }) {
   const [name, setName] = useState('');
   const [locStyle, setLocStyle] = useState('');
   // Hardcoded base physical description as requested by user
-  const bodyType = 'A full-figured Black femme, approximately 250 pounds.';
+  const bodyType = 'A full-figured Black femme, approximately 250 pounds. Hair accessories must NOT be gold, pink, or blue (prefer silver or black).';
   const [robeColor, setRobeColor] = useState('');
   const [familiar, setFamiliar] = useState('');
   
