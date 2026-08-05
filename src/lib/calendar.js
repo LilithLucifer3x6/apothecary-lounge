@@ -1,8 +1,9 @@
 import { Capacitor } from '@capacitor/core';
+import { supabase } from './supabase.js';
 
 /**
- * Calendar Broker (Phase 6 Scaffold)
- * Integrates Google Calendar via Capacitor native plugins, falling back to mocks on Web.
+ * Calendar Broker
+ * Integrates real Google Calendar REST API via Supabase provider_token.
  */
 
 export async function requestCalendarPermissions() {
@@ -10,30 +11,67 @@ export async function requestCalendarPermissions() {
     console.log('Requesting native Google Calendar permissions...');
     return true;
   }
-  console.log('Web Mock: Granted Google Calendar permissions automatically.');
   return true;
 }
 
 export async function syncAppointments() {
-  if (Capacitor.isNativePlatform()) {
-    // Scaffold for real Google Calendar API
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || !session.provider_token) {
+      console.warn("No Google provider token found. Cannot sync real Google Calendar.");
+      return [];
+    }
+
+    const token = session.provider_token;
+    
+    // We fetch events from the primary calendar for the next 30 days
+    const timeMin = new Date().toISOString();
+    const timeMax = new Date(Date.now() + 30 * 86400000).toISOString();
+    
+    const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      // If 401, token might be expired. Should handle refresh in real app.
+      throw new Error(`Calendar fetch failed: ${res.status}`);
+    }
+
+    const data = await res.json();
+    
+    // Parse Google events into our appointment format
+    const appointments = [];
+    if (data.items) {
+      data.items.forEach(item => {
+        const title = item.summary ? item.summary.toLowerCase() : '';
+        const date = item.start.dateTime || item.start.date; // fallback for all-day
+        
+        let type = 'other';
+        if (title.includes('nail') || title.includes('manicure')) type = 'nails';
+        else if (title.includes('retie') || title.includes('locs') || title.includes('hair')) type = 'retie';
+        else if (title.includes('derm') || title.includes('facial') || title.includes('skin')) type = 'derm';
+
+        if (type !== 'other') {
+          appointments.push({
+            id: item.id,
+            type,
+            title: item.summary,
+            date
+          });
+        }
+      });
+    }
+    return appointments;
+  } catch (err) {
+    console.error("Failed to sync real Google Calendar:", err);
     return [];
   }
-  
-  // Web mock: returns a few mock appointments for The Grimoire
-  const today = new Date();
-  const nextNails = new Date(today.getTime() + 2 * 86400000); // 2 days from now
-  const nextRetie = new Date(today.getTime() + 10 * 86400000); // 10 days from now
-  
-  return [
-    { id: 'app_1', type: 'nails', title: 'Nail Salon', date: nextNails.toISOString() },
-    { id: 'app_2', type: 'retie', title: 'Retie Appointment', date: nextRetie.toISOString() }
-  ];
 }
 
 export async function markAppointmentDone(appointmentType) {
   console.log(`Marked ${appointmentType} as done. Recalculating next date...`);
-  // In a real app, this would push a new event to Google Calendar for +2 weeks or +8 weeks.
+  // In a full implementation, we'd POST a new event to Google Calendar for +2 or +8 weeks here.
   return true;
 }
-

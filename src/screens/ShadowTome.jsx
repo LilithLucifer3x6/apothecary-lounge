@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { ic, G } from '../lib/icons.js';
+import { ic, G } from '../lib/icons.jsx';
 import { attachVoice } from '../lib/voice.js';
 import * as AI from '../lib/ai-service.js';
 import { parseTeaImage } from '../lib/ai-engine.js';

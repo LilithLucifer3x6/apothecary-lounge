@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { G } from '../lib/icons.js';
+import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
 import { attachVoice } from '../lib/voice.js';

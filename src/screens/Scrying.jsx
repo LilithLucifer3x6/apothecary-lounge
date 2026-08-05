@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { G } from '../lib/icons.js';
+import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import { evaluateScryingPool, parseProductImage } from '../lib/ai-engine.js';
 import { getReadiness } from '../lib/health-connect.js';
@@ -80,31 +80,60 @@ export default function Scrying({ pose }) {
   };
 
   const handleSaveLedger = async () => {
-    if (!reactionForm.productId || reactionForm.reactions.size === 0 || reactionForm.severity === 0) return;
-    const item = inventory.find(i => i.id === reactionForm.productId);
-    const reactionsArr = Array.from(reactionForm.reactions);
+    if (!profile) return;
+    try {
+      let result;
+      if (editId) {
+        result = await supabase.from('somatic_reactions').update({
+          item_id: reactionForm.productId,
+          zone: reactionForm.zone,
+          severity: reactionForm.severity,
+          symptoms: Array.from(reactionForm.reactions)
+        }).eq('id', editId).select().single();
+      } else {
+        result = await supabase.from('somatic_reactions').insert({
+          item_id: reactionForm.productId,
+          zone: reactionForm.zone,
+          severity: reactionForm.severity,
+          symptoms: Array.from(reactionForm.reactions)
+        }).select().single();
+      }
+      const { error, data } = result;
 
-    const { data } = await supabase.from('somatic_reactions').insert({
-      item_id: reactionForm.productId,
-      zone: reactionForm.zone,
-      severity: reactionForm.severity,
-      symptoms: reactionsArr
-    }).select().single();
-    
-    setLedgerEntries(prev => [...prev, {
-      ...reactionForm,
-      id: data?.id,
-      productName: item?.name,
-      brand: item?.brand,
-      reactions: reactionsArr,
-      date: new Date().toISOString()
-    }]);
-    
+      if (error) throw error;
+      
+      const item = inventory.find(i => i.id === reactionForm.productId);
+      const newEntry = {
+        id: data.id,
+        productId: reactionForm.productId,
+        productName: item ? item.name : 'Unknown',
+        brand: item ? item.brand : '',
+        zone: reactionForm.zone,
+        reactions: Array.from(reactionForm.reactions),
+        severity: reactionForm.severity,
+        date: data.created_at
+      };
+      
+      if (editId) {
+        setLedgerEntries(prev => prev.map(e => e.id === editId ? newEntry : e));
+      } else {
+        setLedgerEntries(prev => [...prev, newEntry]);
+      }
+      setReactionForm({ productId: '', zone: 'The visage, below — jaw and chin', reactions: new Set(), severity: 0 });
+      setEditId(null);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save to ledger.');
+    }
+  };
+
+  const handleEditLedger = (entry) => {
+    setEditId(entry.id);
     setReactionForm({
-      productId: '',
-      zone: 'The visage, below — jaw and chin',
-      reactions: new Set(),
-      severity: 0
+      productId: entry.productId,
+      zone: entry.zone,
+      reactions: new Set(entry.reactions),
+      severity: entry.severity
     });
   };
 
@@ -212,8 +241,9 @@ export default function Scrying({ pose }) {
             </div>
             
             <button className="btn plum" onClick={handleSaveLedger} disabled={!reactionForm.productId || reactionForm.reactions.size === 0 || reactionForm.severity === 0}>
-              Give it to the water
+              {editId ? 'Update the water' : 'Give it to the water'}
             </button>
+            {editId && <button className="btn" onClick={() => { setEditId(null); setReactionForm({ productId: '', zone: 'The visage, below — jaw and chin', reactions: new Set(), severity: 0 }); }}>Cancel Edit</button>}
           </div>
         ) : (
           <div className="empty">Your apothecary stands empty. Inscribe relics to record afflictions.</div>
@@ -231,6 +261,9 @@ export default function Scrying({ pose }) {
                     <div className="mt" style={{ marginTop: '0.3rem' }}>{entry.reactions.join(', ')}</div>
                   </div>
                   <div>
+                    <button className="btn sm" onClick={() => handleEditLedger(entry)} style={{ border: '1px solid var(--silver)', color: 'var(--silver)', marginRight: '0.5rem' }}>
+                      Edit
+                    </button>
                     <button className="btn sm" onClick={() => handleDeleteLedger(entry.id, idx)} style={{ border: '1px solid var(--rose)', color: 'var(--rose)' }}>
                       Erase
                     </button>

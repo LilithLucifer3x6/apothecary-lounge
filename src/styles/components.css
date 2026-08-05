@@ -56,7 +56,7 @@
   
 }
 .tb.on {
-  background: var(--crimson-b);
+  background: rgba(0, 0, 0, 0.4);
   border-bottom: 2px solid var(--crimson-b);
   color: var(--rose);
 }
@@ -114,7 +114,7 @@
 /* Sub nav */
 .sub { display: flex; gap: 0.5rem; margin-bottom: 1rem; overflow-x: auto; }
 .st { padding: 0.25rem 0.75rem; border: 1px solid var(--border); border-radius: 16px; color: var(--ash); cursor: pointer; font-size: 0.875rem; white-space: nowrap; }
-.st.on { background: var(--card); border-color: var(--gold); color: var(--gold); }
+.st.on { background: rgba(0, 0, 0, 0.4); border-color: var(--crimson-b); color: var(--crimson-b); }
 
 /* Forms */
 label.fl { display: block;  color: var(--silver); margin-bottom: 0.25rem; }
@@ -127,7 +127,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 /* Chips */
 .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .chip { border: 1px solid var(--dim); padding: 0.25rem 0.75rem; border-radius: 16px; color: var(--dim); cursor: pointer; display: inline-block; width: fit-content; flex: 0 0 auto; }
-.chip.on { border-color: var(--crimson); color: var(--crimson-b); background: rgba(90, 10, 16, 0.2); }
+.chip.on { border-color: var(--crimson); color: var(--crimson-b); background: rgba(0, 0, 0, 0.4); }
 
 .note { font-style: italic; color: var(--dim); font-size: 0.875rem; margin-top: 0.25rem; }
 .bubble { border-left: 2px solid var(--gold); padding-left: 1rem; margin: 1rem 0;  background: linear-gradient(to right, rgba(169, 173, 184, 0.05), transparent); padding: 1rem; }
@@ -200,7 +200,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
   
 }
 .tb.on {
-  background: var(--crimson-b);
+  background: rgba(0, 0, 0, 0.4);
   border-bottom: 2px solid var(--crimson-b);
   color: var(--rose);
 }
@@ -258,7 +258,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 /* Sub nav */
 .sub { display: flex; gap: 0.5rem; margin-bottom: 1rem; overflow-x: auto; }
 .st { padding: 0.25rem 0.75rem; border: 1px solid var(--border); border-radius: 16px; color: var(--ash); cursor: pointer; font-size: 0.875rem; white-space: nowrap; }
-.st.on { background: var(--card); border-color: var(--gold); color: var(--gold); }
+.st.on { background: rgba(0, 0, 0, 0.4); border-color: var(--crimson-b); color: var(--crimson-b); }
 
 /* Forms */
 label.fl { display: block;  color: var(--silver); margin-bottom: 0.25rem; }
@@ -271,7 +271,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 /* Chips */
 .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .chip { border: 1px solid var(--dim); padding: 0.25rem 0.75rem; border-radius: 16px; color: var(--dim); cursor: pointer; display: inline-block; width: fit-content; flex: 0 0 auto; }
-.chip.on { border-color: var(--crimson); color: var(--crimson-b); background: rgba(90, 10, 16, 0.2); }
+.chip.on { border-color: var(--crimson); color: var(--crimson-b); background: rgba(0, 0, 0, 0.4); }
 
 .note { font-style: italic; color: var(--dim); font-size: 0.875rem; margin-top: 0.25rem; }
 .bubble { border-left: 2px solid var(--gold); padding-left: 1rem; margin: 1rem 0;  background: linear-gradient(to right, rgba(169, 173, 184, 0.05), transparent); padding: 1rem; }

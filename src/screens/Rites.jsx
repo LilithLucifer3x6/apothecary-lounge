@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { G } from '../lib/icons.js';
+import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import SpeakerButton from '../components/SpeakerButton.jsx';
 import { buildRoutines, checkConflicts } from '../lib/routine-engine.js';
@@ -128,10 +128,21 @@ export default function Rites({ pose }) {
       newChecked.delete(id);
       const today = new Date().toISOString().split('T')[0];
       supabase.from('routine_history')
-        .delete()
+        .select('*')
         .contains('items_used', [id])
         .gte('completed_at', today)
-        .then();
+        .then(({ data }) => {
+          if (data && data.length > 0) {
+            data.forEach(row => {
+              const updated = row.items_used.filter(x => x !== id);
+              if (updated.length === 0) {
+                supabase.from('routine_history').delete().eq('id', row.id).then();
+              } else {
+                supabase.from('routine_history').update({ items_used: updated }).eq('id', row.id).then();
+              }
+            });
+          }
+        });
     }
     setCheckedIds(newChecked);
   };

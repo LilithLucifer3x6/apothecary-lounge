@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { G } from '../lib/icons.js';
+import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import { fetchTodayEvents, fetchMonthEvents } from '../lib/gcal.js';
 import SpeakerButton from '../components/SpeakerButton.jsx';
@@ -76,6 +76,13 @@ export default function Grimoire({ pose }) {
     }
   };
 
+  const overrides = profile?.settings?.appointment_overrides || {};
+  let retieAppt = appointments.find(a => a.type === 'retie');
+  if (retieAppt && overrides['retie']) retieAppt = { ...retieAppt, date: overrides['retie'] };
+  
+  let nailsAppt = appointments.find(a => a.type === 'nails');
+  if (nailsAppt && overrides['nails']) nailsAppt = { ...nailsAppt, date: overrides['nails'] };
+
   const emptyDays = [];
   for (let i = 0; i < firstDay; i++) {
     emptyDays.push(<div key={`empty-${i}`}></div>);
@@ -84,8 +91,8 @@ export default function Grimoire({ pose }) {
   const calDays = [];
   for (let i = 1; i <= daysInMonth; i++) {
     const isToday = i === d.getDate() ? 'today' : '';
-    const hasRetie = appointments.some(app => new Date(app.date).getDate() === i && app.type === 'retie');
-    const hasNails = appointments.some(app => new Date(app.date).getDate() === i && app.type === 'nails');
+    const hasRetie = retieAppt && retieAppt.date && new Date(retieAppt.date).getDate() === i && new Date(retieAppt.date).getMonth() === month && new Date(retieAppt.date).getFullYear() === year;
+    const hasNails = nailsAppt && nailsAppt.date && new Date(nailsAppt.date).getDate() === i && new Date(nailsAppt.date).getMonth() === month && new Date(nailsAppt.date).getFullYear() === year;
     
     const currentDayTime = new Date(year, month, i).getTime();
     const dayOfWeek = new Date(year, month, i).getDay();
@@ -142,23 +149,24 @@ export default function Grimoire({ pose }) {
         )}
         
         <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-          {hasIsotretinoin && (
-            <div className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--border)' }}>
-              Isotretinoin {isIsotretinoin80 ? '80mg' : '40mg'}
-            </div>
-          )}
-          {hasFridayInjections && (
-            <div className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>
-              Weekly Injections
-            </div>
-          )}
+            {allMeds.map((m, i) => {
+              const l = m.toLowerCase();
+              if (l.includes('isotretinoin') || l.includes('accutane')) return (
+                <div key={i} className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--border)' }}>
+                  {m} {isIsotretinoin80 ? '80mg' : '40mg'}
+                </div>
+              );
+              if (dayOfWeek === 5 && (l.includes('methotrexate') || l.includes('wegovy') || l.includes('enbrel') || l.includes('etanercept'))) return (
+                <div key={i} className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>
+                  {m} (Weekly Injection)
+                </div>
+              );
+              return null;
+            })}
         </div>
       </div>
     );
   }
-
-  const retieAppt = appointments.find(a => a.type === 'retie');
-  const nailsAppt = appointments.find(a => a.type === 'nails');
 
   const wheelDays = [
     { name: 'Mon', num: 1 }, { name: 'Tue', num: 2 }, { name: 'Wed', num: 3 }, 
@@ -263,29 +271,26 @@ export default function Grimoire({ pose }) {
             <div className="wheel">
               {wheelDays.map(day => {
                 const isFriday = day.num === 5;
-                const isSaturday = day.num === 6;
-                const isSunday = day.num === 0;
                 const orals = profile?.intake_answers?.oralList || [];
                 const rxs = profile?.intake_answers?.rxList || [];
                 const allMeds = [...orals, ...rxs].map(m => (m.name || '').toLowerCase());
                 
-                const hasIso = allMeds.some(m => m.includes('isotretinoin') || m.includes('accutane'));
                 const hasDrysol = allMeds.some(m => m.includes('drysol'));
                 
                 return (
                   <div key={day.name} className="d">
                     <div className="dn">{day.name}</div>
                     <div className="tg" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
-                      {hasIso && (
-                        <span className="pill" style={{ color: 'var(--silver)' }}>Isotretinoin 40/80mg</span>
-                      )}
-                      {isFriday && (
-                        <>
-                          {allMeds.some(m => m.includes('methotrexate')) && <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Methotrexate</span>}
-                          {allMeds.some(m => m.includes('wegovy')) && <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Wegovy</span>}
-                          {allMeds.some(m => m.includes('enbrel') || m.includes('etanercept')) && <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Enbrel</span>}
-                        </>
-                      )}
+                        {allMeds.map((m, i) => {
+                          const l = m.toLowerCase();
+                          if (l.includes('isotretinoin') || l.includes('accutane')) {
+                            return <span key={i} className="pill" style={{ color: 'var(--silver)' }}>{m} 40/80mg</span>;
+                          }
+                          if (isFriday && (l.includes('methotrexate') || l.includes('wegovy') || l.includes('enbrel') || l.includes('etanercept'))) {
+                            return <span key={i} className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>{m}</span>;
+                          }
+                          return null;
+                        })}
                       {hasDrysol && (
                         <span className="pill" style={{ color: 'var(--rose)', borderColor: 'var(--rose)' }}>Drysol (Nightly)</span>
                       )}

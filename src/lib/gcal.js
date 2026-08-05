@@ -1,30 +1,35 @@
 // lib/gcal.js
 
-let tokenClient;
+import { Capacitor } from '@capacitor/core';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+
 let accessToken = null;
 
 export function initGoogleCalendar(clientId, onTokenReceived) {
-  if (!window.google) {
-    console.error("Google Identity Services script not loaded");
-    return;
-  }
-  
-  tokenClient = window.google.accounts.oauth2.initTokenClient({
-    client_id: clientId,
-    scope: 'https://www.googleapis.com/auth/calendar.readonly',
-    callback: (tokenResponse) => {
-      if (tokenResponse && tokenResponse.access_token) {
-        accessToken = tokenResponse.access_token;
-        localStorage.setItem('gcal_token', accessToken);
-        if (onTokenReceived) onTokenReceived(accessToken);
-      }
-    },
+  GoogleAuth.initialize({
+    clientId: clientId,
+    scopes: ['profile', 'email', 'https://www.googleapis.com/auth/calendar.readonly'],
+    grantOfflineAccess: true,
   });
+  
+  // Try to restore from local storage
+  const stored = localStorage.getItem('gcal_token');
+  if (stored) {
+    accessToken = stored;
+    if (onTokenReceived) onTokenReceived(accessToken);
+  }
 }
 
-export function requestCalendarAccess() {
-  if (tokenClient) {
-    tokenClient.requestAccessToken();
+export async function requestCalendarAccess(onTokenReceived) {
+  try {
+    const user = await GoogleAuth.signIn();
+    if (user && user.authentication && user.authentication.accessToken) {
+      accessToken = user.authentication.accessToken;
+      localStorage.setItem('gcal_token', accessToken);
+      if (onTokenReceived) onTokenReceived(accessToken);
+    }
+  } catch (error) {
+    console.error("Google Auth error:", error);
   }
 }
 

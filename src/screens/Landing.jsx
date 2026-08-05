@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
 import Icon from '../components/Icon.jsx';
-import { G } from '../lib/icons.js';
+import { G } from '../lib/icons.jsx';
 
 export default function Landing({ onProceed, onOpenAvatar }) {
   const [hasProfile, setHasProfile] = useState(false);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase.js';
-import { G, verifyGlyphs } from './lib/icons.js';
+import { G, verifyGlyphs } from './lib/icons.jsx';
 import { getTtsEnabled, getTtsRate, getTtsPitch, getTtsVoiceURI, setTtsEnabled, setTtsRate, setTtsPitch, setTtsVoiceURI, getFeminineVoices } from './lib/tts.js';
 import Icon from './components/Icon.jsx';
 import { initGoogleCalendar, requestCalendarAccess } from './lib/gcal.js';
@@ -44,6 +44,7 @@ export default function App() {
   });
   const [showSettings, setShowSettings] = useState(false);
   const [dateStr, setDateStr] = useState(getSpellDate());
+  const [supabaseError, setSupabaseError] = useState(false);
   
   // Settings state
   const [settings, setSettings] = useState({
@@ -119,7 +120,10 @@ export default function App() {
     // Initial background state is now handled by the useEffects tracking currentScreen and activeTab
     
     // Sync settings with profile in background
-    supabase.from('user_profile').select('*').maybeSingle().then(({ data: profile }) => {
+    supabase.from('user_profile').select('*').maybeSingle().then(({ data: profile, error }) => {
+      if (error && error.message !== 'JWT expired' && error.message !== 'No current session') {
+        setSupabaseError(true);
+      }
       if (profile && profile.settings) {
         const stored = localStorage.getItem('al_settings');
         if (stored) {
@@ -159,8 +163,11 @@ export default function App() {
     let profile = null;
     try {
       const res = await supabase.from('user_profile').select('*').maybeSingle();
+      if (res.error) setSupabaseError(true);
       profile = res.data;
-    } catch(e) {}
+    } catch(e) {
+      setSupabaseError(true);
+    }
     
     if (profile && profile.avatar_config) {
       localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
@@ -214,6 +221,20 @@ export default function App() {
       default: return null;
     }
   };
+
+  if (supabaseError) {
+    return (
+      <div className="land" style={{ backgroundImage: "url('/assets/bg_sanctuary.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', color: 'var(--rose)' }}>
+        <div className="scene" style={{ maxWidth: '400px', textAlign: 'center', padding: '2rem' }}>
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <Icon name="ph-warning-circle" style={{fontSize: '3rem', color: 'var(--crimson-b)'}} />
+          <h2 style={{marginTop: '1rem', marginBottom: '1rem'}}>Connection Severed</h2>
+          <p style={{color: 'var(--dim)', marginBottom: '1rem'}}>The Apothecary Lounge cannot reach the Supabase backend. Please ensure your environment variables are configured correctly and the database is accessible.</p>
+          <button className="btn plum" onClick={() => window.location.reload()}>Attempt Reconnection</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

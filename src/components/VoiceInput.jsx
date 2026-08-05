@@ -4,6 +4,7 @@ export default function VoiceInput({ className = '', value, onChange, placeholde
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
   const inputRef = useRef(null);
+  const initialValueRef = useRef('');
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -29,12 +30,14 @@ export default function VoiceInput({ className = '', value, onChange, placeholde
         }
         
         const newValue = finalTranscript || interimTranscript;
+        const base = initialValueRef.current;
+        const textToSet = base ? base + (base.endsWith(' ') ? '' : ' ') + newValue : newValue;
         
         // Create synthetic event to trigger onChange
         if (onChange) {
-          onChange({ target: { value: newValue } });
+          onChange({ target: { value: textToSet } });
         } else if (inputRef.current) {
-          inputRef.current.value = newValue;
+          inputRef.current.value = textToSet;
         }
       };
 
@@ -48,6 +51,7 @@ export default function VoiceInput({ className = '', value, onChange, placeholde
     if (isListening) {
       recognitionRef.current.stop();
     } else {
+      initialValueRef.current = value || '';
       recognitionRef.current.start();
     }
   };

@@ -4,7 +4,7 @@ import { attachVoice } from '../lib/voice.js';
 import SpeakerButton from '../components/SpeakerButton.jsx';
 import * as AI from '../lib/ai-service.js';
 import Icon from '../components/Icon.jsx';
-import { G } from '../lib/icons.js';
+import { G } from '../lib/icons.jsx';
 
 import VoiceInput from '../components/VoiceInput.jsx';
 
@@ -29,6 +29,7 @@ export default function Intake({ onComplete }) {
   
   const [noRx, setNoRx] = useState(false);
   const [noOral, setNoOral] = useState(false);
+  const [prescriptionStartDate, setPrescriptionStartDate] = useState('');
   const [noAlg, setNoAlg] = useState(false);
 
   // AI Path State
@@ -41,6 +42,30 @@ export default function Intake({ onComplete }) {
   const [showKeyInput, setShowKeyInput] = useState(false);
   const [keyInputStr, setKeyInputStr] = useState('');
   const chatLogRef = useRef(null);
+
+  useEffect(() => {
+    supabase.from('user_profile').select('intake_answers').maybeSingle().then(({ data }) => {
+      if (data && data.intake_answers) {
+        const ans = data.intake_answers;
+        if (ans.concerns) setSelectedConcerns(ans.concerns);
+        if (ans.conditions) setSelectedConditions(ans.conditions);
+        if (ans.traditions) setSelectedTraditions(ans.traditions);
+        if (ans.rxList) setRxList(ans.rxList);
+        if (ans.oralList) setOralList(ans.oralList);
+        if (ans.algList) setAlgList(ans.algList);
+        if (ans.noRx) setNoRx(ans.noRx);
+        if (ans.noOral) setNoOral(ans.noOral);
+        if (ans.noAlg) setNoAlg(ans.noAlg);
+        if (ans.prescription_start_date) setPrescriptionStartDate(ans.prescription_start_date);
+        
+        // If they already completed it but are just missing the date, jump to step 4
+        if (ans.oralList && ans.oralList.some(m => m.toLowerCase().includes('isotretinoin') || m.toLowerCase().includes('accutane')) && !ans.prescription_start_date) {
+            setPath('fast');
+            setCurrentStep(4);
+        }
+      }
+    });
+  }, []);
 
   useEffect(() => {
     AI.generateConcerns().then(setConcernsOptions);
@@ -91,7 +116,7 @@ export default function Intake({ onComplete }) {
         const { data: existing } = await supabase.from('user_profile').select('id').maybeSingle();
         const profileData = {
           intake_completed: true,
-          intake_answers: extractedData,
+          intake_answers: { ...extractedData, prescription_start_date: prescriptionStartDate },
           avatar_config: avatarConfig
         };
         if (existing) {
@@ -132,7 +157,8 @@ export default function Intake({ onComplete }) {
         noAlg, 
         rxList: filteredRxList, 
         oralList: filteredOralList, 
-        algList: filteredAlgList 
+        algList: filteredAlgList, 
+        prescription_start_date: prescriptionStartDate 
       },
       avatar_config: avatarConfig
     };
@@ -431,7 +457,7 @@ export default function Intake({ onComplete }) {
                 <input type="checkbox" checked={noOral} onChange={e => { setNoOral(e.target.checked); if(e.target.checked) setOralList([]); }} /> I consume no internal remedies that alter my vessel.
               </label>
 
-              {!noOral && (
+{!noOral && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {oralList.map((med, i) => (
                     <div key={i} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
@@ -442,6 +468,13 @@ export default function Intake({ onComplete }) {
                     </div>
                   ))}
                   <button className="btn" onClick={addOral} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Systemic Measure</button>
+                  
+                  {oralList.some(m => m.toLowerCase().includes('isotretinoin') || m.toLowerCase().includes('accutane')) && (
+                    <div className="field mt-4" style={{ padding: '1rem', border: '1px solid var(--crimson)', borderRadius: '8px' }}>
+                      <label style={{ color: 'var(--rose)', display: 'block', marginBottom: '0.5rem' }}>When did you begin this systemic regimen?</label>
+                      <input type="date" value={prescriptionStartDate} onChange={e => setPrescriptionStartDate(e.target.value)} style={{ padding: '0.5rem', background: 'var(--bg)', color: 'var(--silver)', border: '1px solid var(--border)', borderRadius: '4px' }} />
+                    </div>
+                  )}
                 </div>
               )}
             </div>

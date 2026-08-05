@@ -92,13 +92,13 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
     let isPm = true;
 
     // Master Invocations & Time-of-day parsing
-    if (cat.includes('sleeping mask') || name.includes('night')) {
+    if (cat.includes('sleeping mask') || (item.behavior_flags && item.behavior_flags.night_only)) {
       isAm = false; // Night-specific items
     }
-    if (cat.includes('sunscreen') || name.includes('spf') || name.includes('day')) {
+    if (cat.includes('sunscreen') || cat.includes('spf') || (item.behavior_flags && item.behavior_flags.day_only)) {
       isPm = false; // Day-specific items
     }
-    if (name.includes('drysol')) {
+    if (item.risk_flags && item.risk_flags.hyperhidrosis_treatment) {
       isAm = false; // Drysol at bedtime only
     }
 
@@ -203,9 +203,7 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
     { id: 'wd-2', name: 'The Drying', desc: 'With the aid of another', category: 'immutable', domain: 'vessel', weight: 0.2, isInjected: true }
   ];
   
-  if (!isImmunosuppressed) {
-    immutableWindDown.push({ id: 'wd-3', name: 'The Purging of Blemishes & The Warm Gaze', desc: 'Purify implements before and after.', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true });
-  }
+  immutableWindDown.push({ id: 'wd-3', name: 'The Purging of Blemishes & The Warm Gaze', desc: 'Execute after a shower. Purify implements before and after.', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true });
   
   if (isWeekend) {
     // Left intentionally blank. Rituals must be user-defined.
@@ -284,19 +282,14 @@ export function checkConflicts(items, userProfile = {}) {
   }
 
   // DRYSOL HARD RULE
-  const hasDrysol = items.some(i => i.name.toLowerCase().includes('drysol'));
-  const hasBathRitual = items.some(i => i.name.toLowerCase().includes('bath soak') || i.category.toLowerCase().includes('soak'));
-  const hasWitchHazel = items.some(i => i.name.toLowerCase().includes('witch hazel'));
+  const hasDrysol = items.some(i => i.risk_flags && i.risk_flags.hyperhidrosis_treatment);
+  const hasBathRitual = items.some(i => (i.category || '').toLowerCase().includes('soak'));
+  const hasWitchHazel = items.some(i => i.risk_flags && i.risk_flags.astringent);
   if (hasDrysol && (hasBathRitual || hasWitchHazel)) {
     conflicts.push("Drysol Hard Rule: Never apply aluminum chloride on the same day as the bath ritual or astringents to avoid chemical burning.");
   }
 
-  // ORAL MEDICATIONS (IMMUNOSUPPRESSANTS)
-  const isImmunosuppressed = orals.some(m => m.includes('methotrexate') || m.includes('etanercept') || m.includes('enbrel'));
-  // The extractions step is immutable, so we can just assume it exists in PM, but let's check items too in case user adds tools
-  if (isImmunosuppressed) {
-    conflicts.push("Keeper's Caution: Immunosuppressants detected (Methotrexate/Enbrel). Extractions carry high infection risk. Submerge steel tools in 70% isopropyl alcohol for 10 mins before/after use.");
-  }
+  // Immunosuppressants override accepted: Tool sanitization is handled by the user.
 
   return conflicts;
 }

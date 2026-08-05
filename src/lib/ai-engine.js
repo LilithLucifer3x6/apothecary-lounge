@@ -1,20 +1,47 @@
-let anthropicApiKey = null;
+import { supabase } from './supabase.js';
 
-export function initAnthropic(apiKey) {
-  anthropicApiKey = apiKey;
-  localStorage.setItem('anthropic_api_key', apiKey);
+let anthropicApiKey = '';
+
+export function initAnthropic(key) {
+  anthropicApiKey = key;
+  localStorage.setItem('al_anthropic_key', key);
 }
 
-// Initialize from localStorage or environment variables
-const envKey = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_ANTHROPIC_API_KEY : null;
-const savedKey = localStorage.getItem('anthropic_api_key') || envKey;
+const savedKey = localStorage.getItem('al_anthropic_key');
 if (savedKey) {
   initAnthropic(savedKey);
+}
+
+
+export const ANTHROPIC_MODEL = 'claude-sonnet-4-5-20250929';
+
+export async function invokeAnthropicProxy(body, retries = 2) {
+  const apiKey = localStorage.getItem('al_anthropic_key') || '';
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
+      const { data, error } = await supabase.functions.invoke('anthropic-proxy', {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        body: { model: ANTHROPIC_MODEL, ...body },
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (error) throw error;
+      if (!data) throw new Error("No data returned from Anthropic proxy.");
+      return { data, error: null };
+    } catch (err) {
+      if (i === retries) return { data: null, error: err };
+      await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+    }
+  }
 }
 
 export function isAiReady() {
   return !!anthropicApiKey;
 }
+
 
 /**
  * Conducts the intake conversation and extracts answers when ready.
@@ -22,7 +49,7 @@ export function isAiReady() {
  * @returns {Promise<{ reply: string, extractedData: Object|null }>}
  */
 export async function conductIntake(messageHistory) {
-  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
+  
 
   const systemPrompt = `You are the keeper of Shadow & Sanctuary, an entity guiding a user through The First Inscription (an onboarding ritual).
 Speak in a respectful, slightly mystical, cottagecore-goth tone ("ritual voice"). Do not be overly verbose. Be direct but atmospheric.
@@ -75,29 +102,14 @@ When you believe you have gathered enough information across these categories (o
     apiMessages.unshift({ role: 'user', content: "I am ready to begin." });
   }
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': anthropicApiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-3-5-sonnet-20240620',
+  const { data, error } = await invokeAnthropicProxy({
       max_tokens: 1000,
       system: systemPrompt,
       messages: apiMessages,
       tools: tools
-    })
   });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
-  }
-
-  const response = await res.json();
+  if (error) throw error;
+  const response = data;
 
   let replyText = '';
   let extractedData = null;
@@ -120,7 +132,7 @@ When you believe you have gathered enough information across these categories (o
  * @returns {Promise<Object>}
  */
 export async function parseProductImage(base64Image, mediaType) {
-  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
+  
 
   const tools = [
     {
@@ -140,16 +152,7 @@ export async function parseProductImage(base64Image, mediaType) {
     }
   ];
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': anthropicApiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-3-5-sonnet-20240620',
+  const { data, error } = await invokeAnthropicProxy({
       max_tokens: 1024,
       messages: [
         {
@@ -172,14 +175,9 @@ export async function parseProductImage(base64Image, mediaType) {
       ],
       tools: tools,
       tool_choice: { type: 'tool', name: 'extract_product_details' }
-    })
   });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
-  }
-  const response = await res.json();
+  if (error) throw error;
+  const response = data;
 
   // Extract from tool use block
   for (const block of response.content) {
@@ -199,7 +197,7 @@ export async function parseProductImage(base64Image, mediaType) {
  * @returns {Promise<string>} - The AI's evaluation in the ritual voice.
  */
 export async function evaluateScryingPool(productInfo, userProfile, inventory, reactions = {}) {
-  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
+  
 
   const banished = inventory.filter(i => i.lifecycle_state === 'banished');
   const banishedStr = banished.map(i => `${i.name} (Ingredients: ${i.ingredients})`).join('\n');
@@ -226,29 +224,15 @@ Current Inventory:
 ${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}
 `;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': anthropicApiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-3-5-sonnet-20240620',
+  const { data, error } = await invokeAnthropicProxy({
       max_tokens: 1024,
       system: systemPrompt,
       messages: [
         { role: 'user', content: `Please scry this prospective addition to my chamber: ${productInfo}` }
       ]
-    })
   });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
-  }
-  const response = await res.json();
+  if (error) throw error;
+  const response = data;
   return response.content[0].text;
 }
 
@@ -261,7 +245,7 @@ ${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}
  * @returns {Promise<string>} - The AI's holistic evaluation in the ritual voice (Markdown).
  */
 export async function generateScryingEvaluation(inventory, banishedItems, ledgerEntries, intakeAnswers) {
-  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
+  
 
   const systemPrompt = `You are the Scrying Pool, an oracle within Shadow & Sanctuary.
 The user seeks a holistic divination of their entire routine ecosystem.
@@ -308,29 +292,15 @@ Ledger of Afflictions (Reactions):
 ${JSON.stringify(ledgerEntries, null, 2)}
 Please divine the truth in the water.`;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': anthropicApiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-3-5-sonnet-20240620',
+  const { data, error } = await invokeAnthropicProxy({
       max_tokens: 2000,
       system: systemPrompt,
       messages: [
         { role: 'user', content: userContent }
       ]
-    })
   });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
-  }
-  const response = await res.json();
+  if (error) throw error;
+  const response = data;
   return response.content[0].text;
 }
 
@@ -341,7 +311,7 @@ Please divine the truth in the water.`;
  * @param {Array<string>} ingredients 
  */
 export async function analyzeProduct(name, category, ingredients) {
-  if (!anthropicApiKey) throw new Error('AI not configured.');
+  
 
   const tools = [{
     name: 'save_product_analysis',
@@ -372,16 +342,7 @@ export async function analyzeProduct(name, category, ingredients) {
     }
   }];
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': anthropicApiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-3-5-sonnet-20240620',
+  const { data, error } = await invokeAnthropicProxy({
       max_tokens: 500,
       tools: tools,
       tool_choice: { type: 'tool', name: 'save_product_analysis' },
@@ -391,14 +352,9 @@ Name: ${name}
 Category: ${category}
 Ingredients: ${ingredients.join(', ')}` }
       ]
-    })
   });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
-  }
-  const response = await res.json();
+  if (error) throw error;
+  const response = data;
 
   for (const block of response.content) {
     if (block.type === 'tool_use' && block.name === 'save_product_analysis') {
@@ -420,7 +376,7 @@ Ingredients: ${ingredients.join(', ')}` }
  * @returns {Promise<Object>}
  */
 export async function parseTeaImage(images) {
-  if (!anthropicApiKey) throw new Error('AI not configured. Please add an API key.');
+  
 
   const tools = [
     {
@@ -455,16 +411,7 @@ export async function parseTeaImage(images) {
     text: 'You are analyzing images of a tea or herbal elixir. It might be photos of loose leaf herbs, or photos of the front and back of a tea box/label. If it is loose leaf, analyze the shapes, sizes, and colors of the leaves, flowers, and bits to divine the ingredients. If it is a box, read the label (e.g. use the front for the name and the back for the ingredients). Extract the brand, blend name, ingredients list, estimated caffeine content, recommended steeping parameters, and circadian alignment (daytime vs nighttime use).'
   });
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': anthropicApiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-3-5-sonnet-20240620',
+  const { data, error } = await invokeAnthropicProxy({
       max_tokens: 1024,
       messages: [
         {
@@ -474,14 +421,9 @@ export async function parseTeaImage(images) {
       ],
       tools: tools,
       tool_choice: { type: 'tool', name: 'extract_tea_details' }
-    })
   });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Anthropic API error: ${res.status} ${errText}`);
-  }
-  const response = await res.json();
+  if (error) throw error;
+  const response = data;
 
   for (const block of response.content) {
     if (block.type === 'tool_use' && block.name === 'extract_tea_details') {
