@@ -65,9 +65,11 @@ export default function Intake({ onComplete }) {
     });
   }, []);
 
+  useEffect(() => {
     AI.generateConcerns().then(setConcernsOptions);
     AI.generateConditions().then(setConditionsOptions);
     AI.generateTraditions().then(setTraditionsOptions);
+  }, []);
 
   useEffect(() => {
     if (chatLogRef.current) {

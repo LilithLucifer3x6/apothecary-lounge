@@ -28,7 +28,17 @@ async function queryClaudeForList(promptText) {
 export async function generateConcerns() {
   const fallback = [
     { id: 'acne', label: 'Acne & Breakouts' },
-    { id: 'dryness', label: 'Barrier Damage & Flaking' }
+    { id: 'dryness', label: 'Barrier Damage & Flaking' },
+    { id: 'hyperpigmentation', label: 'Hyperpigmentation & Dark Spots' },
+    { id: 'aging', label: 'Fine Lines & Wrinkles' },
+    { id: 'rosacea', label: 'Rosacea & Redness' },
+    { id: 'texture', label: 'Uneven Texture' },
+    { id: 'pores', label: 'Enlarged Pores' },
+    { id: 'oiliness', label: 'Excess Oil Production' },
+    { id: 'sensitivity', label: 'Extreme Sensitivity' },
+    { id: 'dullness', label: 'Dullness & Lack of Glow' },
+    { id: 'eczema', label: 'Eczema / Atopic Dermatitis' },
+    { id: 'melasma', label: 'Melasma' }
   ];
   const list = await queryClaudeForList('Output a JSON array of 15 common skincare concerns. Each object must have an "id" (snake_case string) and "label" (user-friendly string). Only output the JSON array.');
   return list.length > 0 ? list : fallback;
@@ -37,7 +47,17 @@ export async function generateConcerns() {
 export async function generateConditions() {
   const fallback = [
     { id: 'adhd', label: 'ADHD (Executive Function)' },
-    { id: 'arthritis', label: 'Rheumatoid Arthritis' }
+    { id: 'autism', label: 'Autism Spectrum' },
+    { id: 'arthritis', label: 'Rheumatoid Arthritis' },
+    { id: 'eds', label: 'Ehlers-Danlos / Hypermobility' },
+    { id: 'fibro', label: 'Fibromyalgia' },
+    { id: 'cfs', label: 'Chronic Fatigue Syndrome' },
+    { id: 'endo', label: 'Endometriosis / PCOS' },
+    { id: 'pots', label: 'POTS / Dysautonomia' },
+    { id: 'depression', label: 'Depression / Low Energy Days' },
+    { id: 'anxiety', label: 'Severe Anxiety / OCD' },
+    { id: 'migraines', label: 'Chronic Migraines' },
+    { id: 'diabetes', label: 'Diabetes' }
   ];
   const list = await queryClaudeForList('Output a JSON array of 15 common chronic health conditions that might affect daily routines (like autoimmune, neurodivergence, physical limitations). Each object must have an "id" (snake_case string) and "label" (user-friendly string). Only output the JSON array.');
   return list.length > 0 ? list : fallback;
@@ -46,7 +66,13 @@ export async function generateConditions() {
 export async function generateTraditions() {
   const fallback = [
     { id: 'western', label: 'Western Clinical / Dermatological' },
-    { id: 'kbeauty', label: 'K-Beauty / Korean Heritage' }
+    { id: 'kbeauty', label: 'K-Beauty / Korean Heritage' },
+    { id: 'jbeauty', label: 'J-Beauty / Japanese Heritage' },
+    { id: 'ayurveda', label: 'Ayurvedic Principles' },
+    { id: 'tcm', label: 'Traditional Chinese Medicine' },
+    { id: 'holistic', label: 'Holistic / Plant-Based' },
+    { id: 'minimalist', label: 'Skinimalism / Minimalist' },
+    { id: 'french', label: 'French Pharmacy' }
   ];
   const list = await queryClaudeForList('Output a JSON array of 15 common skincare traditions or heritages (like K-Beauty, Ayurvedic, Western Clinical). Each object must have an "id" (snake_case string) and "label" (user-friendly string). Only output the JSON array.');
   return list.length > 0 ? list : fallback;

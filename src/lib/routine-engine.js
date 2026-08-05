@@ -39,7 +39,7 @@ function parseFlags(item) {
 
 import { generateAdaptiveSuggestions } from './ai-service.js';
 
-export function buildBaseRoutines(items, userProfile = {}) {
+export function buildBaseRoutines(items, userProfile = {}, wearables = {}) {
   const amItems = [];
   const pmItems = [];
   
