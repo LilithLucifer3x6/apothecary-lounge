@@ -377,6 +377,32 @@ export default function ShadowTome({ pose }) {
             </div>
           </div>
 
+          <div className="card" style={{ width: 'fit-content', margin: '0 auto' }}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3 style={{ fontSize: '1.5rem' }}>The Ethereal Vapors <SpeakerButton text="The Ethereal Vapors" /></h3>
+            <div className="mt mb-4" style={{ textAlign: 'center' }}>Document the potency of infused provisions.</div>
+            
+            <div className="field" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <label>Potency (mg/ml)</label>
+              <input type="number" value={thcStrength} onChange={e => setThcStrength(Number(e.target.value))} style={{ width: '80px', background: 'var(--card2)', border: '1px solid var(--border)', padding: '0.5rem', color: 'var(--plum)', borderRadius: '6px', textAlign: 'center' }} />
+            </div>
+            
+            <div className="field" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1rem' }}>
+              <label>Dose Consumed (ml)</label>
+              <input type="number" value={thcDose} onChange={e => setThcDose(Number(e.target.value))} style={{ width: '80px', background: 'var(--card2)', border: '1px solid var(--border)', padding: '0.5rem', color: 'var(--plum)', borderRadius: '6px', textAlign: 'center' }} />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.5rem', borderTop: '1px dashed var(--border)', paddingTop: '1rem', gap: '1rem' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', color: 'var(--dim)' }}>The Harvest</div>
+                <div style={{ fontSize: '1.5rem', color: 'var(--plum)' }}>{thcTotal}mg</div>
+              </div>
+              <button className="btn" onClick={appendThcNote} style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>
+                Etch into Ledger
+              </button>
+            </div>
+          </div>
+
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <h3 style={{ fontSize: '1.5rem' }}>The Herbal Elixirs <SpeakerButton text="The Herbal Elixirs" /></h3>
@@ -421,31 +447,7 @@ export default function ShadowTome({ pose }) {
             </div>
           </div>
 
-          <div className="card">
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The Ethereal Vapors <SpeakerButton text="The Ethereal Vapors" /></h3>
-            <div className="mt mb-4">Document the potency of infused provisions.</div>
-            
-            <div className="field">
-              <label>Potency (mg/ml)</label>
-              <input type="number" value={thcStrength} onChange={e => setThcStrength(Number(e.target.value))} style={{ width: '100%', background: 'var(--card2)', border: '1px solid var(--border)', padding: '0.5rem', color: 'var(--rose)', borderRadius: '6px' }} />
-            </div>
-            
-            <div className="field">
-              <label>Dose Consumed (ml)</label>
-              <input type="number" value={thcDose} onChange={e => setThcDose(Number(e.target.value))} style={{ width: '100%', background: 'var(--card2)', border: '1px solid var(--border)', padding: '0.5rem', color: 'var(--rose)', borderRadius: '6px' }} />
-            </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', borderTop: '1px dashed var(--border)', paddingTop: '1rem' }}>
-              <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--dim)' }}>The Harvest</div>
-                <div style={{ fontSize: '1.5rem', color: 'var(--rose)', }}>{thcTotal}mg</div>
-              </div>
-              <button className="btn" onClick={appendThcNote} style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>
-                Etch into Ledger
-              </button>
-            </div>
-          </div>
 
           {/* Breathwork moved above */}
 
