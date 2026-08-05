@@ -13,7 +13,7 @@ if (savedKey) {
 }
 
 
-export const ANTHROPIC_MODEL = 'claude-sonnet-4-5-20250929';
+export const ANTHROPIC_MODEL = 'claude-3-5-sonnet-20241022';
 
 export async function invokeAnthropicProxy(body, retries = 2) {
   const apiKey = localStorage.getItem('al_anthropic_key') || '';
