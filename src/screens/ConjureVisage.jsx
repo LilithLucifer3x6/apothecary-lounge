@@ -36,20 +36,68 @@ const ROBE_DESIGNS = [
   { id: 'hooded_cloak',       label: 'Hooded Ritual Cloak',        desc: 'Long hooded cloak with a fitted inner robe visible at the hem' },
 ];
 
-// ── ROBE COLORS (no pink, no blue) ───────────────────────────────────────────
+// ── HAIR COLORS (natural + unnatural; no pink, no blue, no gold, no yellow, no blonde) ────
+const HAIR_COLORS = [
+  // Natural
+  { id: 'jet_black',      label: 'Jet Black',         hex: '#0d0d0d',  type: 'natural'   },
+  { id: 'dark_brown',     label: 'Dark Brown',         hex: '#2c1810',  type: 'natural'   },
+  { id: 'warm_brown',     label: 'Warm Brown',         hex: '#5c3317',  type: 'natural'   },
+  { id: 'auburn',         label: 'Auburn',             hex: '#6b2d1a',  type: 'natural'   },
+  { id: 'chestnut',       label: 'Chestnut',           hex: '#5c2a1a',  type: 'natural'   },
+  { id: 'dark_ginger',    label: 'Dark Ginger',        hex: '#8b3a00',  type: 'natural'   },
+  { id: 'dark_gray',      label: 'Dark Gray',          hex: '#404040',  type: 'natural'   },
+  { id: 'silver',         label: 'Silver / White',     hex: '#c0c0c0',  type: 'natural'   },
+  { id: 'salt_pepper',    label: 'Salt & Pepper',      hex: '#707070',  type: 'natural'   },
+  // Unnatural
+  { id: 'cherry_red',     label: 'Cherry Red',         hex: '#c41230',  type: 'unnatural' },
+  { id: 'deep_wine',      label: 'Deep Wine Red',      hex: '#6b0a2a',  type: 'unnatural' },
+  { id: 'burgundy_hair',  label: 'Burgundy',           hex: '#4a0a1a',  type: 'unnatural' },
+  { id: 'scarlet',        label: 'Scarlet',            hex: '#8b0a0a',  type: 'unnatural' },
+  { id: 'deep_purple',    label: 'Deep Purple',        hex: '#2a0a4a',  type: 'unnatural' },
+  { id: 'violet_hair',    label: 'Violet',             hex: '#4a0a6a',  type: 'unnatural' },
+  { id: 'amethyst_hair',  label: 'Amethyst',           hex: '#7a3a9a',  type: 'unnatural' },
+  { id: 'forest_green',   label: 'Forest Green',       hex: '#0a3a0a',  type: 'unnatural' },
+  { id: 'emerald_green',  label: 'Emerald Green',      hex: '#0a6a2a',  type: 'unnatural' },
+  { id: 'copper_red',     label: 'Copper Red',         hex: '#8b3a20',  type: 'unnatural' },
+  { id: 'dark_teal_grn',  label: 'Dark Teal Green',    hex: '#0a3a3a',  type: 'unnatural' },
+  { id: 'black_red_tips', label: 'Black w/ Red Tips',  hex: '#2a0000',  type: 'unnatural' },
+  { id: 'dark_ombre_red', label: 'Dark Red Ombré',     hex: '#3a0a00',  type: 'unnatural' },
+];
+
+// ── ROBE COLORS (no pink, no blue, no gold, no yellow) ─────────────────────
 const ROBE_COLORS = [
-  { id: 'obsidian',   label: 'Obsidian',       hex: '#0d0d0d' },
-  { id: 'crimson',    label: 'Deep Crimson',    hex: '#6b0000' },
-  { id: 'emerald',    label: 'Forest Emerald',  hex: '#0a2e1a' },
-  { id: 'violet',     label: 'Midnight Violet', hex: '#1e0a2e' },
-  { id: 'plum',       label: 'Dark Plum',       hex: '#2d0a2e' },
-  { id: 'burgundy',   label: 'Burgundy',        hex: '#3d0015' },
-  { id: 'rust',       label: 'Rust / Sienna',   hex: '#8b3a00' },
-  { id: 'sage',       label: 'Sage / Moss',     hex: '#2d3d1e' },
-  { id: 'charcoal',   label: 'Charcoal',        hex: '#1a1a1f' },
-  { id: 'gold',       label: 'Gold',            hex: '#B8860B' },
-  { id: 'copper',     label: 'Dark Copper',     hex: '#5c2200' },
-  { id: 'storm',      label: 'Storm Gray',      hex: '#2c2c3a' },
+  // Blacks & Grays
+  { id: 'obsidian',       label: 'Obsidian',           hex: '#0d0d0d' },
+  { id: 'charcoal',       label: 'Charcoal',           hex: '#2a2a35' },
+  { id: 'storm',          label: 'Storm Gray',         hex: '#3a3a4a' },
+  { id: 'gunmetal',       label: 'Gunmetal',           hex: '#404050' },
+  { id: 'pewter',         label: 'Pewter',             hex: '#5a5a6a' },
+  // Reds
+  { id: 'blood_red',      label: 'Blood Crimson',      hex: '#4a0000' },
+  { id: 'deep_crimson',   label: 'Deep Crimson',       hex: '#6b0000' },
+  { id: 'scarlet_robe',   label: 'Scarlet',            hex: '#a30000' },
+  { id: 'ruby',           label: 'Ruby',               hex: '#9b111e' },
+  { id: 'wine',           label: 'Wine / Merlot',      hex: '#4a1022' },
+  { id: 'brick',          label: 'Brick Red',          hex: '#8b3323' },
+  // Browns & Earth
+  { id: 'rust_robe',      label: 'Rust / Sienna',      hex: '#8b3a00' },
+  { id: 'copper_robe',    label: 'Dark Copper',        hex: '#7a3a1a' },
+  { id: 'mahogany',       label: 'Mahogany',           hex: '#4a1a00' },
+  { id: 'chocolate',      label: 'Dark Chocolate',     hex: '#2a1a0a' },
+  { id: 'terracotta',     label: 'Terracotta',         hex: '#8b4a2a' },
+  { id: 'deep_orange',    label: 'Deep Orange',        hex: '#8b4a00' },
+  // Greens
+  { id: 'forest_em',      label: 'Forest Emerald',     hex: '#0a2e1a' },
+  { id: 'hunter',         label: 'Hunter Green',       hex: '#2d4a2d' },
+  { id: 'sage_robe',      label: 'Sage / Moss',        hex: '#3a4a2a' },
+  { id: 'jade',           label: 'Jade',               hex: '#1a4a3a' },
+  { id: 'olive',          label: 'Olive',              hex: '#3a3a1a' },
+  // Purples & Violets
+  { id: 'midnight_v',     label: 'Midnight Violet',    hex: '#1e0a2e' },
+  { id: 'deep_plum',      label: 'Deep Plum',          hex: '#2a0a2a' },
+  { id: 'amethyst_robe',  label: 'Amethyst',           hex: '#4a1a6a' },
+  { id: 'burgundy_robe',  label: 'Burgundy',           hex: '#3d0015' },
+  { id: 'eggplant',       label: 'Eggplant',           hex: '#1a0a1a' },
 ];
 
 // ── HAIR ACCESSORIES (no gold, no pink, no blue) ─────────────────────────────
@@ -209,6 +257,7 @@ function ColorSwatch({ color, selected, onSelect }) {
 export default function ConjureVisage({ onFinish }) {
   const [name, setName] = useState('');
   const [locStyle,       setLocStyle]       = useState('');
+  const [hairColor,      setHairColor]      = useState('');
   const [robeDesign,     setRobeDesign]     = useState('');
   const [robeColor,      setRobeColor]      = useState('');
   const [hairAccessory,  setHairAccessory]  = useState('');
@@ -219,7 +268,7 @@ export default function ConjureVisage({ onFinish }) {
   const [genPhase,   setGenPhase]   = useState('');
   const [genStep,    setGenStep]    = useState(0);
 
-  const isComplete = name && locStyle && robeDesign && robeColor && hairAccessory && jewelry && familiar;
+  const isComplete = name && locStyle && hairColor && robeDesign && robeColor && hairAccessory && jewelry && familiar;
 
   const buildKeeperDescription = () => {
     const hair    = HAIRSTYLES.find(h => h.id === locStyle);
@@ -230,15 +279,17 @@ export default function ConjureVisage({ onFinish }) {
     const fam     = FAMILIARS.find(f => f.id === familiar);
     return {
       name,
-      locStyle:     hair?.desc    || locStyle,
-      robeDesign:   design?.desc  || robeDesign,
-      robeColor:    color?.label  || robeColor,
-      hairAccessory: acc?.desc    || hairAccessory,
-      jewelry:      jewels?.desc  || jewelry,
-      familiar:     fam?.label    || familiar,
-      familiarId:   familiar,
-      robeColorHex: color?.hex    || '#1e0a2e',
-      base:         BASE_DESCRIPTION,
+      locStyle:      hair?.desc    || locStyle,
+      hairColor:     HAIR_COLORS.find(c => c.id === hairColor)?.label || hairColor,
+      hairColorHex:  HAIR_COLORS.find(c => c.id === hairColor)?.hex   || '#0d0d0d',
+      robeDesign:    design?.desc  || robeDesign,
+      robeColor:     color?.label  || robeColor,
+      hairAccessory: acc?.desc     || hairAccessory,
+      jewelry:       jewels?.desc  || jewelry,
+      familiar:      fam?.label    || familiar,
+      familiarId:    familiar,
+      robeColorHex:  color?.hex    || '#1e0a2e',
+      base:          BASE_DESCRIPTION,
     };
   };
 
@@ -338,6 +389,22 @@ export default function ConjureVisage({ onFinish }) {
         <Section title="Hairstyle & Locs">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.8rem' }}>
             {HAIRSTYLES.map(h => <ImgCard key={h.id} item={h} selected={locStyle} onSelect={setLocStyle} />)}
+          </div>
+        </Section>
+
+        {/* HAIR COLOR */}
+        <Section title="Loc Color">
+          <div style={{ fontSize: '0.78rem', color: 'var(--dim)', marginBottom: '0.8rem' }}>Natural shades</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.2rem', marginBottom: '1.5rem' }}>
+            {HAIR_COLORS.filter(c => c.type === 'natural').map(c => (
+              <ColorSwatch key={c.id} color={c} selected={hairColor} onSelect={setHairColor} />
+            ))}
+          </div>
+          <div style={{ fontSize: '0.78rem', color: 'var(--dim)', marginBottom: '0.8rem' }}>Unnatural & fantasy shades</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.2rem' }}>
+            {HAIR_COLORS.filter(c => c.type === 'unnatural').map(c => (
+              <ColorSwatch key={c.id} color={c} selected={hairColor} onSelect={setHairColor} />
+            ))}
           </div>
         </Section>
 
