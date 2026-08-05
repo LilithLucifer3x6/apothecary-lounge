@@ -357,6 +357,26 @@ export default function ShadowTome({ pose }) {
         {/* Right Column: Widgets */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
+          <div className="card" style={{ padding: '1rem' }}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', margin: 0 }}>The Ethereal Breath <SpeakerButton text="The Ethereal Breath" /></h3>
+                <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginTop: '0.2rem' }}>
+                  {isBreathing ? breathInst : (readiness === 'low' ? '4-4-4-4 Box Breathing' : '4-7-8 Spirit Calming')}
+                </div>
+              </div>
+              <button 
+                className="btn plum" 
+                onClick={startMeditation} 
+                disabled={isBreathing}
+                style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem', opacity: isBreathing ? 0.5 : 1 }}
+              >
+                {isBreathing ? 'Inhaling...' : 'Begin'}
+              </button>
+            </div>
+          </div>
+
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <h3 style={{ fontSize: '1.5rem' }}>The Herbal Elixirs <SpeakerButton text="The Herbal Elixirs" /></h3>
@@ -427,32 +447,7 @@ export default function ShadowTome({ pose }) {
             </div>
           </div>
 
-          <div className="card">
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The Centering Wind</h3>
-            <div className="mt mb-4" style={{ fontSize: '0.85rem' }}>
-              {readiness === 'low' ? 'Gentle 4-4-4-4 box breathing for low readiness.' : 'A 4-7-8 cycle to calm the spirit.'}
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', padding: '1.5rem 0' }}>
-              <div 
-                id="breath-circle" 
-                style={{ 
-                  width: '60px', 
-                  height: '60px', 
-                  borderRadius: '50%', 
-                  border: '2px solid',
-                  ...breathCircle 
-                }}
-              ></div>
-              <div id="breath-inst" style={{ fontSize: '1.2rem', color: 'var(--rose)', height: '1.5rem', textAlign: 'center' }}>
-                {breathInst}
-              </div>
-              <button id="btn-breath" className="btn plum" onClick={startMeditation} disabled={isBreathing} style={{ width: '100%' }}>
-                {isBreathing ? 'Meditating...' : 'Draw Breath'}
-              </button>
-            </div>
-          </div>
+          {/* Breathwork moved above */}
 
         </div>
 

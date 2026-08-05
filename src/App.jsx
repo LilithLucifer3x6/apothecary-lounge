@@ -314,8 +314,8 @@ export default function App() {
           <div style={{ position: 'relative', zIndex: 5 }}>
             <div className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem 1rem', position: 'sticky', top: 0, zIndex: 40, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', borderBottom: '1.5px solid rgba(176, 136, 204, 0.15)', gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '0 0 auto' }}>
-              <button onClick={handleReturnToCottage} className="gear" title="Return to Sanctuary" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0, opacity: activeTab === 'home' ? 0.5 : 1 }}>
-                <Icon name="house" style={{fontSize: '1.5rem'}} />
+              <button onClick={handleReturnToCottage} title="Return to Sanctuary" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0, opacity: activeTab === 'home' ? 0.5 : 1 }}>
+                <Icon name="ph-house" style={{fontSize: '1.5rem'}} />
               </button>
             </div>
             
@@ -335,7 +335,7 @@ export default function App() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', flex: '0 0 auto' }}>
-              <button onClick={() => setShowSettings(true)} className="gear" title="Configurations" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0 }}>
+              <button onClick={() => setShowSettings(true)} title="Configurations" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0 }}>
                 <Icon name="ph-gear" style={{fontSize: '1.5rem'}} />
               </button>
             </div>

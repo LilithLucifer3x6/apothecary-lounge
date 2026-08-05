@@ -243,7 +243,7 @@ export default function Scrying({ pose }) {
             <button className="btn plum" onClick={handleSaveLedger} disabled={!reactionForm.productId || reactionForm.reactions.size === 0 || reactionForm.severity === 0}>
               {editId ? 'Update the water' : 'Give it to the water'}
             </button>
-            {editId && <button className="btn" onClick={() => { setEditId(null); setReactionForm({ productId: '', zone: 'The visage, below — jaw and chin', reactions: new Set(), severity: 0 }); }}>Cancel Edit</button>}
+            {editId && <button className="btn" onClick={() => { setEditId(null); setReactionForm({ productId: '', zone: 'The visage, below — jaw and chin', reactions: new Set(), severity: 0 }); }}>Release</button>}
           </div>
         ) : (
           <div className="empty">Your apothecary stands empty. Inscribe relics to record afflictions.</div>
@@ -262,10 +262,10 @@ export default function Scrying({ pose }) {
                   </div>
                   <div>
                     <button className="btn sm" onClick={() => handleEditLedger(entry)} style={{ border: '1px solid var(--silver)', color: 'var(--silver)', marginRight: '0.5rem' }}>
-                      Edit
+                      Alter
                     </button>
                     <button className="btn sm" onClick={() => handleDeleteLedger(entry.id, idx)} style={{ border: '1px solid var(--rose)', color: 'var(--rose)' }}>
-                      Erase
+                      Banish
                     </button>
                   </div>
                 </div>
