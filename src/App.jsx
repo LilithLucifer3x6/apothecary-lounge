@@ -17,7 +17,7 @@ import Scrying from './screens/Scrying.jsx';
 import ShadowTome from './screens/ShadowTome.jsx';
 
 const TABS = [
-  { id: 'rites', label: 'The Mortal Rites', glyph: G.tabRites, bg: '/assets/bg_sanctuary.jpg', pose: 'working' },
+  { id: 'rites', label: 'The Mortal Rites', glyph: G.tabRites, bg: '/assets/bg_rites.jpg', pose: 'working' },
   { id: 'grim', label: 'The Grimoire', glyph: G.tabGrim, bg: '/assets/bg_grimoire.jpg', pose: 'reading' },
   { id: 'altars', label: 'The Altars', glyph: G.tabAltars, bg: '/assets/bg_altars.jpg', pose: 'meditating' },
   { id: 'root', label: 'The Rootwork', glyph: G.tabRoot, bg: '/assets/bg_rootwork.jpg', pose: 'working' },
