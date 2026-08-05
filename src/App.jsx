@@ -512,22 +512,13 @@ export default function App() {
                   <button onClick={async () => {
                     if (window.confirm("Do you truly wish to raze this Sanctuary to ash? All saved rites, items, and settings shall be lost to the void. This cannot be undone.")) {
                       try {
-                        const { data: profile, error: profileErr } = await supabase.from('user_profile').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
+                        const { error: profileErr } = await supabase.from('user_profile').delete().not('id', 'is', null);
                         if (profileErr) throw profileErr;
-                        if (profile) {
-                          const { error: err1 } = await supabase.from('user_profile').delete().eq('id', profile.id);
-                          if (err1) throw err1;
-                          const { error: err2 } = await supabase.from('somatic_reactions').delete().not('id', 'is', null);
-                          if (err2) throw err2;
-                          const { error: err3 } = await supabase.from('shadowtome_elixirs').delete().not('id', 'is', null);
-                          if (err3) throw err3;
-                          const { error: err4 } = await supabase.from('journal_entries').delete().not('id', 'is', null);
-                          if (err4) throw err4;
-                          const { error: err5 } = await supabase.from('routine_history').delete().not('id', 'is', null);
-                          if (err5) throw err5;
-                          const { error: err6 } = await supabase.from('items').delete().not('id', 'is', null);
-                          if (err6) throw err6;
-                        }
+                        await supabase.from('somatic_reactions').delete().not('id', 'is', null);
+                        await supabase.from('shadowtome_elixirs').delete().not('id', 'is', null);
+                        await supabase.from('journal_entries').delete().not('id', 'is', null);
+                        await supabase.from('routine_history').delete().not('id', 'is', null);
+                        await supabase.from('items').delete().not('id', 'is', null);
                       } catch (err) {
                         console.error('Failed to erase Codex', err);
                         alert('Failed to erase Codex. Continuing local wipe.');
