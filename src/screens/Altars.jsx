@@ -66,6 +66,21 @@ export default function Altars({ pose }) {
     setCheckedIds(next);
   };
 
+  const getGlyph = (item) => {
+    if (item.glyph) return item.glyph;
+    if (item.domain === 'grin') return 'tooth';
+    const cat = (item.category || '').toLowerCase();
+    if (cat.includes('cleanser') || cat.includes('wash')) return 'cleanser-tube';
+    if (cat.includes('toner') || cat.includes('mist')) return 'toner-bottle';
+    if (cat.includes('cream') || cat.includes('moisturizer')) return 'cream-jar';
+    if (cat.includes('sunscreen') || cat.includes('spf')) return 'sunscreen';
+    if (cat.includes('serum') || cat.includes('oil')) return 'oil-dropper';
+    if (item.domain === 'vessel') return 'body-vessel';
+    if (item.domain === 'visage') return 'visage-face';
+    if (item.domain === 'crown') return 'crown';
+    return 'sparkles'; 
+  };
+
   const renderStep = (item, isOpt = false, isAid = false) => (
     <div key={item.id} className={`step ${isOpt ? 'opt' : ''}`}>
       {isOpt ? (
@@ -77,7 +92,8 @@ export default function Altars({ pose }) {
         <input type="checkbox" className="step-chk" checked={checkedIds.has(item.id)} onChange={() => handleCheck(item.id)} />
       )}
       <div style={{ flex: 1 }}>
-        <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <span style={{ color: 'var(--silver)', fontSize: '1.8rem', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={getGlyph(item)} /></span>
           {item.name} 
           <span style={{ marginLeft: '0.4rem' }}><SpeakerButton text={item.name} /></span>
           {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}

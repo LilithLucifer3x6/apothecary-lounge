@@ -294,9 +294,9 @@ export default function Grimoire({ pose }) {
           </h3>
           <div className="mt mb-4">Rites that occur sparingly.</div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <div className="row" style={{ flex: '0 1 auto', marginBottom: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', textAlign: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div className="row" style={{ flex: '0 1 auto', marginBottom: 0, justifyContent: 'center' }}>
                 <div>
                   <div className="nm">Root Weaving (Retie) <Icon name="star-four" /></div>
                   <div className="mt">
@@ -318,8 +318,8 @@ export default function Grimoire({ pose }) {
               </div>
             </div>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <div className="row" style={{ flex: '0 1 auto', marginBottom: 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div className="row" style={{ flex: '0 1 auto', marginBottom: 0, justifyContent: 'center' }}>
                 <div>
                   <div className="nm">Talon Honing (Nails) <Icon name="sparkle" /></div>
                   <div className="mt">
@@ -341,8 +341,8 @@ export default function Grimoire({ pose }) {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px dashed var(--border)', paddingTop: '1rem', width: '100%' }}>
-              <div className="row" style={{ flex: '1', marginBottom: 0, border: 'none', background: 'transparent' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px dashed var(--border)', paddingTop: '1rem', width: '100%' }}>
+              <div className="row" style={{ flex: '1', marginBottom: 0, border: 'none', background: 'transparent', justifyContent: 'center' }}>
                 <div>
                   <div className="nm">The Reading <Icon name="ph-moon-stars" /></div>
                   <div className="mt">

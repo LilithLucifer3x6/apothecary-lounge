@@ -195,15 +195,16 @@ export default function Rites({ pose }) {
     setPmSaving(false);
   };
 
-  const renderScheduleStep = (time, desc, color) => (
-    <div className="step" style={{ borderLeft: `3px solid ${color}` }}>
+  const renderScheduleStep = (time, desc, color, glyphName) => (
+    <div key={time} className="step">
       <input 
         type="checkbox" 
         checked={scheduleChecked.has(time)}
         onChange={() => handleScheduleCheck(time)}
       />
       <div style={{ flex: 1 }}>
-        <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+          {glyphName && <span style={{ color: 'var(--silver)', fontSize: '1.8rem', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={glyphName} /></span>}
           {time} 
           <SpeakerButton text={`${time}. ${desc}`} style={{ marginLeft: '0.4rem' }} />
         </div>
@@ -269,16 +270,16 @@ export default function Rites({ pose }) {
           />
         )}
         <div style={{ flex: 1 }}>
-          <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.4rem' }}>
+          <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.4rem', justifyContent: 'center' }}>
             <span style={{ color: 'var(--silver)', fontSize: '1.8rem', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={getGlyph(item)} /></span>
             {displayName} 
             <SpeakerButton text={displayName} />
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
           </div>
           {item.isInjected ? (
-            <div className="mt" style={{opacity: 0.8}}>{item.desc || 'The Foundation'}</div>
+            <div className="mt" style={{opacity: 0.8}}>{item.desc}</div>
           ) : (
-            <div className="mt">{item.brand || 'Elixir'} &bull; {item.storage_location || 'The Vanity'}</div>
+            <div className="mt">{item.brand || 'Elixir'}</div>
           )}
         </div>
       </div>
@@ -316,11 +317,11 @@ export default function Rites({ pose }) {
           <h3>The Long Hours <SpeakerButton text='The Long Hours' /></h3>
           <div className="mt mb-4" style={{ textAlign: 'center' }}>The Order of the Day</div>
           
-          {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift.', 'var(--crimson-b)')}
-          {renderScheduleStep('The Morning Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
-          {renderScheduleStep('The Midday Sustenance', 'A 45-minute pause for nourishment. Engage in gentle movement to stir stagnant energies.', 'var(--rose)')}
-          {renderScheduleStep('The Afternoon Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)')}
-          {renderScheduleStep('The Descent', 'The day\'s labors conclude. Begin the grounding process to sever ties with the work.', 'var(--plum)')}
+          {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift.', 'var(--crimson-b)', G.morning)}
+          {renderScheduleStep('The Morning Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)', G.water)}
+          {renderScheduleStep('The Midday Sustenance', 'A 45-minute pause for nourishment. Engage in gentle movement to stir stagnant energies.', 'var(--rose)', G.morning)}
+          {renderScheduleStep('The Afternoon Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)', G.water)}
+          {renderScheduleStep('The Descent', 'The day\'s labors conclude. Begin the grounding process to sever ties with the work.', 'var(--plum)', G.evening)}
         </div>
 
         {/* Right Column: Evening Invocation */}
