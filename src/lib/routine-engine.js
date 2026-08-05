@@ -179,17 +179,17 @@ export function buildBaseRoutines(items, userProfile = {}, wearables = {}) {
   
   // IMMUTABLE BASELINE ROUTINES (From Spec Section 21)
   const immutableGrinAM = [
-    { id: 'grin-am-1', name: 'Floss Picks', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
-    { id: 'grin-am-2', name: 'Waterpik', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
-    { id: 'grin-am-3', name: 'Mouthwash', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
-    { id: 'grin-am-4', name: 'Brush Teeth', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
+    { id: 'grin-am-1', name: 'The Silk Thread', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
+    { id: 'grin-am-2', name: 'The Purifying Stream', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
+    { id: 'grin-am-3', name: 'The Minted Draught', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
+    { id: 'grin-am-4', name: 'The Bristled Cleanse', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
   ];
   
   const immutableGrinPM = [
-    { id: 'grin-pm-1', name: 'Floss Picks', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
-    { id: 'grin-pm-2', name: 'Waterpik', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
-    { id: 'grin-pm-3', name: 'Mouthwash', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
-    { id: 'grin-pm-4', name: 'Brush Teeth', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
+    { id: 'grin-pm-1', name: 'The Silk Thread', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
+    { id: 'grin-pm-2', name: 'The Purifying Stream', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
+    { id: 'grin-pm-3', name: 'The Minted Draught', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
+    { id: 'grin-pm-4', name: 'The Bristled Cleanse', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
   ];
 
   const immutableWindDown = [
@@ -214,8 +214,19 @@ export function buildBaseRoutines(items, userProfile = {}, wearables = {}) {
 export async function buildRoutines(items, userProfile = {}, wearables = {}) {
   const { amItems, pmItems, getWeight, allItems } = buildBaseRoutines(items, userProfile);
 
-  // AI-Driven Wearables Adaptation
-  const adaptiveIds = await generateAdaptiveSuggestions(wearables, allItems);
+  // AI-Driven Wearables Adaptation with caching to prevent load-time hang
+  const cacheKey = `adaptive_suggestions_${new Date().toISOString().split('T')[0]}`;
+  let adaptiveIds = [];
+  try {
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      adaptiveIds = JSON.parse(cached);
+    } else {
+      adaptiveIds = await generateAdaptiveSuggestions(wearables, allItems);
+      sessionStorage.setItem(cacheKey, JSON.stringify(adaptiveIds || []));
+    }
+  } catch(e) {}
+
   if (adaptiveIds && adaptiveIds.length > 0) {
     adaptiveIds.forEach(id => {
       const item = allItems.find(i => i.id === id);

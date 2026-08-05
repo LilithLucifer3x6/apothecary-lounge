@@ -74,9 +74,9 @@ export default function VoiceInput({ className = '', value, onChange, placeholde
           padding: '1rem 3rem 1rem 1.25rem', 
           fontSize: '1.1rem', 
           borderRadius: '8px', 
-          border: isListening ? '2px solid var(--rose)' : '2px solid var(--border)', 
+          border: isListening ? '2px solid var(--plum)' : '2px solid var(--border)', 
           background: 'var(--card2)', 
-          color: 'var(--rose)',
+          color: 'var(--plum)',
           transition: 'border-color 0.2s'
         }}
         onKeyDown={onKeyDown}
@@ -91,8 +91,8 @@ export default function VoiceInput({ className = '', value, onChange, placeholde
           right: '8px',
           top: isTextArea ? '8px' : '50%',
           transform: isTextArea ? 'none' : 'translateY(-50%)',
-          color: isListening ? 'var(--bg)' : 'var(--rose)',
-          background: isListening ? 'var(--rose)' : 'transparent',
+          color: isListening ? 'var(--bg)' : 'var(--plum)',
+          background: isListening ? 'var(--plum)' : 'transparent',
           border: 'none',
           borderRadius: '50%',
           width: '32px',

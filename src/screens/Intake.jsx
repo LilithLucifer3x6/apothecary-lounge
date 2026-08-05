@@ -222,7 +222,7 @@ export default function Intake({ onComplete }) {
       <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
       
       <div style={{ flexShrink: 0 }}>
-        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'var(--rose)' }}>
+        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'var(--plum)' }}>
           <Icon name={G.sparkles || 'sparkles'} /> The First Inscription
         </h2>
         
@@ -377,7 +377,7 @@ export default function Intake({ onComplete }) {
               {renderTitle('Sacred Healing Directives (Topical Decrees)')}
               <div className="mt mb-4">Potent formulas prescribed by healers. These take priority in all routines.</div>
               
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--plum)' }}>
                 <input type="checkbox" checked={noRx} onChange={e => { setNoRx(e.target.checked); if(e.target.checked) setRxList([]); }} /> I am burdened by no topical prescriptions.
               </label>
 
@@ -386,8 +386,8 @@ export default function Intake({ onComplete }) {
                   {rxList.map((rx, i) => (
                     <div key={i} style={{ borderLeft: '2px solid var(--gold)', paddingLeft: '1rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <span style={{ color: 'var(--rose)', }}>Prescription {i + 1}</span>
-                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: 0 }} onClick={() => removeRx(i)}>Shatter</button>
+                        <span style={{ color: 'var(--plum)', }}>Prescription {i + 1}</span>
+                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--plum)', padding: 0 }} onClick={() => removeRx(i)}>Shatter</button>
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div className="field">
@@ -420,7 +420,7 @@ export default function Intake({ onComplete }) {
               {renderTitle('Medical Directives (Oral)')}
               <div className="mt mb-4">Internal remedies that may cause systemic shifts (e.g. dryness, sensitivity).</div>
               
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--plum)' }}>
                 <input type="checkbox" checked={noOral} onChange={e => { setNoOral(e.target.checked); if(e.target.checked) setOralList([]); }} /> I consume no internal remedies that alter my vessel.
               </label>
 
@@ -431,14 +431,14 @@ export default function Intake({ onComplete }) {
                       <div style={{ flex: 1 }}>
                         <VoiceInput value={med} onChange={e => updateOral(i, e.target.value)} placeholder="e.g. Spironolactone" />
                       </div>
-                      <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: '0.5rem' }} onClick={() => removeOral(i)}>Shatter</button>
+                      <button className="btn sm" style={{ background: 'transparent', color: 'var(--plum)', padding: '0.5rem' }} onClick={() => removeOral(i)}>Shatter</button>
                     </div>
                   ))}
                   <button className="btn" onClick={addOral} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Systemic Measure</button>
                   
                   {oralList.some(m => m.toLowerCase().includes('isotretinoin') || m.toLowerCase().includes('accutane')) && (
                     <div className="field mt-4" style={{ padding: '1rem', border: '1px solid var(--crimson)', borderRadius: '8px' }}>
-                      <label style={{ color: 'var(--rose)', display: 'block', marginBottom: '0.5rem' }}>When did you begin this systemic regimen?</label>
+                      <label style={{ color: 'var(--plum)', display: 'block', marginBottom: '0.5rem' }}>When did you begin this systemic regimen?</label>
                       <input type="date" value={prescriptionStartDate} onChange={e => setPrescriptionStartDate(e.target.value)} style={{ padding: '0.5rem', background: 'var(--bg)', color: 'var(--silver)', border: '1px solid var(--border)', borderRadius: '4px' }} />
                     </div>
                   )}
@@ -451,7 +451,7 @@ export default function Intake({ onComplete }) {
             <div className="ins-step">
               {renderTitle('The ingredients to never touch')}
               <div className="mt mb-4">Allergies and sensitivities.</div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--rose)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--plum)' }}>
                 <input type="checkbox" checked={noAlg} onChange={e => { setNoAlg(e.target.checked); if(e.target.checked) setAlgList(['Lavender']); }} /> I hold no other aversions.
               </label>
               {!noAlg && (
@@ -472,7 +472,7 @@ export default function Intake({ onComplete }) {
                         />
                       </div>
                       {!(i === 0 && alg.toLowerCase() === 'lavender') && (
-                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--rose)', padding: '0.5rem' }} onClick={() => {
+                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--plum)', padding: '0.5rem' }} onClick={() => {
                           const newList = [...algList];
                           newList.splice(i, 1);
                           setAlgList(newList);
@@ -518,7 +518,7 @@ export default function Intake({ onComplete }) {
 
           {currentStep === 7 && (
             <div className="ins-step" style={{ textAlign: 'center', margin: 'auto' }}>
-              <h3 style={{ fontSize: '3rem', color: 'var(--rose)' }}>The First Inscription is sealed</h3>
+              <h3 style={{ fontSize: '3rem', color: 'var(--plum)' }}>The First Inscription is sealed</h3>
               <div className="mt" style={{ fontSize: '1.2rem', marginTop: '2rem' }}>Your chamber awaits.</div>
             </div>
           )}

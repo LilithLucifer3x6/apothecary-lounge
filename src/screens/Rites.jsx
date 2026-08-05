@@ -204,7 +204,7 @@ export default function Rites({ pose }) {
       />
       <div style={{ flex: 1 }}>
         <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-          {glyphName && <span style={{ color: 'var(--silver)', fontSize: '1.8rem', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={glyphName} /></span>}
+          {glyphName && <span style={{ color: 'var(--silver)', fontSize: '1.4rem', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={glyphName} /></span>}
           {time} 
           <SpeakerButton text={`${time}. ${desc}`} style={{ marginLeft: '0.4rem' }} />
         </div>
@@ -241,6 +241,14 @@ export default function Rites({ pose }) {
     
     const getGlyph = (item) => {
       if (item.glyph) return item.glyph;
+      if (item.name === 'The Silk Thread') return 'ph-yarn';
+      if (item.name === 'The Purifying Stream') return 'ph-drop';
+      if (item.name === 'The Minted Draught') return 'ph-flask';
+      if (item.name === 'The Bristled Cleanse') return 'ph-tooth';
+      if (item.name === 'The Cleansing Waters') return 'ph-shower';
+      if (item.name === 'The Drying') return 'ph-towel';
+      if (item.name === 'The Purging of Blemishes') return 'ph-needle';
+      if (item.name === 'The Warm Gaze') return 'ph-eye-closed';
       if (item.domain === 'grin') return 'tooth';
       const cat = (item.category || '').toLowerCase();
       if (cat.includes('cleanser') || cat.includes('wash')) return 'cleanser-tube';
@@ -271,7 +279,7 @@ export default function Rites({ pose }) {
         )}
         <div style={{ flex: 1 }}>
           <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.4rem', justifyContent: 'center' }}>
-            <span style={{ color: 'var(--silver)', fontSize: '1.8rem', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={getGlyph(item)} /></span>
+            <span style={{ color: 'var(--silver)', fontSize: '1.4rem', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={getGlyph(item)} /></span>
             {displayName} 
             <SpeakerButton text={displayName} />
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
@@ -294,20 +302,20 @@ export default function Rites({ pose }) {
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Morning Invocation <SpeakerButton text='The Morning Invocation' /></h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
+          {amItems.length > 0 && (
+            <div style={{ margin: '0.5rem 0 1rem 0', textAlign: 'center' }}>
+              <button 
+                className={`btn ${amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
+                style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
+                onClick={handleCompleteAllAm}
+                disabled={amSaving || amSaved || amItems.every(i => checkedIds.has(i.id))}
+              >
+                {amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'The Altar is Sealed' : 'Seal the Morning Altar'}
+              </button>
+            </div>
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {amItems.length > 0 ? amItems.map(i => renderStep(i)) : <div className="empty">The altar is bare. No morning rites are required.</div>}
-            {amItems.length > 0 && (
-              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-                <button 
-                  className={`btn ${amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
-                  style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
-                  onClick={handleCompleteAllAm}
-                  disabled={amSaving || amSaved || amItems.every(i => checkedIds.has(i.id))}
-                >
-                  {amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'The Morning Rites are Concluded' : 'Conclude All Morning Rites'}
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
@@ -317,31 +325,31 @@ export default function Rites({ pose }) {
           <h3>The Long Hours <SpeakerButton text='The Long Hours' /></h3>
           <div className="mt mb-4" style={{ textAlign: 'center' }}>The Order of the Day</div>
           
-          {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift.', 'var(--crimson-b)', G.morning)}
-          {renderScheduleStep('The Morning Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)', G.water)}
-          {renderScheduleStep('The Midday Sustenance', 'A 45-minute pause for nourishment. Engage in gentle movement to stir stagnant energies.', 'var(--rose)', G.morning)}
-          {renderScheduleStep('The Afternoon Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--rose)', G.water)}
-          {renderScheduleStep('The Descent', 'The day\'s labors conclude. Begin the grounding process to sever ties with the work.', 'var(--plum)', G.evening)}
+          {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift.', 'var(--crimson-b)', 'ph-sun')}
+          {renderScheduleStep('The Morning Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--plum)', 'ph-coffee')}
+          {renderScheduleStep('The Midday Sustenance', 'A 45-minute pause for nourishment. Engage in gentle movement to stir stagnant energies.', 'var(--plum)', 'ph-fork-knife')}
+          {renderScheduleStep('The Afternoon Respite', 'A 15-minute sanctuary. Imbibe 16 ounces of pure water.', 'var(--plum)', 'ph-coffee')}
+          {renderScheduleStep('The Descent', 'The day\'s labors conclude. Begin the grounding process to sever ties with the work.', 'var(--plum)', 'ph-moon')}
         </div>
 
         {/* Right Column: Evening Invocation */}
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Evening Invocation <SpeakerButton text='The Evening Invocation' /></h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
+          {pmItems.length > 0 && (
+            <div style={{ margin: '0.5rem 0 1rem 0', textAlign: 'center' }}>
+              <button 
+                className={`btn ${pmSaved || pmItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
+                style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
+                onClick={handleCompleteAllPm}
+                disabled={pmSaving || pmSaved || pmItems.every(i => checkedIds.has(i.id))}
+              >
+                {pmSaved || pmItems.every(i => checkedIds.has(i.id)) ? 'The Altar is Sealed' : 'Seal the Evening Altar'}
+              </button>
+            </div>
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {pmItems.length > 0 ? pmItems.map(i => renderStep(i)) : <div className="empty">The altar is bare. No evening rites are required.</div>}
-            {pmItems.length > 0 && (
-              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-                <button 
-                  className={`btn ${pmSaved || pmItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
-                  style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
-                  onClick={handleCompleteAllPm}
-                  disabled={pmSaving || pmSaved || pmItems.every(i => checkedIds.has(i.id))}
-                >
-                  {pmSaved || pmItems.every(i => checkedIds.has(i.id)) ? 'The Evening Rites are Concluded' : 'Conclude All Evening Rites'}
-                </button>
-              </div>
-            )}
           </div>
         </div>
         
@@ -350,8 +358,8 @@ export default function Rites({ pose }) {
       {/* Keeper's Warning (Full Width Below) */}
       {conflicts.length > 0 && (
         <div className="card mt-4" style={{ background: 'var(--card-bg-alt, rgba(100,20,20,0.5))', borderColor: '#882222' }}>
-          <h3 style={{ color: 'var(--rose)' }}>The Keeper's Warning <SpeakerButton text="The Keeper's Warning" /></h3>
-          <ul style={{ marginTop: '0.5rem', color: 'var(--rose)', paddingLeft: '1.5rem' }}>
+          <h3 style={{ color: 'var(--plum)' }}>The Keeper's Warning <SpeakerButton text="The Keeper's Warning" /></h3>
+          <ul style={{ marginTop: '0.5rem', color: 'var(--plum)', paddingLeft: '1.5rem' }}>
             {conflicts.map((c, idx) => (
               <li key={idx}>
                 {c} <SpeakerButton text={c} style={{ marginLeft: '0.4rem', verticalAlign: 'middle' }} />

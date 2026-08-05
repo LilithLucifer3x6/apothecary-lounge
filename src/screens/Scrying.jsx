@@ -168,25 +168,25 @@ export default function Scrying({ pose }) {
   return (
     <div style={{ padding: '1rem', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
-        <div className="card mt-4" style={{ height: '100%' }}>
+        <div className="card mt-4" style={{ height: '100%', padding: '1.5rem', textAlign: 'center' }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3><span className="g">{Icon({name: G.tabPool})}</span>What the Water Shows <SpeakerButton text="What the Water Shows" /></h3>
-          <div className="mt mb-4">A holistic divination of your routine, reactions, and trajectory.</div>
+          <h3 style={{ margin: '0 0 0.5rem 0', justifyContent: 'center' }}><span className="g"><Icon name={G.tabPool}/></span>What the Water Shows <SpeakerButton text="What the Water Shows" /></h3>
+          <div className="mt" style={{ marginBottom: '1rem', textAlign: 'center' }}>A holistic divination of your routine, reactions, and trajectory.</div>
           
           <button className="btn full plum" onClick={handleDivineAfflictions}>Divine Afflictions</button>
           
-          <div style={{ marginTop: '1rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', }}>
+          <div style={{ marginTop: '1rem', fontSize: '1rem', color: 'var(--plum)', minHeight: '1rem', }}>
             {evaluationStatus}
           </div>
-          <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
+          <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--plum)', whiteSpace: 'pre-wrap' }}>
             {evaluationResult || <div className="empty" style={{textAlign: 'left', margin: 0}}>The water is still. Inscribe your ledger, then seek the water's counsel.</div>}
           </div>
         </div>
 
-        <div className="card mt-4" style={{ height: '100%' }}>
+        <div className="card mt-4" style={{ height: '100%', padding: '1.5rem', textAlign: 'center' }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Ledger of Afflictions <SpeakerButton text="The Ledger of Afflictions" /></h3>
-        <div className="mt mb-4">Has something turned against you? Speak of it — what, and where, and how sorely.</div>
+        <h3 style={{ margin: '0 0 0.5rem 0', justifyContent: 'center' }}>The Ledger of Afflictions <SpeakerButton text="The Ledger of Afflictions" /></h3>
+        <div className="mt" style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Has something turned against you? Speak of it — what, and where, and how sorely.</div>
         
         {inventory.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -213,9 +213,9 @@ export default function Scrying({ pose }) {
                 {reactionOptions.map(r => {
                   const isChecked = reactionForm.reactions.has(r);
                   return (
-                    <label key={r} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.9rem', cursor: 'pointer', color: isChecked ? 'var(--rose)' : 'var(--dim)' }}>
+                    <label key={r} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.9rem', cursor: 'pointer', color: isChecked ? 'var(--plum)' : 'var(--dim)' }}>
                       <input type="checkbox" checked={isChecked} onChange={() => toggleReaction(r)} style={{ display: 'none' }} />
-                      <div style={{ padding: '0.2rem 0.5rem', border: `1px solid ${isChecked ? 'var(--rose)' : 'var(--border)'}`, borderRadius: '12px', background: isChecked ? 'rgba(176,132,148,0.2)' : 'transparent' }}>
+                      <div style={{ padding: '0.2rem 0.5rem', border: `1px solid ${isChecked ? 'var(--plum)' : 'var(--border)'}`, borderRadius: '12px', background: isChecked ? 'rgba(176,132,148,0.2)' : 'transparent' }}>
                         {r}
                       </div>
                     </label>
@@ -256,7 +256,7 @@ export default function Scrying({ pose }) {
               {ledgerEntries.map((entry, idx) => (
                 <div key={idx} className="row" style={{ opacity: 0.8, alignItems: 'flex-start' }}>
                   <div style={{ flex: 1 }}>
-                    <div className="nm" style={{ color: 'var(--rose)' }}>{entry.productName}</div>
+                    <div className="nm" style={{ color: 'var(--plum)' }}>{entry.productName}</div>
                     <div className="mt">{entry.zone} &bull; Affliction Rank: {entry.severity}/5</div>
                     <div className="mt" style={{ marginTop: '0.3rem' }}>{entry.reactions.join(', ')}</div>
                   </div>
@@ -264,7 +264,7 @@ export default function Scrying({ pose }) {
                     <button className="btn sm" onClick={() => handleEditLedger(entry)} style={{ border: '1px solid var(--silver)', color: 'var(--silver)', marginRight: '0.5rem' }}>
                       Alter
                     </button>
-                    <button className="btn sm" onClick={() => handleDeleteLedger(entry.id, idx)} style={{ border: '1px solid var(--rose)', color: 'var(--rose)' }}>
+                    <button className="btn sm" onClick={() => handleDeleteLedger(entry.id, idx)} style={{ border: '1px solid var(--plum)', color: 'var(--plum)' }}>
                       Banish
                     </button>
                   </div>
@@ -276,17 +276,17 @@ export default function Scrying({ pose }) {
 
       </div>
 
-      <div className="card mt-4" style={{ height: '100%' }}>
+      <div className="card mt-4" style={{ height: '100%', padding: '1.5rem', textAlign: 'center' }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Crypt of Ashes <SpeakerButton text="The Crypt of Ashes" /></h3>
-        <div className="mt mb-4">Elements forever sealed away.</div>
+        <h3 style={{ margin: '0 0 0.5rem 0', justifyContent: 'center' }}>The Crypt of Ashes <SpeakerButton text="The Crypt of Ashes" /></h3>
+        <div className="mt" style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Elements forever sealed away.</div>
         <div>
           {allergies.length > 0 || banishedItems.length > 0 ? (
             <>
               {allergies.map((a, i) => (
                 <div key={`allergy-${i}`} className="row" style={{ opacity: 0.8 }}>
                   <div style={{ flex: 1 }}>
-                    <div className="nm" style={{ color: 'var(--rose)' }}>{a.value}</div>
+                    <div className="nm" style={{ color: 'var(--plum)' }}>{a.value}</div>
                     <div className="mt">Allergy / Sensitivity</div>
                   </div>
                 </div>
@@ -294,7 +294,7 @@ export default function Scrying({ pose }) {
               {banishedItems.map((item, i) => (
                 <div key={`banished-${i}`} className="row" style={{ opacity: 0.8 }}>
                   <div style={{ flex: 1 }}>
-                    <div className="nm" style={{ color: 'var(--rose)' }}>{item.name}</div>
+                    <div className="nm" style={{ color: 'var(--plum)' }}>{item.name}</div>
                     <div className="mt">{item.brand} &bull; Banished</div>
                   </div>
                 </div>

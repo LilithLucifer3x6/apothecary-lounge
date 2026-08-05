@@ -156,9 +156,16 @@ export default function Grimoire({ pose }) {
   let nailsAppt = appointments.find(a => a.type === 'nails');
   if (nailsAppt && overrides['nails']) nailsAppt = { ...nailsAppt, date: overrides['nails'] };
 
+  const prevMonthDays = new Date(year, month, 0).getDate();
   const emptyDays = [];
   for (let i = 0; i < firstDay; i++) {
-    emptyDays.push(<div key={`empty-${i}`}></div>);
+    emptyDays.push(
+      <div key={`empty-${i}`} className="cd" style={{ opacity: 0.3 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span>{prevMonthDays - firstDay + i + 1}</span>
+        </div>
+      </div>
+    );
   }
 
   const calDays = [];
@@ -211,8 +218,8 @@ export default function Grimoire({ pose }) {
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span>{i}</span>
           <div style={{ display: 'flex', gap: '0.2rem' }}>
-            {hasRetie && <span title="Root Weaving" style={{ color: 'var(--plum)' }}><Icon name="star-four" /></span>}
-            {hasNails && <span title="Talon Honing" style={{ color: 'var(--plum)' }}><Icon name="sparkle" /></span>}
+            {hasRetie && <span title="Root Weaving" style={{ color: 'var(--plum)' }}><Icon name="ph-scissors" /></span>}
+            {hasNails && <span title="Talon Honing" style={{ color: 'var(--plum)' }}><Icon name="ph-hand-palm" /></span>}
           </div>
         </div>
         
@@ -298,7 +305,7 @@ export default function Grimoire({ pose }) {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               <div className="row" style={{ flex: '0 1 auto', marginBottom: 0, justifyContent: 'center' }}>
                 <div>
-                  <div className="nm">Root Weaving (Retie) <Icon name="star-four" /></div>
+                  <div className="nm">Root Weaving (Retie) <Icon name="ph-scissors" /></div>
                   <div className="mt">
                     Every 8 weeks. Scheduled for {retieAppt?.date ? new Date(retieAppt.date).toLocaleDateString() : 'Unknown'}.
                   </div>
@@ -321,7 +328,7 @@ export default function Grimoire({ pose }) {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               <div className="row" style={{ flex: '0 1 auto', marginBottom: 0, justifyContent: 'center' }}>
                 <div>
-                  <div className="nm">Talon Honing (Nails) <Icon name="sparkle" /></div>
+                  <div className="nm">Talon Honing (Nails) <Icon name="ph-hand-palm" /></div>
                   <div className="mt">
                     Every 2 weeks. Scheduled for {nailsAppt?.date ? new Date(nailsAppt.date).toLocaleDateString() : 'Unknown'}.
                   </div>
@@ -461,7 +468,7 @@ export default function Grimoire({ pose }) {
         <div className="modal" style={{display: 'block'}}>
           <div className="modal-content card" style={{maxWidth: '550px'}}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{color: 'var(--rose)'}}>The Reading <SpeakerButton text="The Reading" /></h3>
+            <h3 style={{color: 'var(--plum)'}}>The Reading <SpeakerButton text="The Reading" /></h3>
             <div className="mt mb-4">Reflect on the past 30 days of your rituals.</div>
             
             <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '1rem', marginTop: '1rem', paddingRight: '0.5rem' }}>
@@ -469,7 +476,7 @@ export default function Grimoire({ pose }) {
                 <div key={idx} style={{ 
                   textAlign: msg.role === 'user' ? 'right' : 'left', 
                   marginBottom: '1rem',
-                  color: msg.role === 'user' ? 'var(--text)' : 'var(--rose)'
+                  color: msg.role === 'user' ? 'var(--text)' : 'var(--plum)'
                 }}>
                   <div style={{ display: 'inline-block', background: msg.role === 'user' ? 'rgba(255,255,255,0.1)' : 'transparent', padding: msg.role === 'user' ? '0.5rem 1rem' : '0', borderRadius: '8px' }}>
                     {msg.text} {msg.role === 'assistant' && <SpeakerButton text={msg.text} style={{marginLeft: '0.4rem'}} />}
@@ -487,14 +494,14 @@ export default function Grimoire({ pose }) {
                     placeholder="Speak your truth..."
                     value={readingState.input}
                     onChange={(e) => setReadingState({...readingState, input: e.target.value})}
-                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1rem', minHeight: '60px' }}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--plum)', fontSize: '1rem', minHeight: '60px' }}
                   />
                 </div>
                 <button className="btn plum" onClick={handleSendReading} disabled={readingState.isTyping || !readingState.input.trim()}>Reply</button>
               </div>
             ) : (
               <div style={{ textAlign: 'center', marginTop: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-                <div style={{ color: 'var(--rose)', fontSize: '1.1rem', marginBottom: '1rem' }}>
+                <div style={{ color: 'var(--plum)', fontSize: '1.1rem', marginBottom: '1rem' }}>
                   The Reading is complete. Changes noted: <br/><strong>{readingState.completeSummary}</strong>
                 </div>
                 <button className="btn plum" onClick={finishReading} style={{ width: '100%' }}>Seal The Reading</button>

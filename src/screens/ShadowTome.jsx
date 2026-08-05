@@ -216,6 +216,13 @@ export default function ShadowTome({ pose }) {
     runMeditationCycle(3); // Run 3 cycles
   };
 
+  const cancelMeditation = () => {
+    clearBreathTimers();
+    setIsBreathing(false);
+    setBreathInst('Meditation Ceased');
+    setBreathCircle({ transform: 'scale(1)', borderColor: 'var(--plum)', transition: 'all 0.5s ease' });
+  };
+
   const runMeditationCycle = (roundsLeft) => {
     if (roundsLeft === 0) {
       setIsBreathing(false);
@@ -227,7 +234,7 @@ export default function ShadowTome({ pose }) {
     if (readiness === 'low') {
       // Gentle Box Breathing (4-4-4-4) for low readiness
       setBreathInst('Inhale softly... (4s)');
-      setBreathCircle({ transform: 'scale(1.5)', borderColor: 'var(--rose)', transition: 'transform 4s linear, border-color 4s ease' });
+      setBreathCircle({ transform: 'scale(1.5)', borderColor: 'var(--plum)', transition: 'transform 4s linear, border-color 4s ease' });
       
       breathTimeout1Ref.current = setTimeout(() => {
         setBreathInst('Hold gently... (4s)');
@@ -253,7 +260,7 @@ export default function ShadowTome({ pose }) {
     } else {
       // Standard 4-7-8 Breathing
       setBreathInst('Inhale deeply... (4s)');
-      setBreathCircle({ transform: 'scale(2)', borderColor: 'var(--rose)', transition: 'transform 4s linear, border-color 4s ease' });
+      setBreathCircle({ transform: 'scale(2)', borderColor: 'var(--plum)', transition: 'transform 4s linear, border-color 4s ease' });
       
       breathTimeout1Ref.current = setTimeout(() => {
         setBreathInst('Hold the breath... (7s)');
@@ -278,10 +285,10 @@ export default function ShadowTome({ pose }) {
         
         {/* Left Column: Journal & History */}
         <div className="tome-main-col">
-          <div className="card">
+          <div className="card" style={{ padding: '1.5rem' }}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>The Inner Sanctum <SpeakerButton text="The Inner Sanctum" /></h3>
-            <div className="note mb-4">"The ink is your own."</div>
+            <h3 style={{ textAlign: 'center', justifyContent: 'center' }}>The Inner Sanctum <SpeakerButton text="The Inner Sanctum" /></h3>
+            <div className="note mb-4" style={{ fontSize: '1.2rem', textAlign: 'center' }}>"The ink is your own."</div>
             
             <div className="field" style={{ marginTop: '2.5rem' }}>
               <label>The Spirit's Temperament</label>
@@ -309,7 +316,7 @@ export default function ShadowTome({ pose }) {
                 placeholder="Etch your reflections..."
                 value={entryText}
                 onChange={(e) => setEntryText(e.target.value)}
-                style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1.1rem' }}
+                style={{ minHeight: '200px', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--plum)', fontSize: '1.1rem' }}
               />
             </div>
             
@@ -321,9 +328,7 @@ export default function ShadowTome({ pose }) {
           </div>
 
           <div id="tome-history" className="mt-4">
-            {history.length === 0 ? (
-              <div className="empty">The pages remain unmarked. No reflections have been etched.</div>
-            ) : (
+            {history.length === 0 ? null : (
               history.map(entry => (
                 <div key={entry.id || entry.created_at} className="card mb-4" style={{ position: 'relative' }}>
                   <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
@@ -341,7 +346,7 @@ export default function ShadowTome({ pose }) {
                   </div>
 
                   {entry.moods?.length > 0 && (
-                    <div className="mb-2" style={{ color: 'var(--rose)', fontSize: '0.9rem' }}>
+                    <div className="mb-2" style={{ color: 'var(--plum)', fontSize: '0.9rem' }}>
                       {entry.moods.join(' \u2022 ')}
                     </div>
                   )}
@@ -357,39 +362,94 @@ export default function ShadowTome({ pose }) {
         {/* Right Column: Widgets */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
-          <div className="card" style={{ padding: '1rem' }}>
+          <div className="card" style={{ padding: '1.5rem', textAlign: 'center' }}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div>
-                <h3 style={{ fontSize: '1.2rem', margin: 0 }}>The Ethereal Breath <SpeakerButton text="The Ethereal Breath" /></h3>
-                <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginTop: '0.2rem' }}>
+                <h3 style={{ fontSize: '1.2rem', margin: 0, justifyContent: 'center' }}>The Ethereal Breath <SpeakerButton text="The Ethereal Breath" /></h3>
+                <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginTop: '0.5rem', marginBottom: '1rem', textAlign: 'center' }}>
                   {isBreathing ? breathInst : (readiness === 'low' ? '4-4-4-4 Box Breathing' : '4-7-8 Spirit Calming')}
                 </div>
               </div>
-              <button 
-                className="btn plum" 
-                onClick={startMeditation} 
-                disabled={isBreathing}
-                style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem', opacity: isBreathing ? 0.5 : 1 }}
-              >
-                {isBreathing ? 'Inhaling...' : 'Begin'}
-              </button>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {isBreathing && (
+                  <button 
+                    className="btn" 
+                    onClick={cancelMeditation} 
+                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}
+                  >
+                    Cease
+                  </button>
+                )}
+                <button 
+                  className="btn plum" 
+                  onClick={startMeditation} 
+                  disabled={isBreathing}
+                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem', opacity: isBreathing ? 0.5 : 1 }}
+                >
+                  {isBreathing ? 'Inhaling...' : 'Begin'}
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="card" style={{ width: 'fit-content', margin: '0 auto' }}>
+          <div className="card" style={{ padding: '1.5rem', textAlign: 'center' }}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The Ethereal Vapors <SpeakerButton text="The Ethereal Vapors" /></h3>
+            <h3 style={{ fontSize: '1.5rem', justifyContent: 'center' }}>The Herbal Elixirs <SpeakerButton text="The Herbal Elixirs" /></h3>
+            
+            <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', color: 'var(--plum)', cursor: 'pointer', borderRadius: '8px', marginTop: '1rem' }}>
+              <Icon name="ph-camera" /> 
+              <span style={{ marginTop: '0.5rem', textAlign: 'center', fontSize: '1rem' }}>Divine the Ingredients</span>
+              <input type="file" accept="image/*" capture="environment" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={handleTeaUpload} />
+            </div>
+            
+            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+              <button className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }} onClick={() => { setShowTeaModal(true); setTeaModalState('manual'); }}>Inscribe by Hand</button>
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: '1.5rem', textAlign: 'center' }}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3 style={{ fontSize: '1.5rem', justifyContent: 'center' }}>The Herbal Cache <SpeakerButton text="The Herbal Cache" /></h3>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {pantry.length > 0 ? pantry.map(tea => (
+                <div className="row" key={tea.id} style={{ alignItems: 'flex-start' }}>
+                  <div className="tg">
+                    <Icon name="ph-leaf" />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div className="nm">{tea.name}</div>
+                    <div className="mt">{tea.brand} &bull; {tea.circadian_alignment}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginTop: '0.2rem' }}>
+                      <span style={{ color: 'var(--plum)' }}>The Steeping:</span> {tea.steep_time} <br/>
+                      <span style={{ color: 'var(--plum)' }}>Stimulating Vigor:</span> {tea.caffeine_content}
+                    </div>
+                  </div>
+                  <div className="acts" style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button className="btn sm" onClick={() => appendTeaNote(tea)}>Imbibe</button>
+                    <button className="btn sm g" onClick={() => handleBanishTea(tea.id, tea.name)}>Shatter Jar</button>
+                  </div>
+                </div>
+              )) : (
+                <div className="empty">The herbal pantry remains bare.</div>
+              )}
+            </div>
+          </div>
+
+          <div className="card" style={{ width: 'fit-content', margin: '0 auto', padding: '1.5rem', textAlign: 'center' }}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3 style={{ fontSize: '1.5rem', justifyContent: 'center' }}>The Ethereal Vapors <SpeakerButton text="The Ethereal Vapors" /></h3>
             <div className="mt mb-4" style={{ textAlign: 'center' }}>Document the potency of infused provisions.</div>
             
             <div className="field" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <label>Potency (mg/ml)</label>
-              <input type="number" value={thcStrength} onChange={e => setThcStrength(Number(e.target.value))} style={{ width: '80px', background: 'var(--card2)', border: '1px solid var(--border)', padding: '0.5rem', color: 'var(--plum)', borderRadius: '6px', textAlign: 'center' }} />
+              <input type="number" value={thcStrength} onChange={e => setThcStrength(Number(e.target.value))} style={{ width: '60px', background: 'var(--card2)', border: '1px solid var(--border)', padding: '0.5rem', color: 'var(--plum)', borderRadius: '6px', textAlign: 'center' }} />
             </div>
             
             <div className="field" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1rem' }}>
               <label>Dose Consumed (ml)</label>
-              <input type="number" value={thcDose} onChange={e => setThcDose(Number(e.target.value))} style={{ width: '80px', background: 'var(--card2)', border: '1px solid var(--border)', padding: '0.5rem', color: 'var(--plum)', borderRadius: '6px', textAlign: 'center' }} />
+              <input type="number" value={thcDose} onChange={e => setThcDose(Number(e.target.value))} style={{ width: '60px', background: 'var(--card2)', border: '1px solid var(--border)', padding: '0.5rem', color: 'var(--plum)', borderRadius: '6px', textAlign: 'center' }} />
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.5rem', borderTop: '1px dashed var(--border)', paddingTop: '1rem', gap: '1rem' }}>
@@ -403,49 +463,6 @@ export default function ShadowTome({ pose }) {
             </div>
           </div>
 
-          <div className="card">
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Elixirs <SpeakerButton text="The Herbal Elixirs" /></h3>
-            
-            <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px', marginTop: '1rem' }}>
-              <Icon name="ph-camera" /> 
-              <span style={{ marginTop: '0.5rem', textAlign: 'center', fontSize: '1rem' }}>Divine the Ingredients</span>
-              <input type="file" accept="image/*" capture="environment" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={handleTeaUpload} />
-            </div>
-            
-            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-              <button className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }} onClick={() => { setShowTeaModal(true); setTeaModalState('manual'); }}>Inscribe by Hand</button>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Pantry <SpeakerButton text="The Herbal Pantry" /></h3>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {pantry.length > 0 ? pantry.map(tea => (
-                <div className="row" key={tea.id} style={{ alignItems: 'flex-start' }}>
-                  <div className="tg">
-                    <Icon name="ph-leaf" />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div className="nm">{tea.name}</div>
-                    <div className="mt">{tea.brand} &bull; {tea.circadian_alignment}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginTop: '0.2rem' }}>
-                      <span style={{ color: 'var(--rose)' }}>The Steeping:</span> {tea.steep_time} <br/>
-                      <span style={{ color: 'var(--rose)' }}>Stimulating Vigor:</span> {tea.caffeine_content}
-                    </div>
-                  </div>
-                  <div className="acts" style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className="btn sm" onClick={() => appendTeaNote(tea)}>Imbibe</button>
-                    <button className="btn sm g" onClick={() => handleBanishTea(tea.id, tea.name)}>Shatter Jar</button>
-                  </div>
-                </div>
-              )) : (
-                <div className="empty">The herbal pantry remains bare.</div>
-              )}
-            </div>
-          </div>
 
 
 
@@ -463,11 +480,11 @@ export default function ShadowTome({ pose }) {
             
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
               <div>
-                <h3 style={{color: 'var(--rose)'}}>The Herbal Elixir Inscription</h3>
-                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Add a new tea blend to your pantry.</div>
+                <h3 style={{color: 'var(--plum)'}}>The Herbal Elixir Inscription</h3>
+                <div className="mt mb-4" style={{color: 'var(--plum)'}}>Add a new tea blend to your pantry.</div>
               </div>
               {teaModalState !== 'manual' && (
-                <button className="btn sm" style={{background: 'transparent', padding: '0.4rem', color: 'var(--rose)'}} onClick={() => setTeaModalState('manual')} title="Manual Inscription">
+                <button className="btn sm" style={{background: 'transparent', padding: '0.4rem', color: 'var(--plum)'}} onClick={() => setTeaModalState('manual')} title="Manual Inscription">
                   <Icon name="ph-dots-three" />
                 </button>
               )}
@@ -475,13 +492,13 @@ export default function ShadowTome({ pose }) {
 
             {teaModalState === 'photo' && (
               <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
-                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--plum)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name="ph-camera" /> 
                   <span style={{marginTop: '1rem', textAlign: 'center', fontSize: '1.2rem'}}>{teaImages.length > 0 ? 'Summon another vision' : 'Offer visage of the blend or leaves'}</span>
                   <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleTeaUpload} />
                 </div>
                 
-                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--plum)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name="ph-images" />
                   <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Summon multiple visions from the archive</span>
                   <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleTeaUpload} />
@@ -495,7 +512,7 @@ export default function ShadowTome({ pose }) {
                   </div>
                 )}
                 
-                {teaImages.length > 0 && <div style={{textAlign: 'center', color: 'var(--rose)', }}>{teaStatus}</div>}
+                {teaImages.length > 0 && <div style={{textAlign: 'center', color: 'var(--plum)', }}>{teaStatus}</div>}
 
                 <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
                   <button className="btn" onClick={closeTeaModal}>Abandon</button>
@@ -508,8 +525,8 @@ export default function ShadowTome({ pose }) {
 
             {teaModalState === 'confirm' && (
               <div style={{textAlign: 'center', padding: '1rem'}}>
-                <div style={{color: 'var(--rose)', marginBottom: '1rem'}}>I divined:</div>
-                <h2 style={{color: 'var(--rose)', marginBottom: '0.5rem'}}>
+                <div style={{color: 'var(--plum)', marginBottom: '1rem'}}>I divined:</div>
+                <h2 style={{color: 'var(--plum)', marginBottom: '0.5rem'}}>
                   {teaForm.brand ? `${teaForm.brand} ` : ''}{teaForm.name}
                 </h2>
                 <div style={{color: 'var(--dim)', marginBottom: '1rem'}}>
@@ -521,7 +538,7 @@ export default function ShadowTome({ pose }) {
                 <div style={{display: 'flex', justifyContent: 'center', gap: '1rem'}}>
                   <button className="btn" onClick={() => setTeaModalState('photo')}>Reject Vision</button>
                   <button className="btn plum" onClick={handleSaveTea} disabled={isSavingTea}>
-                    {isSavingTea ? 'Inscribing...' : 'Seal in Pantry'}
+                    {isSavingTea ? 'Inscribing...' : 'Stow in the Cache'}
                   </button>
                 </div>
               </div>
@@ -530,8 +547,8 @@ export default function ShadowTome({ pose }) {
             {teaModalState === 'manual' && (
               <>
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Divine by Visage (Optional Override)</label>
-                  <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer'}}>
+                  <label style={{color: 'var(--plum)'}}>Divine by Visage (Optional Override)</label>
+                  <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--plum)', cursor: 'pointer'}}>
                     <Icon name="ph-camera" /> 
                     <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{teaStatus}</span>
                     <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleTeaUpload} />
@@ -539,23 +556,23 @@ export default function ShadowTome({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Brand (Optional)</label>
+                  <label style={{color: 'var(--plum)'}}>Brand (Optional)</label>
                   <VoiceInput value={teaForm.brand} onChange={e => setTeaForm({...teaForm, brand: e.target.value})} />
                 </div>
                 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Name of the Brew</label>
+                  <label style={{color: 'var(--plum)'}}>Name of the Brew</label>
                   <VoiceInput value={teaForm.name} onChange={e => setTeaForm({...teaForm, name: e.target.value})} />
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>The Steeping (Time & Temp)</label>
+                  <label style={{color: 'var(--plum)'}}>The Steeping (Time & Temp)</label>
                   <VoiceInput value={teaForm.steep_time} onChange={e => setTeaForm({...teaForm, steep_time: e.target.value})} />
                 </div>
                 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Circadian Alignment</label>
-                  <select value={teaForm.circadian_alignment} onChange={e => setTeaForm({...teaForm, circadian_alignment: e.target.value})} style={{color: 'var(--rose)'}}>
+                  <label style={{color: 'var(--plum)'}}>Circadian Alignment</label>
+                  <select value={teaForm.circadian_alignment} onChange={e => setTeaForm({...teaForm, circadian_alignment: e.target.value})} style={{color: 'var(--plum)'}}>
                     <option value="">Select...</option>
                     <option value="Solar Hours">Solar Hours</option>
                     <option value="Nocturnal Hours">Nocturnal Hours</option>
@@ -564,8 +581,8 @@ export default function ShadowTome({ pose }) {
                 </div>
                 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Stimulating Vigor</label>
-                  <select value={teaForm.caffeine_content} onChange={e => setTeaForm({...teaForm, caffeine_content: e.target.value})} style={{color: 'var(--rose)'}}>
+                  <label style={{color: 'var(--plum)'}}>Stimulating Vigor</label>
+                  <select value={teaForm.caffeine_content} onChange={e => setTeaForm({...teaForm, caffeine_content: e.target.value})} style={{color: 'var(--plum)'}}>
                     <option value="">Select...</option>
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
@@ -575,14 +592,14 @@ export default function ShadowTome({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Botanical Components</label>
+                  <label style={{color: 'var(--plum)'}}>Botanical Components</label>
                   <VoiceInput isTextArea={true} placeholder="Transcribe the sacred components..." value={teaForm.ingredients} onChange={e => setTeaForm({...teaForm, ingredients: e.target.value})} />
                 </div>
                 
                 <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem'}}>
                   <button className="btn" onClick={closeTeaModal}>Abandon</button>
                   <button className="btn plum" onClick={handleSaveTea} disabled={isSavingTea || !teaForm.name}>
-                    {isSavingTea ? 'Inscribing...' : 'Seal in Pantry'}
+                    {isSavingTea ? 'Inscribing...' : 'Stow in the Cache'}
                   </button>
                 </div>
               </>

@@ -68,10 +68,8 @@ export default function App() {
   useEffect(() => {
     sessionStorage.setItem('al_currentScreen', currentScreen);
     if (currentScreen === 'splash' || currentScreen === 'landing' || currentScreen === 'avatar') {
-      // Outside the cottage — always show the sanctuary exterior
-      document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundPosition = 'center';
+      document.body.style.backgroundImage = 'none';
+      document.body.style.backgroundColor = 'var(--bg)';
     } else if (currentScreen === 'intake') {
       document.body.style.backgroundImage = 'none';
       document.body.style.backgroundColor = 'var(--bg)';
@@ -238,8 +236,8 @@ export default function App() {
 
   if (supabaseError) {
     return (
-      <div className="land" style={{ backgroundImage: "url('/assets/bg_sanctuary.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', color: 'var(--rose)' }}>
-        <div className="scene" style={{ maxWidth: '400px', textAlign: 'center', padding: '2rem' }}>
+      <div className="land" style={{ backgroundColor: 'transparent' }}>
+        <div className="scene" style={{ maxWidth: '400px', textAlign: 'center', padding: '2rem', position: 'relative', zIndex: 10 }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <Icon name="ph-warning-circle" style={{fontSize: '3rem', color: 'var(--crimson-b)'}} />
           <h2 style={{marginTop: '1rem', marginBottom: '1rem'}}>Connection Severed</h2>
@@ -266,7 +264,7 @@ export default function App() {
 
       {currentScreen === 'loading' && (
         <div id="s-loading" className="land">
-          <div className="tag" style={{ textShadow: '0 0 10px rgba(0,0,0,0.8)', color: 'var(--rose)' }}>Consulting the rites...</div>
+          <div className="tag" style={{ textShadow: '0 0 10px rgba(0,0,0,0.8)', color: 'var(--plum)' }}>Consulting the rites...</div>
         </div>
       )}
 
@@ -365,7 +363,7 @@ export default function App() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
               {/* Left Column: Appearance */}
               <div>
-                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Aesthetic Visage</h3>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', textAlign: 'center' }}>Sanctuary Tuning</h3>
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem' }}>Inscription Scale ({settings.fontSize}px)</label>
@@ -411,7 +409,7 @@ export default function App() {
               
               {/* Middle Column: Voice & Integrations */}
               <div>
-                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Ethereal Echoes & Conduits</h3>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', textAlign: 'center' }}>Ethereal Echoes & Conduits</h3>
 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', }}>
@@ -504,7 +502,11 @@ export default function App() {
               {/* Right Column: Danger Zone & Actions */}
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--crimson)' }}>Danger Zone</h3>
+                  <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--crimson)', textAlign: 'center' }}>Danger Zone</h3>
+                  
+                  <button onClick={() => {
+                    alert('Glossary:\nAppSpeak Translation Guide\n\nCrown = Hair\nGaze = Eyes\nGrin = Mouth/Teeth\nVisage = Face\nVessel = Body\nSanctuary = App\nReliquary = Tools/Devices\nApothecary = Consumables');
+                  }} className="btn" style={{ width: '100%', marginBottom: '1rem', background: 'var(--card2)', borderColor: 'var(--plum)', color: 'var(--plum)' }}>Glossary of AppSpeak</button>
                   
                   <button onClick={() => {
                     setShowSettings(false);

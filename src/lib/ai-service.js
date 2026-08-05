@@ -93,9 +93,19 @@ export async function generateMoods() {
     { id: 'renewed', label: 'Cleansed & Renewed' },
     { id: 'withering', label: 'Wilted & Withering' },
     { id: 'enchanted', label: 'Enchanted' },
-    { id: 'stagnant', label: 'Still & Stagnant' }
+    { id: 'stagnant', label: 'Still & Stagnant' },
+    { id: 'scattered', label: 'Scattered to the Winds' },
+    { id: 'radiant', label: 'Radiant as Dawn' },
+    { id: 'hollow', label: 'Hollow & Echoing' },
+    { id: 'tempestuous', label: 'Tempestuous & Wild' },
+    { id: 'nurtured', label: 'Softly Nurtured' },
+    { id: 'feral', label: 'Untamed & Feral' },
+    { id: 'submerged', label: 'Submerged in Thought' },
+    { id: 'ethereal', label: 'Floating & Ethereal' },
+    { id: 'anchored', label: 'Heavy & Anchored' },
+    { id: 'bewitched', label: 'Quietly Bewitched' }
   ];
-  const list = await queryClaudeForList('Output a JSON array of 15 poetic, gothic-cottagecore moods or feelings for a journal. Each object must have an "id" (snake_case string) and "label" (poetic string). Only output the JSON array.');
+  const list = await queryClaudeForList('Output a JSON array of 25 poetic, gothic-cottagecore moods or feelings for a journal. Each object must have an "id" (snake_case string) and "label" (poetic string). Only output the JSON array.');
   return list.length > 0 ? list : fallback;
 }
 

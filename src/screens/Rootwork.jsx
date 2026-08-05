@@ -385,20 +385,20 @@ export default function Rootwork({ pose }) {
 
   return (
     <div style={{padding: '1rem', maxWidth: '900px', margin: '0 auto'}}>
-      <div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '2rem'}}>
-        <button className="btn plum" onClick={() => {
-          setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
-          setPhotoStatus('Offer or Scry Photo');
-          setModalState('photo');
-          setShowAddModal(true);
-        }}>
-          <Icon name="ph-plus" /> Inscribe Relic
-        </button>
-      </div>
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Apothecary <SpeakerButton text="The Apothecary" /></h3>
-        <div className="mt mb-4">Your sacred elixirs and treatments.</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>The Apothecary <SpeakerButton text="The Apothecary" /></h3>
+          <button className="btn plum" style={{ fontSize: '1.2rem', padding: '0.5rem 1rem' }} onClick={() => {
+            setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
+            setPhotoStatus('Offer or Scry Photo');
+            setModalState('photo');
+            setShowAddModal(true);
+          }}>
+            <Icon name="ph-plus" /> Inscribe Relic
+          </button>
+        </div>
+        <div className="mt mb-4" style={{ textAlign: 'center' }}>Your sacred elixirs and treatments.</div>
         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
           {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
         </div>
@@ -442,12 +442,12 @@ export default function Rootwork({ pose }) {
           </div>
         </div>
 
-        <div className="card mb-4" style={{ marginBottom: 0 }}>
+        <div className="card mb-4" style={{ marginBottom: 0, width: 'fit-content', margin: '0 auto' }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Silver Toll <SpeakerButton text="The Silver Toll" /></h3>
-          <div className="mt mb-4">The material cost of your active rituals, tied to frequency of devotion.</div>
-          <div>
-            <div style={{ fontSize: '2rem', color: 'var(--rose)' }}>
+          <div className="mt mb-4" style={{ textAlign: 'center' }}>The material cost of your active rituals, tied to frequency of devotion.</div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '2rem', color: 'var(--plum)' }}>
               ${(() => {
                 const { amItems, pmItems } = buildBaseRoutines(items, {}, {});
                 const activeIds = new Set([...amItems.map(i=>i.id), ...pmItems.map(i=>i.id)]);
@@ -483,36 +483,36 @@ export default function Rootwork({ pose }) {
           </div>
         </div>
 
-        <div className="card mb-4" style={{ marginBottom: 0 }}>
+        <div className="card mb-4" style={{ marginBottom: 0, width: 'fit-content', margin: '0 auto' }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Echo <SpeakerButton text="The Echo" /></h3>
-          <div className="mt mb-4">Reveal the hidden nature of a formula.</div>
+          <div className="mt mb-4" style={{ textAlign: 'center' }}>Reveal the hidden nature of a formula.</div>
           
-          <div className="field" style={{ marginBottom: '1rem' }}>
+          <div className="field" style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <label>Divine by Visage</label>
-            <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+            <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0.8rem', color: 'var(--plum)', cursor: 'pointer', borderRadius: '8px', width: '200px'}}>
               <Icon name={G.tabPool} /> 
-              <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Offer an image to the pool</span>
+              <span style={{marginTop: '0.5rem', textAlign: 'center', fontSize: '0.9rem'}}>Offer an image</span>
               <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleEchoPhotoUpload} />
             </div>
           </div>
 
-          <div className="field" style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+          <div className="field" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
             <div style={{ flex: 1 }}>
               <VoiceInput 
                 isTextArea={true}
                 placeholder="Or inscribe the formula's true name..."
                 value={echoInput}
                 onChange={(e) => setEchoInput(e.target.value)}
-                style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1.1rem' }}
+                style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--plum)', fontSize: '1.1rem' }}
               />
             </div>
             <button className="btn plum" onClick={handleEchoScry} style={{ minWidth: '120px' }}>Divine</button>
           </div>
-          <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--rose)', minHeight: '1rem', }}>
+          <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--plum)', minHeight: '1rem', }}>
             {echoStatus}
           </div>
-          <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--rose)', whiteSpace: 'pre-wrap' }}>
+          <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--plum)', whiteSpace: 'pre-wrap' }}>
             {echoResult}
           </div>
         </div>
@@ -527,8 +527,8 @@ export default function Rootwork({ pose }) {
             
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
               <div>
-                <h3 style={{color: 'var(--rose)'}}>The Relic Inscription</h3>
-                <div className="mt mb-4" style={{color: 'var(--rose)'}}>Commit a new vessel or tool to your apothecary.</div>
+                <h3 style={{color: 'var(--plum)'}}>The Relic Inscription</h3>
+                <div className="mt mb-4" style={{color: 'var(--plum)'}}>Commit a new artifact to your Reliquary or vessel to the Apothecary.</div>
               </div>
               {modalState !== 'manual' && (
                 <button className="btn sm" style={{padding: '0.4rem 1rem', whiteSpace: 'nowrap', flexShrink: 0}} onClick={() => setModalState('manual')} title="Manual Inscription">
@@ -539,13 +539,13 @@ export default function Rootwork({ pose }) {
 
             {modalState === 'photo' && (
               <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
-                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--plum)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name={G.tabPool} /> 
                   <span style={{marginTop: '1rem', textAlign: 'center', fontSize: '1.2rem'}}>{photoStatus}</span>
                   <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
                 </div>
                 
-                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px'}}>
+                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--plum)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name="ph-images" />
                   <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Summon Multiple Visions</span>
                   <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
@@ -559,8 +559,8 @@ export default function Rootwork({ pose }) {
 
             {modalState === 'confirm' && (
               <div style={{textAlign: 'center', padding: '1rem'}}>
-                <div style={{color: 'var(--rose)', marginBottom: '1rem'}}>I divined:</div>
-                <h2 style={{color: 'var(--rose)', marginBottom: '0.5rem'}}>
+                <div style={{color: 'var(--plum)', marginBottom: '1rem'}}>I divined:</div>
+                <h2 style={{color: 'var(--plum)', marginBottom: '0.5rem'}}>
                   {addForm.brand ? `${addForm.brand} ` : ''}{addForm.name}
                 </h2>
                 <div style={{color: 'var(--dim)', marginBottom: '2rem'}}>{addForm.category}</div>
@@ -577,8 +577,8 @@ export default function Rootwork({ pose }) {
             {modalState === 'manual' && (
               <>
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Divine by Visage (Optional)</label>
-                  <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--rose)', cursor: 'pointer'}}>
+                  <label style={{color: 'var(--plum)'}}>Divine by Visage (Optional)</label>
+                  <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--plum)', cursor: 'pointer'}}>
                     <Icon name={G.tabPool} /> 
                     <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{photoStatus}</span>
                     <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
@@ -586,23 +586,23 @@ export default function Rootwork({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Lineage or House (Optional)</label>
+                  <label style={{color: 'var(--plum)'}}>Lineage or House (Optional)</label>
                   <VoiceInput value={addForm.brand} onChange={e => setAddForm({...addForm, brand: e.target.value})} />
                 </div>
                 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Name of the Relic</label>
+                  <label style={{color: 'var(--plum)'}}>Name of the Relic</label>
                   <VoiceInput value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})} />
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Period After Opening (Months)</label>
-                  <input type="number" min="1" placeholder="e.g. 12" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }} />
+                  <label style={{color: 'var(--plum)'}}>Period After Opening (Months)</label>
+                  <input type="number" min="1" placeholder="e.g. 12" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }} />
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Anatomical Realm</label>
-                  <select value={addForm.domain} onChange={e => setAddForm({...addForm, domain: e.target.value})} style={{color: 'var(--rose)'}}>
+                  <label style={{color: 'var(--plum)'}}>Anatomical Realm</label>
+                  <select value={addForm.domain} onChange={e => setAddForm({...addForm, domain: e.target.value})} style={{color: 'var(--plum)'}}>
                     <option value="Crown">Crown (Hair & Scalp)</option>
                     <option value="Visage">Visage (Face)</option>
                     <option value="Gaze">Gaze (Eyes)</option>
@@ -612,37 +612,37 @@ export default function Rootwork({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Elixir Classification</label>
+                  <label style={{color: 'var(--plum)'}}>Elixir Classification</label>
                   <VoiceInput placeholder="e.g. Purifier, Tincture, Veil" value={addForm.category} onChange={e => setAddForm({...addForm, category: e.target.value})} />
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Botanical Components & Herbs</label>
+                  <label style={{color: 'var(--plum)'}}>Botanical Components & Herbs</label>
                   <VoiceInput isTextArea={true} placeholder="Transcribe the sacred components..." value={addForm.ingredients} onChange={e => setAddForm({...addForm, ingredients: e.target.value})} />
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Material Offering (For The Silver Toll)</label>
-                  <input type="number" step="0.01" placeholder="0.00" value={addForm.price} onChange={e => setAddForm({...addForm, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }} />
+                  <label style={{color: 'var(--plum)'}}>Material Offering (For The Silver Toll)</label>
+                  <input type="number" step="0.01" placeholder="0.00" value={addForm.price} onChange={e => setAddForm({...addForm, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }} />
                 </div>
 
                 <div className="field">
-                  <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--rose)', cursor: 'pointer'}}>
-                    <input type="checkbox" checked={addForm.is_composite} onChange={e => setAddForm({...addForm, is_composite: e.target.checked})} style={{accentColor: 'var(--rose)'}} />
+                  <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--plum)', cursor: 'pointer'}}>
+                    <input type="checkbox" checked={addForm.is_composite} onChange={e => setAddForm({...addForm, is_composite: e.target.checked})} style={{accentColor: 'var(--plum)'}} />
                     This is a Composite Brew / Handmade Alchemy
                   </label>
                 </div>
 
                 {addForm.is_composite && (
                   <div className="field">
-                    <label style={{color: 'var(--rose)'}}>Base Elements (What binds this alchemy?)</label>
+                    <label style={{color: 'var(--plum)'}}>Base Elements (What binds this alchemy?)</label>
                     <VoiceInput isTextArea={true} placeholder="e.g. Dead Sea Salt, Oil of Rose" value={addForm.components} onChange={e => setAddForm({...addForm, components: e.target.value})} />
                   </div>
                 )}
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Aetheric Density (1=Fleeting, 10=Anchoring) - Override</label>
-                  <div style={{display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--rose)'}}>
+                  <label style={{color: 'var(--plum)'}}>Aetheric Density (1=Fleeting, 10=Anchoring) - Override</label>
+                  <div style={{display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--plum)'}}>
                     <input type="range" min="1" max="10" step="1" style={{flex: 1}} value={addForm.weight} onChange={e => { setAddForm({...addForm, weight: e.target.value}); setIsAutoWeight(false); }} />
                     <span style={{width: '20px', textAlign: 'center'}}>{isAutoWeight ? 'Auto' : addForm.weight}</span>
                   </div>
@@ -664,14 +664,14 @@ export default function Rootwork({ pose }) {
         <div className="modal" style={{display: 'block'}}>
           <div className="modal-content card" style={{maxWidth: '500px'}}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{color: 'var(--rose)'}}>The Banishment of {banishState.name} <SpeakerButton text={`The Banishment of ${banishState.name}`} /></h3>
+            <h3 style={{color: 'var(--plum)'}}>The Banishment of {banishState.name} <SpeakerButton text={`The Banishment of ${banishState.name}`} /></h3>
             
             <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '1rem', marginTop: '1rem', paddingRight: '0.5rem' }}>
               {banishState.history.map((msg, idx) => (
                 <div key={idx} style={{ 
                   textAlign: msg.role === 'user' ? 'right' : 'left', 
                   marginBottom: '1rem',
-                  color: msg.role === 'user' ? 'var(--text)' : 'var(--rose)'
+                  color: msg.role === 'user' ? 'var(--text)' : 'var(--plum)'
                 }}>
                   <div style={{ display: 'inline-block', background: msg.role === 'user' ? 'rgba(255,255,255,0.1)' : 'transparent', padding: msg.role === 'user' ? '0.5rem 1rem' : '0', borderRadius: '8px' }}>
                     {msg.text} {msg.role === 'assistant' && <SpeakerButton text={msg.text} style={{marginLeft: '0.4rem'}} />}
@@ -689,14 +689,14 @@ export default function Rootwork({ pose }) {
                     placeholder="Speak your reason..."
                     value={banishState.input}
                     onChange={(e) => setBanishState({...banishState, input: e.target.value})}
-                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1rem', minHeight: '60px' }}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--plum)', fontSize: '1rem', minHeight: '60px' }}
                   />
                 </div>
                 <button className="btn plum" onClick={handleSendBanish} disabled={banishState.isTyping || !banishState.input.trim()}>Reply</button>
               </div>
             ) : (
               <div style={{ textAlign: 'center', marginTop: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-                <div style={{ color: 'var(--rose)', fontSize: '1.1rem', marginBottom: '1rem' }}>
+                <div style={{ color: 'var(--plum)', fontSize: '1.1rem', marginBottom: '1rem' }}>
                   Reason sealed: <strong>{banishState.reason}</strong>
                 </div>
                 <button className="btn plum" onClick={submitBanish} style={{ width: '100%' }}>Seal in the Crypt</button>

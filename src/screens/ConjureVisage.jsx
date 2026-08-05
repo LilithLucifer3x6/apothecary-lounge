@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase.js';
+import VoiceInput from '../components/VoiceInput.jsx';
+import Icon from '../components/Icon.jsx';
 
 // ── PHYSICAL BASE (hardcoded per user spec) ──────────────────────────────────
 const BASE_DESCRIPTION =
@@ -7,30 +9,25 @@ const BASE_DESCRIPTION =
 
 // ── HAIRSTYLE / LOC STYLES ───────────────────────────────────────────────────
 const HAIRSTYLES = [
-  { id: 'microlocs_loose',      label: 'Microlocs — Loose & Free',        img: 'hair_microlocs.jpg',  desc: 'Long microlocs worn completely free, cascading past the shoulders' },
-  { id: 'microlocs_halfup',     label: 'Microlocs — Half-Up Crown',        img: 'hair_crownbraid.jpg', desc: 'Top half swept up in a crown, rest cascading freely' },
-  { id: 'microlocs_highbun',    label: 'Microlocs — Dramatic High Bun',    img: null,                  desc: 'All locs swept into a large dramatic high bun with silver pins' },
-  { id: 'microlocs_ponytail',   label: 'Microlocs — High Ponytail',        img: null,                  desc: 'Locs gathered into a sleek high ponytail' },
-  { id: 'microlocs_sideover',   label: 'Microlocs — Side Swept',           img: null,                  desc: 'All locs swept dramatically over one shoulder' },
-  { id: 'microlocs_ceremonial', label: 'Microlocs — Ceremonial Updo',      img: null,                  desc: 'Elaborate updo with locs pinned in an artistic ceremonial arrangement' },
-  { id: 'microlocs_waist',      label: 'Microlocs — Waist Length',         img: null,                  desc: 'Extra-long waist-length microlocs worn completely free and abundant' },
-  { id: 'microlocs_charms',     label: 'Microlocs — Adorned with Charms',  img: null,                  desc: 'Microlocs decorated throughout with silver moon charms and crystal beads' },
-  { id: 'microlocs_wrapped',    label: 'Microlocs — Wrapped Sections',     img: null,                  desc: 'Select locs wrapped with dark thread and silver wire at intervals' },
-  { id: 'sisterlocs_free',      label: 'Sister Locs — Free Flowing',       img: 'hair_freeform.jpg',   desc: 'Fine sister locs worn naturally free, abundant and full' },
-  { id: 'sisterlocs_pinned',    label: 'Sister Locs — Pinned Back',        img: null,                  desc: 'Sister locs elegantly pinned back at the sides' },
-  { id: 'loc_crown',            label: 'Loc Crown Braid',                  img: null,                  desc: 'Locs braided into a regal crown halo around the head' },
-  { id: 'twinbuns',             label: 'Microlocs — Twin Space Buns',      img: 'hair_twinbuns.jpg',   desc: 'Locs divided into two full high buns' },
-  { id: 'loc_upbraid',          label: 'Locs — Braided Back Sections',     img: null,                  desc: 'Front sections braided back, remaining locs hanging freely' },
+  { id: 'microlocs_loose',      label: 'Microlocs — Loose & Free',         img: 'avatar_ghibli_base_1785969739750.jpg', desc: 'Shoulder-length, ultra-skinny microlocs worn completely free, framing the face' },
+  { id: 'microlocs_halfup',     label: 'Microlocs — Half-Up Crown',        img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'Top half swept up in a crown, rest cascading freely at shoulder length' },
+  { id: 'microlocs_highbun',    label: 'Microlocs — Dramatic High Bun',    img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'All locs swept into a large dramatic high bun with silver pins' },
+  { id: 'microlocs_ponytail',   label: 'Microlocs — High Ponytail',        img: 'avatar_ghibli_base_1785969739750.jpg', desc: 'Locs gathered into a sleek high ponytail' },
+  { id: 'microlocs_sideover',   label: 'Microlocs — Side Swept',           img: 'avatar_ghibli_base_1785969739750.jpg', desc: 'All locs swept dramatically over one shoulder' },
+  { id: 'microlocs_ceremonial', label: 'Microlocs — Ceremonial Updo',      img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'Elaborate updo with locs pinned in an artistic ceremonial arrangement' },
+  { id: 'microlocs_wrapped',    label: 'Microlocs — Wrapped Sections',     img: 'avatar_ghibli_base_1785969739750.jpg', desc: 'Select locs wrapped with dark thread and silver wire at intervals' },
+  { id: 'microlocs_twinbuns',   label: 'Microlocs — Twin Space Buns',      img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'Locs divided into two full high buns' },
+  { id: 'microlocs_upbraid',    label: 'Microlocs — Braided Back Sections',img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'Front sections braided back, remaining locs hanging freely' },
 ];
 
 // ── ROBE DESIGNS ─────────────────────────────────────────────────────────────
 const ROBE_DESIGNS = [
-  { id: 'flowing_ceremonial', label: 'Flowing Ceremonial Robe',    desc: 'Full-length flowing robe with wide sleeves and embroidered magical trim' },
-  { id: 'structured_coat',    label: 'Sorceress Coat',             desc: 'Structured long coat with a cinched waist belt and high dramatic collar' },
-  { id: 'kimono_wrap',        label: 'Kimono-Style Wrap Robe',     desc: 'Elegant wrap robe with a wide obi-style sash belt' },
-  { id: 'asymmetric',         label: 'Asymmetric Ritual Robe',     desc: 'Dramatic asymmetric hem with layered fabric and one exposed shoulder' },
-  { id: 'layered_scholar',    label: "Scholar's Layered Robes",    desc: 'Multiple layered robes with intricate detail and overlapping panels' },
-  { id: 'cape_gown',          label: 'Cape & Gown Ensemble',       desc: 'Elegant fitted gown with a sweeping dramatic floor-length cape' },
+  { id: 'flowing_ceremonial', label: 'Flowing Ceremonial Robe',    desc: 'Full-length flowing robe with wide sleeves and embroidered magical trim', img: 'robe_flowing_ceremonial_1785969874360.jpg' },
+  { id: 'structured_coat',    label: 'Sorceress Coat',             desc: 'Structured long coat with a cinched waist belt and high dramatic collar', img: 'robe_structured_coat_1785969846458.jpg' },
+  { id: 'kimono_wrap',        label: 'Kimono-Style Wrap Robe',     desc: 'Elegant wrap robe with a wide obi-style sash belt', img: 'robe_kimono_wrap_1785969853409.jpg' },
+  { id: 'asymmetric',         label: 'Asymmetric Ritual Robe',     desc: 'Dramatic asymmetric hem with layered fabric and one exposed shoulder', img: 'robe_asymmetric_1785969883713.jpg' },
+  { id: 'layered_scholar',    label: "Scholar's Layered Robes",    desc: 'Multiple layered robes with intricate detail and overlapping panels', img: 'robe_layered_scholar_1785969892009.jpg' },
+  { id: 'cape_gown',          label: 'Cape & Gown Ensemble',       desc: 'Elegant fitted gown with a sweeping dramatic floor-length cape', img: 'robe_cape_gown_1785969860343.jpg' },
   { id: 'embroidered_gown',   label: 'Embroidered Ritual Gown',    desc: 'Form-flattering gown covered in glowing magical embroidery patterns' },
   { id: 'velvet_robe',        label: 'Velvet Wrap Robe',           desc: 'Luxurious velvet robe with plush dark fur trim and deep side pockets' },
   { id: 'off_shoulder',       label: 'Off-Shoulder Sorceress Gown',desc: 'Dramatic off-shoulder gown with puffed sleeves and layered skirt' },
@@ -140,12 +137,12 @@ const FAMILIARS = [
 
 // ── ROOM DEFINITIONS for background generation ────────────────────────────────
 export const ROOM_PROMPTS = {
-  rites:  (cfg) => `2D illustrated painterly art of a beautiful plus-sized Black femme apothecary keeper with espresso skin and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory} in a cozy witchy cottage interior with a fireplace and cauldron, brewing a skincare potion. She wears a ${cfg.robeDesign} in ${cfg.robeColor} with stiletto nails painted ${cfg.robeColor}, adorned with ${cfg.jewelry} jewelry. Her ${cfg.familiar} familiar watches nearby. Warm candlelit magical atmosphere, cottagecore goth art style.`,
-  grim:   (cfg) => `2D illustrated painterly art of a beautiful plus-sized Black femme with espresso skin and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory} standing before towering shelves of glowing potion bottles in a dark magical library. She wears a ${cfg.robeDesign} in ${cfg.robeColor} examining a product label. Her ${cfg.familiar} familiar perches nearby. Rich dark magical library atmosphere, cottagecore goth art style.`,
-  altars: (cfg) => `2D illustrated painterly art of a beautiful plus-sized Black femme with espresso skin and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory} at a beautifully arranged altar with crystals, candles, and offerings. She wears a ${cfg.robeDesign} in ${cfg.robeColor} with hands raised in ritual gesture. Her ${cfg.familiar} familiar rests on the altar. Mystical sacred space, cottagecore goth art style.`,
-  root:   (cfg) => `2D illustrated painterly art of a beautiful plus-sized Black femme with espresso skin and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory} casting spells over a large bubbling cauldron, magical glowing symbols forming in the air. She wears a ${cfg.robeDesign} in ${cfg.robeColor}. Her ${cfg.familiar} familiar watches from a wooden beam above. Dark magical workshop, cottagecore goth art style.`,
-  pool:   (cfg) => `2D illustrated painterly art of a beautiful plus-sized Black femme with espresso skin and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory} gazing into a glowing scrying pool with swirling visions of wisdom in the water. She wears a ${cfg.robeDesign} in ${cfg.robeColor}. Her ${cfg.familiar} familiar is reflected in the water. Mystical moonlit chamber, cottagecore goth art style.`,
-  tome:   (cfg) => `2D illustrated painterly art of a beautiful plus-sized Black femme with espresso skin and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory} writing in a large leather-bound shadow tome by candlelight, surrounded by drying herbs and honey jars. She wears a ${cfg.robeDesign} in ${cfg.robeColor} with a warm cup of herbal tea. Her ${cfg.familiar} familiar curls up beside the tome. Cozy witchy study, cottagecore goth art style.`,
+  rites:  (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design, adorned with ${cfg.jewelry} jewelry. Standing in a cozy witchy cottage interior with a fireplace and cauldron, brewing a skincare potion. Her ${cfg.familiar} familiar watches nearby. Magical, ethereal lighting, Studio Ghibli meets Castlevania aesthetic. Soft glowing aura, calm expression.`,
+  grim:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Standing before towering shelves of glowing potion bottles in a dark magical library, examining a product label. Her ${cfg.familiar} familiar perches nearby. Magical, ethereal lighting, Studio Ghibli meets Castlevania aesthetic. Soft glowing aura, calm expression.`,
+  altars: (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Sitting at a beautifully arranged altar with crystals, candles, and offerings, with hands raised in ritual gesture. Her ${cfg.familiar} familiar rests on the altar. Magical, ethereal lighting, Studio Ghibli meets Castlevania aesthetic. Soft glowing aura, calm expression.`,
+  root:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Casting spells over a large bubbling cauldron, magical glowing symbols forming in the air. Her ${cfg.familiar} familiar watches from a wooden beam above. Magical, ethereal lighting, Studio Ghibli meets Castlevania aesthetic. Soft glowing aura, calm expression.`,
+  pool:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Gazing into a glowing scrying pool with swirling visions of wisdom in the water. Her ${cfg.familiar} familiar is reflected in the water. Magical, ethereal lighting, Studio Ghibli meets Castlevania aesthetic. Soft glowing aura, calm expression.`,
+  tome:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Writing in a large leather-bound shadow tome by candlelight, surrounded by drying herbs and honey jars with a warm cup of herbal tea. Her ${cfg.familiar} familiar curls up beside the tome. Magical, ethereal lighting, Studio Ghibli meets Castlevania aesthetic. Soft glowing aura, calm expression.`,
 };
 
 // ── SECTION COMPONENT ────────────────────────────────────────────────────────
@@ -194,7 +191,7 @@ function ImgCard({ item, selected, onSelect }) {
           fontSize: '2rem', color: isSelected ? 'var(--plum)' : 'rgba(176,132,148,0.3)'
         }}>✦</div>
       )}
-      <div style={{ padding: '0.6rem 0.8rem' }}>
+      <div style={{ padding: '0.6rem 0.8rem', textAlign: 'center' }}>
         <div style={{ fontSize: '0.8rem', fontWeight: isSelected ? 'bold' : 'normal', color: isSelected ? 'var(--plum)' : 'var(--silver)' }}>
           {item.label}
         </div>
@@ -208,7 +205,6 @@ function ImgCard({ item, selected, onSelect }) {
   );
 }
 
-// ── TEXT CARD (for designs, accessories, jewelry) ────────────────────────────
 function TextCard({ item, selected, onSelect }) {
   const isSelected = selected === item.id;
   return (
@@ -222,6 +218,7 @@ function TextCard({ item, selected, onSelect }) {
         padding: '0.9rem 1rem',
         boxShadow: isSelected ? '0 0 14px rgba(176,132,148,0.35)' : 'none',
         transition: 'all 0.2s ease',
+        textAlign: 'center'
       }}
     >
       <div style={{ fontSize: '0.85rem', fontWeight: isSelected ? 'bold' : 'normal', color: isSelected ? 'var(--plum)' : 'var(--silver)', marginBottom: '0.3rem' }}>
@@ -234,7 +231,6 @@ function TextCard({ item, selected, onSelect }) {
   );
 }
 
-// ── COLOR SWATCH ─────────────────────────────────────────────────────────────
 function ColorSwatch({ color, selected, onSelect }) {
   const isSelected = selected === color.id;
   return (
@@ -254,7 +250,6 @@ function ColorSwatch({ color, selected, onSelect }) {
   );
 }
 
-// ── MAIN COMPONENT ────────────────────────────────────────────────────────────
 export default function ConjureVisage({ onFinish }) {
   const [name, setName] = useState('');
   const [locStyle,       setLocStyle]       = useState('');
@@ -341,13 +336,12 @@ export default function ConjureVisage({ onFinish }) {
     if (onFinish) onFinish(config);
   };
 
-  // ── Generating splash ────────────────────────────────────────────────────
   if (generating) {
     const progress = Math.round(((genStep + 1) / 7) * 100);
     return (
       <div style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        minHeight: '100vh', color: 'var(--rose)',
+        minHeight: '100vh', color: 'var(--plum)',
       }}>
         <div style={{
           background: 'rgba(5,3,10,0.88)', backdropFilter: 'blur(16px)',
@@ -359,7 +353,7 @@ export default function ConjureVisage({ onFinish }) {
           <div style={{ background: 'rgba(0,0,0,0.4)', borderRadius: '99px', height: '6px', marginTop: '1.5rem', overflow: 'hidden' }}>
             <div style={{
               width: `${progress}%`, height: '100%',
-              background: 'linear-gradient(90deg, var(--plum), var(--rose))',
+              background: 'linear-gradient(90deg, var(--plum), var(--plum))',
               transition: 'width 0.6s ease', borderRadius: '99px'
             }} />
           </div>
@@ -371,11 +365,10 @@ export default function ConjureVisage({ onFinish }) {
     );
   }
 
-  // ── Builder UI ───────────────────────────────────────────────────────────
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
-      minHeight: '100vh', color: 'var(--rose)',
+      minHeight: '100vh', color: 'var(--plum)',
       overflowY: 'auto', paddingBottom: '6rem',
       background: 'transparent',
     }}>
@@ -389,22 +382,20 @@ export default function ConjureVisage({ onFinish }) {
           Conjure Your Visage
         </h1>
         <p style={{ textAlign: 'center', color: 'var(--dim)', marginBottom: '2.5rem', fontSize: '0.9rem' }}>
-          Shape your Keeper. Once bound, she will be painted into every room of the Sanctuary — doing what that room commands.
+          Shape your Keeper. Once bound, she will be painted into every room of the Sanctuary.
         </p>
 
         {/* NAME */}
         <Section title="The Keeper's Name">
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="What shall I call you?"
-            style={{
-              width: '100%', padding: '0.9rem', borderRadius: '6px',
-              background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(176,132,148,0.25)',
-              color: 'var(--plum)', fontSize: '1rem',
-            }}
-          />
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: 'fit-content', minWidth: '250px' }}>
+              <VoiceInput 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+                placeholder="What shall I call you?"
+              />
+            </div>
+          </div>
         </Section>
 
         {/* HAIRSTYLE */}
@@ -416,45 +407,46 @@ export default function ConjureVisage({ onFinish }) {
 
         {/* HAIR COLOR */}
         <Section title="Loc Color">
-          <div style={{ fontSize: '0.78rem', color: 'var(--dim)', marginBottom: '0.8rem' }}>Natural shades</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.2rem', marginBottom: '1.5rem' }}>
-            {HAIR_COLORS.filter(c => c.type === 'natural').map(c => (
-              <ColorSwatch key={c.id} color={c} selected={hairColor} onSelect={setHairColor} />
-            ))}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--dim)', marginBottom: '0.8rem' }}>Unnatural & fantasy shades</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.2rem' }}>
-            {HAIR_COLORS.filter(c => c.type === 'unnatural').map(c => (
-              <ColorSwatch key={c.id} color={c} selected={hairColor} onSelect={setHairColor} />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', justifyContent: 'center' }}>
+            {HAIR_COLORS.map(c => (
+                <div key={c.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setHairColor(c.id)}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: c.hex, border: hairColor === c.id ? '2px solid var(--plum)' : '1px solid transparent', mixBlendMode: 'multiply' }} />
+                    <div style={{ fontSize: '0.6rem', color: 'var(--dim)' }}>{c.label}</div>
+                </div>
             ))}
           </div>
         </Section>
 
         {/* ROBE DESIGN */}
         <Section title="Robe Design">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.8rem' }}>
-            {ROBE_DESIGNS.map(d => <TextCard key={d.id} item={d} selected={robeDesign} onSelect={setRobeDesign} />)}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.8rem' }}>
+            {ROBE_DESIGNS.map(d => <ImgCard key={d.id} item={d} selected={robeDesign} onSelect={setRobeDesign} />)}
           </div>
         </Section>
 
         {/* ROBE COLOR */}
         <Section title="Robe Color">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.2rem', paddingTop: '0.5rem' }}>
-            {ROBE_COLORS.map(c => <ColorSwatch key={c.id} color={c} selected={robeColor} onSelect={setRobeColor} />)}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', justifyContent: 'center' }}>
+            {ROBE_COLORS.map(c => (
+                <div key={c.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setRobeColor(c.id)}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: c.hex, border: robeColor === c.id ? '2px solid var(--plum)' : '1px solid transparent', mixBlendMode: 'multiply' }} />
+                    <div style={{ fontSize: '0.6rem', color: 'var(--dim)' }}>{c.label}</div>
+                </div>
+            ))}
           </div>
         </Section>
 
         {/* HAIR ACCESSORIES */}
         <Section title="Hair Accessories">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: '0.8rem' }}>
-            {HAIR_ACCESSORIES.map(a => <TextCard key={a.id} item={a} selected={hairAccessory} onSelect={setHairAccessory} />)}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.8rem' }}>
+            {HAIR_ACCESSORIES.map(a => <ImgCard key={a.id} item={a} selected={hairAccessory} onSelect={setHairAccessory} />)}
           </div>
         </Section>
 
         {/* JEWELRY */}
         <Section title="Jewels & Adornments">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: '0.8rem' }}>
-            {JEWELRY.map(j => <TextCard key={j.id} item={j} selected={jewelry} onSelect={setJewelry} />)}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.8rem' }}>
+            {JEWELRY.map(j => <ImgCard key={j.id} item={j} selected={jewelry} onSelect={setJewelry} />)}
           </div>
         </Section>
 
@@ -464,26 +456,6 @@ export default function ConjureVisage({ onFinish }) {
             {FAMILIARS.map(f => <ImgCard key={f.id} item={f} selected={familiar} onSelect={setFamiliar} />)}
           </div>
         </Section>
-
-        {/* SUMMARY PREVIEW */}
-        {isComplete && (
-          <div style={{
-            background: 'rgba(176,132,148,0.08)',
-            border: '1px solid rgba(176,132,148,0.25)',
-            borderRadius: '8px', padding: '1.2rem', marginBottom: '2rem'
-          }}>
-            <div style={{ color: 'var(--plum)', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-              ✦ Your Keeper — {name}
-            </div>
-            <div style={{ color: 'var(--dim)', fontSize: '0.78rem', lineHeight: 1.7 }}>
-              <strong style={{ color: 'var(--silver)' }}>Locs:</strong> {HAIRSTYLES.find(h => h.id === locStyle)?.label} &nbsp;·&nbsp;
-              <strong style={{ color: 'var(--silver)' }}>Robe:</strong> {ROBE_DESIGNS.find(d => d.id === robeDesign)?.label} in {ROBE_COLORS.find(c => c.id === robeColor)?.label} &nbsp;·&nbsp;
-              <strong style={{ color: 'var(--silver)' }}>Accessories:</strong> {HAIR_ACCESSORIES.find(a => a.id === hairAccessory)?.label} &nbsp;·&nbsp;
-              <strong style={{ color: 'var(--silver)' }}>Jewels:</strong> {JEWELRY.find(j => j.id === jewelry)?.label} &nbsp;·&nbsp;
-              <strong style={{ color: 'var(--silver)' }}>Familiar:</strong> {FAMILIARS.find(f => f.id === familiar)?.label}
-            </div>
-          </div>
-        )}
 
         {/* GENERATE BUTTON */}
         <button
