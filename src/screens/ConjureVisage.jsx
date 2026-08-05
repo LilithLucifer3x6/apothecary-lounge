@@ -150,7 +150,7 @@ export default function ConjureVisage({ onComplete }) {
               }}
             >
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem', opacity: familiar === f.id ? 1 : 0.6 }}>
-                {f.icon === 'bird' ? '🐦‍⬛' : f.icon === 'bat' ? '🦇' : f.icon === 'owl' ? '🦉' : f.icon === 'snake' ? '🐍' : '🐈‍⬛'}
+                <Icon name={f.icon === 'bird' ? 'ph-bird' : f.icon === 'bat' ? 'ph-bat' : f.icon === 'owl' ? 'ph-owl' : f.icon === 'snake' ? 'ph-bug' : 'ph-cat'} style={{fontSize: '2.5rem', color: familiar === f.id ? 'var(--plum)' : 'var(--silver)'}} />
               </div>
               <div style={{ textAlign: 'center', color: familiar === f.id ? 'var(--plum)' : 'var(--silver)', fontSize: '0.9rem', lineHeight: '1.2', fontWeight: familiar === f.id ? 'bold' : 'normal' }}>
                 {f.label}
