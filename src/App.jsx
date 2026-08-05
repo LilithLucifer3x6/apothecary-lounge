@@ -81,17 +81,24 @@ export default function App() {
   useEffect(() => {
     sessionStorage.setItem('al_activeTab', activeTab);
     if (currentScreen === 'app') {
-      const tab = TABS.find(t => t.id === activeTab);
-      if (tab && tab.bg) {
-        document.body.style.backgroundImage = `url('${tab.bg}')`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-      } else {
-        // 'home' tab or unknown — use sanctuary bg
-        document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
+      // Try to load a personalized generated background for this tab first
+      let bgUrl = null;
+      try {
+        const avatarConfig = JSON.parse(localStorage.getItem('avatar_config') || '{}');
+        if (avatarConfig.generatedBgs && avatarConfig.generatedBgs[activeTab]) {
+          bgUrl = avatarConfig.generatedBgs[activeTab];
+        }
+      } catch(e) {}
+
+      // Fall back to static illustrated room backgrounds
+      if (!bgUrl) {
+        const tab = TABS.find(t => t.id === activeTab);
+        bgUrl = tab?.bg || '/assets/bg_sanctuary.jpg';
       }
+
+      document.body.style.backgroundImage = `url('${bgUrl}')`;
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
     }
   }, [activeTab, currentScreen]);
 
