@@ -67,11 +67,12 @@ export default function App() {
 
   useEffect(() => {
     sessionStorage.setItem('al_currentScreen', currentScreen);
-    if (currentScreen === 'splash' || currentScreen === 'landing') {
+    if (currentScreen === 'splash' || currentScreen === 'landing' || currentScreen === 'avatar') {
+      // Outside the cottage — always show the sanctuary exterior
       document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
       document.body.style.backgroundSize = 'cover';
       document.body.style.backgroundPosition = 'center';
-    } else if (currentScreen === 'avatar' || currentScreen === 'intake') {
+    } else if (currentScreen === 'intake') {
       document.body.style.backgroundImage = 'none';
       document.body.style.backgroundColor = 'var(--bg)';
     }

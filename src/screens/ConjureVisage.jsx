@@ -61,8 +61,8 @@ export default function ConjureVisage({ onFinish }) {
   }
 
   return (
-    <div className="land" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)', color: 'var(--rose)', overflowY: 'auto', paddingBottom: '4rem' }}>
-      <div className="card" style={{ maxWidth: '800px', margin: '2rem auto', width: '90%', background: 'rgba(5, 3, 10, 0.92)' }}>
+    <div className="land" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', color: 'var(--rose)', overflowY: 'auto', paddingBottom: '4rem', background: 'transparent' }}>
+      <div className="card" style={{ maxWidth: '800px', margin: '2rem auto', width: '90%', background: 'rgba(5, 3, 10, 0.82)', backdropFilter: 'blur(12px)', border: '1px solid rgba(176,132,148,0.3)' }}>
         <h1 style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2.5rem' }}>Reshape Visage</h1>
         <p style={{ textAlign: 'center', color: 'var(--silver)', marginBottom: '2rem' }}>
           Select your Keeper's true form. The AI will dynamically paint your unique presence into every room of the Sanctuary.
