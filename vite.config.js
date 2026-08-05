@@ -9,6 +9,14 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      external: [
+        // Capacitor native-only plugins — resolved at runtime by the Android
+        // native layer, never by the web bundler. The isNativePlatform() guards
+        // in gcal.js mean these are never called on web.
+        '@codetrix-studio/capacitor-google-auth',
+      ],
+    },
   },
   server: {
     port: 5173,
