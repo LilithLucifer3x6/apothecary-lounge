@@ -1,4 +1,4 @@
-# The Apothecary Lounge — Project Specification
+# Shadow & Sanctuary — Project Specification
 
 > **How to use this file.** This is the standing spec. Point your assistant at it at the start of
 > every session. If it is not read automatically, paste the RULES block below into the first message.
@@ -66,7 +66,7 @@
 
 ## 1. Overview
 
-The Apothecary Lounge is a personal skin, hair, and body care companion for a single user. Two goals carry equal weight: healing and relaxation. Healing covers the skin barrier, active acne, acne scarring, body scarring, scalp sebopsoriasis, and hair moisture. Relaxation means the routine should feel like ritual rather than obligation. The user has ADHD and memory-recall difficulty, so every design decision favors low friction and zero guilt. Everything the app does is cosmetic. It never diagnoses and never replaces a provider. Platform: one codebase serving a web app and an Android build. Single user, no multi-tenancy, no public release.
+Shadow & Sanctuary is a personal skin, hair, and body care companion for a single user. Two goals carry equal weight: healing and relaxation. Healing covers the skin barrier, active acne, acne scarring, body scarring, scalp sebopsoriasis, and hair moisture. Relaxation means the routine should feel like ritual rather than obligation. The user has ADHD and memory-recall difficulty, so every design decision favors low friction and zero guilt. Everything the app does is cosmetic. It never diagnoses and never replaces a provider. Platform: one codebase serving a web app and an Android build. Single user, no multi-tenancy, no public release.
 
 ## 2. Principles
 
