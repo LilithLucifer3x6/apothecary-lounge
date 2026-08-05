@@ -20,9 +20,7 @@ const ROBE_COLORS = [
   { id: 'crimson', label: 'Crimson', hex: '#8B0000' },
   { id: 'emerald', label: 'Emerald', hex: '#0B3020' },
   { id: 'violet', label: 'Violet', hex: '#3B1E40' },
-  { id: 'gold', label: 'Gold', hex: '#B8860B' },
-  { id: 'sapphire', label: 'Sapphire', hex: '#0F52BA' },
-  { id: 'rose', label: 'Rose', hex: '#FF007F' }
+  { id: 'gold', label: 'Gold', hex: '#B8860B' }
 ];
 
 export default function ConjureVisage({ onFinish }) {
