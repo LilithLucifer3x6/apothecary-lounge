@@ -315,7 +315,7 @@ export default function App() {
             <div className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem 1rem', position: 'sticky', top: 0, zIndex: 40, background: 'transparent', gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '0 0 auto' }}>
               <button onClick={handleReturnToCottage} title="Return to Sanctuary" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0, opacity: activeTab === 'home' ? 0.5 : 1 }}>
-                <Icon name="ph-house" style={{fontSize: '2rem'}} />
+                <Icon name="house" style={{fontSize: '2rem'}} />
               </button>
             </div>
             
