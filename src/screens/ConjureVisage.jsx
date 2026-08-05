@@ -28,7 +28,8 @@ const ROBE_COLORS = [
 export default function ConjureVisage({ onFinish }) {
   const [name, setName] = useState('');
   const [locStyle, setLocStyle] = useState('');
-  const [bodyType, setBodyType] = useState('');
+  // Hardcoded base physical description as requested by user
+  const bodyType = 'A full-figured Black femme, approximately 250 pounds.';
   const [robeColor, setRobeColor] = useState('');
   const [familiar, setFamiliar] = useState('');
   
@@ -105,28 +106,6 @@ export default function ConjureVisage({ onFinish }) {
           ))}
         </div>
 
-        <h3 style={{ marginTop: '2rem', color: 'var(--plum)' }}>Body Type</h3>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-          {['Plus Size', 'Curvy', 'Slender', 'Athletic'].map(type => (
-            <div 
-              key={type}
-              onClick={() => setBodyType(type)}
-              style={{
-                border: bodyType === type ? '2px solid var(--plum)' : '1px solid var(--border)',
-                background: bodyType === type ? 'rgba(176,132,148,0.2)' : 'var(--card2)',
-                padding: '0.8rem 1.5rem',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                color: bodyType === type ? 'var(--plum)' : 'var(--silver)',
-                fontWeight: bodyType === type ? 'bold' : 'normal',
-                boxShadow: bodyType === type ? '0 0 10px rgba(176,132,148,0.2)' : 'none',
-              }}
-            >
-              {type}
-            </div>
-          ))}
-        </div>
-
         <h3 style={{ marginTop: '2rem', color: 'var(--plum)' }}>Robe Color</h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
           {ROBE_COLORS.map(color => (
@@ -191,7 +170,7 @@ export default function ConjureVisage({ onFinish }) {
             className="btn plum" 
             style={{ fontSize: '1.2rem', padding: '1rem 3rem', width: '100%' }} 
             onClick={handleFinish}
-            disabled={!name || !locStyle || !familiar || !robeColor || !bodyType}
+            disabled={!name || !locStyle || !familiar || !robeColor}
           >
             Generate Integrated Sanctuary
           </button>
