@@ -3,9 +3,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(var(--crimson), var(--crimson-b));
-  color: var(--rose);
-  border: none;
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--plum);
+  border: 1px solid var(--border);
   padding: 0.8rem 1.2rem;
   
   font-size: 1rem;
@@ -15,10 +15,10 @@
   text-decoration: none;
 }
 .btn:hover { opacity: 0.9; }
-.btn.g { background: transparent; border: 2px solid var(--crimson-b); color: var(--crimson-b);  }
+.btn.g { background: transparent; border: 1px solid var(--plum); color: var(--plum);  }
 .btn.sm { padding: 0.4rem 0.8rem; font-size: 1rem; }
 .btn.full { width: 100%; }
-.btn.plum { background: linear-gradient(var(--plum), var(--plum-b)); }
+.btn.plum { background: rgba(0, 0, 0, 0.4); color: var(--plum); border-color: var(--plum); }
 
 /* Topbar */
 .topbar {

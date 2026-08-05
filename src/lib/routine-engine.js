@@ -39,7 +39,7 @@ function parseFlags(item) {
 
 import { generateAdaptiveSuggestions } from './ai-service.js';
 
-export async function buildRoutines(items, userProfile = {}, wearables = {}) {
+export function buildBaseRoutines(items, userProfile = {}) {
   const amItems = [];
   const pmItems = [];
   
@@ -127,17 +127,7 @@ export async function buildRoutines(items, userProfile = {}, wearables = {}) {
     if (isPm) pmItems.push(item);
   });
 
-  // AI-Driven Wearables Adaptation
-  const adaptiveIds = await generateAdaptiveSuggestions(wearables, allItems);
-  if (adaptiveIds && adaptiveIds.length > 0) {
-    adaptiveIds.forEach(id => {
-      const item = allItems.find(i => i.id === id);
-      if (item && !amItems.some(a => a.id === id)) {
-        // AI specifically requested this item for the AM routine due to health metrics
-        amItems.push(item);
-      }
-    });
-  }
+  // AI-Driven Wearables Adaptation (moved to buildRoutines)
 
   // Zone-based Conflict Rescheduling
   // If Retinoid is in PM, move Vitamin C and Exfoliating Acids to AM
@@ -217,6 +207,24 @@ export async function buildRoutines(items, userProfile = {}, wearables = {}) {
   pmItems.unshift(...immutableWindDown);
   pmItems.push(...immutableGrinPM);
 
+  return { amItems, pmItems, getWeight, allItems };
+}
+
+export async function buildRoutines(items, userProfile = {}, wearables = {}) {
+  const { amItems, pmItems, getWeight, allItems } = buildBaseRoutines(items, userProfile);
+
+  // AI-Driven Wearables Adaptation
+  const adaptiveIds = await generateAdaptiveSuggestions(wearables, allItems);
+  if (adaptiveIds && adaptiveIds.length > 0) {
+    adaptiveIds.forEach(id => {
+      const item = allItems.find(i => i.id === id);
+      if (item && !amItems.some(a => a.id === id)) {
+        // AI specifically requested this item for the AM routine due to health metrics
+        amItems.push(item);
+      }
+    });
+  }
+  
   return { amItems, pmItems, getWeight };
 }
 

@@ -33,14 +33,12 @@ export default function Intake({ onComplete }) {
   const [noAlg, setNoAlg] = useState(false);
 
   // AI Path State
-  const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(true);
   const [aiStatus, setAiStatus] = useState('');
   const [chatHistory, setChatHistory] = useState([
     { role: 'assistant', content: 'Greetings. I am the Keeper of The Lounge. Let us prepare your chamber. What brings you to this place?' }
   ]);
   const [chatInput, setChatInput] = useState('');
-  const [showKeyInput, setShowKeyInput] = useState(false);
-  const [keyInputStr, setKeyInputStr] = useState('');
   const chatLogRef = useRef(null);
 
   useEffect(() => {
@@ -67,15 +65,9 @@ export default function Intake({ onComplete }) {
     });
   }, []);
 
-  useEffect(() => {
     AI.generateConcerns().then(setConcernsOptions);
     AI.generateConditions().then(setConditionsOptions);
     AI.generateTraditions().then(setTraditionsOptions);
-    
-    import('../lib/ai-engine.js').then(({ isAiReady }) => {
-      setIsReady(isAiReady());
-    });
-  }, []);
 
   useEffect(() => {
     if (chatLogRef.current) {
@@ -83,16 +75,7 @@ export default function Intake({ onComplete }) {
     }
   }, [chatHistory]);
 
-  const handleSetAiKeySubmit = async () => {
-    if (keyInputStr.trim()) {
-      const { initAnthropic } = await import('../lib/ai-engine.js');
-      initAnthropic(keyInputStr.trim());
-      setIsReady(true);
-      setAiStatus('AI activated.');
-      setShowKeyInput(false);
-      setTimeout(() => setAiStatus(''), 2000);
-    }
-  };
+
 
   const sendChatMessage = async () => {
     const text = chatInput.trim();
@@ -246,9 +229,9 @@ export default function Intake({ onComplete }) {
             className="btn" 
             onClick={() => setPath('ai')}
             style={{ 
-              background: path === 'ai' ? 'rgba(138,0,32,0.6)' : 'transparent', 
-              color: path === 'ai' ? 'var(--rose)' : 'var(--silver)', 
-              border: path === 'ai' ? '1px solid var(--crimson)' : '1px solid var(--border)',
+              background: path === 'ai' ? 'rgba(0,0,0,0.4)' : 'transparent', 
+              color: path === 'ai' ? 'var(--plum)' : 'var(--silver)', 
+              border: path === 'ai' ? '1px solid var(--plum)' : '1px solid var(--border)',
               fontSize: '1.3rem',
               padding: '0.6rem 1.2rem'
             }}
@@ -259,9 +242,9 @@ export default function Intake({ onComplete }) {
             className="btn" 
             onClick={() => setPath('fast')}
             style={{ 
-              background: path === 'fast' ? 'rgba(138,0,32,0.6)' : 'transparent', 
-              color: path === 'fast' ? 'var(--rose)' : 'var(--silver)',
-              border: path === 'fast' ? '1px solid var(--crimson)' : '1px solid var(--border)',
+              background: path === 'fast' ? 'rgba(0,0,0,0.4)' : 'transparent', 
+              color: path === 'fast' ? 'var(--plum)' : 'var(--silver)',
+              border: path === 'fast' ? '1px solid var(--plum)' : '1px solid var(--border)',
               fontSize: '1.3rem',
               padding: '0.6rem 1.2rem'
             }}
@@ -293,7 +276,7 @@ export default function Intake({ onComplete }) {
                 key={idx} 
                 className={`msg ${msg.role === 'assistant' ? 'ai' : 'user'}`} 
                 style={{ 
-                  color: msg.role === 'assistant' ? 'var(--silver)' : 'var(--rose)', 
+                  color: msg.role === 'assistant' ? 'var(--silver)' : 'var(--plum)', 
                   marginBottom: '1rem',
                   textAlign: msg.role === 'user' ? 'right' : 'left'
                 }}
@@ -313,26 +296,8 @@ export default function Intake({ onComplete }) {
             </div>
             <button className="btn plum" onClick={sendChatMessage}>Whisper</button>
           </div>
-          <div id="ai-status" style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--rose)', minHeight: '1.5rem', flexShrink: 0 }}>
-            {aiStatus ? (
-              aiStatus
-            ) : !isReady ? (
-              showKeyInput ? (
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <input 
-                    type="password" 
-                    placeholder="sk-ant..." 
-                    value={keyInputStr} 
-                    onChange={e => setKeyInputStr(e.target.value)} 
-                    style={{ padding: '0.2rem 0.5rem', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }}
-                  />
-                  <button className="btn sm plum" onClick={handleSetAiKeySubmit}>Offer</button>
-                  <button className="btn sm" onClick={() => setShowKeyInput(false)} style={{ background: 'transparent' }}>Abandon</button>
-                </div>
-              ) : (
-                <>The Key of Anthropic is missing. <a href="#" onClick={(e) => { e.preventDefault(); setShowKeyInput(true); }} style={{ color: 'var(--rose)', textDecoration: 'underline' }}>Offer the Key</a></>
-              )
-            ) : null}
+          <div id="ai-status" style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--plum)', minHeight: '1.5rem', flexShrink: 0 }}>
+            {aiStatus}
           </div>
         </div>
       )}

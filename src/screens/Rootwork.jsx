@@ -4,7 +4,7 @@ import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
 import { attachVoice } from '../lib/voice.js';
-import { buildRoutines } from '../lib/routine-engine.js';
+import { buildBaseRoutines } from '../lib/routine-engine.js';
 import SpeakerButton from '../components/SpeakerButton.jsx';
 
 export default function Rootwork({ pose }) {
@@ -449,7 +449,7 @@ export default function Rootwork({ pose }) {
           <div>
             <div style={{ fontSize: '2rem', color: 'var(--rose)' }}>
               ${(() => {
-                const { amItems, pmItems } = buildRoutines(items, {}, {});
+                const { amItems, pmItems } = buildBaseRoutines(items, {}, {});
                 const activeIds = new Set([...amItems.map(i=>i.id), ...pmItems.map(i=>i.id)]);
                 const activeItems = items.filter(i => activeIds.has(i.id));
                 

@@ -536,7 +536,7 @@ export default function App() {
                       sessionStorage.clear();
                       window.location.reload();
                     }
-                  }} className="btn g" style={{ width: '100%' }}>Raise the Sanctuary to Ash</button>
+                  }} className="btn g" style={{ width: '100%' }}>Raze the Sanctuary to Ash</button>
                 </div>
                 
                 <button onClick={() => saveSettings(settings)} className="btn full plum" style={{ marginTop: '2rem', padding: '1rem', fontSize: '1.2rem' }}>Bind the Runes of Power</button>
