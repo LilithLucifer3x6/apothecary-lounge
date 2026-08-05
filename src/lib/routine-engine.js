@@ -197,7 +197,8 @@ export function buildBaseRoutines(items, userProfile = {}, wearables = {}) {
     { id: 'wd-2', name: 'The Drying', desc: 'With the aid of another', category: 'immutable', domain: 'vessel', weight: 0.2, isInjected: true }
   ];
   
-  immutableWindDown.push({ id: 'wd-3', name: 'The Purging of Blemishes & The Warm Gaze', desc: 'Execute after a shower. Purify implements before and after.', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true });
+  immutableWindDown.push({ id: 'wd-3a', name: 'The Purging of Blemishes', desc: 'Execute after a shower. Purify implements before and after.', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true });
+  immutableWindDown.push({ id: 'wd-3b', name: 'The Warm Gaze', desc: 'Warm compress and eye massage.', category: 'immutable', domain: 'visage', weight: 0.31, isInjected: true });
   
   if (isWeekend) {
     // Left intentionally blank. Rituals must be user-defined.

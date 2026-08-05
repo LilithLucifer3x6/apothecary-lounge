@@ -77,8 +77,8 @@
     color:var(--plum);font-size:1em;text-align:left;line-height:1.15;}
   .tabs{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:none;padding:.5rem .6rem .65rem;justify-content:center;}
   .tabs::-webkit-scrollbar{display:none;}
-  .tb{flex:0 0 auto;display:flex;align-items:center;gap:.5rem;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);
-      border:1px solid rgba(176, 136, 204, 0.2);color:var(--plum);font-size:1.1em;padding:.6rem 1rem;
+  .tb{flex:0 0 auto;display:flex;align-items:center;gap:.6rem;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);
+      border:1px solid rgba(176, 136, 204, 0.2);color:var(--plum);font-size:1.2em;padding:.7rem 1.1rem;
       border-radius:8px;cursor:pointer;font-family:inherit;}
   .tb:hover{border-color:rgba(176, 136, 204, 0.6);color:var(--plum);box-shadow:0 0 10px rgba(176, 136, 204, 0.15);}
   .tb.on{border-color:var(--crimson);color:var(--plum);box-shadow:inset 0 0 15px rgba(176, 136, 204, 0.3);}
@@ -91,7 +91,7 @@
   @media(min-width:800px){.tome-grid{grid-template-columns:5.5fr 4.5fr;}}
   .ritecol{background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border:1px solid rgba(176, 136, 204, 0.2);border-radius:10px;padding:.75rem .8rem;}
   .step{border:1px solid rgba(176, 136, 204, 0.15);background:rgba(0,0,0,0.65);border-radius:6px;padding:0.65rem 0.85rem;
-    margin-bottom:.5rem;display:flex;align-items:flex-start;gap:.6rem;font-size:1rem;}
+    margin-bottom:.5rem;display:flex;align-items:flex-start;gap:.6rem;font-size:1rem; width: fit-content; max-width: 100%;}
   .step input[type=checkbox]{width:1.25rem;height:1.25rem;accent-color:var(--crimson-b);margin-top:.15rem;flex-shrink:0;}
   .step .body{flex:1;min-width:0;}
   .nm{font-size:1.05em;color:var(--plum);}
@@ -103,7 +103,8 @@
   .st .g .cic{width:1.6em;height:1.6em;}
   .ph-duotone,.ph{font-size:1.15em;vertical-align:-.12em;color:var(--plum);}
   .st .g .ph-duotone{font-size:1.6em;}
-  .tb .ph-duotone{font-size:1.15em;}
+  .tb .ph-duotone{font-size:1.4em;}
+  .tb .cic{width:1.4em;height:1.4em;}
   h3 .g .ph-duotone{font-size:1.1em;}
   .spk{background:transparent;border:none;color:var(--plum);opacity:0.7;cursor:pointer;font-size:.85em;padding:.1rem .25rem;flex-shrink:0;font-family:inherit;}
   .spk:hover{color:var(--plum);opacity:1;}
