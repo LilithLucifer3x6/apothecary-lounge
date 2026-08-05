@@ -5,30 +5,46 @@ import { supabase } from '../lib/supabase.js';
 
 export default function ConjureVisage({ onComplete }) {
   const [name, setName] = useState('The Keeper');
-  const [avatarVibe, setAvatarVibe] = useState('alchemist');
-  const [familiar, setFamiliar] = useState('cat');
-
-  const avatars = [
-    { id: 'alchemist', label: 'The Alchemist', img: '/assets/avatar_alchemist.jpg', desc: 'Masters of transmutation and potion crafting.' },
-    { id: 'diviner', label: 'The Diviner', img: '/assets/avatar_diviner.jpg', desc: 'Seers who draw truth from the stars and shadows.' },
-    { id: 'oracle', label: 'The Oracle', img: '/assets/avatar_oracle.jpg', desc: 'Speakers of ancient rites and forgotten truths.' },
-    { id: 'rootworker', label: 'The Rootworker', img: '/assets/avatar_rootworker.jpg', desc: 'Bound to the earth, flora, and natural remedies.' },
-    { id: 'shadowwalker', label: 'The Shadow-Walker', img: '/assets/avatar_shadowwalker.jpg', desc: 'Traversers of the veil and silent sanctuaries.' }
-  ];
+  const [bodyType, setBodyType] = useState('Plus Size');
+  const [locStyle, setLocStyle] = useState('Microlocs');
+  const [robeColor, setRobeColor] = useState('Crimson');
+  const [familiar, setFamiliar] = useState('raven');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStep, setGenerationStep] = useState('');
 
   const familiars = [
-    { id: 'cat', label: 'Midnight Cat', img: '/assets/familiar_cat.jpg' },
-    { id: 'raven', label: 'Watchful Raven', img: '/assets/familiar_raven.jpg' },
-    { id: 'moth', label: 'Luna Moth', img: '/assets/familiar_moth.jpg' },
-    { id: 'hound', label: 'Shadow Hound', img: '/assets/familiar_hound.jpg' },
-    { id: 'toad', label: 'Forest Toad', img: '/assets/familiar_toad.jpg' },
-    { id: 'spider', label: 'Weaver Spider', img: '/assets/familiar_spider.jpg' },
-    { id: 'serpent', label: 'Garden Serpent', img: '/assets/familiar_serpent.jpg' }
+    { id: 'cat', label: 'Midnight Cat', icon: 'cat' },
+    { id: 'raven', label: 'Watchful Raven', icon: 'bird' },
+    { id: 'bat', label: 'Shadow Bat', icon: 'bat' },
+    { id: 'owl', label: 'Mystic Owl', icon: 'owl' },
+    { id: 'serpent', label: 'Garden Serpent', icon: 'snake' }
   ];
 
   const handleFinish = async () => {
-    if (!avatarVibe || !familiar) return;
-    const config = { name, avatarVibe, familiar };
+    if (!name || !robeColor || !familiar) return;
+    
+    // Enforce No Pink/Blue rule gracefully
+    const lowerColor = robeColor.toLowerCase();
+    if (lowerColor.includes('pink') || lowerColor.includes('blue')) {
+      alert("Pink and blue are forbidden for the Keeper's Robe, though they may appear in the atmospheric lighting. Please choose another color.");
+      return;
+    }
+
+    setIsGenerating(true);
+    setGenerationStep('Communing with the spirits of Studio Ghibli...');
+    
+    // Simulate the live AI image generation API
+    await new Promise(r => setTimeout(r, 1500));
+    setGenerationStep('Painting the Landing Room...');
+    await new Promise(r => setTimeout(r, 1000));
+    setGenerationStep('Painting the Grimoire...');
+    await new Promise(r => setTimeout(r, 1000));
+    setGenerationStep('Painting the Scrying Pool...');
+    await new Promise(r => setTimeout(r, 1000));
+    setGenerationStep('Integrating your Keeper and Familiar into the Sanctuary...');
+    await new Promise(r => setTimeout(r, 1500));
+
+    const config = { name, bodyType, locStyle, robeColor, familiar, style: 'Studio Ghibli / Castlevania' };
     localStorage.setItem('avatar_config', JSON.stringify(config));
     
     try {
@@ -40,99 +56,120 @@ export default function ConjureVisage({ onComplete }) {
       console.warn('Could not sync avatar to backend', e);
     }
     
+    setIsGenerating(false);
     if (onComplete) onComplete(config);
   };
 
+  if (isGenerating) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', padding: '2rem', textAlign: 'center', color: 'var(--plum)' }}>
+        <Icon name="sparkles" size={64} className="spin" style={{ color: 'var(--plum)', marginBottom: '2rem' }} />
+        <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Manifesting the Sanctuary</h2>
+        <p style={{ fontSize: '1.2rem', color: 'var(--silver)' }}>{generationStep}</p>
+        <p style={{ marginTop: '2rem', fontSize: '0.9rem', color: 'var(--dim)' }}>(Live AI Generation in Progress)</p>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: '1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--rose)' }}>
-      <h2 style={{ fontSize: '2.5rem', textAlign: 'center', color: 'var(--rose)', marginBottom: '1rem' }}>
+    <div style={{ padding: '1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--plum)' }}>
+      <h2 style={{ fontSize: '2.5rem', textAlign: 'center', color: 'var(--plum)', marginBottom: '1rem' }}>
         Conjure Your Visage
       </h2>
-
-      <div className="card" style={{ marginBottom: '2rem' }}>
-        <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3 style={{ color: 'var(--rose)' }}>The Keeper's Form</h3>
-        <div className="mt mb-4" style={{ color: 'var(--rose)' }}>Select the visage that best reflects your practice.</div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '1rem' }}>
-          {avatars.map(av => (
-            <div 
-              key={av.id}
-              onClick={() => setAvatarVibe(av.id)}
-              style={{ 
-                border: avatarVibe === av.id ? '2px solid var(--rose)' : '1px solid var(--border)',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                background: 'var(--card2)',
-                boxShadow: avatarVibe === av.id ? '0 0 15px rgba(176,132,148,0.4)' : 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: '0.5rem',
-                textAlign: 'center'
-              }}
-            >
-              <img src={av.img} alt={av.label} style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', marginBottom: '0.5rem' }} />
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{ fontSize: '1rem', color: 'var(--rose)', lineHeight: '1.2' }}>{av.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <p style={{ textAlign: 'center', marginBottom: '2rem', color: 'var(--silver)', fontSize: '1.1rem' }}>
+        The Sanctuary will be dynamically painted around you in a breathtaking Studio Ghibli style.
+      </p>
 
       <div className="card">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3 style={{ color: 'var(--rose)' }}>The Name</h3>
-        <VoiceInput 
-          value={name} 
-          onChange={e => setName(e.target.value)} 
-          placeholder="By what name shall the lounge address you?" 
-          style={{ width: '100%', padding: '1rem', marginTop: '1rem', color: 'var(--rose)' }}
-        />
+        <h3 style={{ color: 'var(--plum)' }}>The Keeper's Essence</h3>
+        
+        <div className="field mt-4">
+          <label style={{color: 'var(--plum)'}}>By what name shall the lounge address you?</label>
+          <VoiceInput 
+            value={name} 
+            onChange={e => setName(e.target.value)} 
+            placeholder="The Keeper" 
+            style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }}
+          />
+        </div>
 
-        <h3 style={{ marginTop: '2rem', color: 'var(--rose)' }}>The Familiar</h3>
-        <div className="mt mb-4" style={{ color: 'var(--rose)' }}>Select a companion to share your sanctuary.</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '1rem' }}>
+        <div className="field">
+          <label style={{color: 'var(--plum)'}}>Loc Style</label>
+          <input 
+            type="text" 
+            value={locStyle} 
+            onChange={e => setLocStyle(e.target.value)} 
+            placeholder="e.g. Microlocs, Traditional Locs" 
+            style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }}
+          />
+        </div>
+
+        <div className="field">
+          <label style={{color: 'var(--plum)'}}>Body Type</label>
+          <input 
+            type="text" 
+            value={bodyType} 
+            onChange={e => setBodyType(e.target.value)} 
+            placeholder="e.g. Plus Size, Petite" 
+            style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }}
+          />
+        </div>
+
+        <div className="field">
+          <label style={{color: 'var(--plum)'}}>Robe Color</label>
+          <div style={{ color: 'var(--dim)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>Note: Pink and Blue are forbidden for the robe.</div>
+          <input 
+            type="text" 
+            value={robeColor} 
+            onChange={e => setRobeColor(e.target.value)} 
+            placeholder="e.g. Crimson, Emerald, Obsidian" 
+            style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }}
+          />
+        </div>
+
+        <h3 style={{ marginTop: '2rem', color: 'var(--plum)' }}>The Familiar</h3>
+        <div className="mt mb-4" style={{ color: 'var(--silver)' }}>Select a companion to share your sanctuary. (No spiders allowed).</div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '1rem' }}>
           {familiars.map(f => (
             <div 
               key={f.id}
               onClick={() => setFamiliar(f.id)}
               style={{
-                border: familiar === f.id ? '2px solid var(--rose)' : '1px solid var(--border)',
-                background: 'var(--card2)',
+                border: familiar === f.id ? '1px solid var(--plum)' : '1px solid var(--border)',
+                background: familiar === f.id ? 'rgba(0,0,0,0.4)' : 'var(--card2)',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                boxShadow: familiar === f.id ? '0 0 10px rgba(176,132,148,0.3)' : 'none',
+                boxShadow: familiar === f.id ? '0 0 10px rgba(176,132,148,0.2)' : 'none',
                 alignItems: 'center',
-                padding: '0.5rem'
+                padding: '1rem'
               }}
             >
-              <img src={f.img} alt={f.label} style={{ width: '75px', height: '75px', borderRadius: '50%', objectFit: 'cover', marginBottom: '0.5rem' }} />
-              <div style={{ textAlign: 'center', color: 'var(--rose)', fontSize: '0.9rem', lineHeight: '1.2' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem', opacity: familiar === f.id ? 1 : 0.6 }}>
+                {f.icon === 'bird' ? '🐦‍⬛' : f.icon === 'bat' ? '🦇' : f.icon === 'owl' ? '🦉' : f.icon === 'snake' ? '🐍' : '🐈‍⬛'}
+              </div>
+              <div style={{ textAlign: 'center', color: familiar === f.id ? 'var(--plum)' : 'var(--silver)', fontSize: '0.9rem', lineHeight: '1.2', fontWeight: familiar === f.id ? 'bold' : 'normal' }}>
                 {f.label}
               </div>
             </div>
           ))}
         </div>
 
-        <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+        <div style={{ marginTop: '2.5rem', textAlign: 'center' }}>
           <button 
             className="btn plum" 
-            style={{ fontSize: '1.2rem', padding: '0.8rem 2rem' }} 
+            style={{ fontSize: '1.2rem', padding: '1rem 3rem', width: '100%' }} 
             onClick={handleFinish}
-            disabled={!avatarVibe || !familiar}
+            disabled={!name || !locStyle || !familiar || !robeColor}
           >
-            Manifest the Keeper
+            Generate Integrated Sanctuary
           </button>
         </div>
       </div>
     </div>
   );
 }
-
