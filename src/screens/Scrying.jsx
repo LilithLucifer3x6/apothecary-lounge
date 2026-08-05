@@ -23,7 +23,7 @@ export default function Scrying({ pose }) {
   const [ledgerEntries, setLedgerEntries] = useState([]);
   const [evaluationStatus, setEvaluationStatus] = useState('');
   const [evaluationResult, setEvaluationResult] = useState('');
-
+  const [editId, setEditId] = useState(null);
   const reactionOptions = ['Peeling', 'Redness', 'Burning', 'Itching', 'Purging', 'Dryness', 'Darkening where it healed'];
   const zoneOptions = [
     'The visage, below — jaw and chin',

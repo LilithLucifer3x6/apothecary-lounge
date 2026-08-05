@@ -596,8 +596,8 @@ export default function Rootwork({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--rose)'}}>Mortal Potency Expiry</label>
-                  <input type="date" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }} />
+                  <label style={{color: 'var(--rose)'}}>Period After Opening (Months)</label>
+                  <input type="number" min="1" placeholder="e.g. 12" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }} />
                 </div>
 
                 <div className="field">

@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import SpeakerButton from '../components/SpeakerButton.jsx';
-import { buildRoutines } from '../lib/routine-engine.js';
+import { buildBaseRoutines } from '../lib/routine-engine.js';
 
 const ALTARS = [
   { id: 'crown', name: 'Crown', icon: G.crown },
@@ -79,7 +79,7 @@ export default function Altars({ pose }) {
       <div style={{ flex: 1 }}>
         <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
           {item.name} 
-          <span style={{ marginLeft: '0.4rem' }} dangerouslySetInnerHTML={{ __html: speakerMarkup(item.name) }} />
+          <span style={{ marginLeft: '0.4rem' }}><SpeakerButton text={item.name} /></span>
           {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
         </div>
         <div className="mt">{item.brand || 'Altar Step'} {item.desc ? `• ${item.desc}` : ''}</div>
@@ -89,7 +89,7 @@ export default function Altars({ pose }) {
 
   const renderAltarContent = () => {
     // Sort items by weight using engine logic
-    const { getWeight } = buildRoutines(items, {}, {});
+    const { getWeight } = buildBaseRoutines(items, {});
     const domainItems = items
       .filter(i => (i.domain || '').toLowerCase() === activeAltarId)
       .sort((a, b) => getWeight(a) - getWeight(b));
