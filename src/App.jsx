@@ -68,22 +68,20 @@ export default function App() {
   useEffect(() => {
     sessionStorage.setItem('al_currentScreen', currentScreen);
     if (currentScreen !== 'app') {
-      if (currentScreen === 'avatar' || currentScreen === 'intake' || currentScreen === 'loading') {
-        document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
-      } else {
-        document.body.style.backgroundImage = `url('/assets/app_bg.jpg')`;
-      }
+      document.body.style.backgroundImage = 'none';
+      document.body.style.backgroundColor = 'var(--bg)';
     }
   }, [currentScreen]);
 
   useEffect(() => {
     sessionStorage.setItem('al_activeTab', activeTab);
     if (currentScreen === 'app') {
-      if (activeTab === 'home') {
-        document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
+      const tab = TABS.find(t => t.id === activeTab);
+      if (tab && tab.bg) {
+        document.body.style.backgroundImage = `url('${tab.bg}')`;
       } else {
-        const tab = TABS.find(t => t.id === activeTab);
-        if (tab) document.body.style.backgroundImage = `url('${tab.bg}')`;
+        document.body.style.backgroundImage = 'none';
+        document.body.style.backgroundColor = 'var(--bg)';
       }
     }
   }, [activeTab, currentScreen]);
@@ -300,12 +298,9 @@ export default function App() {
           <div style={{ position: 'relative', zIndex: 5 }}>
             <div className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem 1rem', position: 'sticky', top: 0, zIndex: 40, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', borderBottom: '1.5px solid rgba(176, 136, 204, 0.15)', gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '0 0 auto' }}>
-              {activeTab !== 'home' && (
-                <button onClick={handleReturnToCottage} className="gear" title="Return to Sanctuary" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0 }}>
-                  <Icon name="house" style={{fontSize: '1.5rem'}} />
-                </button>
-              )}
-              {activeTab !== 'grim' && <div className="datemark" style={{ position: 'static', margin: 0 }}>{dateStr}</div>}
+              <button onClick={handleReturnToCottage} className="gear" title="Return to Sanctuary" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0, opacity: activeTab === 'home' ? 0.5 : 1 }}>
+                <Icon name="house" style={{fontSize: '1.5rem'}} />
+              </button>
             </div>
             
             <div className="tabs" style={{ display: 'flex', justifyContent: 'center', flex: 1, gap: '0.5rem', overflowX: 'auto', scrollbarWidth: 'none', padding: 0 }}>
