@@ -15,6 +15,7 @@ export default function Grimoire({ pose }) {
 
   const [profile, setProfile] = useState(null);
   const [overrideModal, setOverrideModal] = useState({ show: false, type: '', date: '' });
+  const [isoLogsDates, setIsoLogsDates] = useState(new Set());
 
   useEffect(() => {
     let mounted = true;
@@ -25,6 +26,17 @@ export default function Grimoire({ pose }) {
     supabase.from('routine_history').select('*').order('completed_at', { ascending: false }).limit(30)
       .then(({data}) => {
         if (mounted && data) setHistory(data);
+      });
+      
+    supabase.from('routine_history').select('routine_date, step_name, completed').eq('completed', true)
+      .then(({data}) => {
+        if (mounted && data) {
+          const dates = new Set(
+            data.filter(d => (d.step_name || '').toLowerCase().includes('isotretinoin') || (d.step_name || '').toLowerCase().includes('accutane'))
+                .map(d => d.routine_date)
+          );
+          setIsoLogsDates(dates);
+        }
       });
       
     fetchTodayEvents().then(events => {
@@ -104,6 +116,28 @@ export default function Grimoire({ pose }) {
     const hasIsotretinoin = allMeds.some(m => m.includes('isotretinoin') || m.includes('accutane'));
     const hasFridayInjections = dayOfWeek === 5 && allMeds.some(m => m.includes('enbrel') || m.includes('wegovy') || m.includes('methotrexate') || m.includes('etanercept'));
     
+    let isIsotretinoin80 = false;
+    if (hasIsotretinoin) {
+      const calDate = new Date(year, month, i);
+      const calDateString = calDate.getFullYear() + '-' + String(calDate.getMonth() + 1).padStart(2, '0') + '-' + String(calDate.getDate()).padStart(2, '0');
+      
+      const todayDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const todayString = todayDate.getFullYear() + '-' + String(todayDate.getMonth() + 1).padStart(2, '0') + '-' + String(todayDate.getDate()).padStart(2, '0');
+      
+      if (calDate.getTime() <= todayDate.getTime()) {
+         let pastDoses = 0;
+         isoLogsDates.forEach(dateStr => { if (dateStr < calDateString) pastDoses++; });
+         isIsotretinoin80 = (pastDoses % 2 === 1);
+      } else {
+         let pastDosesToToday = 0;
+         isoLogsDates.forEach(dateStr => { if (dateStr <= todayString) pastDosesToToday++; });
+         
+         const diffFutureDays = Math.round((calDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24));
+         const projectedTotal = pastDosesToToday + diffFutureDays - 1;
+         isIsotretinoin80 = (projectedTotal % 2 === 1);
+      }
+    }
+
     const dayEvents = monthEvents.filter(ev => {
       if (!ev.start) return false;
       const evDate = new Date(ev.start.dateTime || ev.start.date);
@@ -145,7 +179,7 @@ export default function Grimoire({ pose }) {
               const l = m.toLowerCase();
               if (l.includes('isotretinoin') || l.includes('accutane')) return (
                 <div key={i} className="pill" style={{ color: 'var(--plum)', borderColor: 'var(--border)' }}>
-                  {m} 40/80mg
+                  {m} {isIsotretinoin80 ? '80mg' : '40mg'}
                 </div>
               );
               if (dayOfWeek === 5 && (l.includes('methotrexate') || l.includes('wegovy') || l.includes('enbrel') || l.includes('etanercept'))) return (
