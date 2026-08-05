@@ -298,36 +298,37 @@ export default function App() {
       {currentScreen === 'app' && (
         <div id="s-app" style={{ position: 'relative', minHeight: '100vh' }}>
           <div style={{ position: 'relative', zIndex: 5 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 1rem', position: 'sticky', top: 0, zIndex: 10 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                {activeTab !== 'home' && (
-                  <button onClick={handleReturnToCottage} className="btn" title="Return to Sanctuary" style={{ padding: '0.4rem 0.6rem' }}>
-                    <Icon name="house" />
-                  </button>
-                )}
-                {activeTab !== 'grim' && <div className="datemark" style={{ position: 'static', margin: 0 }}>{dateStr}</div>}
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button onClick={() => setShowSettings(true)} className="btn" style={{ padding: '0.4rem 0.6rem' }} title="Configurations">
-                  <Icon name="ph-gear" />
+            <div className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem 1rem', position: 'sticky', top: 0, zIndex: 40, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', borderBottom: '1.5px solid rgba(176, 136, 204, 0.15)', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '0 0 auto' }}>
+              {activeTab !== 'home' && (
+                <button onClick={handleReturnToCottage} className="gear" title="Return to Sanctuary" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0 }}>
+                  <Icon name="house" style={{fontSize: '1.5rem'}} />
                 </button>
-              </div>
+              )}
+              {activeTab !== 'grim' && <div className="datemark" style={{ position: 'static', margin: 0 }}>{dateStr}</div>}
             </div>
             
-            <div className="tabs" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '0.2rem', padding: '0.5rem 1rem' }}>
+            <div className="tabs" style={{ display: 'flex', justifyContent: 'center', flex: 1, gap: '0.5rem', overflowX: 'auto', scrollbarWidth: 'none', padding: 0 }}>
               {TABS.map(t => (
                 <button
                   key={t.id}
                   className={`tb ${activeTab === t.id ? 'active on' : ''}`}
                   title={t.label}
                   onClick={() => handleTabClick(t.id)}
+                  style={{ whiteSpace: 'nowrap' }}
                 >
                   <Icon name={t.glyph} />
                   <span>{t.label}</span>
                 </button>
               ))}
             </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', flex: '0 0 auto' }}>
+              <button onClick={() => setShowSettings(true)} className="gear" title="Configurations" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0 }}>
+                <Icon name="ph-gear" style={{fontSize: '1.5rem'}} />
+              </button>
+            </div>
+          </div>
             
             <div id="main-content">
               {renderActiveTabContent()}
@@ -364,11 +365,14 @@ export default function App() {
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem' }}>Ancient Script</label>
                   <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
+                    <option value="Sacramento">Sacramento</option>
+                    <option value="Alex Brush">Alex Brush</option>
+                    <option value="Petit Formal Script">Petit Formal Script</option>
+                    <option value="Meddon">Meddon</option>
                     <option value="Cormorant Garamond">Cormorant Garamond</option>
                     <option value="Alice">Alice</option>
-                    <option value="Cinzel Decorative">Cinzel Decorative</option>
-                    <option value="Lora">Lora</option>
                     <option value="Elsie">Elsie</option>
+                    <option value="Lora">Lora</option>
                     <option value="Parisienne">Parisienne</option>
                     <option value="Allura">Allura</option>
                     <option value="Great Vibes">Great Vibes</option>

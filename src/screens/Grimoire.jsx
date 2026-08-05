@@ -104,14 +104,6 @@ export default function Grimoire({ pose }) {
     const hasIsotretinoin = allMeds.some(m => m.includes('isotretinoin') || m.includes('accutane'));
     const hasFridayInjections = dayOfWeek === 5 && allMeds.some(m => m.includes('enbrel') || m.includes('wegovy') || m.includes('methotrexate') || m.includes('etanercept'));
     
-    let isIsotretinoin80 = false;
-    if (hasIsotretinoin) {
-      const rxStart = profile?.intake_answers?.prescription_start_date;
-      const anchorDate = rxStart ? new Date(rxStart) : new Date(2026, 7, 3);
-      const diffDays = Math.round((currentDayTime - anchorDate.getTime()) / (1000 * 60 * 60 * 24));
-      isIsotretinoin80 = Math.abs(diffDays) % 2 === 1; 
-    }
-
     const dayEvents = monthEvents.filter(ev => {
       if (!ev.start) return false;
       const evDate = new Date(ev.start.dateTime || ev.start.date);
@@ -124,8 +116,8 @@ export default function Grimoire({ pose }) {
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span>{i}</span>
           <div style={{ display: 'flex', gap: '0.2rem' }}>
-            {hasRetie && <span title="Root Weaving" style={{ color: 'var(--gold)' }}><Icon name="star-four" /></span>}
-            {hasNails && <span title="Talon Honing" style={{ color: 'var(--gold)' }}><Icon name="sparkle" /></span>}
+            {hasRetie && <span title="Root Weaving" style={{ color: 'var(--plum)' }}><Icon name="star-four" /></span>}
+            {hasNails && <span title="Talon Honing" style={{ color: 'var(--plum)' }}><Icon name="sparkle" /></span>}
           </div>
         </div>
         
@@ -135,7 +127,7 @@ export default function Grimoire({ pose }) {
               <div key={idx} style={{ 
                 fontSize: '0.65rem', 
                 background: 'var(--plum-b)', 
-                color: 'var(--silver)', 
+                color: 'var(--plum)', 
                 padding: '2px 4px', 
                 borderRadius: '4px',
                 whiteSpace: 'nowrap',
@@ -152,12 +144,12 @@ export default function Grimoire({ pose }) {
             {allMeds.map((m, i) => {
               const l = m.toLowerCase();
               if (l.includes('isotretinoin') || l.includes('accutane')) return (
-                <div key={i} className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--border)' }}>
-                  {m} {isIsotretinoin80 ? '80mg' : '40mg'}
+                <div key={i} className="pill" style={{ color: 'var(--plum)', borderColor: 'var(--border)' }}>
+                  {m} 40/80mg
                 </div>
               );
               if (dayOfWeek === 5 && (l.includes('methotrexate') || l.includes('wegovy') || l.includes('enbrel') || l.includes('etanercept'))) return (
-                <div key={i} className="pill" style={{ color: 'var(--gold)', borderColor: 'var(--gold)' }}>
+                <div key={i} className="pill" style={{ color: 'var(--plum)', borderColor: 'var(--plum)' }}>
                   {m} (Weekly Injection)
                 </div>
               );
@@ -284,15 +276,15 @@ export default function Grimoire({ pose }) {
                         {allMeds.map((m, i) => {
                           const l = m.toLowerCase();
                           if (l.includes('isotretinoin') || l.includes('accutane')) {
-                            return <span key={i} className="pill" style={{ color: 'var(--silver)' }}>{m} 40/80mg</span>;
+                            return <span key={i} className="pill" style={{ color: 'var(--plum)' }}>{m} 40/80mg</span>;
                           }
                           if (isFriday && (l.includes('methotrexate') || l.includes('wegovy') || l.includes('enbrel') || l.includes('etanercept'))) {
-                            return <span key={i} className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>{m}</span>;
+                            return <span key={i} className="pill" style={{ color: 'var(--plum)', borderColor: 'var(--plum)' }}>{m}</span>;
                           }
                           return null;
                         })}
                       {hasDrysol && (
-                        <span className="pill" style={{ color: 'var(--rose)', borderColor: 'var(--rose)' }}>Drysol (Nightly)</span>
+                        <span className="pill" style={{ color: 'var(--plum)', borderColor: 'var(--plum)' }}>Drysol (Nightly)</span>
                       )}
 
                     </div>
@@ -312,7 +304,7 @@ export default function Grimoire({ pose }) {
         </h3>
         <div className="mt mb-4">The long count.</div>
         
-        <h2 style={{ fontSize: '2.5rem', color: 'var(--rose)', textAlign: 'center', margin: '1rem 0' }}>
+        <h2 style={{ fontSize: '2.5rem', color: 'var(--plum)', textAlign: 'center', margin: '1rem 0' }}>
           {new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}
         </h2>
         
@@ -332,15 +324,15 @@ export default function Grimoire({ pose }) {
         <div className="modal" style={{ display: 'block' }}>
           <div className="modal-content card" style={{ maxWidth: '400px' }}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ color: 'var(--rose)' }}>Rewrite Fate</h3>
-            <div className="mt mb-4" style={{ color: 'var(--rose)' }}>
+            <h3 style={{ color: 'var(--plum)' }}>Rewrite Fate</h3>
+            <div className="mt mb-4" style={{ color: 'var(--plum)' }}>
               Inscribe the date this rite was last fulfilled.
             </div>
             <input 
               type="date" 
               value={overrideModal.date} 
               onChange={e => setOverrideModal({ ...overrideModal, date: e.target.value })} 
-              style={{ width: '100%', padding: '0.8rem', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px', marginBottom: '1rem' }} 
+              style={{ width: '100%', padding: '0.8rem', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px', marginBottom: '1rem' }} 
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
               <button className="btn" onClick={() => setOverrideModal({ show: false, type: '', date: '' })}>Abandon</button>

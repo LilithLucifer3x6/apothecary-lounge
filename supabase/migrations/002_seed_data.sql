@@ -27,3 +27,5 @@ VALUES
   ('retinoid', 'benzoyl_peroxide', 'separate_days', 'Benzoyl peroxide can degrade certain retinoids and increase dryness.', 'reference'),
   ('acid', 'acid', 'advisory', 'Layering AHA and BHA can lead to over-exfoliation. Proceed with caution.', 'reference'),
   ('vitamin_c', 'niacinamide', 'advisory', 'Historical concern of flushing; mostly outdated but worth noting for sensitive skin.', 'reference');
+
+

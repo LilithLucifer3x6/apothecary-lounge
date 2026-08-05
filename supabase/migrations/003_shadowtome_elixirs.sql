@@ -8,3 +8,5 @@ CREATE TABLE IF NOT EXISTS public.shadowtome_elixirs (
   circadian_alignment text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+

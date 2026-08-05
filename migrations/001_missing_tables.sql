@@ -85,3 +85,5 @@ CREATE TRIGGER update_user_profile_modtime BEFORE UPDATE ON user_profile FOR EAC
 
 DROP TRIGGER IF EXISTS update_items_modtime ON items;
 CREATE TRIGGER update_items_modtime BEFORE UPDATE ON items FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+
+

@@ -50,7 +50,21 @@ export default function Rites({ pose }) {
       
       const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
       const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, realWearables);
-      setAmItems(am);
+      
+      const { data: isoLog } = await supabase.from('isotretinoin_log').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
+      const nextDose = isoLog ? (isoLog.last_confirmed_dose_mg === 40 ? 80 : 40) : 40;
+      
+      const isoItem = {
+        id: `iso-${nextDose}`,
+        name: `Isotretinoin, oral (${nextDose}mg)`,
+        category: 'immutable',
+        isInjected: true,
+        desc: 'Systemic / Morning Rite',
+        isRx: true,
+        glyph: 'pill'
+      };
+      
+      setAmItems([isoItem, ...am]);
       setPmItems(pm);
       setConflicts(checkConflicts(itemsArr, userProfile || {}));
       
@@ -119,30 +133,32 @@ export default function Rites({ pose }) {
     
     if (isNowChecked) {
       newChecked.add(id);
-      // Individually log completion to database immediately
-      supabase.from('routine_history').insert({
-        completed_at: new Date().toISOString(),
-        items_used: [id]
-      }).then();
+      if (id.startsWith('iso-')) {
+        const dose = parseInt(id.split('-')[1]);
+        supabase.from('isotretinoin_log').insert({ last_confirmed_dose_mg: dose }).then();
+      } else {
+        supabase.from('routine_history').insert({ completed_at: new Date().toISOString(), items_used: [id] }).then();
+      }
     } else {
       newChecked.delete(id);
-      const today = new Date().toISOString().split('T')[0];
-      supabase.from('routine_history')
-        .select('*')
-        .contains('items_used', [id])
-        .gte('completed_at', today)
-        .then(({ data }) => {
-          if (data && data.length > 0) {
-            data.forEach(row => {
-              const updated = row.items_used.filter(x => x !== id);
-              if (updated.length === 0) {
-                supabase.from('routine_history').delete().eq('id', row.id).then();
-              } else {
-                supabase.from('routine_history').update({ items_used: updated }).eq('id', row.id).then();
-              }
-            });
-          }
-        });
+      if (id.startsWith('iso-')) {
+        // Technically unchecking could mean deleting the last log, but for safety we just ignore unchecks on rx.
+      } else {
+        const today = new Date().toISOString().split('T')[0];
+        supabase.from('routine_history').select('*').contains('items_used', [id]).gte('completed_at', today)
+          .then(({ data }) => {
+            if (data && data.length > 0) {
+              data.forEach(row => {
+                const updated = row.items_used.filter(x => x !== id);
+                if (updated.length === 0) {
+                  supabase.from('routine_history').delete().eq('id', row.id).then();
+                } else {
+                  supabase.from('routine_history').update({ items_used: updated }).eq('id', row.id).then();
+                }
+              });
+            }
+          });
+      }
     }
     setCheckedIds(newChecked);
   };

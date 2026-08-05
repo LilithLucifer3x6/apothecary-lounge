@@ -34,7 +34,7 @@
     the nearest one that has. Inventing new visual treatment is a defect.
 12. **Icons are drawn, never emoji.** Phosphor for functional marks, game-icons for ritual marks, AI
     draws an inline SVG when neither is exact. Resemblance to the real object is the standard.
-13. **Health Connect is read-only and the only broker.** Never call a manufacturer SDK directly.
+13. **Wearable integration uses a dual-platform approach.** Terra is the broker on the web build, and Android Health Connect is the broker on the Android APK build. This is an intentional platform exception.
 14. **Everything degrades cleanly.** No wearable connected means those features simply do not appear.
 15. **Prescriptions are always named with strength.** Never a generic label.
 16. **No streaks, no guilt, no notifications** except the two restock nudges.
@@ -215,6 +215,7 @@ Prescriptions. Cannot be Banished by ordinary means; provider-directed discontin
 - Tacrolimus 0.1% ointment. Zone: orbital and eyelid. Eyelid eczema.
 - Drysol, aluminium chloride. Zone: underarms. Hyperhidrosis. Bedtime, dry skin only, never on freshly shaved or irritated skin.
 - Zoryve 0.3% foam. Insurance denied refill. Runs out with the current bottle, then Banished as unobtainable.
+- Isotretinoin, oral (40mg/80mg). Zone: Systemic. Daily step in the Morning Rite. Anchor date: August 3, 2026, first dose 40mg. Alternates between 40mg and 80mg based on the *last confirmed dose*, not the calendar date. If the last confirmed dose was 40mg, the next suggested dose is 80mg. If there is no confirmed dose yet (empty state), the next suggested dose defaults to 40mg (anchor value). Missing a day does not advance the sequence.
 
 Tretinoin titration. The pharmacist directed one to two nights weekly, increasing as tolerated toward nightly. The app supports that progression and never drives it alone.
 - Scheduling begins at one to two nights weekly.
@@ -245,7 +246,7 @@ Reached by a gear control in the header, present on every screen.
 
 ## 19. Wearables and health data
 
-Data arrives through Android Health Connect, which acts as the single broker. The application never talks to a manufacturer's service directly.
+Data arrives through Terra on the web build, and Android Health Connect on the Android APK. This split is intentional to support seamless syncing of Samsung Health, RingConn, and Renpho across both platforms. Google Calendar sync remains independent.
 - Sources the user connects: the RingConn companion application for the Gen 3 ring; Samsung Health for the Galaxy watch; and the Renpho application for its devices. Each is toggled independently and states plainly what it contributes.
 - Setup is guided rather than a permission wall. The app names each source, explains in one line what it will draw and why, and lets the user decline any single stream while keeping the rest.
 - Data drawn, and what each is for:
@@ -364,7 +365,7 @@ Build in this order. Each phase should run before the next begins.
 
 Estimate, given existing Postgres experience and a prior successful Android build: a working core in one to two weeks of evenings, full scope in a further three to five weeks.
 
-Cost. Everything except AI is free at this scale: Supabase free tier, Vercel free tier, and a sideloaded Android build. AI is pay-per-use with no subscription. At Haiku 4.5 rates of one dollar per million input tokens and five per million output, with AI carrying the manual burden described elsewhere, steady state is roughly eighteen cents per month, about two dollars and twenty cents per year. The one-time bulk import of around eighty products at three photos each costs sixty-eight cents at standard rates, or thirty-four cents through the Batch API. First month totals roughly fifty cents. Three controls hold this envelope: Haiku serves all extraction, classification, and parsing; the Batch API halves anything not time-sensitive; and prompt caching cuts repeated input by about ninety percent, which applies to nearly every intake call since the system prompt is identical across them.
+Cost. Everything except AI is free at this scale: Supabase free tier, Vercel free tier, and a sideloaded Android build. AI is pay-per-use with no subscription. The application explicitly uses Claude Sonnet 5 (`claude-sonnet-5`) globally for all extraction, classification, parsing, and conversational tasks. At Claude Sonnet 5 rates, with AI carrying the manual burden described elsewhere, steady state is roughly 3-5 dollars per month. The one-time bulk import of around eighty products costs less than two dollars. Three controls hold this envelope: Sonnet 5 serves everything; the Batch API halves anything not time-sensitive; and prompt caching cuts repeated input by about ninety percent, which applies to nearly every intake call since the system prompt is identical across them.
 
 ## 31. The Steeping — specified, not built
 

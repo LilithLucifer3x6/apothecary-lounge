@@ -1,8 +1,8 @@
-﻿-- The Apothecary Lounge â€” Core Schema
+-- The Apothecary Lounge — Core Schema
 -- Run this in the Supabase SQL Editor
 
 -- User profile (single row for single-user app)
-CREATE TABLE user_profile (
+CREATE TABLE IF NOT EXISTS user_profile (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   display_name TEXT,
   avatar_config JSONB DEFAULT '{}',
@@ -14,8 +14,8 @@ CREATE TABLE user_profile (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Items (all inventory â€” consumables, tools, composites)
-CREATE TABLE items (
+-- Items (all inventory — consumables, tools, composites)
+CREATE TABLE IF NOT EXISTS items (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   brand TEXT,
@@ -56,7 +56,7 @@ CREATE TABLE items (
 );
 
 -- Composite components junction
-CREATE TABLE composite_components (
+CREATE TABLE IF NOT EXISTS composite_components (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   composite_id UUID REFERENCES items(id) ON DELETE CASCADE,
   component_id UUID REFERENCES items(id) ON DELETE CASCADE,
@@ -65,7 +65,7 @@ CREATE TABLE composite_components (
 );
 
 -- Codex (ingredient block list)
-CREATE TABLE codex_entries (
+CREATE TABLE IF NOT EXISTS codex_entries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   ingredient TEXT NOT NULL,
   reason TEXT,
@@ -75,7 +75,7 @@ CREATE TABLE codex_entries (
 );
 
 -- Conflict rules (reference data for synergy engine)
-CREATE TABLE conflict_rules (
+CREATE TABLE IF NOT EXISTS conflict_rules (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   ingredient_a TEXT NOT NULL,
   ingredient_b TEXT NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE conflict_rules (
 );
 
 -- Routine history
-CREATE TABLE routine_history (
+CREATE TABLE IF NOT EXISTS routine_history (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   routine_date DATE NOT NULL DEFAULT CURRENT_DATE,
   routine_type TEXT NOT NULL CHECK (routine_type IN ('morning', 'evening')),
@@ -102,7 +102,7 @@ CREATE TABLE routine_history (
 );
 
 -- Reactions
-CREATE TABLE reactions (
+CREATE TABLE IF NOT EXISTS reactions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   item_id UUID REFERENCES items(id) ON DELETE CASCADE,
   reaction_type TEXT NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE reactions (
 );
 
 -- Appointments (salon, recurring rituals)
-CREATE TABLE appointments (
+CREATE TABLE IF NOT EXISTS appointments (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   glyph TEXT,
@@ -127,7 +127,7 @@ CREATE TABLE appointments (
 );
 
 -- Journal entries (Shadow Tome)
-CREATE TABLE journal_entries (
+CREATE TABLE IF NOT EXISTS journal_entries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   entry_date DATE NOT NULL DEFAULT CURRENT_DATE,
   moods TEXT[] DEFAULT '{}',
@@ -139,14 +139,14 @@ CREATE TABLE journal_entries (
 );
 
 -- Storage locations (user-extensible)
-CREATE TABLE storage_locations (
+CREATE TABLE IF NOT EXISTS storage_locations (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL UNIQUE,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- Glyph registry (uniqueness enforcement)
-CREATE TABLE glyph_registry (
+CREATE TABLE IF NOT EXISTS glyph_registry (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   glyph_name TEXT NOT NULL UNIQUE,
   assigned_to TEXT NOT NULL,
@@ -155,7 +155,7 @@ CREATE TABLE glyph_registry (
 );
 
 -- Tretinoin titration tracking
-CREATE TABLE titration_log (
+CREATE TABLE IF NOT EXISTS titration_log (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   check_date DATE NOT NULL DEFAULT CURRENT_DATE,
   current_frequency TEXT,
@@ -196,7 +196,7 @@ CREATE POLICY "Allow all access" ON titration_log FOR ALL USING (true) WITH CHEC
 -- Seed Data for The Apothecary Lounge
 
 INSERT INTO codex_entries (ingredient, reason, is_permanent, source)
-VALUES ('lavender', 'Known sensitivity â€” permanent entry', true, 'system');
+VALUES ('lavender', 'Known sensitivity — permanent entry', true, 'system');
 
 INSERT INTO storage_locations (name)
 VALUES 
@@ -232,3 +232,5 @@ CREATE TABLE IF NOT EXISTS public.shadowtome_elixirs (
   circadian_alignment text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+
