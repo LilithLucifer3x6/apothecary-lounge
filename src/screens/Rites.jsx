@@ -270,7 +270,7 @@ export default function Rites({ pose }) {
         )}
         <div style={{ flex: 1 }}>
           <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.4rem' }}>
-            <span style={{ color: 'var(--silver)', fontSize: '1.8rem', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={getGlyph(item)} /></span>
+            <span style={{ color: 'var(--silver)', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={getGlyph(item)} /></span>
             {displayName} 
             <SpeakerButton text={displayName} />
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
@@ -287,18 +287,7 @@ export default function Rites({ pose }) {
 
   return (
     <div style={{ padding: '1rem' }}>
-      <div style={{ 
-        textAlign: 'center', 
-        marginBottom: '2rem', 
-        fontSize: '1.3rem',
-        color: 'var(--rose)',
-        textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 4px #000',
-        letterSpacing: '1px'
-      }}>
-        The Daily Rites
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'start', marginTop: '1.5rem', maxWidth: '1200px', margin: '1.5rem auto 0 auto' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'start', marginTop: '1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Left Column: Morning Invocation */}
         <div className="card">
