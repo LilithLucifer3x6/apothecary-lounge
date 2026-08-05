@@ -1,11 +1,18 @@
 import React from 'react';
 import { ic } from '../lib/icons.jsx';
 
-export default function Icon({ name }) {
+export default function Icon({ name, ...props }) {
   if (!name) return null;
   
   // Fix missing ph-gear
   let finalName = name === 'ph-gear' || name === 'gear' ? 'gear' : name;
-  return <span style={{ display: 'inline-flex', alignItems: 'center', filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.8))' }} dangerouslySetInnerHTML={{ __html: ic(finalName) }} />;
+  return (
+    <span 
+      style={{ display: 'inline-flex', alignItems: 'center', filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.8))', ...props.style }} 
+      {...props}
+    >
+      {ic(finalName)}
+    </span>
+  );
 }
 

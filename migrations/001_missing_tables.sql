@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS user_profile (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Items (Rootwork inventory)
 CREATE TABLE IF NOT EXISTS items (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -35,6 +36,7 @@ CREATE TABLE IF NOT EXISTS items (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Routine History (Tracking Rites/Altars completions)
 CREATE TABLE IF NOT EXISTS routine_history (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -43,6 +45,7 @@ CREATE TABLE IF NOT EXISTS routine_history (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Journal Entries (ShadowTome)
 CREATE TABLE IF NOT EXISTS journal_entries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -50,6 +53,7 @@ CREATE TABLE IF NOT EXISTS journal_entries (
   moods TEXT[],
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 -- ShadowTome Elixirs
 CREATE TABLE IF NOT EXISTS shadowtome_elixirs (
@@ -60,6 +64,7 @@ CREATE TABLE IF NOT EXISTS shadowtome_elixirs (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Somatic Reactions (Scrying)
 CREATE TABLE IF NOT EXISTS somatic_reactions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -69,6 +74,7 @@ CREATE TABLE IF NOT EXISTS somatic_reactions (
   resolved BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 -- Function to handle `updated_at` triggers
 CREATE OR REPLACE FUNCTION update_modified_column() 

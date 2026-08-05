@@ -15,6 +15,7 @@ export default function Grimoire({ pose }) {
 
   const [profile, setProfile] = useState(null);
   const [overrideModal, setOverrideModal] = useState({ show: false, type: '', date: '' });
+  const [isoLogsDates, setIsoLogsDates] = useState(new Set());
 
   useEffect(() => {
     let mounted = true;
@@ -25,6 +26,17 @@ export default function Grimoire({ pose }) {
     supabase.from('routine_history').select('*').order('completed_at', { ascending: false }).limit(30)
       .then(({data}) => {
         if (mounted && data) setHistory(data);
+      });
+      
+    supabase.from('routine_history').select('routine_date, step_name, completed').eq('completed', true)
+      .then(({data}) => {
+        if (mounted && data) {
+          const dates = new Set(
+            data.filter(d => (d.step_name || '').toLowerCase().includes('isotretinoin') || (d.step_name || '').toLowerCase().includes('accutane'))
+                .map(d => d.routine_date)
+          );
+          setIsoLogsDates(dates);
+        }
       });
       
     fetchTodayEvents().then(events => {
@@ -106,10 +118,24 @@ export default function Grimoire({ pose }) {
     
     let isIsotretinoin80 = false;
     if (hasIsotretinoin) {
-      const rxStart = profile?.intake_answers?.prescription_start_date;
-      const anchorDate = rxStart ? new Date(rxStart) : new Date(2026, 7, 3);
-      const diffDays = Math.round((currentDayTime - anchorDate.getTime()) / (1000 * 60 * 60 * 24));
-      isIsotretinoin80 = Math.abs(diffDays) % 2 === 1; 
+      const calDate = new Date(year, month, i);
+      const calDateString = calDate.getFullYear() + '-' + String(calDate.getMonth() + 1).padStart(2, '0') + '-' + String(calDate.getDate()).padStart(2, '0');
+      
+      const todayDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const todayString = todayDate.getFullYear() + '-' + String(todayDate.getMonth() + 1).padStart(2, '0') + '-' + String(todayDate.getDate()).padStart(2, '0');
+      
+      if (calDate.getTime() <= todayDate.getTime()) {
+         let pastDoses = 0;
+         isoLogsDates.forEach(dateStr => { if (dateStr < calDateString) pastDoses++; });
+         isIsotretinoin80 = (pastDoses % 2 === 1);
+      } else {
+         let pastDosesToToday = 0;
+         isoLogsDates.forEach(dateStr => { if (dateStr <= todayString) pastDosesToToday++; });
+         
+         const diffFutureDays = Math.round((calDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24));
+         const projectedTotal = pastDosesToToday + diffFutureDays - 1;
+         isIsotretinoin80 = (projectedTotal % 2 === 1);
+      }
     }
 
     const dayEvents = monthEvents.filter(ev => {

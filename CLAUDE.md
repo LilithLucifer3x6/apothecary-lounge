@@ -237,7 +237,7 @@ The Echo accepts prospective items. A photograph or screenshot of something unde
 
 Reached by a gear control in the header, present on every screen.
 - Typography: font size and typeface selection, applied globally with full reflow.
-- Text-to-speech, defaulting to off. When off, no speaker control appears anywhere in the application — the controls are not merely inactive, they are absent, and the interface must be free of them. When switched on, a small unobtrusive speaker appears at the right of every readable element: routine steps, weekly entries, calendar days, appointed days, altar contents, inventory rows, and Pool findings. Titles and tab labels never carry one.
+- Text-to-speech, defaulting to off. When off, no speaker control appears anywhere in the application — the controls are not merely inactive, they are absent, and the interface must be free of them. When switched on, a small unobtrusive speaker appears at the right of readable elements, and unlike earlier specs, titles and headers DO carry the speaker control (e.g. "The Apothecary").
 - Voice selection offers several feminine voices rather than a single default, drawn from those the device provides, with rate and pitch adjustable. The chosen voice persists.
 - Integrations: Health Connect authorisation and per-source selection, covering the ring, the watch, and any other connected wellness source. Only data the application actually uses is requested — sleep, readiness, activity, and heavy-sweat signals. Google Calendar authorisation lives here too.
 - Resets, at three levels: an individual entry may be deleted anywhere it was entered; a single tab or the routine alone may be reset without touching anything else; and a full reset returns the application to first launch. Destructive resets confirm before acting and name exactly what will be lost.
@@ -311,7 +311,8 @@ Products are added by photo. Optical character recognition extracts label text, 
 ## 28. Visual and voice
 
 Palette: obsidian ground, crimson and purple accents, silver and platinum metals. Green is excluded. Gold is permitted sparingly.
-- Typography leans calligraphic. Display and headers use flowing fountain-pen and copperplate forms — the hand of an old grimoire or a summoning scroll, not plain block lettering. Readability governs: functional text, step labels, and anything read repeatedly stays legible, using a calligraphic face only where it does not cost clarity.
+- Typography is strictly Sacramento. All text, display, headers, and functional text uses Sacramento, a flowing fountain-pen script form. Do not use plain block lettering or sans-serifs. The atmospheric aesthetic governs everything.
+- Color Contrast: The app prioritizes atmospheric aesthetics over strict WCAG contrast rules. For example, text uses a dark `--plum` color to blend into the gothic aesthetic, rather than forcing high-contrast white or gray on dark backgrounds.
 - Texture references aged parchment and ink, not wood, leather, or clay.
 - Theme is Virgin Islander and Hoodoo heritage blended with cottagecore goth, handled with respect and never as caricature.
 - Display names are consistent. Every tab and section heading carries the definite article: The Mortal Rites, The Grimoire, The Altars, The Rootwork, The Scrying Pool, The Shadow Tome. Running prose follows ordinary grammar.

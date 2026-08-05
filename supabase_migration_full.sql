@@ -1,8 +1,8 @@
-﻿-- The Apothecary Lounge â€” Core Schema
+-- The Apothecary Lounge / Shadow & Sanctuary — Core Schema
 -- Run this in the Supabase SQL Editor
 
 -- User profile (single row for single-user app)
-CREATE TABLE user_profile (
+CREATE TABLE IF NOT EXISTS user_profile (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   display_name TEXT,
   avatar_config JSONB DEFAULT '{}',
@@ -14,8 +14,9 @@ CREATE TABLE user_profile (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Items (all inventory â€” consumables, tools, composites)
-CREATE TABLE items (
+
+-- Items (all inventory — consumables, tools, composites)
+CREATE TABLE IF NOT EXISTS items (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   brand TEXT,
@@ -55,8 +56,9 @@ CREATE TABLE items (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Composite components junction
-CREATE TABLE composite_components (
+CREATE TABLE IF NOT EXISTS composite_components (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   composite_id UUID REFERENCES items(id) ON DELETE CASCADE,
   component_id UUID REFERENCES items(id) ON DELETE CASCADE,
@@ -64,8 +66,9 @@ CREATE TABLE composite_components (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Codex (ingredient block list)
-CREATE TABLE codex_entries (
+CREATE TABLE IF NOT EXISTS codex_entries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   ingredient TEXT NOT NULL,
   reason TEXT,
@@ -74,8 +77,9 @@ CREATE TABLE codex_entries (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Conflict rules (reference data for synergy engine)
-CREATE TABLE conflict_rules (
+CREATE TABLE IF NOT EXISTS conflict_rules (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   ingredient_a TEXT NOT NULL,
   ingredient_b TEXT NOT NULL,
@@ -86,8 +90,9 @@ CREATE TABLE conflict_rules (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Routine history
-CREATE TABLE routine_history (
+CREATE TABLE IF NOT EXISTS routine_history (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   routine_date DATE NOT NULL DEFAULT CURRENT_DATE,
   routine_type TEXT NOT NULL CHECK (routine_type IN ('morning', 'evening')),
@@ -101,134 +106,150 @@ CREATE TABLE routine_history (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Reactions
-CREATE TABLE reactions (
+
+-- Somatic Reactions (Merged with reactions)
+CREATE TABLE IF NOT EXISTS somatic_reactions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   item_id UUID REFERENCES items(id) ON DELETE CASCADE,
-  reaction_type TEXT NOT NULL,
   zone TEXT,
-  severity INTEGER CHECK (severity >= 1 AND severity <= 5),
+  severity TEXT,
+  symptoms JSONB DEFAULT '[]',
+  reaction_type TEXT,
   notes TEXT,
-  logged_at TIMESTAMPTZ DEFAULT now()
+  created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Appointments (salon, recurring rituals)
-CREATE TABLE appointments (
+
+-- Appointments
+CREATE TABLE IF NOT EXISTS appointments (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  glyph TEXT,
-  cadence_weeks INTEGER,
-  last_completed DATE,
-  next_due DATE,
-  is_optional BOOLEAN DEFAULT true,
+  title TEXT NOT NULL,
+  practitioner TEXT,
+  appointment_time TIMESTAMPTZ NOT NULL,
+  location TEXT,
   notes TEXT,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
+  reminders JSONB DEFAULT '[]',
+  created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Journal entries (Shadow Tome)
-CREATE TABLE journal_entries (
+
+-- Journal Entries
+CREATE TABLE IF NOT EXISTS journal_entries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   entry_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  moods TEXT[] DEFAULT '{}',
-  body_text TEXT,
-  is_breathing_session BOOLEAN DEFAULT false,
-  breathing_duration_seconds INTEGER,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
-
--- Storage locations (user-extensible)
-CREATE TABLE storage_locations (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL UNIQUE,
+  mood TEXT,
+  notes TEXT,
+  photos TEXT[],
+  moon_phase TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Glyph registry (uniqueness enforcement)
-CREATE TABLE glyph_registry (
+
+-- Storage Locations
+CREATE TABLE IF NOT EXISTS storage_locations (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  glyph_name TEXT NOT NULL UNIQUE,
-  assigned_to TEXT NOT NULL,
-  assigned_type TEXT NOT NULL CHECK (assigned_type IN ('item', 'category', 'ritual', 'altar', 'appointment', 'system')),
+  name TEXT NOT NULL,
+  description TEXT,
+  environment_type TEXT CHECK (environment_type IN ('dry', 'humid', 'refrigerated', 'dark')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Tretinoin titration tracking
-CREATE TABLE titration_log (
+
+-- Glyph Registry
+CREATE TABLE IF NOT EXISTS glyph_registry (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  check_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  current_frequency TEXT,
-  tolerance_responses JSONB DEFAULT '{}',
-  recommendation TEXT,
-  user_confirmed BOOLEAN DEFAULT false,
+  name TEXT NOT NULL,
+  svg_path TEXT NOT NULL,
+  tags TEXT[],
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+
+-- Titration Log
+CREATE TABLE IF NOT EXISTS titration_log (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  item_id UUID REFERENCES items(id) ON DELETE CASCADE,
+  date DATE NOT NULL DEFAULT CURRENT_DATE,
+  dosage_amount DECIMAL(10,2),
+  dosage_unit TEXT,
   notes TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Disable RLS for single-user app (no auth needed)
+
+-- ShadowTome Elixirs
+CREATE TABLE IF NOT EXISTS shadowtome_elixirs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  brand TEXT,
+  name TEXT NOT NULL,
+  ingredients JSONB,
+  caffeine_content TEXT,
+  steep_time TEXT,
+  circadian_alignment TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+
+-- Enable RLS on all tables
 ALTER TABLE user_profile ENABLE ROW LEVEL SECURITY;
 ALTER TABLE items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE composite_components ENABLE ROW LEVEL SECURITY;
 ALTER TABLE codex_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conflict_rules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE routine_history ENABLE ROW LEVEL SECURITY;
-ALTER TABLE reactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE somatic_reactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE journal_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE storage_locations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE glyph_registry ENABLE ROW LEVEL SECURITY;
 ALTER TABLE titration_log ENABLE ROW LEVEL SECURITY;
+ALTER TABLE shadowtome_elixirs ENABLE ROW LEVEL SECURITY;
 
 -- Allow anon access to all tables (single-user, private app)
+DROP POLICY IF EXISTS "Allow all access" ON user_profile;
 CREATE POLICY "Allow all access" ON user_profile FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON items;
 CREATE POLICY "Allow all access" ON items FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON composite_components;
 CREATE POLICY "Allow all access" ON composite_components FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON codex_entries;
 CREATE POLICY "Allow all access" ON codex_entries FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON conflict_rules;
 CREATE POLICY "Allow all access" ON conflict_rules FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON routine_history;
 CREATE POLICY "Allow all access" ON routine_history FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all access" ON reactions FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON somatic_reactions;
+CREATE POLICY "Allow all access" ON somatic_reactions FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON appointments;
 CREATE POLICY "Allow all access" ON appointments FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON journal_entries;
 CREATE POLICY "Allow all access" ON journal_entries FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON storage_locations;
 CREATE POLICY "Allow all access" ON storage_locations FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON glyph_registry;
 CREATE POLICY "Allow all access" ON glyph_registry FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON titration_log;
 CREATE POLICY "Allow all access" ON titration_log FOR ALL USING (true) WITH CHECK (true);
--- Seed Data for The Apothecary Lounge
+DROP POLICY IF EXISTS "Allow all access" ON shadowtome_elixirs;
+CREATE POLICY "Allow all access" ON shadowtome_elixirs FOR ALL USING (true) WITH CHECK (true);
 
-INSERT INTO codex_entries (ingredient, reason, is_permanent, source)
-VALUES ('lavender', 'Known sensitivity â€” permanent entry', true, 'system');
-
-INSERT INTO storage_locations (name)
-VALUES 
-  ('Mini fridge'),
-  ('Bathroom shelf'),
-  ('Vanity'),
-  ('Basket'),
-  ('Cabinet'),
-  ('Shower caddy');
-
-INSERT INTO appointments (name, cadence_weeks, glyph, is_optional)
-VALUES
-  ('Root Weaving', 8, 'locs', false),
-  ('Talon Honing', 2, 'talon', false),
-  ('The Soaking', 2, 'bathtub', false),
-  ('The Smoothing', NULL, 'depilatory', true),
-  ('The Paring', NULL, 'razor', true);
-
-INSERT INTO conflict_rules (ingredient_a, ingredient_b, conflict_type, description, source)
-VALUES
-  ('retinoid', 'acid', 'separate_days', 'May cause excess irritation and compromise the skin barrier.', 'reference'),
-  ('retinoid', 'vitamin_c', 'separate_am_pm', 'Differing optimal pH ranges and increased irritation risk.', 'reference'),
-  ('retinoid', 'benzoyl_peroxide', 'separate_days', 'Benzoyl peroxide can degrade certain retinoids and increase dryness.', 'reference'),
-  ('acid', 'acid', 'advisory', 'Layering AHA and BHA can lead to over-exfoliation. Proceed with caution.', 'reference'),
-  ('vitamin_c', 'niacinamide', 'advisory', 'Historical concern of flushing; mostly outdated but worth noting for sensitive skin.', 'reference');
-CREATE TABLE IF NOT EXISTS public.shadowtome_elixirs (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  brand text,
-  name text NOT NULL,
-  ingredients jsonb,
-  caffeine_content text,
-  steep_time text,
-  circadian_alignment text,
-  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
-);
+-- MERGE reactions INTO somatic_reactions safely
+-- We only copy rows that don't already perfectly match on item_id, zone, severity, and DATE(created_at)
+DO $$
+BEGIN
+    IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'reactions') THEN
+        INSERT INTO somatic_reactions (item_id, zone, severity, reaction_type, notes, created_at)
+        SELECT r.item_id, r.zone, r.severity, r.reaction_type, r.notes, r.logged_at
+        FROM reactions r
+        WHERE NOT EXISTS (
+            SELECT 1 FROM somatic_reactions sr 
+            WHERE sr.item_id = r.item_id 
+              AND sr.zone = r.zone 
+              AND sr.severity = r.severity 
+              AND DATE(sr.created_at) = DATE(r.logged_at)
+        );
+        
+        -- Drop the old table now that it is merged
+        DROP TABLE reactions;
+    END IF;
+END $$;
