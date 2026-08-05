@@ -30,6 +30,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   padding: 0.5rem 1rem;
+  font-weight: 600;
 }
 
 button.gear, button.icon-btn, button[title="Return to Sanctuary"] {
