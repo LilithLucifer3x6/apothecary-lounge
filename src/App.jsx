@@ -67,7 +67,11 @@ export default function App() {
 
   useEffect(() => {
     sessionStorage.setItem('al_currentScreen', currentScreen);
-    if (currentScreen !== 'app') {
+    if (currentScreen === 'splash' || currentScreen === 'landing') {
+      document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+    } else if (currentScreen === 'avatar' || currentScreen === 'intake') {
       document.body.style.backgroundImage = 'none';
       document.body.style.backgroundColor = 'var(--bg)';
     }
@@ -79,9 +83,13 @@ export default function App() {
       const tab = TABS.find(t => t.id === activeTab);
       if (tab && tab.bg) {
         document.body.style.backgroundImage = `url('${tab.bg}')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
       } else {
-        document.body.style.backgroundImage = 'none';
-        document.body.style.backgroundColor = 'var(--bg)';
+        // 'home' tab or unknown — use sanctuary bg
+        document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
       }
     }
   }, [activeTab, currentScreen]);
@@ -256,7 +264,7 @@ export default function App() {
 
       {currentScreen === 'avatar' && (
         <div id="s-av" className="land">
-          <ConjureVisage onComplete={() => { 
+          <ConjureVisage onFinish={() => { 
             const isCompletedLocally = localStorage.getItem('intake_completed') === 'true';
             if (!isCompletedLocally) {
               setCurrentScreen('intake');
