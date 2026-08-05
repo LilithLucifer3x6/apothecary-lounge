@@ -5,11 +5,9 @@ export function initAnthropic(apiKey) {
   localStorage.setItem('anthropic_api_key', apiKey);
 }
 
-// Auto-initialize with key from txt if not stored in localStorage
-const k1 = 'sk-ant-api03--wB5H1EHE55XTB';
-const k2 = '__3KKj-KHHyyqFvrwu3069cxocvnIz5omcY-';
-const k3 = 'sogVeBoDtk18JLWDuasPqL3cTRI6P5ZYMPew-vrmRygAA';
-const savedKey = localStorage.getItem('anthropic_api_key') || (k1 + k2 + k3);
+// Initialize from localStorage or environment variables
+const envKey = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_ANTHROPIC_API_KEY : null;
+const savedKey = localStorage.getItem('anthropic_api_key') || envKey;
 if (savedKey) {
   initAnthropic(savedKey);
 }
@@ -365,7 +363,8 @@ export async function analyzeProduct(name, category, ingredients) {
           type: 'object',
           properties: {
             requires_rinse: { type: 'boolean' },
-            layering_weight: { type: 'integer', description: '1 (watery) to 10 (heavy balm/oil)' }
+            layering_weight: { type: 'integer', description: '1 (watery) to 10 (heavy balm/oil)' },
+            uses_per_week: { type: 'number', description: 'Recommended frequency of use per week. Default to 7 for daily items, 1-3 for masks/exfoliants.' }
           }
         }
       },
@@ -492,3 +491,4 @@ export async function parseTeaImage(images) {
 
   throw new Error("Failed to extract tea details from image");
 }
+

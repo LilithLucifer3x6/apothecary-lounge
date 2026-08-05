@@ -4,7 +4,7 @@ import { ic, G } from '../lib/icons.js';
 import { attachVoice } from '../lib/voice.js';
 import * as AI from '../lib/ai-service.js';
 import { parseTeaImage } from '../lib/ai-engine.js';
-import { speakerMarkup } from '../lib/tts.js';
+import SpeakerButton from '../components/SpeakerButton.jsx';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
 
@@ -72,8 +72,8 @@ export default function ShadowTome({ pose }) {
 
   const loadHealthData = async () => {
     try {
-      const { data } = await supabase.from('user_profile').select('health_data').single();
-      if (data && data.health_data && data.health_data.readiness) {
+      const { data } = await supabase.from('user_profile').select('health_data').maybeSingle();
+      if (data?.health_data?.readiness) {
         setReadiness(data.health_data.readiness.toLowerCase());
       }
     } catch (e) {
@@ -210,6 +210,7 @@ export default function ShadowTome({ pose }) {
   const startMeditation = () => {
     if (isBreathing) return;
     setIsBreathing(true);
+    clearBreathTimers(); // Prevents overlapping cycles if triggered rapidly
     runMeditationCycle(3); // Run 3 cycles
   };
 
@@ -277,7 +278,7 @@ export default function ShadowTome({ pose }) {
         <div className="tome-main-col">
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3>The Inner Sanctum <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Inner Sanctum") }} /></h3>
+            <h3>The Inner Sanctum <SpeakerButton text="The Inner Sanctum" /></h3>
             <div className="note mb-4">"The ink is your own."</div>
             
             <div className="field" style={{ marginTop: '2.5rem' }}>
@@ -356,7 +357,7 @@ export default function ShadowTome({ pose }) {
           
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Elixirs <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Herbal Elixirs") }} /></h3>
+            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Elixirs <SpeakerButton text="The Herbal Elixirs" /></h3>
             
             <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 1rem', color: 'var(--rose)', cursor: 'pointer', borderRadius: '8px', marginTop: '1rem' }}>
               <Icon name="ph-camera" /> 
@@ -371,7 +372,7 @@ export default function ShadowTome({ pose }) {
 
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Pantry <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Herbal Pantry") }} /></h3>
+            <h3 style={{ fontSize: '1.5rem' }}>The Herbal Pantry <SpeakerButton text="The Herbal Pantry" /></h3>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {pantry.length > 0 ? pantry.map(tea => (
@@ -400,7 +401,7 @@ export default function ShadowTome({ pose }) {
 
           <div className="card">
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem' }}>The Ethereal Vapors <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Ethereal Vapors") }} /></h3>
+            <h3 style={{ fontSize: '1.5rem' }}>The Ethereal Vapors <SpeakerButton text="The Ethereal Vapors" /></h3>
             <div className="mt mb-4">Document the potency of infused provisions.</div>
             
             <div className="field">
@@ -593,3 +594,4 @@ export default function ShadowTome({ pose }) {
     </div>
   );
 }
+

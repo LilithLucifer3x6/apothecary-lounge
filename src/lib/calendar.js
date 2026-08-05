@@ -36,3 +36,4 @@ export async function markAppointmentDone(appointmentType) {
   // In a real app, this would push a new event to Google Calendar for +2 weeks or +8 weeks.
   return true;
 }
+

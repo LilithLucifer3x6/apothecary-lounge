@@ -27,3 +27,4 @@ export const cor = `<span class="corner tl"></span><span class="corner tr"></spa
 export function div(sym) {
   return `<div class="divider"><span>${sym}</span></div>`;
 }
+

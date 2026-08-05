@@ -44,7 +44,13 @@ export async function fetchTodayEvents() {
       }
     });
     
-    if (!response.ok) throw new Error("Failed to fetch events");
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem('gcal_token');
+        accessToken = null;
+      }
+      throw new Error("Failed to fetch events");
+    }
     const data = await response.json();
     return data.items || [];
   } catch (err) {
@@ -67,7 +73,13 @@ export async function fetchMonthEvents(year, month) {
       }
     });
     
-    if (!response.ok) throw new Error("Failed to fetch month events");
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem('gcal_token');
+        accessToken = null;
+      }
+      throw new Error("Failed to fetch month events");
+    }
     const data = await response.json();
     return data.items || [];
   } catch (err) {
@@ -75,3 +87,4 @@ export async function fetchMonthEvents(year, month) {
     return [];
   }
 }
+

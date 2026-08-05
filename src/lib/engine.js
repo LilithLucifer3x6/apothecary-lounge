@@ -15,8 +15,8 @@ export function generateRite(items, timeOfDay, date) {
 
   // Sort by layering_weight (thinnest first)
   activeItems.sort((a, b) => {
-    const weightA = a.layering_weight !== undefined ? a.layering_weight : 50;
-    const weightB = b.layering_weight !== undefined ? b.layering_weight : 50;
+    const weightA = a.layering_weight !== undefined ? a.layering_weight : 5;
+    const weightB = b.layering_weight !== undefined ? b.layering_weight : 5;
     return weightA - weightB;
   });
 
@@ -114,3 +114,4 @@ export function generateWeeklySchedule(items, appointments = []) {
 
   return schedule;
 }
+

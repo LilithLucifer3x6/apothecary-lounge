@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { attachVoice } from '../lib/voice.js';
-import { speakerMarkup } from '../lib/tts.js';
+import SpeakerButton from '../components/SpeakerButton.jsx';
 import * as AI from '../lib/ai-service.js';
 import Icon from '../components/Icon.jsx';
 import { G } from '../lib/icons.js';
@@ -38,6 +38,8 @@ export default function Intake({ onComplete }) {
     { role: 'assistant', content: 'Greetings. I am the Keeper of The Lounge. Let us prepare your chamber. What brings you to this place?' }
   ]);
   const [chatInput, setChatInput] = useState('');
+  const [showKeyInput, setShowKeyInput] = useState(false);
+  const [keyInputStr, setKeyInputStr] = useState('');
   const chatLogRef = useRef(null);
 
   useEffect(() => {
@@ -56,14 +58,13 @@ export default function Intake({ onComplete }) {
     }
   }, [chatHistory]);
 
-  const handleSetAiKey = async (e) => {
-    e.preventDefault();
-    const key = prompt('Offer the Key of Anthropic:');
-    if (key) {
+  const handleSetAiKeySubmit = async () => {
+    if (keyInputStr.trim()) {
       const { initAnthropic } = await import('../lib/ai-engine.js');
-      initAnthropic(key);
+      initAnthropic(keyInputStr.trim());
       setIsReady(true);
       setAiStatus('AI activated.');
+      setShowKeyInput(false);
       setTimeout(() => setAiStatus(''), 2000);
     }
   };
@@ -114,11 +115,25 @@ export default function Intake({ onComplete }) {
     const conditions = selectedConditions;
     const traditions = selectedTraditions;
 
+    const filteredRxList = noRx ? [] : rxList.filter(rx => rx.name && rx.name.trim() !== '');
+    const filteredOralList = noOral ? [] : oralList.filter(o => o && o.trim() !== '');
+    const filteredAlgList = noAlg ? [] : algList.filter(a => a && a.trim() !== '');
+
     const avatarConfig = JSON.parse(localStorage.getItem('avatar_config') || '{}');
     const { data: existing } = await supabase.from('user_profile').select('id').maybeSingle();
     const profileData = {
       intake_completed: true,
-      intake_answers: { concerns, conditions, traditions, noRx, noOral, noAlg, rxList, oralList, algList },
+      intake_answers: { 
+        concerns, 
+        conditions, 
+        traditions, 
+        noRx, 
+        noOral, 
+        noAlg, 
+        rxList: filteredRxList, 
+        oralList: filteredOralList, 
+        algList: filteredAlgList 
+      },
       avatar_config: avatarConfig
     };
     
@@ -187,7 +202,7 @@ export default function Intake({ onComplete }) {
 
   const renderTitle = (titleText) => (
     <h3>
-      {titleText} <span dangerouslySetInnerHTML={{ __html: speakerMarkup(titleText) }} />
+      {titleText} <SpeakerButton text={titleText} />
     </h3>
   );
 
@@ -206,7 +221,7 @@ export default function Intake({ onComplete }) {
             onClick={() => setPath('ai')}
             style={{ 
               background: path === 'ai' ? 'rgba(138,0,32,0.6)' : 'transparent', 
-              color: path === 'ai' ? 'var(--white)' : 'var(--parch)', 
+              color: path === 'ai' ? 'var(--rose)' : 'var(--silver)', 
               border: path === 'ai' ? '1px solid var(--crimson)' : '1px solid var(--border)',
               fontSize: '1.3rem',
               padding: '0.6rem 1.2rem'
@@ -219,7 +234,7 @@ export default function Intake({ onComplete }) {
             onClick={() => setPath('fast')}
             style={{ 
               background: path === 'fast' ? 'rgba(138,0,32,0.6)' : 'transparent', 
-              color: path === 'fast' ? 'var(--white)' : 'var(--parch)',
+              color: path === 'fast' ? 'var(--rose)' : 'var(--silver)',
               border: path === 'fast' ? '1px solid var(--crimson)' : '1px solid var(--border)',
               fontSize: '1.3rem',
               padding: '0.6rem 1.2rem'
@@ -252,7 +267,7 @@ export default function Intake({ onComplete }) {
                 key={idx} 
                 className={`msg ${msg.role === 'assistant' ? 'ai' : 'user'}`} 
                 style={{ 
-                  color: msg.role === 'assistant' ? 'var(--parch)' : 'var(--white)', 
+                  color: msg.role === 'assistant' ? 'var(--silver)' : 'var(--rose)', 
                   marginBottom: '1rem',
                   textAlign: msg.role === 'user' ? 'right' : 'left'
                 }}
@@ -272,11 +287,25 @@ export default function Intake({ onComplete }) {
             </div>
             <button className="btn plum" onClick={sendChatMessage}>Whisper</button>
           </div>
-          <div id="ai-status" style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--rose)', height: '1rem', flexShrink: 0 }}>
+          <div id="ai-status" style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--rose)', minHeight: '1.5rem', flexShrink: 0 }}>
             {aiStatus ? (
               aiStatus
             ) : !isReady ? (
-              <>The Key of Anthropic is missing. <a href="#" onClick={handleSetAiKey} style={{ color: 'var(--rose)', textDecoration: 'underline' }}>Offer the Key</a></>
+              showKeyInput ? (
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input 
+                    type="password" 
+                    placeholder="sk-ant..." 
+                    value={keyInputStr} 
+                    onChange={e => setKeyInputStr(e.target.value)} 
+                    style={{ padding: '0.2rem 0.5rem', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px' }}
+                  />
+                  <button className="btn sm plum" onClick={handleSetAiKeySubmit}>Offer</button>
+                  <button className="btn sm" onClick={() => setShowKeyInput(false)} style={{ background: 'transparent' }}>Abandon</button>
+                </div>
+              ) : (
+                <>The Key of Anthropic is missing. <a href="#" onClick={(e) => { e.preventDefault(); setShowKeyInput(true); }} style={{ color: 'var(--rose)', textDecoration: 'underline' }}>Offer the Key</a></>
+              )
             ) : null}
           </div>
         </div>
@@ -369,19 +398,19 @@ export default function Intake({ onComplete }) {
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div className="field">
-                          <label style={{ color: 'var(--parch)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Name</label>
+                          <label style={{ color: 'var(--silver)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Name</label>
                           <VoiceInput value={rx.name} onChange={e => updateRx(i, 'name', e.target.value)} placeholder="e.g. Tretinoin" />
                         </div>
                         <div className="field">
-                          <label style={{ color: 'var(--parch)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Strength</label>
+                          <label style={{ color: 'var(--silver)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Strength</label>
                           <VoiceInput value={rx.strength} onChange={e => updateRx(i, 'strength', e.target.value)} placeholder="e.g. 0.05%" />
                         </div>
                         <div className="field">
-                          <label style={{ color: 'var(--parch)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Zone</label>
+                          <label style={{ color: 'var(--silver)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Zone</label>
                           <VoiceInput value={rx.zone} onChange={e => updateRx(i, 'zone', e.target.value)} placeholder="e.g. Face" />
                         </div>
                         <div className="field">
-                          <label style={{ color: 'var(--parch)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Frequency</label>
+                          <label style={{ color: 'var(--silver)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Frequency</label>
                           <VoiceInput value={rx.frequency} onChange={e => updateRx(i, 'frequency', e.target.value)} placeholder="e.g. Nightly" />
                         </div>
                       </div>
@@ -551,3 +580,4 @@ export default function Intake({ onComplete }) {
     </div>
   );
 }
+

@@ -5,7 +5,7 @@ import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
 import { attachVoice } from '../lib/voice.js';
 import { buildRoutines } from '../lib/routine-engine.js';
-import { speakerMarkup } from '../lib/tts.js';
+import SpeakerButton from '../components/SpeakerButton.jsx';
 
 export default function Rootwork({ pose }) {
   const [items, setItems] = useState([]);
@@ -102,11 +102,12 @@ export default function Rootwork({ pose }) {
     reader.readAsDataURL(file);
   };
 
-  const handleEchoScry = async () => {
-    if (!echoInput.trim()) return;
+  const handleEchoScry = async (inputStr = echoInput) => {
+    const query = (typeof inputStr === 'string' ? inputStr : echoInput).trim();
+    if (!query) return;
     
     // LAVENDER BAN
-    if (echoInput.toLowerCase().includes('lavender')) {
+    if (query.toLowerCase().includes('lavender')) {
       setEchoStatus(<span><Icon name="warning" /> WARNING: Lavender detected. This formula is sealed in the Crypt of Ashes.</span>);
       setEchoResult('Lavender is strictly forbidden from your routine. It has been sealed in the Crypt of Ashes.');
       
@@ -129,7 +130,7 @@ export default function Rootwork({ pose }) {
     try {
       const { evaluateScryingPool } = await import('../lib/ai-engine.js');
       // Pass empty reactions object since Echo checks prospective items, not current reactions
-      const reply = await evaluateScryingPool(echoInput.trim(), profile?.intake_answers || {}, items, {});
+      const reply = await evaluateScryingPool(query, profile?.intake_answers || {}, items, {});
       setEchoStatus('');
       setEchoResult(reply);
     } catch (err) {
@@ -155,7 +156,8 @@ export default function Rootwork({ pose }) {
         const details = await parseProductImage(base64, mime);
         const formulaStr = `${details.brand || ''} ${details.name || ''} ${details.category || ''}`;
         setEchoInput(formulaStr.trim());
-        setEchoStatus('Vision extracted. Ready to analyze.');
+        setEchoStatus('Vision extracted. Divining...');
+        await handleEchoScry(formulaStr.trim());
       } catch (err) {
         console.error(err);
         setEchoStatus('The vision was clouded. Offer image anew.');
@@ -353,7 +355,7 @@ export default function Rootwork({ pose }) {
       </div>
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Apothecary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Apothecary") }} /></h3>
+        <h3>The Apothecary <SpeakerButton text="The Apothecary" /></h3>
         <div className="mt mb-4">Your sacred elixirs and treatments.</div>
         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
           {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
@@ -362,7 +364,7 @@ export default function Rootwork({ pose }) {
 
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Reliquary <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Reliquary") }} /></h3>
+        <h3>The Reliquary <SpeakerButton text="The Reliquary" /></h3>
         <div className="mt mb-4">Your instruments of ritual and restorative tools.</div>
         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
           {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">Your Reliquary contains no instruments.</div>}
@@ -373,7 +375,7 @@ export default function Rootwork({ pose }) {
         
         <div className="card mb-4" style={{ marginBottom: 0 }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Waning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Waning") }} /></h3>
+          <h3>The Waning <SpeakerButton text="The Waning" /></h3>
           <div className="mt mb-4">Relics nearing the end of their mortal potency.</div>
           <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
             {(() => {
@@ -391,7 +393,7 @@ export default function Rootwork({ pose }) {
 
         <div className="card mb-4" style={{ marginBottom: 0 }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Summoning Scroll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Summoning Scroll") }} /></h3>
+          <h3>The Summoning Scroll <SpeakerButton text="The Summoning Scroll" /></h3>
           <div className="mt mb-4">Items needing replenishment.</div>
           <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
             {ebbing.length === 0 ? <div className="mt">No active summons.</div> : ebbing.map(renderRow)}
@@ -400,7 +402,7 @@ export default function Rootwork({ pose }) {
 
         <div className="card mb-4" style={{ marginBottom: 0 }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Silver Toll <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Silver Toll") }} /></h3>
+          <h3>The Silver Toll <SpeakerButton text="The Silver Toll" /></h3>
           <div className="mt mb-4">The material cost of your active rituals, tied to frequency of devotion.</div>
           <div>
             <div style={{ fontSize: '2rem', color: 'var(--rose)' }}>
@@ -414,7 +416,21 @@ export default function Rootwork({ pose }) {
                   if (item.price && item.period_after_opening_months) {
                     const price = parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
                     const months = parseInt(item.period_after_opening_months, 10) || 1;
-                    const usesPerWeek = item.category?.toLowerCase().includes('mask') ? (item.category?.toLowerCase().includes('rinse') ? 2 : 5) : 7;
+                    let usesPerWeek = 7;
+                    try {
+                      if (item.behavior_flags) {
+                        const b = typeof item.behavior_flags === 'string' ? JSON.parse(item.behavior_flags) : item.behavior_flags;
+                        if (typeof b.uses_per_week === 'number') {
+                          usesPerWeek = b.uses_per_week;
+                        } else {
+                           usesPerWeek = item.category?.toLowerCase().includes('mask') ? (item.category?.toLowerCase().includes('rinse') ? 2 : 5) : 7;
+                        }
+                      } else {
+                         usesPerWeek = item.category?.toLowerCase().includes('mask') ? (item.category?.toLowerCase().includes('rinse') ? 2 : 5) : 7;
+                      }
+                    } catch(e) {
+                      usesPerWeek = item.category?.toLowerCase().includes('mask') ? (item.category?.toLowerCase().includes('rinse') ? 2 : 5) : 7;
+                    }
                     const usageFactor = usesPerWeek / 7;
                     totalMonthly += (price / months) * usageFactor;
                   }
@@ -427,7 +443,7 @@ export default function Rootwork({ pose }) {
 
         <div className="card mb-4" style={{ marginBottom: 0 }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Echo <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Echo") }} /></h3>
+          <h3>The Echo <SpeakerButton text="The Echo" /></h3>
           <div className="mt mb-4">Reveal the hidden nature of a formula.</div>
           
           <div className="field" style={{ marginBottom: '1rem' }}>
@@ -632,3 +648,4 @@ export default function Rootwork({ pose }) {
     </div>
   );
 }
+

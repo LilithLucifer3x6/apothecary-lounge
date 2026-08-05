@@ -51,6 +51,7 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
   const rxList = intake.rxList || [];
   const orals = oralsList.map(o => (o.name || '').toLowerCase());
   const hasIsotretinoin = orals.some(m => m.includes('isotretinoin') || m.includes('accutane'));
+  const isImmunosuppressed = orals.some(m => m.includes('methotrexate') || m.includes('etanercept') || m.includes('enbrel'));
 
   const virtualRxItems = rxList.map((rx, idx) => {
     const rxName = (rx.name || '').toLowerCase();
@@ -60,7 +61,7 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
       name: rx.name,
       category: 'treatment',
       domain: rxName.includes('drysol') ? 'vessel' : 'visage',
-      risk_flags: { retinoid: rxName.includes('tretinoin') },
+      risk_flags: { retinoid: rxName.includes('tretinoin') || rxName.includes('retin') || rxName.includes('adapalene') || rxName.includes('tazarotene') || rxName.includes('trifarotene') },
       behavior_flags: { layering_weight: 9 }, // Default treatment weight
       ingredients: [],
       isInjected: false,
@@ -82,8 +83,8 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
     const name = (item.name || '').toLowerCase();
     const cat = (item.category || '').toLowerCase();
     
-    // HARD MEDICAL BLOCK: Isotretinoin (Oral) + Tretinoin (Topical)
-    if (hasIsotretinoin && name.includes('tretinoin') && !name.includes('isotretinoin')) {
+    // HARD MEDICAL BLOCK: Isotretinoin (Oral) + Retinoid/Acid (Topical)
+    if (hasIsotretinoin && (item.risk_flags.retinoid || item.risk_flags.acid || item.risk_flags.exfoliant)) {
       return; // Stripped entirely to prevent chemical burns
     }
 
@@ -136,7 +137,7 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
 
   // Zone-based Conflict Rescheduling
   // If Retinoid is in PM, move Vitamin C and Exfoliating Acids to AM
-  const pmRetinoids = pmItems.filter(i => i.risk_flags?.retinoid || (i.name || '').toLowerCase().includes('tretinoin'));
+  const pmRetinoids = pmItems.filter(i => i.risk_flags?.retinoid);
   if (pmRetinoids.length > 0) {
     // Find all Vit C and Acids in PM that share a zone with the retinoid
     for (let i = pmItems.length - 1; i >= 0; i--) {
@@ -199,9 +200,12 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
 
   const immutableWindDown = [
     { id: 'wd-1', name: 'The Cleansing Waters', category: 'immutable', domain: 'vessel', weight: 0.1, isInjected: true },
-    { id: 'wd-2', name: 'The Drying', desc: 'With the aid of another', category: 'immutable', domain: 'vessel', weight: 0.2, isInjected: true },
-    { id: 'wd-3', name: 'The Purging of Blemishes & The Warm Gaze', desc: 'Purify implements before and after.', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true }
+    { id: 'wd-2', name: 'The Drying', desc: 'With the aid of another', category: 'immutable', domain: 'vessel', weight: 0.2, isInjected: true }
   ];
+  
+  if (!isImmunosuppressed) {
+    immutableWindDown.push({ id: 'wd-3', name: 'The Purging of Blemishes & The Warm Gaze', desc: 'Purify implements before and after.', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true });
+  }
   
   if (isWeekend) {
     // Left intentionally blank. Rituals must be user-defined.
@@ -235,7 +239,7 @@ export function checkConflicts(items, userProfile = {}) {
 
   // ZONAL CONFLICT RESOLUTION
   for (const [zone, zoneItems] of Object.entries(zoneMap)) {
-    const hasRetinoid = zoneItems.some(i => i.risk_flags.retinoid || i.name.toLowerCase().includes('tretinoin'));
+    const hasRetinoid = zoneItems.some(i => i.risk_flags.retinoid);
     const hasAcid = zoneItems.some(i => i.risk_flags.acid || i.risk_flags.exfoliant);
     const hasVitC = zoneItems.some(i => i.risk_flags.vitamin_c);
     
@@ -256,10 +260,10 @@ export function checkConflicts(items, userProfile = {}) {
     }
   }
 
-  // HARD MEDICAL BLOCK: Isotretinoin + Tretinoin
-  const hasTopicalTret = items.some(i => i.name.toLowerCase().includes('tretinoin') && !i.name.toLowerCase().includes('isotretinoin'));
-  if (hasIsotretinoin && hasTopicalTret) {
-    conflicts.push("CRITICAL HAZARD: Oral Isotretinoin detected. Concomitant use of topical Tretinoin causes severe chemical burns and barrier damage. Topical Tretinoin has been suspended from all Rites.");
+  // HARD MEDICAL BLOCK: Isotretinoin + Retinoids/Acids
+  const hasTopicalRetinoidOrAcid = items.some(i => i.risk_flags.retinoid || i.risk_flags.acid || i.risk_flags.exfoliant);
+  if (hasIsotretinoin && hasTopicalRetinoidOrAcid) {
+    conflicts.push("CRITICAL HAZARD: Oral Isotretinoin detected. Concomitant use of topical retinoids or exfoliating acids causes severe chemical burns and barrier damage. They have been suspended from all Rites.");
   }
 
   // 4C HAIR & INTIMATE WARDS
@@ -296,3 +300,4 @@ export function checkConflicts(items, userProfile = {}) {
 
   return conflicts;
 }
+

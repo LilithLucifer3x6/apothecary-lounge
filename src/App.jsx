@@ -66,11 +66,26 @@ export default function App() {
 
   useEffect(() => {
     sessionStorage.setItem('al_currentScreen', currentScreen);
+    if (currentScreen !== 'app') {
+      if (currentScreen === 'avatar' || currentScreen === 'intake' || currentScreen === 'loading') {
+        document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
+      } else {
+        document.body.style.backgroundImage = `url('/assets/app_bg.jpg')`;
+      }
+    }
   }, [currentScreen]);
 
   useEffect(() => {
     sessionStorage.setItem('al_activeTab', activeTab);
-  }, [activeTab]);
+    if (currentScreen === 'app') {
+      if (activeTab === 'home') {
+        document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
+      } else {
+        const tab = TABS.find(t => t.id === activeTab);
+        if (tab) document.body.style.backgroundImage = `url('${tab.bg}')`;
+      }
+    }
+  }, [activeTab, currentScreen]);
 
   useEffect(() => {
     verifyGlyphs();
@@ -101,18 +116,7 @@ export default function App() {
       else window.speechSynthesis.onvoiceschanged = populateVoices;
     }
     
-    const initScreen = localStorage.getItem('avatar_config') ? (sessionStorage.getItem('al_currentScreen') || 'splash') : 'splash';
-    const initTab = localStorage.getItem('avatar_config') ? (sessionStorage.getItem('al_activeTab') || 'rites') : 'rites';
-    if (initScreen === 'app') {
-      if (initTab === 'home') {
-        document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
-      } else {
-        const tab = TABS.find(t => t.id === initTab);
-        if (tab) document.body.style.backgroundImage = `url('${tab.bg}')`;
-      }
-    } else {
-      document.body.style.backgroundImage = `url('/assets/app_bg.jpg')`;
-    }
+    // Initial background state is now handled by the useEffects tracking currentScreen and activeTab
     
     // Sync settings with profile in background
     supabase.from('user_profile').select('*').maybeSingle().then(({ data: profile }) => {
@@ -166,10 +170,8 @@ export default function App() {
     const hasAvatar = !!localStorage.getItem('avatar_config');
 
     if (!profile && !hasAvatar) {
-      document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
       setCurrentScreen('avatar');
     } else if (!isCompletedLocally && (!profile || !profile.intake_completed)) {
-      document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
       setCurrentScreen('intake');
     } else {
       setCurrentScreen('app');
@@ -183,14 +185,6 @@ export default function App() {
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
-    if (tabId === 'home') {
-      document.body.style.backgroundImage = `url('/assets/bg_sanctuary.jpg')`;
-      return;
-    }
-    const tab = TABS.find(t => t.id === tabId);
-    if (tab) {
-      document.body.style.backgroundImage = `url('${tab.bg}')`;
-    }
   };
 
   const saveSettings = async (newSettings) => {
@@ -478,17 +472,45 @@ export default function App() {
                   
                   <button onClick={async () => {
                     if (window.confirm("Do you truly wish to shatter the First Inscription? You will be cast back to the initial inquiry.")) {
-                      const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
-                      if (profile) {
-                        await supabase.from('user_profile').update({ intake_completed: false }).eq('id', profile.id);
+                      try {
+                        const { data: profile, error: profileErr } = await supabase.from('user_profile').select('*').maybeSingle();
+                        if (profileErr) throw profileErr;
+                        if (profile) {
+                          const { error: updateErr } = await supabase.from('user_profile').update({ intake_completed: false }).eq('id', profile.id);
+                          if (updateErr) throw updateErr;
+                        }
+                        setShowSettings(false);
+                        setCurrentScreen('intake');
+                      } catch (err) {
+                        console.error('Failed to shatter inscription', err);
+                        alert('Failed to communicate with the Sanctuary. Please try again.');
                       }
-                      setShowSettings(false);
-                      setCurrentScreen('intake');
                     }
                   }} className="btn g" style={{ width: '100%', marginBottom: '1rem' }}>Shatter the First Inscription</button>
 
-                  <button onClick={() => {
+                  <button onClick={async () => {
                     if (window.confirm("Do you truly wish to raze this Sanctuary to ash? All saved rites, items, and settings shall be lost to the void. This cannot be undone.")) {
+                      try {
+                        const { data: profile, error: profileErr } = await supabase.from('user_profile').select('*').maybeSingle();
+                        if (profileErr) throw profileErr;
+                        if (profile) {
+                          const { error: err1 } = await supabase.from('user_profile').delete().eq('id', profile.id);
+                          if (err1) throw err1;
+                          const { error: err2 } = await supabase.from('somatic_reactions').delete().not('id', 'is', null);
+                          if (err2) throw err2;
+                          const { error: err3 } = await supabase.from('shadowtome_elixirs').delete().not('id', 'is', null);
+                          if (err3) throw err3;
+                          const { error: err4 } = await supabase.from('journal_entries').delete().not('id', 'is', null);
+                          if (err4) throw err4;
+                          const { error: err5 } = await supabase.from('routine_history').delete().not('id', 'is', null);
+                          if (err5) throw err5;
+                          const { error: err6 } = await supabase.from('items').delete().not('id', 'is', null);
+                          if (err6) throw err6;
+                        }
+                      } catch (err) {
+                        console.error('Failed to erase Codex', err);
+                        alert('Failed to erase Codex. Continuing local wipe.');
+                      }
                       localStorage.clear();
                       sessionStorage.clear();
                       window.location.reload();
@@ -505,3 +527,4 @@ export default function App() {
     </>
   );
 }
+

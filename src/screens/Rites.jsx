@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.js';
 import Icon from '../components/Icon.jsx';
-import { speakerMarkup } from '../lib/tts.js';
+import SpeakerButton from '../components/SpeakerButton.jsx';
 import { buildRoutines, checkConflicts } from '../lib/routine-engine.js';
+import { getReadiness, getHeavySweat, getSleepDuration } from '../lib/health-connect.js';
 
 export default function Rites({ pose }) {
   const [items, setItems] = useState([]);
@@ -37,13 +38,18 @@ export default function Rites({ pose }) {
       const itemsArr = data || [];
       setItems(itemsArr);
       
-      const mockWearables = {
-        sleepDuration: 5.5,
-        heavySweat: true
+      const sleepDuration = await getSleepDuration();
+      const heavySweat = await getHeavySweat();
+      const readinessObj = await getReadiness();
+      
+      const realWearables = {
+        sleepDuration: parseFloat(sleepDuration),
+        heavySweat: heavySweat,
+        readiness: readinessObj?.score || 100
       };
       
       const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
-      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, mockWearables);
+      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, realWearables);
       setAmItems(am);
       setPmItems(pm);
       setConflicts(checkConflicts(itemsArr, userProfile || {}));
@@ -120,6 +126,12 @@ export default function Rites({ pose }) {
       }).then();
     } else {
       newChecked.delete(id);
+      const today = new Date().toISOString().split('T')[0];
+      supabase.from('routine_history')
+        .delete()
+        .contains('items_used', [id])
+        .gte('completed_at', today)
+        .then();
     }
     setCheckedIds(newChecked);
   };
@@ -166,7 +178,7 @@ export default function Rites({ pose }) {
       <div style={{ flex: 1 }}>
         <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
           {time} 
-          <span style={{ marginLeft: '0.4rem' }} dangerouslySetInnerHTML={{ __html: speakerMarkup(`${time}. ${desc}`) }} />
+          <SpeakerButton text={`${time}. ${desc}`} style={{ marginLeft: '0.4rem' }} />
         </div>
         <div className="mt">{desc}</div>
       </div>
@@ -233,7 +245,7 @@ export default function Rites({ pose }) {
           <div className={`nm ${rxClass}`} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.4rem' }}>
             <span style={{ color: 'var(--silver)' }}><Icon name={getGlyph(item)} /></span>
             {displayName} 
-            <span dangerouslySetInnerHTML={{ __html: speakerMarkup(displayName) }} />
+            <SpeakerButton text={displayName} />
             {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
           </div>
           {item.isInjected ? (
@@ -263,7 +275,7 @@ export default function Rites({ pose }) {
         {/* Left Column: Morning Invocation */}
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Morning Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Morning Invocation') }} /></h3>
+          <h3>The Morning Invocation <SpeakerButton text='The Morning Invocation' /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
             {amItems.length > 0 ? amItems.map(i => renderStep(i)) : <div className="empty">The altar is bare. No morning rites are required.</div>}
             {amItems.length > 0 && (
@@ -284,7 +296,7 @@ export default function Rites({ pose }) {
         {/* Center Column: The Long Hours */}
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Long Hours <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Long Hours') }} /></h3>
+          <h3>The Long Hours <SpeakerButton text='The Long Hours' /></h3>
           <div className="mt mb-4" style={{ textAlign: 'center' }}>The Order of the Day</div>
           
           {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift.', 'var(--crimson-b)')}
@@ -297,7 +309,7 @@ export default function Rites({ pose }) {
         {/* Right Column: Evening Invocation */}
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Evening Invocation <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Evening Invocation') }} /></h3>
+          <h3>The Evening Invocation <SpeakerButton text='The Evening Invocation' /></h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
             {pmItems.length > 0 ? pmItems.map(i => renderStep(i)) : <div className="empty">The altar is bare. No evening rites are required.</div>}
             {pmItems.length > 0 && (
@@ -320,11 +332,11 @@ export default function Rites({ pose }) {
       {/* Keeper's Warning (Full Width Below) */}
       {conflicts.length > 0 && (
         <div className="card mt-4" style={{ background: 'var(--card-bg-alt, rgba(100,20,20,0.5))', borderColor: '#882222' }}>
-          <h3 style={{ color: 'var(--rose)' }}>The Keeper's Warning <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Keeper's Warning") }} /></h3>
+          <h3 style={{ color: 'var(--rose)' }}>The Keeper's Warning <SpeakerButton text="The Keeper's Warning" /></h3>
           <ul style={{ marginTop: '0.5rem', color: 'var(--rose)', paddingLeft: '1.5rem' }}>
             {conflicts.map((c, idx) => (
               <li key={idx}>
-                {c} <span dangerouslySetInnerHTML={{ __html: speakerMarkup(c) }} style={{ marginLeft: '0.4rem', verticalAlign: 'middle' }} />
+                {c} <SpeakerButton text={c} style={{ marginLeft: '0.4rem', verticalAlign: 'middle' }} />
               </li>
             ))}
           </ul>
@@ -334,3 +346,4 @@ export default function Rites({ pose }) {
     </div>
   );
 }
+

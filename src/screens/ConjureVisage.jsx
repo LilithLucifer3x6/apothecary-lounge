@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
+import { supabase } from '../lib/supabase.js';
 
 export default function ConjureVisage({ onComplete }) {
   const [name, setName] = useState('The Keeper');
@@ -25,10 +26,20 @@ export default function ConjureVisage({ onComplete }) {
     { id: 'snake', label: 'Garden Serpent', img: '/assets/fam_snake.jpg' }
   ];
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (!avatarVibe || !familiar) return;
     const config = { name, avatarVibe, familiar };
     localStorage.setItem('avatar_config', JSON.stringify(config));
+    
+    try {
+      const { data: profile } = await supabase.from('user_profile').select('id').maybeSingle();
+      if (profile) {
+        await supabase.from('user_profile').update({ avatar_config: config }).eq('id', profile.id);
+      }
+    } catch(e) {
+      console.warn('Could not sync avatar to backend', e);
+    }
+    
     if (onComplete) onComplete(config);
   };
 
@@ -124,3 +135,4 @@ export default function ConjureVisage({ onComplete }) {
     </div>
   );
 }
+

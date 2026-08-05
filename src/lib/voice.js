@@ -21,9 +21,11 @@ export function attachVoice(inputEl) {
   recognition.lang = 'en-US';
 
   let isListening = false;
+  let originalValue = '';
 
   recognition.onstart = () => {
     isListening = true;
+    originalValue = inputEl.value;
     btn.classList.add('listening');
   };
 
@@ -39,8 +41,10 @@ export function attachVoice(inputEl) {
       }
     }
 
-    // Combine any final transcript with the interim updates
-    inputEl.value = finalTranscript || interimTranscript;
+    // Append to original value instead of overwriting
+    const currentSpoken = finalTranscript || interimTranscript;
+    const separator = (originalValue && originalValue.trim().length > 0 && currentSpoken) ? ' ' : '';
+    inputEl.value = originalValue + separator + currentSpoken;
     
     // Trigger input event to update any tied reactive frameworks/listeners
     inputEl.dispatchEvent(new Event('input', { bubbles: true }));
@@ -66,3 +70,4 @@ export function attachVoice(inputEl) {
     }
   });
 }
+

@@ -80,3 +80,4 @@ export function speakerMarkup(text) {
   if (!window.speechSynthesis) return '';
   return `<button type="button" class="spk" style="${ttsEnabled ? '' : 'display:none;'}" onclick="window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance('${text.replace(/'/g, "\\'")}'); u.rate = ${ttsRate}; u.pitch = ${ttsPitch}; const v = window.speechSynthesis.getVoices().find(x => x.voiceURI === '${ttsVoiceURI}'); if(v) u.voice = v; window.speechSynthesis.speak(u);"><i class="ph-duotone ph-speaker-high"></i></button>`;
 }
+

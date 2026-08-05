@@ -32,3 +32,4 @@ export function checkMelaninRisks(item) {
   
   return { warnings };
 }
+

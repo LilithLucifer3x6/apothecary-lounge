@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.js';
 import Icon from '../components/Icon.jsx';
-import { speakerMarkup } from '../lib/tts.js';
+import SpeakerButton from '../components/SpeakerButton.jsx';
 import { buildRoutines } from '../lib/routine-engine.js';
 
 const ALTARS = [
@@ -40,8 +40,15 @@ export default function Altars({ pose }) {
 
   const handleCheck = (id) => {
     const next = new Set(checkedIds);
-    if (next.has(id)) next.delete(id);
-    else {
+    if (next.has(id)) {
+      next.delete(id);
+      const today = new Date().toISOString().split('T')[0];
+      supabase.from('routine_history')
+        .delete()
+        .contains('items_used', [id])
+        .gte('completed_at', today)
+        .then();
+    } else {
       next.add(id);
       supabase.from('routine_history').insert({ completed_at: new Date().toISOString(), items_used: [id] }).then();
     }
@@ -106,7 +113,7 @@ export default function Altars({ pose }) {
               padding: '0.6rem 1.2rem', 
               fontSize: '1.2rem', 
               background: activeAltarId === altar.id ? '#000000' : 'transparent', 
-              color: activeAltarId === altar.id ? 'var(--parch)' : 'var(--rose)',
+              color: activeAltarId === altar.id ? 'var(--silver)' : 'var(--rose)',
               border: activeAltarId === altar.id ? '1px solid var(--plum)' : '1px solid var(--border)',
               boxShadow: activeAltarId === altar.id ? 'inset 0 0 15px rgba(176, 136, 204, 0.3)' : 'none',
               width: 'fit-content',
@@ -121,9 +128,10 @@ export default function Altars({ pose }) {
       
       <div className="card" style={{ width: '100%', minHeight: '300px', transition: 'opacity 0.3s ease', opacity }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The {displayedAltar} <span dangerouslySetInnerHTML={{ __html: speakerMarkup(`The ${displayedAltar}`) }} /></h3>
+        <h3>The {displayedAltar} <SpeakerButton text={`The ${displayedAltar}`} /></h3>
         {renderAltarContent()}
       </div>
     </div>
   );
 }
+

@@ -5,7 +5,7 @@ import Icon from '../components/Icon.jsx';
 import { evaluateScryingPool, parseProductImage } from '../lib/ai-engine.js';
 import { getReadiness } from '../lib/health-connect.js';
 import VoiceInput from '../components/VoiceInput.jsx';
-import { speakerMarkup } from '../lib/tts.js';
+import SpeakerButton from '../components/SpeakerButton.jsx';
 
 export default function Scrying({ pose }) {
   const [inventory, setInventory] = useState([]);
@@ -43,6 +43,7 @@ export default function Scrying({ pose }) {
 
       const { data: reactions } = await supabase.from('somatic_reactions').select('*, items(name, brand)');
       const formattedLedger = (reactions || []).map(r => ({
+        id: r.id,
         productId: r.item_id,
         zone: r.zone,
         severity: r.severity,
@@ -83,15 +84,16 @@ export default function Scrying({ pose }) {
     const item = inventory.find(i => i.id === reactionForm.productId);
     const reactionsArr = Array.from(reactionForm.reactions);
 
-    await supabase.from('somatic_reactions').insert({
+    const { data } = await supabase.from('somatic_reactions').insert({
       item_id: reactionForm.productId,
       zone: reactionForm.zone,
       severity: reactionForm.severity,
       symptoms: reactionsArr
-    });
+    }).select().single();
     
     setLedgerEntries(prev => [...prev, {
       ...reactionForm,
+      id: data?.id,
       productName: item?.name,
       brand: item?.brand,
       reactions: reactionsArr,
@@ -104,6 +106,15 @@ export default function Scrying({ pose }) {
       reactions: new Set(),
       severity: 0
     });
+  };
+
+  const handleDeleteLedger = async (id, index) => {
+    if (confirm("Erase this affliction from the ledger?")) {
+      if (id) {
+        await supabase.from('somatic_reactions').delete().eq('id', id);
+      }
+      setLedgerEntries(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
   const handleDivineAfflictions = async () => {
@@ -125,15 +136,12 @@ export default function Scrying({ pose }) {
   const allergies = profile?.intake_answers?.conditions?.filter(c => c.type === 'allergy') || [];
   const banishedItems = inventory.filter(i => i.lifecycle_state === 'banished');
 
-  // Strict local lavender check in case database hasn't updated
-  const localBanished = banishedItems.some(i => i.name.toLowerCase().includes('lavender')) ? banishedItems : [...banishedItems, { name: 'Lavender', brand: 'Universal', lifecycle_state: 'banished'}];
-
   return (
     <div style={{ padding: '1rem', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
         <div className="card mt-4" style={{ height: '100%' }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3><span className="g">{Icon({name: G.tabPool})}</span>What the Water Shows <span dangerouslySetInnerHTML={{ __html: speakerMarkup("What the Water Shows") }} /></h3>
+          <h3><span className="g">{Icon({name: G.tabPool})}</span>What the Water Shows <SpeakerButton text="What the Water Shows" /></h3>
           <div className="mt mb-4">A holistic divination of your routine, reactions, and trajectory.</div>
           
           <button className="btn full plum" onClick={handleDivineAfflictions}>Divine Afflictions</button>
@@ -148,7 +156,7 @@ export default function Scrying({ pose }) {
 
         <div className="card mt-4" style={{ height: '100%' }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Ledger of Afflictions <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Ledger of Afflictions") }} /></h3>
+        <h3>The Ledger of Afflictions <SpeakerButton text="The Ledger of Afflictions" /></h3>
         <div className="mt mb-4">Has something turned against you? Speak of it — what, and where, and how sorely.</div>
         
         {inventory.length > 0 ? (
@@ -222,6 +230,11 @@ export default function Scrying({ pose }) {
                     <div className="mt">{entry.zone} &bull; Affliction Rank: {entry.severity}/5</div>
                     <div className="mt" style={{ marginTop: '0.3rem' }}>{entry.reactions.join(', ')}</div>
                   </div>
+                  <div>
+                    <button className="btn sm" onClick={() => handleDeleteLedger(entry.id, idx)} style={{ border: '1px solid var(--rose)', color: 'var(--rose)' }}>
+                      Erase
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -232,10 +245,10 @@ export default function Scrying({ pose }) {
 
       <div className="card mt-4" style={{ height: '100%' }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Crypt of Ashes <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Crypt of Ashes") }} /></h3>
+        <h3>The Crypt of Ashes <SpeakerButton text="The Crypt of Ashes" /></h3>
         <div className="mt mb-4">Elements forever sealed away.</div>
         <div>
-          {allergies.length > 0 || localBanished.length > 0 ? (
+          {allergies.length > 0 || banishedItems.length > 0 ? (
             <>
               {allergies.map((a, i) => (
                 <div key={`allergy-${i}`} className="row" style={{ opacity: 0.8 }}>
@@ -245,7 +258,7 @@ export default function Scrying({ pose }) {
                   </div>
                 </div>
               ))}
-              {localBanished.map((item, i) => (
+              {banishedItems.map((item, i) => (
                 <div key={`banished-${i}`} className="row" style={{ opacity: 0.8 }}>
                   <div style={{ flex: 1 }}>
                     <div className="nm" style={{ color: 'var(--rose)' }}>{item.name}</div>
@@ -263,3 +276,4 @@ export default function Scrying({ pose }) {
   </div>
   );
 }
+

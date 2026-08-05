@@ -108,3 +108,4 @@ export default function VoiceInput({ className = '', value, onChange, placeholde
     </div>
   );
 }
+

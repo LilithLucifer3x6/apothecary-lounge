@@ -24,3 +24,4 @@ export async function fetchTerraData(devId, apiKey) {
     return null;
   }
 }
+

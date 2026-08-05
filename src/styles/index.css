@@ -1,22 +1,5 @@
 :root {
-  --bg: #f2eff4; 
-  --card: rgba(255, 255, 255, 0.85); 
-  --card2: rgba(240, 238, 245, 0.95); 
-  --border: rgba(0, 0, 0, 0.15);
-  --crimson: #7a1a2b; 
-  --crimson-b: #4a0d16; 
-  --plum: #422a3e; 
-  --plum-b: rgba(66, 42, 62, 0.3);
-  --rose: #381c3e; 
-  --parch: #1f1a24; 
-  --silver: #443b4a; 
-  --gold: #7a1a2b;
-  --moss: #2c3625; 
-  --ink: #1a161b;
-  --white: #100b12; 
-  --ash: #554d5c; 
-  --dim: #554d5c;
-  --ff: 'Inter', sans-serif;
+  /* Variables are defined in design-tokens.css */
 }
 
 *, *::before, *::after {
@@ -75,7 +58,7 @@ input[type=text]:focus, input[type=number]:focus, select:focus, textarea:focus {
 ::-webkit-scrollbar-thumb:hover { background: var(--dim); }
 
 /* Selection */
-::selection { background: var(--crimson); color: var(--white); }
+::selection { background: var(--crimson); color: var(--rose); }
 
 /* Focus */
 *:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
@@ -147,3 +130,4 @@ input[type=text]:focus, input[type=number]:focus, select:focus, textarea:focus {
   h2 { font-size: 1.5rem; }
   .card { padding: 1rem; }
 }
+

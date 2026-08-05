@@ -62,3 +62,4 @@ export function zonesAdjacent(zonesA, zonesB) {
   
   return false;
 }
+

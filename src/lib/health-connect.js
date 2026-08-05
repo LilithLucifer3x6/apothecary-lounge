@@ -42,3 +42,4 @@ export async function getSleepDuration() {
   }
   return (Math.random() * 3 + 5).toFixed(1); // 5 to 8 hours
 }
+

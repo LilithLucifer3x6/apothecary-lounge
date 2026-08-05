@@ -120,3 +120,4 @@ export async function evaluateTolerance(history) {
   // Mock tolerance evaluation
   return { status: 'tolerated', suggestion: 'Maintain current cadence.' };
 }
+

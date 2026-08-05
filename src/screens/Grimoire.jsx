@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.js';
 import Icon from '../components/Icon.jsx';
 import { fetchTodayEvents, fetchMonthEvents } from '../lib/gcal.js';
-import { speakerMarkup } from '../lib/tts.js';
+import SpeakerButton from '../components/SpeakerButton.jsx';
 import { syncAppointments, markAppointmentDone } from '../lib/calendar.js';
 
 export default function Grimoire({ pose }) {
@@ -14,6 +14,7 @@ export default function Grimoire({ pose }) {
   const [monthEvents, setMonthEvents] = useState([]);
 
   const [profile, setProfile] = useState(null);
+  const [overrideModal, setOverrideModal] = useState({ show: false, type: '', date: '' });
 
   useEffect(() => {
     let mounted = true;
@@ -54,10 +55,24 @@ export default function Grimoire({ pose }) {
     setMarked(prev => ({ ...prev, [type]: true }));
   };
 
-  const handleOverride = () => {
-    const date = prompt('Inscribe the date this rite was last fulfilled (YYYY-MM-DD):');
-    if (date && !isNaN(new Date(date).getTime())) {
-      alert('Fate has been rewritten to ' + date);
+  const handleOverride = (type) => {
+    setOverrideModal({ show: true, type, date: new Date().toISOString().split('T')[0] });
+  };
+
+  const handleOverrideSubmit = async () => {
+    if (!overrideModal.date || !profile) return;
+    try {
+      const settings = profile.settings || {};
+      const apptOverrides = settings.appointment_overrides || {};
+      apptOverrides[overrideModal.type] = overrideModal.date;
+      
+      const newSettings = { ...settings, appointment_overrides: apptOverrides };
+      await supabase.from('user_profile').update({ settings: newSettings }).eq('id', profile.id);
+      
+      setProfile(prev => ({ ...prev, settings: newSettings }));
+      setOverrideModal({ show: false, type: '', date: '' });
+    } catch(e) {
+      console.error(e);
     }
   };
 
@@ -72,18 +87,23 @@ export default function Grimoire({ pose }) {
     const hasRetie = appointments.some(app => new Date(app.date).getDate() === i && app.type === 'retie');
     const hasNails = appointments.some(app => new Date(app.date).getDate() === i && app.type === 'nails');
     
-    // Anchor date: August 3rd, 2026 (User's first dose: 40mg)
-    const anchorDate = new Date(2026, 7, 3); // Month is 0-indexed (7 = Aug)
-    // Need to strip time for perfect day calculation
     const currentDayTime = new Date(year, month, i).getTime();
     const dayOfWeek = new Date(year, month, i).getDay();
-    const diffDays = Math.round((currentDayTime - anchorDate.getTime()) / (1000 * 60 * 60 * 24));
     
-    // Even diff = 40mg, Odd diff = 80mg
-    const isIsotretinoin80 = Math.abs(diffDays) % 2 === 1; 
-
-    const hasIsotretinoin = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
-    const hasFridayInjections = dayOfWeek === 5 && profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('enbrel') || o.name.toLowerCase().includes('wegovy') || o.name.toLowerCase().includes('methotrexate'));
+    const orals = profile?.intake_answers?.oralList || [];
+    const rxs = profile?.intake_answers?.rxList || [];
+    const allMeds = [...orals, ...rxs].map(m => (m.name || '').toLowerCase());
+    
+    const hasIsotretinoin = allMeds.some(m => m.includes('isotretinoin') || m.includes('accutane'));
+    const hasFridayInjections = dayOfWeek === 5 && allMeds.some(m => m.includes('enbrel') || m.includes('wegovy') || m.includes('methotrexate') || m.includes('etanercept'));
+    
+    let isIsotretinoin80 = false;
+    if (hasIsotretinoin) {
+      const rxStart = profile?.intake_answers?.prescription_start_date;
+      const anchorDate = rxStart ? new Date(rxStart) : new Date(2026, 7, 3);
+      const diffDays = Math.round((currentDayTime - anchorDate.getTime()) / (1000 * 60 * 60 * 24));
+      isIsotretinoin80 = Math.abs(diffDays) % 2 === 1; 
+    }
 
     const dayEvents = monthEvents.filter(ev => {
       if (!ev.start) return false;
@@ -108,7 +128,7 @@ export default function Grimoire({ pose }) {
               <div key={idx} style={{ 
                 fontSize: '0.65rem', 
                 background: 'var(--plum-b)', 
-                color: 'var(--parch)', 
+                color: 'var(--silver)', 
                 padding: '2px 4px', 
                 borderRadius: '4px',
                 whiteSpace: 'nowrap',
@@ -123,7 +143,7 @@ export default function Grimoire({ pose }) {
         
         <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
           {hasIsotretinoin && (
-            <div className="pill" style={{ color: 'var(--parch)', borderColor: 'var(--border)' }}>
+            <div className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--border)' }}>
               Isotretinoin {isIsotretinoin80 ? '80mg' : '40mg'}
             </div>
           )}
@@ -151,7 +171,7 @@ export default function Grimoire({ pose }) {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Appointed Times of Today <span dangerouslySetInnerHTML={{ __html: speakerMarkup("The Appointed Times of Today") }} /></h3>
+        <h3>The Appointed Times of Today <SpeakerButton text="The Appointed Times of Today" /></h3>
         
         {realEvents.length > 0 ? realEvents.map((ev, i) => (
           <div key={i} className="step">
@@ -175,7 +195,7 @@ export default function Grimoire({ pose }) {
           <div className="corner bl"></div><div className="corner br"></div>
           <h3>
             The Appointed Days{' '}
-            <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Appointed Days') }} />
+            <SpeakerButton text='The Appointed Days' />
           </h3>
           <div className="mt mb-4">Rites that occur sparingly.</div>
           
@@ -197,7 +217,7 @@ export default function Grimoire({ pose }) {
                 >
                   {marked['retie'] ? 'Marked' : 'Inscribe'}
                 </button>
-                <button className="spk btn-override" title="Override Calendar Fate" onClick={handleOverride}>
+                <button className="spk btn-override" title="Override Calendar Fate" onClick={() => handleOverride('retie')}>
                   <i className="ph-duotone ph-dots-three-vertical"></i>
                 </button>
               </div>
@@ -220,7 +240,7 @@ export default function Grimoire({ pose }) {
                 >
                   {marked['nails'] ? 'Marked' : 'Inscribe'}
                 </button>
-                <button className="spk btn-override" title="Override Calendar Fate" onClick={handleOverride}>
+                <button className="spk btn-override" title="Override Calendar Fate" onClick={() => handleOverride('nails')}>
                   <i className="ph-duotone ph-dots-three-vertical"></i>
                 </button>
               </div>
@@ -235,7 +255,7 @@ export default function Grimoire({ pose }) {
           <div className="corner bl"></div><div className="corner br"></div>
           <h3>
             The Weekly Wheel{' '}
-            <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Weekly Wheel') }} />
+            <SpeakerButton text='The Weekly Wheel' />
           </h3>
           <div className="mt mb-4">Rhythms and cycles.</div>
           
@@ -245,8 +265,12 @@ export default function Grimoire({ pose }) {
                 const isFriday = day.num === 5;
                 const isSaturday = day.num === 6;
                 const isSunday = day.num === 0;
-                const hasIso = profile?.intake_answers?.oralList?.some(o => o.name.toLowerCase().includes('isotretinoin'));
-                const hasDrysol = profile?.intake_answers?.rxList?.some(r => r.name.toLowerCase().includes('drysol'));
+                const orals = profile?.intake_answers?.oralList || [];
+                const rxs = profile?.intake_answers?.rxList || [];
+                const allMeds = [...orals, ...rxs].map(m => (m.name || '').toLowerCase());
+                
+                const hasIso = allMeds.some(m => m.includes('isotretinoin') || m.includes('accutane'));
+                const hasDrysol = allMeds.some(m => m.includes('drysol'));
                 
                 return (
                   <div key={day.name} className="d">
@@ -257,9 +281,9 @@ export default function Grimoire({ pose }) {
                       )}
                       {isFriday && (
                         <>
-                          <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Methotrexate 15mg</span>
-                          <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Wegovy 2.4mg</span>
-                          <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Enbrel</span>
+                          {allMeds.some(m => m.includes('methotrexate')) && <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Methotrexate</span>}
+                          {allMeds.some(m => m.includes('wegovy')) && <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Wegovy</span>}
+                          {allMeds.some(m => m.includes('enbrel') || m.includes('etanercept')) && <span className="pill" style={{ color: 'var(--silver)', borderColor: 'var(--silver)' }}>Enbrel</span>}
                         </>
                       )}
                       {hasDrysol && (
@@ -279,7 +303,7 @@ export default function Grimoire({ pose }) {
         <div className="corner bl"></div><div className="corner br"></div>
         <h3>
           The Ephemeris{' '}
-          <span dangerouslySetInnerHTML={{ __html: speakerMarkup('The Ephemeris') }} />
+          <SpeakerButton text='The Ephemeris' />
         </h3>
         <div className="mt mb-4">The long count.</div>
         
@@ -298,6 +322,30 @@ export default function Grimoire({ pose }) {
 
       </div>
       </div>
+      
+      {overrideModal.show && (
+        <div className="modal" style={{ display: 'block' }}>
+          <div className="modal-content card" style={{ maxWidth: '400px' }}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3 style={{ color: 'var(--rose)' }}>Rewrite Fate</h3>
+            <div className="mt mb-4" style={{ color: 'var(--rose)' }}>
+              Inscribe the date this rite was last fulfilled.
+            </div>
+            <input 
+              type="date" 
+              value={overrideModal.date} 
+              onChange={e => setOverrideModal({ ...overrideModal, date: e.target.value })} 
+              style={{ width: '100%', padding: '0.8rem', background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--rose)', borderRadius: '4px', marginBottom: '1rem' }} 
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+              <button className="btn" onClick={() => setOverrideModal({ show: false, type: '', date: '' })}>Abandon</button>
+              <button className="btn plum" onClick={handleOverrideSubmit}>Rewrite</button>
+            </div>
+          </div>
+        </div>
+      )}
+      
     </div>
   );
 }
+
