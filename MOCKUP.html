@@ -59,7 +59,7 @@
     border-bottom:2px solid var(--crimson);}
   .brand{display:flex;align-items:center;justify-content:center;gap:.6rem;padding:.7rem .6rem .2rem;position:relative;}
   .brand h1{font-family:'Great Vibes',cursive;font-size:2.25em;margin:0;color:var(--parch);}
-  .gear{position:absolute;right:.7rem;top:.85rem;background:transparent;border:1.5px solid var(--border);
+  .gear{position:absolute;right:.7rem;top:.85rem;background:transparent;border:none;
     color:var(--gold);border-radius:8px;padding:.28rem .5rem;font-size:1em;cursor:pointer;}
   .datemark{position:absolute;left:.7rem;top:.8rem;font-family:'Cormorant Garamond',serif;
     color:var(--gold);font-size:1em;font-weight:700;text-align:left;line-height:1.15;}
@@ -196,10 +196,22 @@
         <svg id="avsvg" viewBox="0 0 150 195" width="170" height="220"></svg>
       </div>
       <div id="avopts"></div>
-      <button class="btn full" onclick="go('land')">The Keeper stands ready</button>
+      <button class="btn full" onclick="startGeneration()">The Keeper stands ready</button>
       <div class="note">Placeholder forms — the built app uses illustrated assets.</div>
     </div>
   </main>
+  
+  <div id="s-loading" class="screen">
+    <div style="text-align:center; padding: 4rem 1rem;">
+      <h2 style="font-family:'Great Vibes', cursive; font-size:2.8em; color:var(--parch); margin-bottom:1rem;">Gathering your Sanctuary...</h2>
+      <p style="color:var(--gold); font-style:italic;">Painting the Keeper into the world.</p>
+      <div style="margin-top:2rem;">
+        <!-- Simple CSS spinner for mockup -->
+        <div style="display:inline-block; width: 40px; height: 40px; border: 3px solid rgba(255,255,255,.1); border-radius: 50%; border-top-color: var(--crimson); animation: spin 1s ease-in-out infinite;"></div>
+      </div>
+    </div>
+  </div>
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </div>
 
 <!-- LANDING -->
@@ -374,6 +386,10 @@ const G={
 
 function go(s){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('on'));
  document.getElementById('s-'+s).classList.add('on');window.scrollTo(0,0);}
+function startGeneration(){
+  go('loading');
+  setTimeout(() => go('land'), 2500);
+}
 function setFs(v){document.documentElement.style.setProperty('--fs',v+'rem');}
 function setFf(v){document.documentElement.style.setProperty('--ff',v);}
 let TTS=true;
@@ -387,9 +403,9 @@ const AVO=[
  {k:'skin',l:'Their complexion',v:[['#6b4630','Warm deep'],['#5b3a29','Rich umber'],['#4a2e20','Espresso'],['#3a2318','Deepest']]},
  {k:'loc',l:'The colour of their crown',v:[['#141118','Black'],['#3b1d24','Oxblood'],['#2a1a3a','Violet-black'],['#6b4a2a','Bronze']]},
  {k:'eye',l:'Their eyes',v:[['#c4243a','Red'],['#a9adb8','Amber'],['#7a4ec4','Violet'],['#3aa88a','Jade']]},
- {k:'robe',l:'Their garment',v:[['#3a1148','Plum'],['#5a0a10','Crimson'],['#14141a','Obsidian'],['#3d4438','Moss']]},
+ {k:'robe',l:'Their garment',v:[['#3a1148','Plum'],['#5a0a10','Crimson'],['#14141a','Obsidian'],['#3d4438','Moss'],['#d4af37','Gold'],['#8c4a16','Bronze'],['#3aa88a','Jade'],['#e6dcc3','Parchment'],['#7a4ec4','Violet'],['#a9adb8','Silver']]},
  {k:'style',l:'How they wear their crown',v:[['free','Loose'],['buns','Twin buns'],['high','Crowned high'],['wrap','Wrapped'],['side','Swept aside']]},
- {k:'fam',l:'Their familiar',v:[['🐈‍⬛','Cat'],['🦇','Bat'],['🐍','Serpent'],['🦉','Owl'],['🐀','Rat']]},
+ {k:'fam',l:'Their familiar',v:[['🐈‍⬛','Cat'],['🦇','Bat'],['🐍','Serpent'],['🦉','Owl'],['🐦‍⬛','Raven']]},
 ];
 function locs(c,style){
  if(style==='buns') return `<circle cx="55" cy="36" r="13" fill="${c}"/><circle cx="95" cy="36" r="13" fill="${c}"/>
@@ -524,8 +540,7 @@ const STEPS=[
   b:`<div class="chips">${['Breakouts','Cystic breakouts','Blackheads','Marks left behind','Uneven tone','A barrier undone','Flaking','Dryness','Oiliness','Sensitivity','Redness','Itching','Bumps that will not settle','Ingrown hairs','Scarring','Dullness','Rough texture','Enlarged pores','Tightness','Stinging','Peeling','Nothing — I came for the quiet'].map(c=>`<button class="chip" onclick="this.classList.toggle('on')">${c}</button>`).join('')}
      <button class="chip" onclick="alert('The pool widens as you look — spoken additions join it too.')">＋ show me more</button></div>`},
  {q:'What has been prescribed to you? I will name these plainly wherever they appear.',
-  b:`<div class="cb"><input type="checkbox" checked> ${ic(G.tretinoin)} Tretinoin 0.05% — chin, at bedtime</div>
-     <div class="cb"><input type="checkbox" checked> ${ic(G.tacrolimus)} Tacrolimus 0.1% — eyelids</div>
+  b:`<div class="cb"><input type="checkbox" checked> ${ic(G.tacrolimus)} Tacrolimus 0.1% — eyelids</div>
      <div class="cb"><input type="checkbox" checked> ${ic(G.drysol)} Drysol 20% — underarms</div>
      <div class="ip" style="margin-top:.6rem;"><input type="text" placeholder="Another..."><button class="mic">🎙</button></div>`},
  {q:'And what are we protecting? Take all that hold true.',r:true,
@@ -613,7 +628,6 @@ document.getElementById('x-rites').innerHTML=`
    ${stp(G.oral,'The Grin tended','picks, water, rinse, brush')}
    ${stp('towel','The Visage cleansed','a damp cloth')}
    ${tog(G.maskSheet,'A veil, if you like','set here tonight · always yours to skip')}
-   ${stp(G.tretinoin,'Tretinoin 0.05%','chin · twice weekly, climbing',true)}
    ${stp('hand-palm','Hands cleansed','')}
    ${stp(G.tacrolimus,'Tacrolimus 0.1%','eyelids',true)}
    ${stp(G.moisturiser,'Moisturiser','')}
@@ -639,8 +653,7 @@ document.getElementById('x-rites').innerHTML=`
  let cells='';for(let i=0;i<first;i++)cells+='<div></div>';
  for(let d=1;d<=len;d++){const dow=new Date(y,m,d).getDay();
   let ev='';
-  if(dow===0||dow===3)ev+=`<div class="ce">${ic(G.tretinoin)}</div>`;
-  if(dow===6)ev+=`<div class="ce">${ic(G.maskRinse)}</div>`;
+  if(dow===6)ev+=\`<div class="ce">\${ic(G.maskRinse)}</div>\`;
   if(d===19)ev+=`<div class="ce">${ic(G.rootWeave)}</div>`;
   if(d===7||d===21)ev+=`<div class="ce">${ic(G.talon)}</div>`;
   if(d===8||d===22)ev+=`<div class="ce">${ic(G.soak)}</div>`;
@@ -651,7 +664,6 @@ document.getElementById('x-rites').innerHTML=`
   <h3><span class="g">☾</span>The Turning Week ${spk}</h3>
   <div class="wheel">${dn.map((n,i)=>`<div class="d"><div class="dn">${n}</div>
     <span class="tg">${ic(G.morning)} Waking</span>
-    ${(i===0||i===3)?`<span class="tg">${ic(G.tretinoin)} Tretinoin</span>`:''}
     <span class="tg">${i===6?G.maskRinse+' Rinsing veil':G.maskSheet+' Veil'}</span>
     ${i===5?`<span class="tg">${ic(G.talon)} Talons</span>`:''}
     ${i===6?`<span class="tg">${ic(G.soak)} Soaking</span>`:''}
@@ -712,7 +724,6 @@ document.getElementById('x-root').innerHTML=`
  <div class="empty">Nothing ebbs. The shelves hold.</div>
  ${div('🏺')}
  <h3><span class="g">${ic(G.apothecary)}</span>The Apothecary ${spk}</h3>
- ${itemRow(G.tretinoin,'Tretinoin 0.05%','<span class="pill">Stocked</span>','the visage · chin','peeling, redness, purging, dryness, sun sensitivity')}
  ${itemRow(G.tacrolimus,'Tacrolimus 0.1%','<span class="pill">Stocked</span>','the gaze · eyelids','stinging, warmth, thinning')}
  ${itemRow(G.drysol,'Drysol 20%','<span class="pill">Stocked</span>','the vessel · underarms','burning, itching, rawness')}
  <div class="empty">Bare otherwise. Show me, or speak.</div>
@@ -730,7 +741,7 @@ document.getElementById('x-scry').innerHTML=`
  <button class="btn full">Give it to the water</button>
  ${div('✒')}
  <h3><span class="g">✦</span>Or set it down by hand ${spk}</h3>
- <select style="margin-bottom:.45rem;"><option>Tretinoin 0.05% — a retinoid</option><option>Drysol 20% — an astringent</option></select>
+ <select style="margin-bottom:.45rem;"><option>Tacrolimus 0.1% — an ointment</option><option>Drysol 20% — an astringent</option></select>
  <select style="margin-bottom:.55rem;"><option>The visage, below — jaw and chin</option><option>The visage, midway — nose and cheek</option><option>The gaze — lid and orbit</option><option>The crown — scalp</option><option>The vessel — underarm</option></select>
  ${['Peeling','Redness','Purging','Dryness','Stinging','Darkening where it healed'].map(x=>`<div class="cb"><input type="checkbox"> ${x}</div>`).join('')}
  <label class="fl" style="margin-top:.5rem;">How sorely</label>

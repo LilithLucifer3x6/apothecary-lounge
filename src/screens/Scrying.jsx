@@ -87,14 +87,14 @@ export default function Scrying({ pose }) {
         result = await supabase.from('somatic_reactions').update({
           item_id: reactionForm.productId,
           zone: reactionForm.zone,
-          severity: reactionForm.severity,
+          severity: String(reactionForm.severity),
           symptoms: Array.from(reactionForm.reactions)
         }).eq('id', editId).select().single();
       } else {
         result = await supabase.from('somatic_reactions').insert({
           item_id: reactionForm.productId,
           zone: reactionForm.zone,
-          severity: reactionForm.severity,
+          severity: String(reactionForm.severity),
           symptoms: Array.from(reactionForm.reactions)
         }).select().single();
       }

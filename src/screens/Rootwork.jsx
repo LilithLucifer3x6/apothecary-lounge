@@ -261,7 +261,49 @@ export default function Rootwork({ pose }) {
   };
 
   const handleBanishItem = (id, name) => {
-    setBanishState({ id, name, reason: '' });
+    setBanishState({ id, name, reason: '', history: [], input: '', isTyping: false });
+    handleBanishChatStart(name);
+  };
+
+  const handleBanishChatStart = async (name) => {
+    setBanishState(prev => ({ ...prev, isTyping: true }));
+    const { converseBanish } = await import('../lib/ai-service.js');
+    const reply = await converseBanish({ name }, []);
+    setBanishState(prev => {
+      if (!prev) return null;
+      return { ...prev, isTyping: false, history: [{ role: 'assistant', text: reply }] };
+    });
+  };
+
+  const handleSendBanish = async () => {
+    if (!banishState || !banishState.input.trim()) return;
+    const userText = banishState.input.trim();
+    
+    setBanishState(prev => {
+      const newHist = [...prev.history, { role: 'user', text: userText }];
+      return { ...prev, history: newHist, input: '', isTyping: true };
+    });
+    
+    const { converseBanish } = await import('../lib/ai-service.js');
+    const currentHist = [...banishState.history, { role: 'user', text: userText }];
+    const reply = await converseBanish({ name: banishState.name }, currentHist);
+    
+    const match = reply.match(/\[BANISH_REASON:\s*(.*?)\]/);
+    if (match) {
+      const extractedReason = match[1];
+      setBanishState(prev => ({
+        ...prev, 
+        isTyping: false,
+        reason: extractedReason,
+        history: [...prev.history, { role: 'assistant', text: reply.replace(/\[BANISH_REASON:.*?\]/, '').trim() }]
+      }));
+    } else {
+      setBanishState(prev => ({
+        ...prev, 
+        isTyping: false,
+        history: [...prev.history, { role: 'assistant', text: reply }]
+      }));
+    }
   };
 
   const submitBanish = async () => {
@@ -622,25 +664,47 @@ export default function Rootwork({ pose }) {
         <div className="modal" style={{display: 'block'}}>
           <div className="modal-content card" style={{maxWidth: '500px'}}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{color: 'var(--rose)'}}>The Banishment of {banishState.name}</h3>
-            <div className="mt" style={{ marginBottom: '1rem' }}>
-              Why are you banishing this from the rootwork?
+            <h3 style={{color: 'var(--rose)'}}>The Banishment of {banishState.name} <SpeakerButton text={`The Banishment of ${banishState.name}`} /></h3>
+            
+            <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '1rem', marginTop: '1rem', paddingRight: '0.5rem' }}>
+              {banishState.history.map((msg, idx) => (
+                <div key={idx} style={{ 
+                  textAlign: msg.role === 'user' ? 'right' : 'left', 
+                  marginBottom: '1rem',
+                  color: msg.role === 'user' ? 'var(--text)' : 'var(--rose)'
+                }}>
+                  <div style={{ display: 'inline-block', background: msg.role === 'user' ? 'rgba(255,255,255,0.1)' : 'transparent', padding: msg.role === 'user' ? '0.5rem 1rem' : '0', borderRadius: '8px' }}>
+                    {msg.text} {msg.role === 'assistant' && <SpeakerButton text={msg.text} style={{marginLeft: '0.4rem'}} />}
+                  </div>
+                </div>
+              ))}
+              {banishState.isTyping && <div style={{ color: 'var(--dim)', fontStyle: 'italic' }}>The Keeper is listening...</div>}
             </div>
-            <select 
-              value={banishState.reason} 
-              onChange={e => setBanishState({...banishState, reason: e.target.value})} 
-              style={{ width: '100%', marginBottom: '1rem', background: 'var(--card)', color: 'var(--rose)' }}
-            >
-              <option value="">Select a reason...</option>
-              <option value="Adverse reaction (Affliction)">Adverse reaction (Affliction)</option>
-              <option value="Material Toll (Cost)">Material Toll (Too Expensive)</option>
-              <option value="Elusive (Availability)">Elusive (Hard to Find)</option>
-              <option value="Hollow (Ineffective)">Hollow (Ineffective)</option>
-              <option value="Other">Other</option>
-            </select>
-            <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem'}}>
-              <button className="btn" onClick={() => setBanishState(null)}>Abandon</button>
-              <button className="btn plum" onClick={submitBanish} disabled={!banishState.reason}>Seal in the Crypt</button>
+
+            {!banishState.reason ? (
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1 }}>
+                  <VoiceInput 
+                    isTextArea={true}
+                    placeholder="Speak your reason..."
+                    value={banishState.input}
+                    onChange={(e) => setBanishState({...banishState, input: e.target.value})}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1rem', minHeight: '60px' }}
+                  />
+                </div>
+                <button className="btn plum" onClick={handleSendBanish} disabled={banishState.isTyping || !banishState.input.trim()}>Reply</button>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', marginTop: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                <div style={{ color: 'var(--rose)', fontSize: '1.1rem', marginBottom: '1rem' }}>
+                  Reason sealed: <strong>{banishState.reason}</strong>
+                </div>
+                <button className="btn plum" onClick={submitBanish} style={{ width: '100%' }}>Seal in the Crypt</button>
+              </div>
+            )}
+
+            <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem'}}>
+              <button className="btn" onClick={() => setBanishState(null)}>Abandon Banishment</button>
             </div>
           </div>
         </div>

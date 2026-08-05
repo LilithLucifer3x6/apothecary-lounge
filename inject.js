@@ -23,7 +23,6 @@ async function run() {
 
   // Update Topicals
   intake.rxList = [
-    { name: 'Tretinoin cream', strength: '0.05%', zone: 'chin', frequency: 'Titration: 1-2 nights/week' },
     { name: 'Tacrolimus ointment', strength: '0.1%', zone: 'orbital and eyelid', frequency: 'Eyelid eczema' },
     { name: 'Drysol (Aluminium Chloride)', strength: '', zone: 'underarms', frequency: 'Bedtime, dry skin only' },
     { name: 'Zoryve foam', strength: '0.3%', zone: '', frequency: 'Ebbing' },

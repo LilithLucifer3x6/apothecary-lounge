@@ -93,7 +93,9 @@ export default function ShadowTome({ pose }) {
     if (entryText || moodsArray.length > 0) {
       await supabase.from('journal_entries').insert([{
         body_text: entryText,
-        moods: moodsArray
+        moods: moodsArray,
+        moon_phase: 'Unknown',
+        photos: []
       }]);
       setEntryText('');
       setSelectedMoods(new Set());

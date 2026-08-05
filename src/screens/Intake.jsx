@@ -425,7 +425,7 @@ export default function Intake({ onComplete }) {
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div className="field">
                           <label style={{ color: 'var(--silver)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Name</label>
-                          <VoiceInput value={rx.name} onChange={e => updateRx(i, 'name', e.target.value)} placeholder="e.g. Tretinoin" />
+                          <VoiceInput value={rx.name} onChange={e => updateRx(i, 'name', e.target.value)} placeholder="e.g. Tacrolimus" />
                         </div>
                         <div className="field">
                           <label style={{ color: 'var(--silver)', fontSize: '0.9rem', marginBottom: '0.3rem', display: 'block' }}>Strength</label>

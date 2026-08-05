@@ -6,6 +6,8 @@ import { fetchTodayEvents, fetchMonthEvents } from '../lib/gcal.js';
 import SpeakerButton from '../components/SpeakerButton.jsx';
 import { syncAppointments, markAppointmentDone } from '../lib/calendar.js';
 
+import VoiceInput from '../components/VoiceInput.jsx';
+
 export default function Grimoire({ pose }) {
   const [appointments, setAppointments] = useState([]);
   const [marked, setMarked] = useState({});
@@ -16,6 +18,8 @@ export default function Grimoire({ pose }) {
   const [profile, setProfile] = useState(null);
   const [overrideModal, setOverrideModal] = useState({ show: false, type: '', date: '' });
   const [isoLogsDates, setIsoLogsDates] = useState(new Set());
+  
+  const [readingState, setReadingState] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -84,6 +88,63 @@ export default function Grimoire({ pose }) {
       setProfile(prev => ({ ...prev, settings: newSettings }));
       setOverrideModal({ show: false, type: '', date: '' });
     } catch(e) {
+      console.error(e);
+    }
+  };
+
+  const handleStartReading = async () => {
+    setReadingState({ history: [], input: '', isTyping: true, completeSummary: null });
+    const { converseReading } = await import('../lib/ai-service.js');
+    const reply = await converseReading([], profile);
+    setReadingState(prev => {
+      if (!prev) return null;
+      return { ...prev, isTyping: false, history: [{ role: 'assistant', text: reply }] };
+    });
+  };
+
+  const handleSendReading = async () => {
+    if (!readingState || !readingState.input.trim()) return;
+    const userText = readingState.input.trim();
+    
+    setReadingState(prev => {
+      const newHist = [...prev.history, { role: 'user', text: userText }];
+      return { ...prev, history: newHist, input: '', isTyping: true };
+    });
+    
+    const { converseReading } = await import('../lib/ai-service.js');
+    const currentHist = [...readingState.history, { role: 'user', text: userText }];
+    const reply = await converseReading(currentHist, profile);
+    
+    const match = reply.match(/\[READING_COMPLETE:\s*(.*?)\]/);
+    if (match) {
+      const summary = match[1];
+      setReadingState(prev => ({
+        ...prev, 
+        isTyping: false,
+        completeSummary: summary,
+        history: [...prev.history, { role: 'assistant', text: reply.replace(/\[READING_COMPLETE:.*?\]/, '').trim() }]
+      }));
+    } else {
+      setReadingState(prev => ({
+        ...prev, 
+        isTyping: false,
+        history: [...prev.history, { role: 'assistant', text: reply }]
+      }));
+    }
+  };
+
+  const finishReading = async () => {
+    if (!readingState || !profile) return;
+    try {
+      const settings = profile.settings || {};
+      settings.last_reading_date = new Date().toISOString();
+      if (readingState.completeSummary) {
+         settings.last_reading_summary = readingState.completeSummary;
+      }
+      await supabase.from('user_profile').update({ settings }).eq('id', profile.id);
+      setProfile(prev => ({ ...prev, settings }));
+      setReadingState(null);
+    } catch (e) {
       console.error(e);
     }
   };
@@ -279,6 +340,26 @@ export default function Grimoire({ pose }) {
                 </button>
               </div>
             </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px dashed var(--border)', paddingTop: '1rem', width: '100%' }}>
+              <div className="row" style={{ flex: '1', marginBottom: 0, border: 'none', background: 'transparent' }}>
+                <div>
+                  <div className="nm">The Reading <Icon name="ph-moon-stars" /></div>
+                  <div className="mt">
+                    A 30-day reflection to realign your regimens.
+                    {profile?.settings?.last_reading_date && <><br/>Last Communion: {new Date(profile.settings.last_reading_date).toLocaleDateString()}</>}
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button 
+                  className="btn plum" 
+                  onClick={handleStartReading}
+                >
+                  Commune
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -371,6 +452,57 @@ export default function Grimoire({ pose }) {
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
               <button className="btn" onClick={() => setOverrideModal({ show: false, type: '', date: '' })}>Abandon</button>
               <button className="btn plum" onClick={handleOverrideSubmit}>Rewrite</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {readingState && (
+        <div className="modal" style={{display: 'block'}}>
+          <div className="modal-content card" style={{maxWidth: '550px'}}>
+            <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+            <h3 style={{color: 'var(--rose)'}}>The Reading <SpeakerButton text="The Reading" /></h3>
+            <div className="mt mb-4">Reflect on the past 30 days of your rituals.</div>
+            
+            <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '1rem', marginTop: '1rem', paddingRight: '0.5rem' }}>
+              {readingState.history.map((msg, idx) => (
+                <div key={idx} style={{ 
+                  textAlign: msg.role === 'user' ? 'right' : 'left', 
+                  marginBottom: '1rem',
+                  color: msg.role === 'user' ? 'var(--text)' : 'var(--rose)'
+                }}>
+                  <div style={{ display: 'inline-block', background: msg.role === 'user' ? 'rgba(255,255,255,0.1)' : 'transparent', padding: msg.role === 'user' ? '0.5rem 1rem' : '0', borderRadius: '8px' }}>
+                    {msg.text} {msg.role === 'assistant' && <SpeakerButton text={msg.text} style={{marginLeft: '0.4rem'}} />}
+                  </div>
+                </div>
+              ))}
+              {readingState.isTyping && <div style={{ color: 'var(--dim)', fontStyle: 'italic' }}>The Keeper consults the stars...</div>}
+            </div>
+
+            {!readingState.completeSummary ? (
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1 }}>
+                  <VoiceInput 
+                    isTextArea={true}
+                    placeholder="Speak your truth..."
+                    value={readingState.input}
+                    onChange={(e) => setReadingState({...readingState, input: e.target.value})}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--rose)', fontSize: '1rem', minHeight: '60px' }}
+                  />
+                </div>
+                <button className="btn plum" onClick={handleSendReading} disabled={readingState.isTyping || !readingState.input.trim()}>Reply</button>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', marginTop: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                <div style={{ color: 'var(--rose)', fontSize: '1.1rem', marginBottom: '1rem' }}>
+                  The Reading is complete. Changes noted: <br/><strong>{readingState.completeSummary}</strong>
+                </div>
+                <button className="btn plum" onClick={finishReading} style={{ width: '100%' }}>Seal The Reading</button>
+              </div>
+            )}
+
+            <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem'}}>
+              <button className="btn" onClick={() => setReadingState(null)}>Abandon Reading</button>
             </div>
           </div>
         </div>

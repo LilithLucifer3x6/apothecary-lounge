@@ -49,7 +49,7 @@ export default function Rites({ pose }) {
       };
       
       const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
-      const { amItems: am, pmItems: pm } = buildRoutines(itemsArr, userProfile || {}, realWearables);
+      const { amItems: am, pmItems: pm } = await buildRoutines(itemsArr, userProfile || {}, realWearables);
       
       const { data: isoLog } = await supabase.from('isotretinoin_log').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
       const nextDose = isoLog ? (isoLog.last_confirmed_dose_mg === 40 ? 80 : 40) : 40;

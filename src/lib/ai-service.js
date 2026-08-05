@@ -96,3 +96,93 @@ export async function evaluateTolerance(history) {
   }
   return { status: 'tolerated', suggestion: 'Maintain current cadence.' };
 }
+
+export async function generateAdaptiveSuggestions(wearables, availableItems) {
+  const { sleepDuration, heavySweat } = wearables;
+  if (sleepDuration >= 6 && !heavySweat) return []; // No special needs
+
+  const apiKey = localStorage.getItem('al_anthropic_key') || '';
+  try {
+    const promptText = `
+You are the Keeper of the Sanctuary, powering a cosmetic wellness app.
+Health Data:
+- Sleep: ${sleepDuration} hours
+- Heavy Sweat: ${heavySweat ? 'Yes' : 'No'}
+
+Available Items:
+${JSON.stringify(availableItems.map(i => ({id: i.id, name: i.name, category: i.category, risk_flags: i.risk_flags})))}
+
+Based on this, suggest any items that should be explicitly added to the morning routine (e.g. de-puffing eye products for poor sleep, gentle body washes for heavy sweat).
+Return ONLY a JSON array of item IDs that you recommend adding to the AM routine. No other text.
+`;
+    const { data, error } = await invokeAnthropicProxy({
+        max_tokens: 512,
+        messages: [{ role: 'user', content: promptText }]
+    });
+    
+    if (error) throw error;
+    
+    const responseText = data.content[0].text;
+    const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    }
+  } catch (err) {
+    console.error('Failed to get adaptive suggestions:', err);
+  }
+  return [];
+}
+
+export async function converseBanish(item, history) {
+  const apiKey = localStorage.getItem('al_anthropic_key') || '';
+  try {
+    const promptText = `
+You are the Keeper of the Sanctuary. The user is banishing "${item.name}" from their apothecary.
+Goal: Have a brief conversation to discover exactly WHY they are banishing it (adverse reaction, cost, availability, ineffectiveness, etc.) and extract any ingredient patterns if it's an adverse reaction.
+If you have determined the reason, your final response must end with exactly this phrase: "[BANISH_REASON: <the reason>]".
+Otherwise, reply sympathetically and ask a clarifying question. Keep responses to 1-2 short sentences.
+`;
+    // Format history for Anthropic
+    const msgs = history.map(h => ({ role: h.role, content: h.text }));
+    msgs.unshift({ role: 'user', content: promptText }); // Use user role since system role might not be supported here
+
+    const { data, error } = await invokeAnthropicProxy({
+        max_tokens: 256,
+        messages: msgs
+    });
+    
+    if (error) throw error;
+    
+    return data.content[0].text;
+  } catch (err) {
+    console.error('Failed to converse about banish:', err);
+    return "I sense a disturbance. Tell me plainly, why must we banish this? (Type your reason to proceed)";
+  }
+}
+
+export async function converseReading(history, userProfile) {
+  const apiKey = localStorage.getItem('al_anthropic_key') || '';
+  try {
+    const promptText = `
+You are the Keeper of the Sanctuary, leading "The Reading", a monthly reflection on the user's wellness rituals.
+Goal: Have a short conversation to check if they are experiencing any new skin concerns (dryness, breakouts), lifestyle changes (more stress, less sleep), or if any products are causing irritation.
+Ask one question at a time. Be empathetic, poetic, and concise (1-2 sentences).
+If you have gathered enough information (after 2-3 exchanges), conclude the reading by ending your final response with exactly: "[READING_COMPLETE: <summary of changes or 'No changes'>]".
+Current profile: ${JSON.stringify(userProfile?.intake_answers || {})}
+`;
+    const msgs = history.map(h => ({ role: h.role, content: h.text }));
+    msgs.unshift({ role: 'user', content: promptText });
+
+    const { data, error } = await invokeAnthropicProxy({
+        max_tokens: 300,
+        messages: msgs
+    });
+    
+    if (error) throw error;
+    
+    return data.content[0].text;
+  } catch (err) {
+    console.error('Failed to converse for reading:', err);
+    return "The stars are obscured tonight. How has your flesh and spirit fared this past cycle?";
+  }
+}

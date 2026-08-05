@@ -37,7 +37,9 @@ function parseFlags(item) {
   return item;
 }
 
-export function buildRoutines(items, userProfile = {}, wearables = {}) {
+import { generateAdaptiveSuggestions } from './ai-service.js';
+
+export async function buildRoutines(items, userProfile = {}, wearables = {}) {
   const amItems = [];
   const pmItems = [];
   
@@ -120,20 +122,22 @@ export function buildRoutines(items, userProfile = {}, wearables = {}) {
       }
     }
 
-    // Wearables adaptation: 
-    // Poor sleep (under 6 hours) -> De-puffing eye products in AM
-    if (sleepDuration < 6 && (cat.includes('eye') && cat.includes('de-puff'))) {
-      isAm = true; 
-    }
-    // Heavy sweat -> Gentle body cleanse
-    if (heavySweat && cat.includes('body wash') && item.risk_flags.gentle) {
-      isAm = true;
-      isPm = true;
-    }
-
+    // Base AM/PM logic falls through to here.
     if (isAm) amItems.push(item);
     if (isPm) pmItems.push(item);
   });
+
+  // AI-Driven Wearables Adaptation
+  const adaptiveIds = await generateAdaptiveSuggestions(wearables, allItems);
+  if (adaptiveIds && adaptiveIds.length > 0) {
+    adaptiveIds.forEach(id => {
+      const item = allItems.find(i => i.id === id);
+      if (item && !amItems.some(a => a.id === id)) {
+        // AI specifically requested this item for the AM routine due to health metrics
+        amItems.push(item);
+      }
+    });
+  }
 
   // Zone-based Conflict Rescheduling
   // If Retinoid is in PM, move Vitamin C and Exfoliating Acids to AM

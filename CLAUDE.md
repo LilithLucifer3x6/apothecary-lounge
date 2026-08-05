@@ -82,13 +82,17 @@ The user has fibromyalgia, spondyloarthritis, rheumatoid arthritis, and osteoart
 ## 4. The avatar and the room
 
 A one-time builder runs before The First Inscription. Its title is phrased as a question. All wording within it uses the application's own vocabulary — the hair controls belong to The Crown and are named accordingly, never as generic loc colour or loc style.
-- The figure renders with visible microlocs at every setting. Locs are the default and only texture; no European textures are offered.
+- The figure renders with visible microlocs at every setting. These must be depicted as true microlocs—so small and fine that when grouped up they almost look like loose hair, beautifully adorned. Locs are the default and only texture; no European textures are offered.
+- The figure is strictly plus-size and full-figured (representing a 5'8", ~250lb body type). This is the default and only body type.
 - Hairstyles are visually distinct from one another at a glance. No two options may render alike. Twin buns is a confirmed keeper.
 - Every builder choice persists into the room and everywhere else the figure appears. A selection that reverts to default on the following screen is a defect.
-- The avatar and familiar are editable later from Settings without repeating intake.
+- Avatar robes can be customized to any color of the rainbow, EXCEPT pink and blue. Pink and blue are permitted in background elements, but the robes themselves must never be pink or blue.
+- The familiars offered are Cat, Bat, Owl, Serpent, and Raven. Spiders are strictly forbidden.
 
-The room is the landing screen: a static illustrated interior, generously sized, richly dressed rather than sparse.
-- It contains a hearth with cauldron, an alchemy station with vessels and apparatus, an apothecary bench, a sleeping area, a ritual space, and a working circle marked on the floor.
+The room is the landing screen and serves as the backdrop for all tabs. Instead of flat SVGs, these backgrounds are dynamically generated during the First Inscription via a live AI Image Generation API:
+- When the user selects their avatar's traits (loc style, robe color, familiar, etc.), the application generates 6 unique, high-fidelity 2D digital paintings (Studio Ghibli meets Castlevania aesthetic) corresponding to each tab.
+- The avatar and familiar are physically integrated and painted directly into the background of each room, fully matched with the ethereal lighting of the scene.
+- Once generated, these images are stored and used permanently, avoiding ongoing API costs.
 - Candles are plentiful and lit throughout.
 - The figure holds a grimoire, marking them as the one who does the work.
 - The familiar shares the room.
@@ -206,19 +210,18 @@ Deterministic checks run on reference data. No AI participates in a pass or fail
 
 ## 14. Conflict resolution by zone
 
-Conflicts are evaluated by application zone, not by co-presence in the routine. Two products conflict only when their zones overlap or are directly adjacent. Alcohol-based witch hazel on the underarms does not conflict with a facial retinoid. Salicylic acid bars on chest and back do not conflict with facial actives. A retinal eye serum in the orbital zone and tretinoin applied nose-down do not directly layer; that pairing produces an advisory about total retinoid load rather than a block. Adjacent zones produce a migration advisory. A conflict reschedules rather than forbids. The engine moves one product to a slot where it works. Vitamin C conflicting with a nightly retinoid moves to the Morning Rite, its conventional placement. Exfoliating acids move to nights the retinoid is skipped. Buffering is supported, applying moisturizer before a prescription to reduce irritation. Only a Codex match or a genuine hazard removes a product outright. Where nothing can be safely scheduled, the app says so and explains why. Warnings are overridable. The user may proceed after acknowledgment, since a provider may have approved a combination the engine flags. Hardcoded zone rule: Drysol is never scheduled on the same day as the bath ritual or as underarm witch hazel, because aluminum chloride on freshly exfoliated or astringent-treated skin causes burning.
+Conflicts are evaluated by application zone, not by co-presence in the routine. Two products conflict only when their zones overlap or are directly adjacent. Alcohol-based witch hazel on the underarms does not conflict with a facial retinoid. Salicylic acid bars on chest and back do not conflict with facial actives. A retinal eye serum in the orbital zone and a strong topical retinoid applied nose-down do not directly layer; that pairing produces an advisory about total retinoid load rather than a block. Adjacent zones produce a migration advisory. A conflict reschedules rather than forbids. The engine moves one product to a slot where it works. Vitamin C conflicting with a nightly retinoid moves to the Morning Rite, its conventional placement. Exfoliating acids move to nights the retinoid is skipped. Buffering is supported, applying moisturizer before a prescription to reduce irritation. Only a Codex match or a genuine hazard removes a product outright. Where nothing can be safely scheduled, the app says so and explains why. Warnings are overridable. The user may proceed after acknowledgment, since a provider may have approved a combination the engine flags. Hardcoded zone rule: Drysol is never scheduled on the same day as the bath ritual or as underarm witch hazel, because aluminum chloride on freshly exfoliated or astringent-treated skin causes burning.
 
 ## 15. Master Invocations
 
 Prescriptions. Cannot be Banished by ordinary means; provider-directed discontinuation is the exception and is recorded as such. May be marked Hollow. Zones are editable. Named explicitly wherever they appear.
-- Tretinoin 0.05% cream. Zone: chin per the label, editable. Under active titration, see below.
+
 - Tacrolimus 0.1% ointment. Zone: orbital and eyelid. Eyelid eczema.
 - Drysol, aluminium chloride. Zone: underarms. Hyperhidrosis. Bedtime, dry skin only, never on freshly shaved or irritated skin.
 - Zoryve 0.3% foam. Insurance denied refill. Runs out with the current bottle, then Banished as unobtainable.
 - Isotretinoin, oral (40mg/80mg). Zone: Systemic. Daily step in the Morning Rite. Anchor date: August 3, 2026, first dose 40mg. Alternates between 40mg and 80mg based on the *last confirmed dose*, not the calendar date. If the last confirmed dose was 40mg, the next suggested dose is 80mg. If there is no confirmed dose yet (empty state), the next suggested dose defaults to 40mg (anchor value). Missing a day does not advance the sequence.
 
-Tretinoin titration. The pharmacist directed one to two nights weekly, increasing as tolerated toward nightly. The app supports that progression and never drives it alone.
-- Scheduling begins at one to two nights weekly.
+
 - Every two weeks the app opens an AI-led conversation about tolerance: peeling, redness, blistering, bumps, stinging, and pigment change.
 - Responses feed the Scrying Pool, which evaluates tolerance across time rather than from a single answer.
 - Where tolerance is established, the Pool proposes a single-step increase in weekly frequency. The user confirms. The app never increases frequency on its own.
@@ -246,7 +249,7 @@ Reached by a gear control in the header, present on every screen.
 
 ## 19. Wearables and health data
 
-Data arrives through Terra on the web build, and Android Health Connect on the Android APK. This split is intentional to support seamless syncing of Samsung Health, RingConn, and Renpho across both platforms. Google Calendar sync remains independent.
+Data arrives exclusively through Android Health Connect. Google Calendar sync remains independent. The application must remain strictly free to use, and third-party paid APIs (like Terra) are explicitly forbidden to keep operating costs under $10 a year.
 - Sources the user connects: the RingConn companion application for the Gen 3 ring; Samsung Health for the Galaxy watch; and the Renpho application for its devices. Each is toggled independently and states plainly what it contributes.
 - Setup is guided rather than a permission wall. The app names each source, explains in one line what it will draw and why, and lets the user decline any single stream while keeping the rest.
 - Data drawn, and what each is for:
@@ -281,7 +284,7 @@ Tools in The Arsenal carry usage rules that are not ingredient-based and cannot 
 Both intake and check-in are AI-led conversations rather than forms. The user speaks; AI asks, follows up, and structures the answers. Form and checkbox paths remain available as the fast route.
 - The First Inscription runs once, before any other screen. It gathers known allergies and sensitivities, seeding the Codex; active prescriptions, becoming Master Invocations; conditions to protect; current concerns, setting routine priority; oral medications as cosmetic-evaluation context; and product philosophy preference across traditions, which shapes what the Scrying Pool suggests, limited to what ships to the US.
 - The Reading runs every thirty days. It asks what currently weighs on the user and what the goals are, then re-sorts the entire routine across all domains. It re-asks medications, pre-filled with the previous answer.
-- The tretinoin tolerance check runs every two weeks as its own short conversation.
+
 - Banishing a product opens a conversation that captures the reason.
 - Any data entry that can be conducted as a conversation is conducted as one. Manual entry is a fallback, never the primary path.
 - The conditions question, the current-concerns question, and the opening skin question are required. The opening question offers a relaxation-only answer for when nothing is actively wrong.
@@ -366,7 +369,7 @@ Build in this order. Each phase should run before the next begins.
 
 Estimate, given existing Postgres experience and a prior successful Android build: a working core in one to two weeks of evenings, full scope in a further three to five weeks.
 
-Cost. Everything except AI is free at this scale: Supabase free tier, Vercel free tier, and a sideloaded Android build. AI is pay-per-use with no subscription. The application explicitly uses Claude Sonnet 5 (`claude-sonnet-5`) globally for all extraction, classification, parsing, and conversational tasks. At Claude Sonnet 5 rates, with AI carrying the manual burden described elsewhere, steady state is roughly 3-5 dollars per month. The one-time bulk import of around eighty products costs less than two dollars. Three controls hold this envelope: Sonnet 5 serves everything; the Batch API halves anything not time-sensitive; and prompt caching cuts repeated input by about ninety percent, which applies to nearly every intake call since the system prompt is identical across them.
+Cost. Everything except AI is free at this scale: Supabase free tier, Vercel free tier, and a sideloaded Android build. AI is pay-per-use with no subscription. The application explicitly uses Claude Sonnet 5 (`claude-sonnet-5`) globally for all extraction, classification, parsing, and conversational tasks. The entire build for all AI queries and generations throughout the year must remain strictly under $10 a year. Three controls hold this envelope: Sonnet 5 serves everything; the Batch API halves anything not time-sensitive; and prompt caching cuts repeated input by about ninety percent, which applies to nearly every intake call since the system prompt is identical across them.
 
 ## 31. The Steeping — specified, not built
 
@@ -433,4 +436,4 @@ Version one carries everything in this document, including Google Calendar synch
 
 ## 33. Open decisions
 
-State names, domain names, and tretinoin cadence are settled. Ebbing and Hollow are confirmed. The Gaze and The Grin are confirmed. Titration follows the pharmacist's direction as described in the Master Invocations section. The landing screen is the illustrated cottage interior holding the avatar and familiar, preceded on first launch by the avatar builder. No open decisions remain.
+State names, domain names, and prescriptions are settled. Ebbing and Hollow are confirmed. The Gaze and The Grin are confirmed. The landing screen is the illustrated cottage interior holding the avatar and familiar, preceded on first launch by the avatar builder. No open decisions remain.
