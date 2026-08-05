@@ -495,6 +495,11 @@ export default function App() {
                 <div>
                   <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--crimson)' }}>Danger Zone</h3>
                   
+                  <button onClick={() => {
+                    setShowSettings(false);
+                    setCurrentScreen('avatar');
+                  }} className="btn plum" style={{ width: '100%', marginBottom: '1rem' }}>Reshape Visage (Avatar Builder)</button>
+
                   <button onClick={async () => {
                     if (window.confirm("Do you truly wish to shatter the First Inscription? You will be cast back to the initial inquiry.")) {
                       try {
