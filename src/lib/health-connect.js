@@ -1,5 +1,13 @@
 import { Capacitor } from '@capacitor/core';
-import { Health } from '@capgo/capacitor-health';
+
+// @capgo/capacitor-health is a native-only plugin. Dynamic import guarded
+// by isNativePlatform() so it is never resolved on web — not installed in
+// web package.json and listed in rollupOptions.external in vite.config.js.
+async function getHealth() {
+  if (!Capacitor.isNativePlatform()) return null;
+  const { Health } = await import('@capgo/capacitor-health');
+  return Health;
+}
 
 /**
  * Health Connect Broker
@@ -7,9 +15,9 @@ import { Health } from '@capgo/capacitor-health';
  */
 
 export async function requestHealthPermissions() {
-  if (Capacitor.isNativePlatform()) {
+  const Health = await getHealth();
+  if (Health) {
     try {
-      console.log('Requesting native Health Connect permissions...');
       await Health.requestAuthorization({
         read: ['sleepAnalysis', 'heartRate', 'activeEnergyBurned', 'workouts']
       });
@@ -24,25 +32,23 @@ export async function requestHealthPermissions() {
 }
 
 export async function getReadiness() {
-  if (Capacitor.isNativePlatform()) {
+  const Health = await getHealth();
+  if (Health) {
     try {
       const end = new Date();
       const start = new Date(end.getTime() - (24 * 60 * 60 * 1000));
-      
       const hrData = await Health.query({
         sampleType: 'heartRate',
         startDate: start.toISOString(),
         endDate: end.toISOString()
       });
-      
-      // Simple heuristic based on having data
       const score = hrData && hrData.samples && hrData.samples.length > 0 ? 85 : 75;
       let state = 'optimal';
       if (score < 70) state = 'drained';
       return { score, state };
     } catch (e) {
       console.error('Health Connect query error:', e);
-      return { score: 80, state: 'optimal' }; // Fallback
+      return { score: 80, state: 'optimal' };
     }
   }
   // Web mock: random readiness
@@ -53,7 +59,8 @@ export async function getReadiness() {
 }
 
 export async function getHeavySweat() {
-  if (Capacitor.isNativePlatform()) {
+  const Health = await getHealth();
+  if (Health) {
     try {
       const end = new Date();
       const start = new Date(end.getTime() - (24 * 60 * 60 * 1000));
@@ -62,10 +69,8 @@ export async function getHeavySweat() {
         startDate: start.toISOString(),
         endDate: end.toISOString()
       });
-      
-      // Assume heavy sweat if there are any intense workouts
       return workoutData && workoutData.samples && workoutData.samples.length > 0;
-    } catch(e) {
+    } catch (e) {
       return false;
     }
   }
@@ -74,7 +79,8 @@ export async function getHeavySweat() {
 }
 
 export async function getSleepDuration() {
-  if (Capacitor.isNativePlatform()) {
+  const Health = await getHealth();
+  if (Health) {
     try {
       const end = new Date();
       const start = new Date(end.getTime() - (24 * 60 * 60 * 1000));
@@ -83,19 +89,16 @@ export async function getSleepDuration() {
         startDate: start.toISOString(),
         endDate: end.toISOString()
       });
-      
       if (sleepData && sleepData.samples && sleepData.samples.length > 0) {
-        // Calculate total hours of sleep from samples
         const totalMs = sleepData.samples.reduce((acc, sample) => {
           return acc + (new Date(sample.endDate).getTime() - new Date(sample.startDate).getTime());
         }, 0);
         return (totalMs / (1000 * 60 * 60)).toFixed(1);
       }
-      return 7.5; 
-    } catch(e) {
+      return 7.5;
+    } catch (e) {
       return 7.5;
     }
   }
   return (Math.random() * 3 + 5).toFixed(1); // 5 to 8 hours
 }
-

@@ -13,8 +13,9 @@ export default defineConfig({
       external: [
         // Capacitor native-only plugins — resolved at runtime by the Android
         // native layer, never by the web bundler. The isNativePlatform() guards
-        // in gcal.js mean these are never called on web.
+        // in gcal.js and health-connect.js mean these are never called on web.
         '@codetrix-studio/capacitor-google-auth',
+        '@capgo/capacitor-health',
       ],
     },
   },
