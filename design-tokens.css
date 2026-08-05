@@ -98,13 +98,11 @@
   .mt{font-size:.85em;color:var(--plum);opacity:0.7;margin-top:.15rem;}
   .rx{color:var(--plum);}
   .aid{font-size:.7em;border:1px solid var(--plum-b);color:var(--plum);border-radius:999px;padding:.1rem .5rem;margin-left:.3rem;}
-  .cic{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.18em;color:var(--plum);}
+  .cic{display:inline-block;width:1.45em;height:1.45em;vertical-align:-.18em;color:var(--plum);}
   .cic svg{width:100%;height:100%;display:block;}
   .st .g .cic{width:1.6em;height:1.6em;}
-  .ph-duotone,.ph{font-size:1.15em;vertical-align:-.12em;color:var(--plum);}
+  .ph-duotone,.ph{font-size:1.45em;vertical-align:-.12em;color:var(--plum);}
   .st .g .ph-duotone{font-size:1.6em;}
-  .tb .ph-duotone{font-size:1.4em;}
-  .tb .cic{width:1.4em;height:1.4em;}
   h3 .g .ph-duotone{font-size:1.1em;}
   .spk{background:transparent;border:none;color:var(--plum);opacity:0.7;cursor:pointer;font-size:.85em;padding:.1rem .25rem;flex-shrink:0;font-family:inherit;}
   .spk:hover{color:var(--plum);opacity:1;}
