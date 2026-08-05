@@ -192,11 +192,11 @@ Otherwise, reply sympathetically and ask a clarifying question. Keep responses t
 `;
     // Format history for Anthropic
     const msgs = history.map(h => ({ role: h.role, content: h.text }));
-    msgs.unshift({ role: 'user', content: promptText }); // Use user role since system role might not be supported here
 
     const { data, error } = await invokeAnthropicProxy({
         max_tokens: 256,
-        messages: msgs
+        system: promptText,
+        messages: msgs.length > 0 ? msgs : [{ role: 'user', content: 'I am ready to proceed.' }]
     });
     
     if (error) throw error;
@@ -219,11 +219,11 @@ If you have gathered enough information (after 2-3 exchanges), conclude the read
 Current profile: ${JSON.stringify(userProfile?.intake_answers || {})}
 `;
     const msgs = history.map(h => ({ role: h.role, content: h.text }));
-    msgs.unshift({ role: 'user', content: promptText });
 
     const { data, error } = await invokeAnthropicProxy({
         max_tokens: 300,
-        messages: msgs
+        system: promptText,
+        messages: msgs.length > 0 ? msgs : [{ role: 'user', content: 'I am ready for the reading.' }]
     });
     
     if (error) throw error;

@@ -93,9 +93,9 @@ export default function Altars({ pose }) {
       )}
       <div style={{ flex: 1 }}>
         <div className="nm" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <span style={{ color: 'var(--silver)', fontSize: '1.8rem', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={getGlyph(item)} /></span>
+          <span style={{ color: 'var(--silver)', fontSize: '1.2em', marginRight: '0.4rem', display: 'flex', alignItems: 'center' }}><Icon name={getGlyph(item)} /></span>
           {item.name} 
-          <span style={{ marginLeft: '0.4rem' }}><SpeakerButton text={item.name} /></span>
+          <span style={{ marginLeft: '0.4rem', display: 'flex', alignItems: 'center' }}><SpeakerButton text={item.name} /></span>
           {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
         </div>
         <div className="mt">{item.brand || 'Altar Step'} {item.desc ? `• ${item.desc}` : ''}</div>
@@ -116,7 +116,27 @@ export default function Altars({ pose }) {
 
     return (
       <div>
-        <div className="mt mb-4">The Liturgy of Sequence</div>
+        <div className="mt mb-4" style={{ textAlign: 'center' }}>The Liturgy of Sequence</div>
+        
+        <div style={{ margin: '0.5rem 0 1rem 0', textAlign: 'center' }}>
+          <button 
+            className={`btn ${domainItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
+            style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
+            onClick={() => {
+              const toSave = domainItems.filter(i => !checkedIds.has(i.id)).map(i => i.id);
+              if (toSave.length > 0) {
+                supabase.from('routine_history').insert({ completed_at: new Date().toISOString(), items_used: toSave }).then();
+                const nextChecked = new Set(checkedIds);
+                toSave.forEach(id => nextChecked.add(id));
+                setCheckedIds(nextChecked);
+              }
+            }}
+            disabled={domainItems.every(i => checkedIds.has(i.id))}
+          >
+            {domainItems.every(i => checkedIds.has(i.id)) ? 'The Altar is Sealed' : 'Seal the Altar'}
+          </button>
+        </div>
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {domainItems.map(i => {
             const isOpt = i.category?.toLowerCase().includes('mask') || i.category?.toLowerCase().includes('treatment');
@@ -139,7 +159,7 @@ export default function Altars({ pose }) {
               textAlign: 'center', 
               padding: '0.6rem 1.2rem', 
               fontSize: '1.2rem', 
-              background: '#000000', 
+              background: activeAltarId === altar.id ? 'rgba(0,0,0,0.95)' : 'rgba(0,0,0,0.65)', 
               color: activeAltarId === altar.id ? 'var(--silver)' : 'var(--plum)',
               border: activeAltarId === altar.id ? '1px solid var(--plum)' : '1px solid var(--border)',
               boxShadow: activeAltarId === altar.id ? 'inset 0 0 15px rgba(176, 136, 204, 0.3)' : 'none',

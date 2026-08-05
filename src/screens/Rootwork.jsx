@@ -387,9 +387,9 @@ export default function Rootwork({ pose }) {
     <div style={{padding: '1rem', maxWidth: '900px', margin: '0 auto'}}>
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3>The Apothecary <SpeakerButton text="The Apothecary" /></h3>
-          <button className="btn plum" style={{ fontSize: '1.2rem', padding: '0.5rem 1rem' }} onClick={() => {
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', marginBottom: '1rem' }}>
+          <h3 style={{ margin: 0 }}>The Apothecary <SpeakerButton text="The Apothecary" /></h3>
+          <button className="btn plum" style={{ fontSize: '1.2rem', padding: '0.5rem 1rem', position: 'absolute', right: 0 }} onClick={() => {
             setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
             setPhotoStatus('Offer or Scry Photo');
             setModalState('photo');
@@ -399,55 +399,27 @@ export default function Rootwork({ pose }) {
           </button>
         </div>
         <div className="mt mb-4" style={{ textAlign: 'center' }}>Your sacred elixirs and treatments.</div>
-        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '0.5rem'}}>
           {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
         </div>
       </div>
 
       <div className="card mb-4">
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>The Reliquary <SpeakerButton text="The Reliquary" /></h3>
-        <div className="mt mb-4">Your instruments of ritual and restorative tools.</div>
-        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+        <h3 style={{ justifyContent: 'center' }}>The Reliquary <SpeakerButton text="The Reliquary" /></h3>
+        <div className="mt mb-4" style={{ textAlign: 'center' }}>Your instruments of ritual and restorative tools.</div>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '0.5rem'}}>
           {arsenal.length > 0 ? arsenal.map(renderRow) : <div className="empty">Your Reliquary contains no instruments.</div>}
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem', marginTop: '1rem', width: '100%' }}>
-        
-        <div className="card mb-4" style={{ marginBottom: 0 }}>
+      <div className="tome-grid mt-4" style={{ width: '100%' }}>
+        <div className="card mb-4" style={{ marginBottom: 0, alignSelf: 'start', width: '100%' }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Waning <SpeakerButton text="The Waning" /></h3>
-          <div className="mt mb-4">Relics nearing the end of their mortal potency.</div>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-            {(() => {
-              const waningItems = apothecary.filter(i => {
-                if (!i.period_after_opening_months) return false;
-                const start = i.opened_date ? new Date(i.opened_date) : new Date(i.created_at);
-                const expiry = new Date(start.setMonth(start.getMonth() + parseInt(i.period_after_opening_months, 10)));
-                const monthsLeft = (expiry - new Date()) / (1000 * 60 * 60 * 24 * 30);
-                return monthsLeft > 0 && monthsLeft <= 2;
-              });
-              return waningItems.length === 0 ? <div className="mt">All relics remain potent.</div> : waningItems.map(renderRow);
-            })()}
-          </div>
-        </div>
-
-        <div className="card mb-4" style={{ marginBottom: 0 }}>
-          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Summoning Scroll <SpeakerButton text="The Summoning Scroll" /></h3>
-          <div className="mt mb-4">Items needing replenishment.</div>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-            {ebbing.length === 0 ? <div className="mt">No active summons.</div> : ebbing.map(renderRow)}
-          </div>
-        </div>
-
-        <div className="card mb-4" style={{ marginBottom: 0, width: 'fit-content', margin: '0 auto' }}>
-          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Silver Toll <SpeakerButton text="The Silver Toll" /></h3>
+          <h3 style={{ justifyContent: 'center' }}>The Silver Toll <SpeakerButton text="The Silver Toll" /></h3>
           <div className="mt mb-4" style={{ textAlign: 'center' }}>The material cost of your active rituals, tied to frequency of devotion.</div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '2rem', color: 'var(--plum)' }}>
+            <div style={{ fontSize: '2.5rem', color: 'var(--plum)' }}>
               ${(() => {
                 const { amItems, pmItems } = buildBaseRoutines(items, {}, {});
                 const activeIds = new Set([...amItems.map(i=>i.id), ...pmItems.map(i=>i.id)]);
@@ -483,9 +455,9 @@ export default function Rootwork({ pose }) {
           </div>
         </div>
 
-        <div className="card mb-4" style={{ marginBottom: 0, width: 'fit-content', margin: '0 auto' }}>
+        <div className="card mb-4" style={{ marginBottom: 0, width: '100%' }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-          <h3>The Echo <SpeakerButton text="The Echo" /></h3>
+          <h3 style={{ justifyContent: 'center' }}>The Echo <SpeakerButton text="The Echo" /></h3>
           <div className="mt mb-4" style={{ textAlign: 'center' }}>Reveal the hidden nature of a formula.</div>
           
           <div className="field" style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -498,7 +470,7 @@ export default function Rootwork({ pose }) {
           </div>
 
           <div className="field" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
-            <div style={{ flex: 1 }}>
+            <div style={{ width: '100%' }}>
               <VoiceInput 
                 isTextArea={true}
                 placeholder="Or inscribe the formula's true name..."
@@ -509,11 +481,40 @@ export default function Rootwork({ pose }) {
             </div>
             <button className="btn plum" onClick={handleEchoScry} style={{ minWidth: '120px' }}>Divine</button>
           </div>
-          <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--plum)', minHeight: '1rem', }}>
+          <div style={{ marginTop: '0.5rem', fontSize: '1rem', color: 'var(--plum)', minHeight: '1rem', textAlign: 'center' }}>
             {echoStatus}
           </div>
           <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--plum)', whiteSpace: 'pre-wrap' }}>
             {echoResult}
+          </div>
+        </div>
+      </div>
+
+      <div className="rites2 mt-4" style={{ width: '100%' }}>
+        <div className="card mb-4" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', maxHeight: '500px' }}>
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3 style={{ justifyContent: 'center' }}>The Waning <SpeakerButton text="The Waning" /></h3>
+          <div className="mt mb-4" style={{ textAlign: 'center' }}>Relics nearing the end of their mortal potency.</div>
+          <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {(() => {
+              const waningItems = apothecary.filter(i => {
+                if (!i.period_after_opening_months) return false;
+                const start = i.opened_date ? new Date(i.opened_date) : new Date(i.created_at);
+                const expiry = new Date(start.setMonth(start.getMonth() + parseInt(i.period_after_opening_months, 10)));
+                const monthsLeft = (expiry - new Date()) / (1000 * 60 * 60 * 24 * 30);
+                return monthsLeft > 0 && monthsLeft <= 2;
+              });
+              return waningItems.length === 0 ? <div className="mt" style={{ textAlign: 'center' }}>All relics remain potent.</div> : waningItems.map(renderRow);
+            })()}
+          </div>
+        </div>
+
+        <div className="card mb-4" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', maxHeight: '500px' }}>
+          <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
+          <h3 style={{ justifyContent: 'center' }}>The Summoning Scroll <SpeakerButton text="The Summoning Scroll" /></h3>
+          <div className="mt mb-4" style={{ textAlign: 'center' }}>Items needing replenishment.</div>
+          <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {ebbing.length === 0 ? <div className="mt" style={{ textAlign: 'center' }}>No active summons.</div> : ebbing.map(renderRow)}
           </div>
         </div>
 

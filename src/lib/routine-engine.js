@@ -179,17 +179,17 @@ export function buildBaseRoutines(items, userProfile = {}, wearables = {}) {
   
   // IMMUTABLE BASELINE ROUTINES (From Spec Section 21)
   const immutableGrinAM = [
-    { id: 'grin-am-1', name: 'The Silk Thread', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
-    { id: 'grin-am-2', name: 'The Purifying Stream', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
-    { id: 'grin-am-3', name: 'The Minted Draught', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
-    { id: 'grin-am-4', name: 'The Bristled Cleanse', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
+    { id: 'grin-am-1', name: 'The Silk Thread', desc: 'Floss meticulously to remove stagnation.', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
+    { id: 'grin-am-2', name: 'The Purifying Stream', desc: 'Water flosser to flush hidden impurities.', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
+    { id: 'grin-am-3', name: 'The Minted Draught', desc: 'Mouthwash to cleanse the breath.', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
+    { id: 'grin-am-4', name: 'The Bristled Cleanse', desc: 'Brush teeth with devotion.', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
   ];
   
   const immutableGrinPM = [
-    { id: 'grin-pm-1', name: 'The Silk Thread', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
-    { id: 'grin-pm-2', name: 'The Purifying Stream', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
-    { id: 'grin-pm-3', name: 'The Minted Draught', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
-    { id: 'grin-pm-4', name: 'The Bristled Cleanse', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
+    { id: 'grin-pm-1', name: 'The Silk Thread', desc: 'Floss meticulously to remove stagnation.', category: 'immutable', domain: 'grin', weight: -0.4, isInjected: true },
+    { id: 'grin-pm-2', name: 'The Purifying Stream', desc: 'Water flosser to flush hidden impurities.', category: 'immutable', domain: 'grin', weight: -0.3, isInjected: true },
+    { id: 'grin-pm-3', name: 'The Minted Draught', desc: 'Mouthwash to cleanse the breath.', category: 'immutable', domain: 'grin', weight: -0.2, isInjected: true },
+    { id: 'grin-pm-4', name: 'The Bristled Cleanse', desc: 'Brush teeth with devotion.', category: 'immutable', domain: 'grin', weight: -0.1, isInjected: true }
   ];
 
   const immutableWindDown = [

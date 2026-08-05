@@ -24,7 +24,7 @@ export default function Intake({ onComplete }) {
   
   const [rxList, setRxList] = useState([]);
   const [oralList, setOralList] = useState([]);
-  const [algList, setAlgList] = useState(['Lavender']);
+  const [algList, setAlgList] = useState([]);
   const [newAlg, setNewAlg] = useState('');
   
   const [noRx, setNoRx] = useState(false);
@@ -452,7 +452,7 @@ export default function Intake({ onComplete }) {
               {renderTitle('The ingredients to never touch')}
               <div className="mt mb-4">Allergies and sensitivities.</div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--plum)' }}>
-                <input type="checkbox" checked={noAlg} onChange={e => { setNoAlg(e.target.checked); if(e.target.checked) setAlgList(['Lavender']); }} /> I hold no other aversions.
+                <input type="checkbox" checked={noAlg} onChange={e => { setNoAlg(e.target.checked); if(e.target.checked) setAlgList([]); }} /> I hold no other aversions.
               </label>
               {!noAlg && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -461,8 +461,6 @@ export default function Intake({ onComplete }) {
                       <div style={{ flex: 1 }}>
                         <VoiceInput 
                           value={alg} 
-                          disabled={i === 0 && alg.toLowerCase() === 'lavender'} 
-                          style={(i === 0 && alg.toLowerCase() === 'lavender') ? { opacity: 0.7, background: 'rgba(255,255,255,0.5)' } : {}} 
                           onChange={e => {
                             const newList = [...algList];
                             newList[i] = e.target.value;
@@ -471,13 +469,11 @@ export default function Intake({ onComplete }) {
                           placeholder="e.g. Lanolin" 
                         />
                       </div>
-                      {!(i === 0 && alg.toLowerCase() === 'lavender') && (
-                        <button className="btn sm" style={{ background: 'transparent', color: 'var(--plum)', padding: '0.5rem' }} onClick={() => {
-                          const newList = [...algList];
-                          newList.splice(i, 1);
-                          setAlgList(newList);
-                        }}>Shatter</button>
-                      )}
+                      <button className="btn sm" style={{ background: 'transparent', color: 'var(--plum)', padding: '0.5rem' }} onClick={() => {
+                        const newList = [...algList];
+                        newList.splice(i, 1);
+                        setAlgList(newList);
+                      }}>Shatter</button>
                     </div>
                   ))}
                   <button className="btn" onClick={() => setAlgList([...algList, ''])} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Aversion</button>

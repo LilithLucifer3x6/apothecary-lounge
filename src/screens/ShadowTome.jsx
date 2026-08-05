@@ -91,14 +91,26 @@ export default function ShadowTome({ pose }) {
   const handleSave = async () => {
     const moodsArray = Array.from(selectedMoods);
     if (entryText || moodsArray.length > 0) {
+      const currentText = entryText;
+      const currentMoods = moodsArray;
+      
+      const optimisticEntry = {
+        id: Date.now(),
+        created_at: new Date().toISOString(),
+        body_text: currentText,
+        moods: currentMoods,
+      };
+      setHistory(prev => [optimisticEntry, ...prev]);
+      
+      setEntryText('');
+      setSelectedMoods(new Set());
+      
       await supabase.from('journal_entries').insert([{
-        body_text: entryText,
-        moods: moodsArray,
+        body_text: currentText,
+        moods: currentMoods,
         moon_phase: 'Unknown',
         photos: []
       }]);
-      setEntryText('');
-      setSelectedMoods(new Set());
       loadHistory();
     }
   };
@@ -290,8 +302,8 @@ export default function ShadowTome({ pose }) {
             <h3 style={{ textAlign: 'center', justifyContent: 'center' }}>The Inner Sanctum <SpeakerButton text="The Inner Sanctum" /></h3>
             <div className="note mb-4" style={{ fontSize: '1.2rem', textAlign: 'center' }}>"The ink is your own."</div>
             
-            <div className="field" style={{ marginTop: '2.5rem' }}>
-              <label>The Spirit's Temperament</label>
+            <div className="field" style={{ marginTop: '1rem' }}>
+              <label style={{ fontSize: '1.15rem' }}>The Spirit's Temperament</label>
               <div className="chips" id="tome-moods">
                 {moodsList.length === 0 ? (
                   <div style={{ opacity: 0.5 }}>Divining moods...</div>
@@ -362,7 +374,7 @@ export default function ShadowTome({ pose }) {
         {/* Right Column: Widgets */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
-          <div className="card" style={{ padding: '1.5rem', textAlign: 'center' }}>
+          <div className="card" style={{ padding: '1.5rem', textAlign: 'center', maxWidth: '300px', margin: '0 auto' }}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div>
@@ -410,7 +422,7 @@ export default function ShadowTome({ pose }) {
 
           <div className="card" style={{ padding: '1.5rem', textAlign: 'center' }}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{ fontSize: '1.5rem', justifyContent: 'center' }}>The Herbal Cache <SpeakerButton text="The Herbal Cache" /></h3>
+            <h3 style={{ fontSize: '1.5rem', justifyContent: 'center' }}>The Botanical Trove <SpeakerButton text="The Botanical Trove" /></h3>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {pantry.length > 0 ? pantry.map(tea => (
@@ -432,7 +444,7 @@ export default function ShadowTome({ pose }) {
                   </div>
                 </div>
               )) : (
-                <div className="empty">The herbal pantry remains bare.</div>
+                <div className="empty">The botanical trove is bare.</div>
               )}
             </div>
           </div>
@@ -479,9 +491,9 @@ export default function ShadowTome({ pose }) {
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
-              <div>
-                <h3 style={{color: 'var(--plum)'}}>The Herbal Elixir Inscription</h3>
-                <div className="mt mb-4" style={{color: 'var(--plum)'}}>Add a new tea blend to your pantry.</div>
+              <div style={{width: '100%'}}>
+                <h3 style={{color: 'var(--plum)', textAlign: 'center', justifyContent: 'center'}}>The Herbal Elixir Inscription</h3>
+                <div className="mt mb-4" style={{color: 'var(--plum)', textAlign: 'center'}}>Add a new tea blend to your botanical trove.</div>
               </div>
               {teaModalState !== 'manual' && (
                 <button className="btn sm" style={{background: 'transparent', padding: '0.4rem', color: 'var(--plum)'}} onClick={() => setTeaModalState('manual')} title="Manual Inscription">
@@ -538,7 +550,7 @@ export default function ShadowTome({ pose }) {
                 <div style={{display: 'flex', justifyContent: 'center', gap: '1rem'}}>
                   <button className="btn" onClick={() => setTeaModalState('photo')}>Reject Vision</button>
                   <button className="btn plum" onClick={handleSaveTea} disabled={isSavingTea}>
-                    {isSavingTea ? 'Inscribing...' : 'Stow in the Cache'}
+                    {isSavingTea ? 'Inscribing...' : 'Stow in the Trove'}
                   </button>
                 </div>
               </div>
@@ -547,7 +559,7 @@ export default function ShadowTome({ pose }) {
             {teaModalState === 'manual' && (
               <>
                 <div className="field">
-                  <label style={{color: 'var(--plum)'}}>Divine by Visage (Optional Override)</label>
+                  <label style={{color: 'var(--plum)'}}>Divine by Visage</label>
                   <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--plum)', cursor: 'pointer'}}>
                     <Icon name="ph-camera" /> 
                     <span style={{marginTop: '0.5rem', textAlign: 'center'}}>{teaStatus}</span>
@@ -556,7 +568,7 @@ export default function ShadowTome({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--plum)'}}>Brand (Optional)</label>
+                  <label style={{color: 'var(--plum)'}}>Lineage or House</label>
                   <VoiceInput value={teaForm.brand} onChange={e => setTeaForm({...teaForm, brand: e.target.value})} />
                 </div>
                 
@@ -566,7 +578,7 @@ export default function ShadowTome({ pose }) {
                 </div>
 
                 <div className="field">
-                  <label style={{color: 'var(--plum)'}}>The Steeping (Time & Temp)</label>
+                  <label style={{color: 'var(--plum)'}}>The Steeping</label>
                   <VoiceInput value={teaForm.steep_time} onChange={e => setTeaForm({...teaForm, steep_time: e.target.value})} />
                 </div>
                 
@@ -599,7 +611,7 @@ export default function ShadowTome({ pose }) {
                 <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem'}}>
                   <button className="btn" onClick={closeTeaModal}>Abandon</button>
                   <button className="btn plum" onClick={handleSaveTea} disabled={isSavingTea || !teaForm.name}>
-                    {isSavingTea ? 'Inscribing...' : 'Stow in the Cache'}
+                    {isSavingTea ? 'Inscribing...' : 'Stow in the Trove'}
                   </button>
                 </div>
               </>
