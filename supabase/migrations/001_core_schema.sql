@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS user_profile (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Items (all inventory — consumables, tools, composites)
 CREATE TABLE IF NOT EXISTS items (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -55,6 +56,7 @@ CREATE TABLE IF NOT EXISTS items (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Composite components junction
 CREATE TABLE IF NOT EXISTS composite_components (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -63,6 +65,7 @@ CREATE TABLE IF NOT EXISTS composite_components (
   proportion TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 -- Codex (ingredient block list)
 CREATE TABLE IF NOT EXISTS codex_entries (
@@ -73,6 +76,7 @@ CREATE TABLE IF NOT EXISTS codex_entries (
   source TEXT DEFAULT 'manual',
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 -- Conflict rules (reference data for synergy engine)
 CREATE TABLE IF NOT EXISTS conflict_rules (
@@ -85,6 +89,7 @@ CREATE TABLE IF NOT EXISTS conflict_rules (
   source TEXT DEFAULT 'reference',
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 -- Routine history
 CREATE TABLE IF NOT EXISTS routine_history (
@@ -101,8 +106,9 @@ CREATE TABLE IF NOT EXISTS routine_history (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Reactions
-CREATE TABLE IF NOT EXISTS reactions (
+CREATE TABLE IF NOT EXISTS somatic_reactions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   item_id UUID REFERENCES items(id) ON DELETE CASCADE,
   reaction_type TEXT NOT NULL,
@@ -111,6 +117,7 @@ CREATE TABLE IF NOT EXISTS reactions (
   notes TEXT,
   logged_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 -- Appointments (salon, recurring rituals)
 CREATE TABLE IF NOT EXISTS appointments (
@@ -126,6 +133,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Journal entries (Shadow Tome)
 CREATE TABLE IF NOT EXISTS journal_entries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -138,12 +146,14 @@ CREATE TABLE IF NOT EXISTS journal_entries (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Storage locations (user-extensible)
 CREATE TABLE IF NOT EXISTS storage_locations (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL UNIQUE,
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 -- Glyph registry (uniqueness enforcement)
 CREATE TABLE IF NOT EXISTS glyph_registry (
@@ -153,6 +163,7 @@ CREATE TABLE IF NOT EXISTS glyph_registry (
   assigned_type TEXT NOT NULL CHECK (assigned_type IN ('item', 'category', 'ritual', 'altar', 'appointment', 'system')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 -- Tretinoin titration tracking
 CREATE TABLE IF NOT EXISTS titration_log (
@@ -166,6 +177,7 @@ CREATE TABLE IF NOT EXISTS titration_log (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+
 -- Disable RLS for single-user app (no auth needed)
 ALTER TABLE user_profile ENABLE ROW LEVEL SECURITY;
 ALTER TABLE items ENABLE ROW LEVEL SECURITY;
@@ -173,7 +185,7 @@ ALTER TABLE composite_components ENABLE ROW LEVEL SECURITY;
 ALTER TABLE codex_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conflict_rules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE routine_history ENABLE ROW LEVEL SECURITY;
-ALTER TABLE reactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE somatic_reactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE journal_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE storage_locations ENABLE ROW LEVEL SECURITY;
@@ -181,17 +193,27 @@ ALTER TABLE glyph_registry ENABLE ROW LEVEL SECURITY;
 ALTER TABLE titration_log ENABLE ROW LEVEL SECURITY;
 
 -- Allow anon access to all tables (single-user, private app)
+DROP POLICY IF EXISTS "Allow all access" ON user_profile;
 CREATE POLICY "Allow all access" ON user_profile FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON items;
 CREATE POLICY "Allow all access" ON items FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON composite_components;
 CREATE POLICY "Allow all access" ON composite_components FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON codex_entries;
 CREATE POLICY "Allow all access" ON codex_entries FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON conflict_rules;
 CREATE POLICY "Allow all access" ON conflict_rules FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON routine_history;
 CREATE POLICY "Allow all access" ON routine_history FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all access" ON reactions FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON somatic_reactions;
+CREATE POLICY "Allow all access" ON somatic_reactions FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON appointments;
 CREATE POLICY "Allow all access" ON appointments FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON journal_entries;
 CREATE POLICY "Allow all access" ON journal_entries FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON storage_locations;
 CREATE POLICY "Allow all access" ON storage_locations FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON glyph_registry;
 CREATE POLICY "Allow all access" ON glyph_registry FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow all access" ON titration_log;
 CREATE POLICY "Allow all access" ON titration_log FOR ALL USING (true) WITH CHECK (true);
-
-

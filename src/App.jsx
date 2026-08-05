@@ -120,7 +120,7 @@ export default function App() {
     // Initial background state is now handled by the useEffects tracking currentScreen and activeTab
     
     // Sync settings with profile in background
-    supabase.from('user_profile').select('*').maybeSingle().then(({ data: profile, error }) => {
+    supabase.from('user_profile').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle().then(({ data: profile, error }) => {
       if (error && error.message !== 'JWT expired' && error.message !== 'No current session') {
         setSupabaseError(true);
       }
@@ -162,7 +162,7 @@ export default function App() {
   const handleEnter = async () => {
     let profile = null;
     try {
-      const res = await supabase.from('user_profile').select('*').maybeSingle();
+      const res = await supabase.from('user_profile').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
       if (res.error) setSupabaseError(true);
       profile = res.data;
     } catch(e) {
@@ -199,7 +199,7 @@ export default function App() {
     localStorage.setItem('app_settings', JSON.stringify(newSettings));
     applySettings(newSettings);
     
-    const { data: profile } = await supabase.from('user_profile').select('*').maybeSingle();
+    const { data: profile } = await supabase.from('user_profile').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
     if (profile) {
       await supabase.from('user_profile').update({ settings: newSettings }).eq('id', profile.id);
     }
@@ -498,7 +498,7 @@ export default function App() {
                   <button onClick={async () => {
                     if (window.confirm("Do you truly wish to shatter the First Inscription? You will be cast back to the initial inquiry.")) {
                       try {
-                        const { data: profile, error: profileErr } = await supabase.from('user_profile').select('*').maybeSingle();
+                        const { data: profile, error: profileErr } = await supabase.from('user_profile').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
                         if (profileErr) throw profileErr;
                         if (profile) {
                           const { error: updateErr } = await supabase.from('user_profile').update({ intake_completed: false }).eq('id', profile.id);
@@ -516,22 +516,13 @@ export default function App() {
                   <button onClick={async () => {
                     if (window.confirm("Do you truly wish to raze this Sanctuary to ash? All saved rites, items, and settings shall be lost to the void. This cannot be undone.")) {
                       try {
-                        const { data: profile, error: profileErr } = await supabase.from('user_profile').select('*').maybeSingle();
+                        const { error: profileErr } = await supabase.from('user_profile').delete().not('id', 'is', null);
                         if (profileErr) throw profileErr;
-                        if (profile) {
-                          const { error: err1 } = await supabase.from('user_profile').delete().eq('id', profile.id);
-                          if (err1) throw err1;
-                          const { error: err2 } = await supabase.from('somatic_reactions').delete().not('id', 'is', null);
-                          if (err2) throw err2;
-                          const { error: err3 } = await supabase.from('shadowtome_elixirs').delete().not('id', 'is', null);
-                          if (err3) throw err3;
-                          const { error: err4 } = await supabase.from('journal_entries').delete().not('id', 'is', null);
-                          if (err4) throw err4;
-                          const { error: err5 } = await supabase.from('routine_history').delete().not('id', 'is', null);
-                          if (err5) throw err5;
-                          const { error: err6 } = await supabase.from('items').delete().not('id', 'is', null);
-                          if (err6) throw err6;
-                        }
+                        await supabase.from('somatic_reactions').delete().not('id', 'is', null);
+                        await supabase.from('shadowtome_elixirs').delete().not('id', 'is', null);
+                        await supabase.from('journal_entries').delete().not('id', 'is', null);
+                        await supabase.from('routine_history').delete().not('id', 'is', null);
+                        await supabase.from('items').delete().not('id', 'is', null);
                       } catch (err) {
                         console.error('Failed to erase Codex', err);
                         alert('Failed to erase Codex. Continuing local wipe.');
