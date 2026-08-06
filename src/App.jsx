@@ -77,26 +77,32 @@ export default function App() {
 
   useEffect(() => {
     sessionStorage.setItem('al_activeTab', activeTab);
-    if (currentScreen === 'app') {
-      // Try to load a personalized generated background for this tab first
-      let bgUrl = null;
-      try {
-        const avatarConfig = JSON.parse(localStorage.getItem('avatar_config') || '{}');
-        if (avatarConfig.generatedBgs && avatarConfig.generatedBgs[activeTab]) {
-          bgUrl = avatarConfig.generatedBgs[activeTab];
+    
+    const applyBackground = () => {
+      if (currentScreen === 'app') {
+        let bgUrl = null;
+        try {
+          const avatarConfig = JSON.parse(localStorage.getItem('avatar_config') || '{}');
+          if (avatarConfig.generatedBgs && avatarConfig.generatedBgs[activeTab]) {
+            bgUrl = avatarConfig.generatedBgs[activeTab];
+          }
+        } catch(e) {}
+
+        if (!bgUrl) {
+          const tab = TABS.find(t => t.id === activeTab);
+          bgUrl = tab?.bg || '/assets/bg_sanctuary.jpg';
         }
-      } catch(e) {}
 
-      // Fall back to static illustrated room backgrounds
-      if (!bgUrl) {
-        const tab = TABS.find(t => t.id === activeTab);
-        bgUrl = tab?.bg || '/assets/bg_sanctuary.jpg';
+        document.body.style.backgroundImage = `url('${bgUrl}')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
       }
+    };
 
-      document.body.style.backgroundImage = `url('${bgUrl}')`;
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundPosition = 'center';
-    }
+    applyBackground();
+
+    window.addEventListener('backgrounds_updated', applyBackground);
+    return () => window.removeEventListener('backgrounds_updated', applyBackground);
   }, [activeTab, currentScreen]);
 
   useEffect(() => {

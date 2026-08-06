@@ -294,59 +294,36 @@ export default function ConjureVisage({ onFinish }) {
 
     const config = buildKeeperDescription();
     setGenerating(true);
-
-    const rooms = [
-      { id: 'rites', title: 'Binding your essence to the Sanctuary...' },
-      { id: 'grim', title: 'Weaving your Keeper into the Grimoire...' },
-      { id: 'altars', title: 'Painting your Keeper at the Altars...' },
-      { id: 'root', title: 'Summoning your Keeper to the Rootwork...' },
-      { id: 'pool', title: 'Conjuring your Keeper at the Scrying Pool...' },
-      { id: 'tome', title: 'Inscribing your Keeper in the Shadow Tome...' },
-    ];
-
-    const generatedBgs = {};
-
-    for (let i = 0; i < rooms.length; i++) {
-      const room = rooms[i];
-      setGenPhase(room.title);
-      setGenStep(i);
-      
-      const prompt = ROOM_PROMPTS[room.id](config);
-      try {
-        const { data, error } = await supabase.functions.invoke('generate-room-bg', {
-          body: { prompt }
-        });
-        
-        if (error) {
-          console.warn(`Failed to generate ${room.id} bg:`, error);
-        } else if (data && data.url) {
-          generatedBgs[room.id] = data.url;
-        }
-      } catch (err) {
-        console.warn(`Failed to invoke generate-room-bg for ${room.id}:`, err);
-      }
-    }
-
     setGenPhase('The Sanctuary awakens...');
     setGenStep(6);
+    
+    // Simulate a brief, satisfying pause
     await new Promise(r => setTimeout(r, 600));
 
-    config.generatedBgs = generatedBgs;
+    // Save initial config immediately
     localStorage.setItem('avatar_config', JSON.stringify(config));
+    
+    // Fire off background generation pipeline
+    import('../lib/ai-engine.js').then(({ startBackgroundRoomGeneration }) => {
+      startBackgroundRoomGeneration(config);
+    });
+
     if (onFinish) onFinish(config);
   };
 
   if (generating) {
-    const progress = Math.round(((genStep + 1) / 7) * 100);
+    const progress = 100; // Instantly jump to 100% because generation is now detached
     return (
       <div style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        minHeight: '100vh', color: 'var(--plum)',
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+        background: 'rgba(5,3,10,0.95)', backdropFilter: 'blur(10px)',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', zIndex: 100
       }}>
         <div style={{
-          background: 'rgba(5,3,10,0.88)', backdropFilter: 'blur(16px)',
-          padding: '2.5rem 3rem', borderRadius: '12px',
-          border: '1px solid rgba(176,132,148,0.35)', textAlign: 'center', maxWidth: '420px',
+          width: '80%', maxWidth: '400px', textAlign: 'center',
+          background: 'rgba(176,132,148,0.05)', padding: '3rem 2rem',
+          borderRadius: '16px', border: '1px solid rgba(176,132,148,0.2)'
         }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>✦</div>
           <h2 style={{ marginBottom: '0.5rem', color: 'var(--plum)', fontSize: '1.3rem' }}>{genPhase}</h2>
