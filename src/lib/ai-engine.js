@@ -170,6 +170,97 @@ export async function parseProductImage(base64Image, mediaType) {
 }
 
 /**
+ * Parses multiple product images using Claude Vision, groups them by product, and resolves conflicts.
+ * @param {Array<{base64: string, mediaType: string, filename: string}>} images
+ * @returns {Promise<Array>}
+ */
+export async function parseBatchProductImages(images) {
+  if (!images || images.length === 0) return [];
+
+  const tools = [
+    {
+      name: 'group_and_extract_products',
+      description: 'Groups multiple product images into distinct products and extracts their details',
+      input_schema: {
+        type: 'object',
+        properties: {
+          products: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                filenames: { 
+                  type: 'array', 
+                  items: { type: 'string' },
+                  description: 'The filenames of the images that belong to this product'
+                },
+                brand: { type: 'string' },
+                name: { type: 'string' },
+                domain: { type: 'string', enum: ['Crown', 'Visage', 'Vessel', 'Grin'] },
+                category: { type: 'string' },
+                price: { type: 'number' },
+                ingredients: { 
+                  type: 'array', 
+                  items: { type: 'string' },
+                  description: 'The definitive ingredients list'
+                },
+                ingredient_conflicts: {
+                  type: 'boolean',
+                  description: 'True if there is ambiguity or disagreement across photos regarding ingredients/risk flags'
+                },
+                ingredient_conflict_details: {
+                  type: 'string',
+                  description: 'If ingredient_conflicts is true, explain the disagreement so the user can resolve it.'
+                }
+              },
+              required: ['filenames', 'brand', 'name', 'domain', 'ingredients', 'ingredient_conflicts']
+            }
+          }
+        },
+        required: ['products']
+      }
+    }
+  ];
+
+  const contentBlocks = images.map(img => ({
+    type: 'image',
+    source: {
+      type: 'base64',
+      media_type: img.mediaType,
+      data: img.base64
+    }
+  }));
+
+  contentBlocks.push({
+    type: 'text',
+    text: `I have uploaded ${images.length} images. They have the following filenames in order: ${images.map(i => i.filename).join(', ')}.
+Your task is to analyze all images simultaneously and GROUP them into distinct products (e.g. front label, back label, and price tag of the SAME product belong in one group).
+For each distinct product you identify:
+1. List the filenames of the images that belong to it.
+2. Extract brand, name, domain (Crown=Hair, Visage=Face, Vessel=Body, Grin=Mouth), and price.
+3. For non-safety fields (like name or price), if photos disagree, use Source Precedence (Physical container > Packaging > Retailer Listing > AI Knowledge) and output only the winner.
+4. For ingredients or risk flags, if photos disagree (e.g. front says "fragrance free" but back lists "parfum", or one photo cuts off the list), set 'ingredient_conflicts' to true and explain the conflict in 'ingredient_conflict_details' so the user must make an explicit choice. If they agree, set it to false.`
+  });
+
+  const { data, error } = await invokeAnthropicProxy({
+      max_tokens: 4096,
+      messages: [{ role: 'user', content: contentBlocks }],
+      tools: tools,
+      tool_choice: { type: 'tool', name: 'group_and_extract_products' }
+  });
+
+  if (error) throw error;
+
+  for (const block of data.content) {
+    if (block.type === 'tool_use' && block.name === 'group_and_extract_products') {
+      return block.input.products || [];
+    }
+  }
+
+  return [];
+}
+
+/**
  * Scry a prospective product against the user's profile and inventory.
  * @param {string} productInfo - Name and/or ingredients of the prospective product.
  * @param {Object} userProfile - The user's intake profile (concerns, allergies, conditions).
@@ -187,7 +278,7 @@ The user seeks your wisdom on a prospective new product or formula (The Echo).
 Perform a strict Safety Check against their known allergies (The Codex), medical conditions, and past Somatic Reactions. 
 If they have banished items or reacted poorly (peeling, redness, burning), deduce the common denominator ingredients and explicitly warn them if the prospective item contains them.
 Perform a Redundancy Guard: compare the prospective item's primary actives against their current inventory. If they already own a formula that serves the exact same purpose or uses the same actives, explicitly warn them to guard against redundant spending.
-If you detect a safety conflict or redundancy, generate 1 or 2 valid alternative product recommendations (real-world products).
+If you detect a safety conflict or redundancy, you MUST suggest valid alternative replacements. STRICT CONSTRAINT: You must suggest replacements from their *owned* Current Inventory first. Do not suggest new real-world purchases unless they literally own nothing that serves the same purpose.
 Speak in a mystical, cottagecore-goth tone ("ritual voice"). Be concise but insightful.
 Do not use gendered language or pronouns.
 
@@ -197,11 +288,12 @@ ${JSON.stringify(userProfile, null, 2)}
 Somatic Reactions (Ledger of Afflictions):
 ${JSON.stringify(reactions, null, 2)}
 
-Banished Items (The Crypt of Ashes):
-${banishedStr || 'None'}
+Banished Items (The Crypt of Ashes) [Max 40]:
+${banishedStr ? banishedStr.substring(0, 4000) + (banishedStr.length > 4000 ? '\n...[TRUNCATED]' : '') : 'None'}
 
-Current Inventory:
-${JSON.stringify(inventory.map(i => i.name + ' (' + i.category + ')'), null, 2)}
+Current Inventory [Max 40 items]:
+${JSON.stringify(inventory.slice(0, 40).map(i => i.name + ' (' + i.category + ')'), null, 2)}
+${inventory.length > 40 ? '...[TRUNCATED - Showing 40 of ' + inventory.length + ' items]' : ''}
 `;
 
   const { data, error } = await invokeAnthropicProxy({
@@ -242,7 +334,7 @@ Assess if their current routine is actively moving them toward their stated inta
 Recommend removing steps or products they do not actually need (e.g. "you are using too many acids", or "you have overlapping moisturizers"). Identify any redundant steps.
 
 ### Replacement & Synergy Mapping
-When a product is banished or ebbing, suggest replacements first from their *owned* inventory, then from general product knowledge. Suggest unowned product categories that would work synergistically with their current routine.
+When a product is banished or ebbing, you MUST suggest replacements first from their *owned* Active Inventory. STRICT CONSTRAINT: Do not suggest new outside products to buy unless their owned inventory is completely devoid of a viable alternative. Only suggest unowned product categories if it solves a critical routine gap.
 
 ### Correlations
 Point out behavioral or systemic correlations (e.g., reacting to something due to applying it too frequently, or overlapping conflicts).
@@ -255,11 +347,12 @@ Do not use gendered language or pronouns.`;
 Intake Profile (Goals & Allergies):
 ${JSON.stringify(intakeAnswers, null, 2)}
 
-Active Inventory:
-${JSON.stringify(inventory.map(i => ({ name: i.name, category: i.category, ingredients: i.ingredients, state: i.lifecycle_state })), null, 2)}
+Active Inventory (Truncated to Top 50):
+${JSON.stringify(inventory.slice(0, 50).map(i => ({ name: i.name, category: i.category, ingredients: i.ingredients, state: i.lifecycle_state })), null, 2)}
+${inventory.length > 50 ? '...[TRUNCATED - Showing 50 of ' + inventory.length + ' items]' : ''}
 
-Banished Items (Crypt of Ashes):
-${JSON.stringify(banishedItems.map(i => {
+Banished Items (Crypt of Ashes, Truncated to Top 30):
+${JSON.stringify(banishedItems.slice(0, 30).map(i => {
   const isCostOrAvail = i.banish_reason?.includes('Material Toll') || i.banish_reason?.includes('Elusive');
   return { 
     name: i.name, 
@@ -267,6 +360,7 @@ ${JSON.stringify(banishedItems.map(i => {
     reason: i.banish_reason 
   };
 }), null, 2)}
+${banishedItems.length > 30 ? '...[TRUNCATED - Showing 30 of ' + banishedItems.length + ' banished items]' : ''}
 
 Ledger of Afflictions (Reactions):
 ${JSON.stringify(ledgerEntries, null, 2)}

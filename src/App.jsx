@@ -5,6 +5,7 @@ import { getTtsEnabled, getTtsRate, getTtsPitch, getTtsVoiceURI, setTtsEnabled, 
 import Icon from './components/Icon.jsx';
 import { initGoogleCalendar, requestCalendarAccess } from './lib/gcal.js';
 import { Capacitor } from '@capacitor/core';
+import { initEngineRules } from './lib/routine-engine.js';
 
 import ConjureVisage from './screens/ConjureVisage.jsx';
 import Landing from './screens/Landing.jsx';
@@ -155,6 +156,9 @@ export default function App() {
         localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
       }
     });
+
+    // Initialize Routine Engine deterministic rules (Codex + Conflicts)
+    initEngineRules();
 
   }, []);
 

@@ -15,17 +15,6 @@ export async function checkCodex(ingredientList) {
   const matches = [];
   const lowerIngredients = ingredientList.map(i => i.toLowerCase());
 
-  // Check hardcoded variants of lavender
-  const lavenderRegex = /lavender|lavandula|lavandin/i;
-  for (const ing of ingredientList) {
-    if (lavenderRegex.test(ing)) {
-      matches.push({
-        ingredient: ing,
-        reason: 'Known sensitivity — permanent entry'
-      });
-    }
-  }
-
   try {
     const { data: codexEntries, error } = await supabase
       .from('codex_entries')

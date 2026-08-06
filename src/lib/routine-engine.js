@@ -4,8 +4,21 @@
  * Enforces the Deterministic Safety Layer (Codex, Melanin Ward, 4C Hair, Zonal Rules).
  */
 
-// Hardcoded Codex Blocks
-const CODEX_BANS = ['lavender', 'lavandula'];
+import { supabase } from './supabase.js';
+
+let cachedCodex = [];
+let cachedConflicts = [];
+
+export async function initEngineRules() {
+  try {
+    const { data: c1 } = await supabase.from('codex_entries').select('*');
+    const { data: c2 } = await supabase.from('conflict_rules').select('*');
+    cachedCodex = c1 || [];
+    cachedConflicts = c2 || [];
+  } catch (e) {
+    console.error('Failed to initialize engine rules:', e);
+  }
+}
 
 // Risk Ward checks (presence-based triggers)
 const MELANIN_TRIGGERS = ['hydroquinone', 'citrus', 'lemon', 'lime', 'grapefruit'];
@@ -77,8 +90,9 @@ export function buildBaseRoutines(items, userProfile = {}, wearables = {}) {
   allItems.forEach(rawItem => {
     const item = parseFlags(rawItem);
     
-    // THE CODEX: Absolute Ban
-    if (checkIngredients(item.ingredients, CODEX_BANS)) {
+    // THE CODEX: Dynamic DB Ban
+    const dynamicBans = cachedCodex.map(c => c.ingredient.toLowerCase());
+    if (checkIngredients(item.ingredients, dynamicBans)) {
       return; // Stripped entirely
     }
 
@@ -251,7 +265,6 @@ export function checkConflicts(items, userProfile = {}) {
   
   // ZONAL MAPPING
   const zoneMap = {};
-  
   items.forEach(rawItem => {
     const item = parseFlags(rawItem);
     const zone = (item.application_zone || 'full-face').toLowerCase();
@@ -259,18 +272,29 @@ export function checkConflicts(items, userProfile = {}) {
     zoneMap[zone].push(item);
   });
 
-  // ZONAL CONFLICT RESOLUTION
-  for (const [zone, zoneItems] of Object.entries(zoneMap)) {
-    const hasRetinoid = zoneItems.some(i => i.risk_flags.retinoid);
-    const hasAcid = zoneItems.some(i => i.risk_flags.acid || i.risk_flags.exfoliant);
-    const hasVitC = zoneItems.some(i => i.risk_flags.vitamin_c);
+  // DYNAMIC CONFLICT RULES
+  cachedConflicts.forEach(rule => {
+    const ingA = rule.ingredient_a.toLowerCase();
+    const ingB = rule.ingredient_b.toLowerCase();
     
-    if (hasRetinoid && hasAcid) {
-      conflicts.push(`Zonal Conflict [${zone}]: Mixing Retinoids and Acids in the same zone causes severe irritation. Reschedule acid to alternate days.`);
+    const hasA = (itemList) => itemList.some(i => (i.risk_flags && i.risk_flags[ingA]) || checkIngredients(i.ingredients, [ingA]) || i.name.toLowerCase().includes(ingA));
+    const hasB = (itemList) => itemList.some(i => (i.risk_flags && i.risk_flags[ingB]) || checkIngredients(i.ingredients, [ingB]) || i.name.toLowerCase().includes(ingB));
+    
+    if (rule.zone_specific) {
+      for (const [zone, zoneItems] of Object.entries(zoneMap)) {
+        if (hasA(zoneItems) && hasB(zoneItems)) {
+          conflicts.push(`Zonal Conflict [${zone}]: ${rule.description || 'Mixing these components is not advised.'}`);
+        }
+      }
+    } else {
+      if (hasA(items) && hasB(items)) {
+        conflicts.push(`Conflict: ${rule.description || 'Mixing these components is not advised.'}`);
+      }
     }
-    if (hasRetinoid && hasVitC) {
-      conflicts.push(`Zonal Conflict [${zone}]: Vitamin C and Retinoids destabilize each other. Move Vitamin C to the Morning Rite.`);
-    }
+  });
+
+  // ZONAL CONFLICT RESOLUTION (Melanin Ward only, acids/retinoids handled dynamically above)
+  for (const [zone, zoneItems] of Object.entries(zoneMap)) {
     
     // MELANIN WARD (Methotrexate is heavily photosensitizing)
     const photosensitizers = zoneItems.filter(i => i.risk_flags.photosensitizer || checkIngredients(i.ingredients, MELANIN_TRIGGERS));

@@ -51,17 +51,19 @@ export default function Rites({ pose }) {
       const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();
       const { amItems: am, pmItems: pm } = await buildRoutines(itemsArr, userProfile || {}, realWearables);
       
-      const { data: isoLog } = await supabase.from('isotretinoin_log').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
-      const nextDose = isoLog ? (isoLog.last_confirmed_dose_mg === 40 ? 80 : 40) : 40;
+      const { data: isoLogsArr } = await supabase.from('isotretinoin_log').select('*').order('last_confirmed_date', { ascending: false });
+      const lastTakenLog = isoLogsArr?.find(l => l.last_confirmed_dose_mg > 0);
+      const nextDose = lastTakenLog ? (lastTakenLog.last_confirmed_dose_mg === 40 ? 80 : 40) : 40;
       
       const isoItem = {
         id: `iso-${nextDose}`,
-        name: `Isotretinoin, oral (${nextDose}mg)`,
+        name: `Isotretinoin, oral`,
         category: 'immutable',
         isInjected: true,
         desc: 'Systemic / Morning Rite',
         isRx: true,
-        glyph: 'pill'
+        glyph: 'pill',
+        expectedDose: nextDose
       };
       
       setAmItems([isoItem, ...am]);
@@ -127,23 +129,28 @@ export default function Rites({ pose }) {
     localStorage.setItem(`schedule_${todayKey}`, JSON.stringify(Array.from(newChecked)));
   };
 
+  const handleIsoCheck = async (id, taken) => {
+    const dose = taken ? parseInt(id.split('-')[1]) : 0;
+    const today = new Date().toISOString().split('T')[0];
+    await supabase.from('isotretinoin_log').insert({ last_confirmed_dose_mg: dose, last_confirmed_date: today });
+    const newChecked = new Set(checkedIds);
+    if (taken) newChecked.add(id);
+    else newChecked.add('iso-missed');
+    setCheckedIds(newChecked);
+  };
+
   const handleCheck = async (id) => {
     const newChecked = new Set(checkedIds);
     const isNowChecked = !newChecked.has(id);
     
     if (isNowChecked) {
       newChecked.add(id);
-      if (id.startsWith('iso-')) {
-        const dose = parseInt(id.split('-')[1]);
-        supabase.from('isotretinoin_log').insert({ last_confirmed_dose_mg: dose }).then();
-      } else {
+      if (!id.startsWith('iso-')) {
         supabase.from('routine_history').insert({ completed_at: new Date().toISOString(), items_used: [id] }).then();
       }
     } else {
       newChecked.delete(id);
-      if (id.startsWith('iso-')) {
-        // Technically unchecking could mean deleting the last log, but for safety we just ignore unchecks on rx.
-      } else {
+      if (!id.startsWith('iso-')) {
         const today = new Date().toISOString().split('T')[0];
         supabase.from('routine_history').select('*').contains('items_used', [id]).gte('completed_at', today)
           .then(({ data }) => {
@@ -269,6 +276,17 @@ export default function Rites({ pose }) {
             <input type="checkbox" />
             <span className="sl"></span>
           </label>
+        ) : item.id.startsWith('iso-') ? (
+           <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
+             {checkedIds.has(item.id) || checkedIds.has('iso-missed') ? (
+               <span style={{color:'var(--silver)', fontSize:'0.9rem', fontWeight: 'bold'}}>{checkedIds.has(item.id) ? 'Taken' : 'Missed'}</span>
+             ) : (
+               <>
+                 <button className="btn plum" style={{padding:'0.3rem 0.6rem', fontSize:'0.8rem'}} onClick={() => handleIsoCheck(item.id, true)}>Took {item.expectedDose}mg</button>
+                 <button className="btn" style={{padding:'0.3rem 0.6rem', fontSize:'0.8rem', background: 'rgba(255,255,255,0.1)'}} onClick={() => handleIsoCheck(item.id, false)}>Missed</button>
+               </>
+             )}
+           </div>
         ) : (
           <input 
             type="checkbox" 

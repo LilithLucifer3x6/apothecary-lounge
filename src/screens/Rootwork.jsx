@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
+import MultiPhotoReview from '../components/MultiPhotoReview.jsx';
 import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
@@ -18,10 +19,17 @@ export default function Rootwork({ pose }) {
     category: '',
     ingredients: '',
     weight: '5',
-    expiration: ''
+    expiration: '',
+    price: '',
+    is_essential: false,
+    is_composite: false,
+    selectedComponents: []
   });
   const [isAutoWeight, setIsAutoWeight] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importStatus, setImportStatus] = useState('');
+  const [pendingImports, setPendingImports] = useState([]);
   const [photoStatus, setPhotoStatus] = useState('Offer or Scry Photo');
   const [modalState, setModalState] = useState('photo');
   const [banishState, setBanishState] = useState(null);
@@ -42,8 +50,9 @@ export default function Rootwork({ pose }) {
           const opened = new Date(item.opened_date);
           const daysOpen = (now - opened) / (1000 * 60 * 60 * 24);
           
-          // Predictive Restocking: If open for more than 60 days, predict it is ebbing
-          if (daysOpen > 60) {
+          // Ebbing prediction: based on typical usage cadence. 
+          // If no explicit volume tracking exists, we predict ebbing after 14 days of being open.
+          if (daysOpen > 14) {
             await supabase.from('items').update({ lifecycle_state: 'ebbing' }).eq('id', item.id);
             item.lifecycle_state = 'ebbing';
           }
@@ -66,8 +75,42 @@ export default function Rootwork({ pose }) {
   const waning = items.filter(i => i.lifecycle_state === 'waning');
   const ebbing = items.filter(i => i.lifecycle_state === 'ebbing' || i.lifecycle_state === 'hollow');
   const banished = items.filter(i => i.lifecycle_state === 'banished');
-  const apothecary = items.filter(i => i.type === 'product' && !['ebbing', 'hollow', 'banished', 'waning'].includes(i.lifecycle_state));
-  const arsenal = items.filter(i => i.type === 'tool' && !['ebbing', 'hollow', 'banished', 'waning'].includes(i.lifecycle_state));
+  const enrichedApothecary = items
+    .filter(i => (i.item_type === 'consumable' || i.item_type === 'composite') && !['ebbing', 'hollow', 'banished'].includes(i.lifecycle_state))
+    .map(i => {
+      let expiryPAO = null;
+      let expiryShelf = null;
+
+      if (i.period_after_opening_months && i.opened_date) {
+        const start = new Date(i.opened_date);
+        expiryPAO = new Date(start.setMonth(start.getMonth() + parseInt(i.period_after_opening_months, 10)));
+      }
+
+      if (i.unopened_shelf_life_months && (i.manufacture_date || i.purchase_date || i.created_at)) {
+        const startShelf = new Date(i.manufacture_date || i.purchase_date || i.created_at);
+        expiryShelf = new Date(startShelf.setMonth(startShelf.getMonth() + parseInt(i.unopened_shelf_life_months, 10)));
+      }
+
+      const trueExpiry = (expiryPAO && expiryShelf) 
+        ? (expiryPAO < expiryShelf ? expiryPAO : expiryShelf) 
+        : (expiryPAO || expiryShelf);
+        
+      let monthsLeft = null;
+      if (trueExpiry) {
+        monthsLeft = (trueExpiry - new Date()) / (1000 * 60 * 60 * 24 * 30);
+      }
+      
+      return {
+        ...i,
+        is_expired: monthsLeft !== null && monthsLeft <= 0,
+        is_waning: monthsLeft !== null && monthsLeft > 0 && monthsLeft <= 1
+      };
+    });
+
+  const apothecaryActive = enrichedApothecary.filter(i => !i.is_waning && !i.is_expired);
+  const waningItems = enrichedApothecary.filter(i => i.is_waning || i.is_expired);
+
+  const arsenal = items.filter(i => i.item_type === 'tool' && !['ebbing', 'hollow', 'banished'].includes(i.lifecycle_state));
 
   const handlePhotoUpload = async (e) => {
     const file = e.target.files[0];
@@ -116,7 +159,7 @@ export default function Rootwork({ pose }) {
         await supabase.from('items').insert([{
           brand: 'Unknown',
           name: 'Lavender Formula (Banished)',
-          type: 'product',
+          item_type: 'consumable',
           lifecycle_state: 'banished'
         }]);
         fetchItems();
@@ -169,6 +212,16 @@ export default function Rootwork({ pose }) {
 
   const handleSave = async () => {
     if (!addForm.name) return;
+    
+    // Block save if composite and any selected component is missing a proportion
+    if (addForm.is_composite && addForm.selectedComponents?.length > 0) {
+      const missingProportions = addForm.selectedComponents.some(c => !c.proportion || c.proportion.trim() === '');
+      if (missingProportions) {
+        alert("Please specify a proportion for all selected base elements.");
+        return;
+      }
+    }
+
     setIsSaving(true);
     
     const manualWeight = isAutoWeight ? null : parseInt(addForm.weight);
@@ -187,6 +240,7 @@ export default function Rootwork({ pose }) {
       const riskFlagsStr = JSON.stringify(aiResult.risk_flags || {});
       const ingStr = JSON.stringify(ingArray);
       
+      let savedItemId = addForm.id;
       if (addForm.id) {
         await supabase.from('items').update({
           brand: addForm.brand,
@@ -199,11 +253,10 @@ export default function Rootwork({ pose }) {
           glyph: aiResult.glyph,
           period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
           price: addForm.price ? parseFloat(addForm.price) : null,
-          is_composite: addForm.is_composite || false,
-          components: addForm.is_composite ? addForm.components : null
+          composite_form: addForm.is_composite ? 'other' : null
         }).eq('id', addForm.id);
       } else {
-        await supabase.from('items').insert([{
+        const { data: inserted } = await supabase.from('items').insert([{
           brand: addForm.brand,
           name: addForm.name,
           domain: addForm.domain,
@@ -211,18 +264,32 @@ export default function Rootwork({ pose }) {
           ingredients: ingStr,
           risk_flags: riskFlagsStr,
           behavior_flags: bFlagsStr,
-          type: 'product',
+          item_type: addForm.is_composite ? 'composite' : 'consumable',
           lifecycle_state: 'stocked',
+          is_essential: addForm.is_essential || false,
           period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
           price: addForm.price ? parseFloat(addForm.price) : null,
-          is_composite: addForm.is_composite || false,
-          components: addForm.is_composite ? addForm.components : null,
+          composite_form: addForm.is_composite ? 'other' : null,
           opened_date: new Date().toISOString()
-        }]);
+        }]).select();
+        if (inserted && inserted.length > 0) savedItemId = inserted[0].id;
+      }
+      
+      if (savedItemId && addForm.is_composite) {
+        await supabase.from('composite_components').delete().eq('composite_id', savedItemId);
+        if (addForm.selectedComponents?.length > 0) {
+          const links = addForm.selectedComponents.map(comp => ({
+            composite_id: savedItemId,
+            component_id: comp.id,
+            proportion: comp.proportion.trim()
+          }));
+          await supabase.from('composite_components').insert(links);
+        }
       }
     } catch (err) {
       console.error("AI Analysis failed", err);
       // Fallback
+      let savedItemId = addForm.id;
       if (addForm.id) {
         await supabase.from('items').update({
           brand: addForm.brand,
@@ -231,29 +298,41 @@ export default function Rootwork({ pose }) {
           category: addForm.category,
           period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
           price: addForm.price ? parseFloat(addForm.price) : null,
-          is_composite: addForm.is_composite || false,
-          components: addForm.is_composite ? addForm.components : null
+          composite_form: addForm.is_composite ? 'other' : null
         }).eq('id', addForm.id);
       } else {
-        await supabase.from('items').insert([{
+        const { data: inserted } = await supabase.from('items').insert([{
           brand: addForm.brand, 
           name: addForm.name, 
           domain: addForm.domain, 
           category: addForm.category, 
-          type: 'product', 
+          item_type: addForm.is_composite ? 'composite' : 'consumable', 
           lifecycle_state: 'stocked',
+          is_essential: addForm.is_essential || false,
           period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
           price: addForm.price ? parseFloat(addForm.price) : null,
-          is_composite: addForm.is_composite || false,
-          components: addForm.is_composite ? addForm.components : null,
+          composite_form: addForm.is_composite ? 'other' : null,
           opened_date: new Date().toISOString()
-        }]);
+        }]).select();
+        if (inserted && inserted.length > 0) savedItemId = inserted[0].id;
+      }
+      
+      if (savedItemId && addForm.is_composite) {
+        await supabase.from('composite_components').delete().eq('composite_id', savedItemId);
+        if (addForm.selectedComponents?.length > 0) {
+          const links = addForm.selectedComponents.map(compId => ({
+            composite_id: savedItemId,
+            component_id: compId,
+            proportion: 'equal'
+          }));
+          await supabase.from('composite_components').insert(links);
+        }
       }
     }
     
     setIsSaving(false);
     setShowAddModal(false);
-    setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '', price: '', is_composite: false, components: '' });
+    setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '', price: '', is_composite: false, selectedComponents: [] });
     setIsAutoWeight(true);
     setPhotoStatus('Offer or Scry Photo');
     setModalState('photo');
@@ -316,7 +395,88 @@ export default function Rootwork({ pose }) {
     fetchItems();
   };
 
-  const handleAmendItem = (item) => {
+  // --- MULTI-PHOTO AI IMPORT LOGIC ---
+  const [reviewProducts, setReviewProducts] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState([]);
+
+  const handleMultiPhotoUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files || files.length === 0) return;
+    
+    setImportStatus('Divining batch of images...');
+    setPendingImports([]);
+    
+    try {
+      // Read all files as base64
+      const imagePromises = files.map(file => new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const dataUrl = ev.target.result;
+          resolve({
+            name: file.name,
+            dataUrl: dataUrl,
+            base64: dataUrl.split(',')[1],
+            mediaType: dataUrl.split(';')[0].split(':')[1]
+          });
+        };
+        reader.readAsDataURL(file);
+      }));
+      
+      const loadedImages = await Promise.all(imagePromises);
+      setUploadedImages(loadedImages);
+      
+      const { parseBatchProductImages } = await import('../lib/ai-engine.js');
+      
+      // Pass to Claude Vision
+      const aiProducts = await parseBatchProductImages(loadedImages.map(img => ({
+        base64: img.base64,
+        mediaType: img.mediaType,
+        filename: img.name
+      })));
+      
+      if (aiProducts.length > 0) {
+        setReviewProducts(aiProducts);
+        setImportStatus(''); // Clear status, show review modal
+        setShowImportModal(false); // We show our own Review Modal now
+      } else {
+        setImportStatus('The Oracle found no items in these images.');
+      }
+      
+    } catch (err) {
+      console.error(err);
+      setImportStatus('Error interpreting images: ' + err.message);
+    }
+  };
+
+  const handleConfirmBatchImport = async (readyProducts, isComplete) => {
+    setImportStatus(`Committing ${readyProducts.length} ready items to the Codex...`);
+    
+    if (isComplete) {
+      setReviewProducts(null); // Hide modal entirely
+    }
+    
+    const toImport = readyProducts.map(p => ({
+      name: p.name || 'Unknown',
+      brand: p.brand || 'Unknown',
+      domain: p.domain || 'Visage',
+      primary_category: p.category || null,
+      item_type: 'consumable', // AI vision imports are generally consumables
+      lifecycle_state: 'stocked',
+      price: p.price || null,
+      ingredients: JSON.stringify(p.ingredients || [])
+    }));
+    
+    const { error } = await supabase.from('items').insert(toImport);
+    if (error) {
+      setImportStatus('Error during import: ' + error.message);
+    } else {
+      setImportStatus(`Successfully imported ${toImport.length} items from visions!`);
+      fetchItems();
+      setTimeout(() => { setImportStatus(''); }, 3000);
+    }
+  };
+
+  const handleAmendItem = async (item) => {
     let ingStr = '';
     try {
       if (item.ingredients) {
@@ -337,6 +497,12 @@ export default function Rootwork({ pose }) {
       }
     } catch (e) {}
 
+    let selectedComponents = [];
+    if (item.composite_form || item.item_type === 'composite') {
+      const { data } = await supabase.from('composite_components').select('component_id, proportion').eq('composite_id', item.id);
+      if (data) selectedComponents = data.map(d => ({ id: d.component_id, proportion: d.proportion }));
+    }
+
     setAddForm({
       id: item.id,
       brand: item.brand || '',
@@ -345,7 +511,11 @@ export default function Rootwork({ pose }) {
       category: item.category || '',
       ingredients: ingStr,
       weight: wStr,
-      expiration: ''
+      expiration: item.period_after_opening_months ? String(item.period_after_opening_months) : '',
+      price: item.price ? String(item.price) : '',
+      is_essential: !!item.is_essential,
+      is_composite: !!item.composite_form,
+      selectedComponents
     });
     setIsAutoWeight(isAuto);
     setModalState('manual');
@@ -354,7 +524,11 @@ export default function Rootwork({ pose }) {
 
   const renderRow = (item) => {
     let statusPill = null;
-    if (item.lifecycle_state === 'ebbing') {
+    if (item.is_expired) {
+      statusPill = <span className="pill" style={{background: 'var(--alert)', color: 'white', border: 'none'}}>Expired</span>;
+    } else if (item.is_waning) {
+      statusPill = <span className="pill eb" style={{borderColor: 'var(--plum)', color: 'var(--plum)'}}>Waning</span>;
+    } else if (item.lifecycle_state === 'ebbing') {
       statusPill = <span className="pill eb">Ebbing</span>;
     } else if (item.lifecycle_state === 'hollow') {
       statusPill = <span className="pill ho">Hollow</span>;
@@ -389,18 +563,25 @@ export default function Rootwork({ pose }) {
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', marginBottom: '1rem' }}>
           <h3 style={{ margin: 0 }}>The Apothecary <SpeakerButton text="The Apothecary" /></h3>
-          <button className="btn plum" style={{ fontSize: '1.2rem', padding: '0.5rem 1rem', position: 'absolute', right: 0 }} onClick={() => {
-            setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '' });
-            setPhotoStatus('Offer or Scry Photo');
-            setModalState('photo');
-            setShowAddModal(true);
-          }}>
-            <Icon name="ph-plus" /> Inscribe Relic
-          </button>
+          <div style={{ position: 'absolute', right: 0, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <button className="btn outline" style={{ fontSize: '0.9rem', padding: '0.4rem 0.8rem' }} onClick={() => {
+              setImportStatus('');
+              setPendingImports([]);
+              setShowImportModal(true);
+            }}>
+              Import CSV
+            </button>
+            <button className="btn plum" style={{ fontSize: '1.2rem', padding: '0.5rem 1rem' }} onClick={() => {
+              setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '', price: '', is_essential: false, is_composite: false, selectedComponents: [] });
+              setPhotoStatus('Offer or Scry Photo');
+              setModalState('photo');
+              setShowAddModal(true);
+            }}>+</button>
+          </div>
         </div>
         <div className="mt mb-4" style={{ textAlign: 'center' }}>Your sacred elixirs and treatments.</div>
         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '0.5rem'}}>
-          {apothecary.length > 0 ? apothecary.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
+          {apothecaryActive.length > 0 ? apothecaryActive.map(renderRow) : <div className="empty">The shelves of your Apothecary stand empty.</div>}
         </div>
       </div>
 
@@ -496,30 +677,74 @@ export default function Rootwork({ pose }) {
           <h3 style={{ justifyContent: 'center' }}>The Waning <SpeakerButton text="The Waning" /></h3>
           <div className="mt mb-4" style={{ textAlign: 'center' }}>Relics nearing the end of their mortal potency.</div>
           <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {(() => {
-              const waningItems = apothecary.filter(i => {
-                if (!i.period_after_opening_months) return false;
-                const start = i.opened_date ? new Date(i.opened_date) : new Date(i.created_at);
-                const expiry = new Date(start.setMonth(start.getMonth() + parseInt(i.period_after_opening_months, 10)));
-                const monthsLeft = (expiry - new Date()) / (1000 * 60 * 60 * 24 * 30);
-                return monthsLeft > 0 && monthsLeft <= 2;
-              });
-              return waningItems.length === 0 ? <div className="mt" style={{ textAlign: 'center' }}>All relics remain potent.</div> : waningItems.map(renderRow);
-            })()}
+            {waningItems.length === 0 ? <div className="mt" style={{ textAlign: 'center' }}>All relics remain potent.</div> : waningItems.map(renderRow)}
           </div>
         </div>
 
         <div className="card mb-4" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', maxHeight: '500px' }}>
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3 style={{ justifyContent: 'center' }}>The Summoning Scroll <SpeakerButton text="The Summoning Scroll" /></h3>
-          <div className="mt mb-4" style={{ textAlign: 'center' }}>Items needing replenishment.</div>
+          <div className="mt mb-4" style={{ textAlign: 'center' }}>Items needing replenishment. Non-essential items wait for batches of 5.</div>
           <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {ebbing.length === 0 ? <div className="mt" style={{ textAlign: 'center' }}>No active summons.</div> : ebbing.map(renderRow)}
+            {(() => {
+              if (ebbing.length === 0) return <div className="mt" style={{ textAlign: 'center' }}>No active summons.</div>;
+              
+              const essential = ebbing.filter(i => i.is_essential);
+              const nonEssential = ebbing.filter(i => !i.is_essential);
+              const readyNonEssential = nonEssential.length >= 5 ? nonEssential : [];
+              const pendingCount = nonEssential.length < 5 ? nonEssential.length : 0;
+              
+              const itemsToRender = [...essential, ...readyNonEssential];
+              
+              return (
+                <>
+                  {itemsToRender.map(renderRow)}
+                  {pendingCount > 0 && (
+                    <div style={{ textAlign: 'center', color: 'var(--dim)', fontSize: '0.9rem', fontStyle: 'italic', marginTop: '1rem', padding: '1rem', borderTop: '1px dashed var(--border)' }}>
+                      {pendingCount} non-essential item{pendingCount > 1 ? 's are' : ' is'} ebbing and silently waiting for a batch of 5.
+                    </div>
+                  )}
+                  {itemsToRender.length === 0 && pendingCount === 0 && (
+                    <div className="mt" style={{ textAlign: 'center' }}>No active summons.</div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         </div>
 
       </div>
 
+
+      {showImportModal && (
+        <div className="modal-backdrop" onClick={() => setShowImportModal(false)}>
+          <div className="card" style={{maxWidth: '600px', width: '90%'}} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0 }}>Bulk Import CSV</h3>
+              <button className="btn link" onClick={() => setShowImportModal(false)}>Close</button>
+            </div>
+            
+            {pendingImports.length === 0 ? (
+              <>
+                <p style={{color: 'var(--dim)', fontSize: '0.9rem'}}>
+                  Upload multiple photos (front, back, ingredient labels, price tags) of your inventory. 
+                  The Oracle will group them by product and extract their details for your review.
+                </p>
+                
+                <div className="field mt">
+                  <input type="file" multiple accept="image/*" onChange={handleMultiPhotoUpload} style={{ color: 'var(--plum)', fontSize: '1rem', padding: '0.5rem' }} />
+                </div>
+              </>
+            ) : null}
+            
+            {importStatus && (
+              <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', borderRadius: '4px', textAlign: 'center', color: 'var(--plum)' }}>
+                {importStatus}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {showAddModal && (
         <div className="modal" style={{display: 'block'}}>
@@ -629,6 +854,13 @@ export default function Rootwork({ pose }) {
 
                 <div className="field">
                   <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--plum)', cursor: 'pointer'}}>
+                    <input type="checkbox" checked={addForm.is_essential} onChange={e => setAddForm({...addForm, is_essential: e.target.checked})} style={{accentColor: 'var(--plum)'}} />
+                    Mark as Essential (Alert immediately when ebbing)
+                  </label>
+                </div>
+
+                <div className="field">
+                  <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--plum)', cursor: 'pointer'}}>
                     <input type="checkbox" checked={addForm.is_composite} onChange={e => setAddForm({...addForm, is_composite: e.target.checked})} style={{accentColor: 'var(--plum)'}} />
                     This is a Composite Brew / Handmade Alchemy
                   </label>
@@ -636,8 +868,48 @@ export default function Rootwork({ pose }) {
 
                 {addForm.is_composite && (
                   <div className="field">
-                    <label style={{color: 'var(--plum)'}}>Base Elements (What binds this alchemy?)</label>
-                    <VoiceInput isTextArea={true} placeholder="e.g. Dead Sea Salt, Oil of Rose" value={addForm.components} onChange={e => setAddForm({...addForm, components: e.target.value})} />
+                    <label style={{color: 'var(--plum)'}}>Base Elements & Proportions</label>
+                    <div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid var(--border)', padding: '0.5rem', borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'rgba(0,0,0,0.2)' }}>
+                      {items.filter(i => i.id !== addForm.id && i.item_type !== 'tool').map(i => {
+                        const isChecked = addForm.selectedComponents?.some(c => c.id === i.id);
+                        const compData = addForm.selectedComponents?.find(c => c.id === i.id) || { id: i.id, proportion: '' };
+                        return (
+                          <div key={i.id} style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                            <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--plum)', cursor: 'pointer', flex: 1}}>
+                              <input 
+                                type="checkbox" 
+                                style={{accentColor: 'var(--plum)'}}
+                                checked={isChecked}
+                                onChange={(e) => {
+                                   let newComps = [...(addForm.selectedComponents || [])];
+                                   if (e.target.checked) {
+                                     newComps.push({ id: i.id, proportion: '' });
+                                   } else {
+                                     newComps = newComps.filter(c => c.id !== i.id);
+                                   }
+                                   setAddForm({...addForm, selectedComponents: newComps});
+                                }}
+                              />
+                              {i.name}
+                            </label>
+                            {isChecked && (
+                              <input 
+                                type="text" 
+                                placeholder="e.g. 2 parts, 50%, 10ml" 
+                                value={compData.proportion}
+                                onChange={(e) => {
+                                  const newComps = addForm.selectedComponents.map(c => 
+                                    c.id === i.id ? { ...c, proportion: e.target.value } : c
+                                  );
+                                  setAddForm({...addForm, selectedComponents: newComps});
+                                }}
+                                style={{ width: '120px', padding: '0.2rem 0.5rem', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px', fontSize: '0.8rem' }}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
 
@@ -708,6 +980,23 @@ export default function Rootwork({ pose }) {
               <button className="btn" onClick={() => setBanishState(null)}>Abandon Banishment</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* MULTI-PHOTO REVIEW MODAL */}
+      {reviewProducts && (
+        <MultiPhotoReview 
+          initialProducts={reviewProducts}
+          imageFiles={uploadedImages}
+          onConfirm={handleConfirmBatchImport}
+          onCancel={() => { setReviewProducts(null); setUploadedImages([]); }}
+        />
+      )}
+      
+      {/* GLOBAL TOAST/STATUS for Import */}
+      {!showImportModal && importStatus && (
+        <div style={{ position: 'fixed', bottom: '2rem', right: '2rem', background: 'var(--card)', border: '1px solid var(--plum)', padding: '1rem', borderRadius: '8px', zIndex: 1000, color: 'var(--plum)' }}>
+          {importStatus}
         </div>
       )}
     </div>
