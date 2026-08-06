@@ -42,9 +42,14 @@ export default function Intake({ onComplete }) {
   const chatLogRef = useRef(null);
 
   useEffect(() => {
-    supabase.from('user_profile').select('intake_answers').maybeSingle().then(({ data }) => {
-      if (data && data.intake_answers) {
-        const ans = data.intake_answers;
+    supabase.from('user_profile').select('intake_answers, intake_completed').maybeSingle().then(({ data }) => {
+      if (data) {
+        if (data.intake_completed) {
+          onComplete(); // Defend against accidental re-entry bugs
+          return;
+        }
+        if (data.intake_answers) {
+          const ans = data.intake_answers;
         if (ans.concerns) setSelectedConcerns(ans.concerns);
         if (ans.conditions) setSelectedConditions(ans.conditions);
         if (ans.traditions) setSelectedTraditions(ans.traditions);
@@ -60,6 +65,7 @@ export default function Intake({ onComplete }) {
         if (ans.oralList && ans.oralList.some(m => m.toLowerCase().includes('isotretinoin') || m.toLowerCase().includes('accutane')) && !ans.prescription_start_date) {
             setPath('fast');
             setCurrentStep(4);
+        }
         }
       }
     });

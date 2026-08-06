@@ -19,8 +19,13 @@ export default function Landing({ onProceed, onOpenAvatar }) {
     if (isCompletedLocally) {
       setHasProfile(true);
     } else {
-      supabase.from('user_profile').select('id').maybeSingle().then(({ data }) => {
-        setHasProfile(!!data);
+      supabase.from('user_profile').select('intake_completed').maybeSingle().then(({ data }) => {
+        if (data && data.intake_completed) {
+          localStorage.setItem('intake_completed', 'true');
+          setHasProfile(true);
+        } else {
+          setHasProfile(false);
+        }
       });
     }
   }, []);

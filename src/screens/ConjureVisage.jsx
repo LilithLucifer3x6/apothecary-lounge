@@ -9,15 +9,15 @@ const BASE_DESCRIPTION =
 
 // ── HAIRSTYLE / LOC STYLES ───────────────────────────────────────────────────
 const HAIRSTYLES = [
-  { id: 'microlocs_loose',      label: 'Microlocs — Loose & Free',         img: 'avatar_ghibli_base_1785969739750.jpg', desc: 'Shoulder-length, ultra-skinny microlocs worn completely free, framing the face' },
-  { id: 'microlocs_halfup',     label: 'Microlocs — Half-Up Crown',        img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'Top half swept up in a crown, rest cascading freely at shoulder length' },
-  { id: 'microlocs_highbun',    label: 'Microlocs — Dramatic High Bun',    img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'All locs swept into a large dramatic high bun with silver pins' },
-  { id: 'microlocs_ponytail',   label: 'Microlocs — High Ponytail',        img: 'avatar_ghibli_base_1785969739750.jpg', desc: 'Locs gathered into a sleek high ponytail' },
-  { id: 'microlocs_sideover',   label: 'Microlocs — Side Swept',           img: 'avatar_ghibli_base_1785969739750.jpg', desc: 'All locs swept dramatically over one shoulder' },
-  { id: 'microlocs_ceremonial', label: 'Microlocs — Ceremonial Updo',      img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'Elaborate updo with locs pinned in an artistic ceremonial arrangement' },
-  { id: 'microlocs_wrapped',    label: 'Microlocs — Wrapped Sections',     img: 'avatar_ghibli_base_1785969739750.jpg', desc: 'Select locs wrapped with dark thread and silver wire at intervals' },
-  { id: 'microlocs_twinbuns',   label: 'Microlocs — Twin Space Buns',      img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'Locs divided into two full high buns' },
-  { id: 'microlocs_upbraid',    label: 'Microlocs — Braided Back Sections',img: 'avatar_ghibli_updo_1785969752264.jpg', desc: 'Front sections braided back, remaining locs hanging freely' },
+  { id: 'microlocs_loose',      label: 'Microlocs — Loose & Free',         img: 'avatar_base_1785969739750.jpg', desc: 'Shoulder-length, ultra-skinny microlocs worn completely free, framing the face' },
+  { id: 'microlocs_halfup',     label: 'Microlocs — Half-Up Crown',        img: 'avatar_updo_1785969752264.jpg', desc: 'Top half swept up in a crown, rest cascading freely at shoulder length' },
+  { id: 'microlocs_highbun',    label: 'Microlocs — Dramatic High Bun',    img: 'avatar_updo_1785969752264.jpg', desc: 'All locs swept into a large dramatic high bun with silver pins' },
+  { id: 'microlocs_ponytail',   label: 'Microlocs — High Ponytail',        img: 'avatar_base_1785969739750.jpg', desc: 'Locs gathered into a sleek high ponytail' },
+  { id: 'microlocs_sideover',   label: 'Microlocs — Side Swept',           img: 'avatar_base_1785969739750.jpg', desc: 'All locs swept dramatically over one shoulder' },
+  { id: 'microlocs_ceremonial', label: 'Microlocs — Ceremonial Updo',      img: 'avatar_updo_1785969752264.jpg', desc: 'Elaborate updo with locs pinned in an artistic ceremonial arrangement' },
+  { id: 'microlocs_wrapped',    label: 'Microlocs — Wrapped Sections',     img: 'avatar_base_1785969739750.jpg', desc: 'Select locs wrapped with dark thread and silver wire at intervals' },
+  { id: 'microlocs_twinbuns',   label: 'Microlocs — Twin Space Buns',      img: 'avatar_updo_1785969752264.jpg', desc: 'Locs divided into two full high buns' },
+  { id: 'microlocs_upbraid',    label: 'Microlocs — Braided Back Sections',img: 'avatar_updo_1785969752264.jpg', desc: 'Front sections braided back, remaining locs hanging freely' },
 ];
 
 // ── ROBE DESIGNS ─────────────────────────────────────────────────────────────
@@ -28,10 +28,10 @@ const ROBE_DESIGNS = [
   { id: 'asymmetric',         label: 'Asymmetric Ritual Robe',     desc: 'Dramatic asymmetric hem with layered fabric and one exposed shoulder', img: 'robe_asymmetric_1785969883713.jpg' },
   { id: 'layered_scholar',    label: "Scholar's Layered Robes",    desc: 'Multiple layered robes with intricate detail and overlapping panels', img: 'robe_layered_scholar_1785969892009.jpg' },
   { id: 'cape_gown',          label: 'Cape & Gown Ensemble',       desc: 'Elegant fitted gown with a sweeping dramatic floor-length cape', img: 'robe_cape_gown_1785969860343.jpg' },
-  { id: 'embroidered_gown',   label: 'Embroidered Ritual Gown',    desc: 'Form-flattering gown covered in glowing magical embroidery patterns' },
-  { id: 'velvet_robe',        label: 'Velvet Wrap Robe',           desc: 'Luxurious velvet robe with plush dark fur trim and deep side pockets' },
-  { id: 'off_shoulder',       label: 'Off-Shoulder Sorceress Gown',desc: 'Dramatic off-shoulder gown with puffed sleeves and layered skirt' },
-  { id: 'hooded_cloak',       label: 'Hooded Ritual Cloak',        desc: 'Long hooded cloak with a fitted inner robe visible at the hem' },
+  { id: 'embroidered_gown',   label: 'Embroidered Ritual Gown',    desc: 'Form-flattering gown covered in glowing magical embroidery patterns', img: 'robe_embroidered_1785991478740.jpg' },
+  { id: 'velvet_robe',        label: 'Velvet Wrap Robe',           desc: 'Luxurious velvet robe with plush dark fur trim and deep side pockets', img: 'robe_velvet_1785991487069.jpg' },
+  { id: 'off_shoulder',       label: 'Off-Shoulder Sorceress Gown',desc: 'Dramatic off-shoulder gown with puffed sleeves and layered skirt', img: 'robe_off_shoulder_1785991494990.jpg' },
+  { id: 'hooded_cloak',       label: 'Hooded Ritual Cloak',        desc: 'Long hooded cloak with a fitted inner robe visible at the hem', img: 'robe_hooded_1785991503119.jpg' },
 ];
 
 // ── HAIR COLORS (natural + unnatural; no pink, no blue, no gold, no yellow, no blonde) ────
@@ -100,15 +100,15 @@ const ROBE_COLORS = [
 
 // ── HAIR ACCESSORIES (no gold, no pink, no blue) ─────────────────────────────
 const HAIR_ACCESSORIES = [
-  { id: 'silver_cuffs',   label: 'Silver Loc Cuffs',        desc: 'Delicate silver cuffs placed at intervals along the locs' },
-  { id: 'black_iron',     label: 'Black Iron Wraps',         desc: 'Dark iron spiral wraps threaded through the locs' },
-  { id: 'amethyst_cuffs', label: 'Amethyst Crystal Cuffs',  desc: 'Silver cuffs set with deep purple amethyst stones' },
-  { id: 'obsidian_beads', label: 'Obsidian Beads',           desc: 'Polished obsidian beads woven throughout the locs' },
-  { id: 'silver_moons',   label: 'Silver Moon Charms',       desc: 'Crescent moon and star charms dangling from the locs' },
-  { id: 'bone_wood',      label: 'Bone & Wood Wraps',        desc: 'Organic carved bone and wood wraps for an earthy look' },
-  { id: 'copper_spiral',  label: 'Copper Spiral Cuffs',      desc: 'Warm copper (not gold) spiral wraps coiled along the locs' },
-  { id: 'garnet_pins',    label: 'Garnet-Set Silver Pins',   desc: 'Silver pins topped with deep red garnet stones pinned throughout' },
-  { id: 'wire_wrapped',   label: 'Silver Wire Wrapped Tips', desc: 'Loc tips wrapped in delicate silver wire with crystal beads' },
+  { id: 'silver_cuffs',   label: 'Silver Loc Cuffs',        desc: 'Delicate silver cuffs placed at intervals along the locs', img: 'acc_silver_cuffs_1785991545863.jpg' },
+  { id: 'black_iron',     label: 'Black Iron Wraps',         desc: 'Dark iron spiral wraps threaded through the locs', img: 'acc_black_iron_1785991560822.jpg' },
+  { id: 'amethyst_cuffs', label: 'Amethyst Crystal Cuffs',  desc: 'Silver cuffs set with deep purple amethyst stones', img: 'acc_amethyst_1785991571987.jpg' },
+  { id: 'obsidian_beads', label: 'Obsidian Beads',           desc: 'Polished obsidian beads woven throughout the locs', img: 'acc_obsidian_1785991579981.jpg' },
+  { id: 'silver_moons',   label: 'Silver Moon Charms',       desc: 'Crescent moon and star charms dangling from the locs', img: 'acc_moons_1785991588255.jpg' },
+  { id: 'bone_wood',      label: 'Bone & Wood Wraps',        desc: 'Organic carved bone and wood wraps for an earthy look', img: 'acc_bone_wood_1785991603327.jpg' },
+  { id: 'copper_spiral',  label: 'Copper Spiral Cuffs',      desc: 'Warm copper (not gold) spiral wraps coiled along the locs', img: 'acc_copper_spiral_1785991609908.jpg' },
+  { id: 'garnet_pins',    label: 'Garnet-Set Silver Pins',   desc: 'Silver pins topped with deep red garnet stones pinned throughout', img: 'acc_garnet_pins_1785991616405.jpg' },
+  { id: 'wire_wrapped',   label: 'Silver Wire Wrapped Tips', desc: 'Loc tips wrapped in delicate silver wire with crystal beads', img: 'acc_wire_wrapped_1785991623704.jpg' },
   { id: 'none',           label: 'No Accessories',           desc: 'Natural locs without any additional adornment' },
 ];
 
@@ -128,11 +128,11 @@ const JEWELRY = [
 
 // ── FAMILIARS ─────────────────────────────────────────────────────────────────
 const FAMILIARS = [
-  { id: 'cat',   label: 'Midnight Cat',    img: 'fam_cat_ghibli.jpg'   },
-  { id: 'raven', label: 'Shadow Raven',    img: 'fam_raven_ghibli.jpg' },
-  { id: 'bat',   label: 'Cave Bat',        img: 'fam_bat_ghibli.jpg'   },
-  { id: 'owl',   label: 'Barn Owl',        img: 'fam_owl_ghibli.jpg'   },
-  { id: 'snake', label: 'Emerald Serpent', img: 'fam_snake_ghibli.jpg' },
+  { id: 'cat',   label: 'Midnight Cat',    img: 'fam_cat.jpg'   },
+  { id: 'raven', label: 'Shadow Raven',    img: 'fam_raven.jpg' },
+  { id: 'bat',   label: 'Cave Bat',        img: 'fam_bat.jpg'   },
+  { id: 'owl',   label: 'Barn Owl',        img: 'fam_owl.jpg'   },
+  { id: 'snake', label: 'Emerald Serpent', img: 'fam_snake.jpg' },
 ];
 
 // ── ROOM DEFINITIONS for background generation ────────────────────────────────

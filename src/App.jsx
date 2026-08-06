@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase.js';
 import { G, verifyGlyphs } from './lib/icons.jsx';
-import { getTtsEnabled, getTtsRate, getTtsPitch, getTtsVoiceURI, setTtsEnabled, setTtsRate, setTtsPitch, setTtsVoiceURI, getFeminineVoices } from './lib/tts.js';
+import { speak, getTtsEnabled, getTtsRate, getTtsPitch, getTtsVoiceURI, setTtsEnabled, setTtsRate, setTtsPitch, setTtsVoiceURI, getFeminineVoices } from './lib/tts.js';
 import Icon from './components/Icon.jsx';
 import { initGoogleCalendar, requestCalendarAccess } from './lib/gcal.js';
+import { syncWearableSnapshot } from './lib/health-connect.js';
 import { Capacitor } from '@capacitor/core';
 import { initEngineRules } from './lib/routine-engine.js';
 
@@ -53,8 +54,6 @@ export default function App() {
     tts: false,
     health: false,
     cal: false,
-    terraDevId: '',
-    terraApiKey: '',
     gcalClientId: ''
   });
   
@@ -105,7 +104,7 @@ export default function App() {
     verifyGlyphs();
     
     // Load Settings
-    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"16","fontFamily":"Cormorant Garamond","tts":false,"health":false,"cal":false}');
+    const saved = JSON.parse(localStorage.getItem('app_settings') || '{"fontSize":"18","fontFamily":"Sacramento","tts":false,"health":false,"cal":false}');
     setSettings(saved);
     applySettings(saved);
     
@@ -114,6 +113,10 @@ export default function App() {
       rate: getTtsRate(),
       pitch: getTtsPitch()
     });
+
+    if (saved.health) {
+      syncWearableSnapshot();
+    }
 
     const populateVoices = () => {
       const voices = getFeminineVoices();
@@ -154,6 +157,9 @@ export default function App() {
       }
       if (profile && profile.avatar_config) {
         localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
+      }
+      if (profile && profile.intake_completed) {
+        localStorage.setItem('intake_completed', 'true');
       }
     });
 
@@ -203,6 +209,9 @@ export default function App() {
   };
 
   const handleReturnToCottage = () => {
+    if (settings.tts) speak("Return to Sanctuary");
+    setCurrentScreen('home');
+  };
     handleTabClick('home');
   };
 
@@ -227,7 +236,7 @@ export default function App() {
     const pose = tab ? tab.pose : 'working';
     
     switch (activeTab) {
-      case 'home': return <div style={{ minHeight: 'calc(100vh - 120px)' }}><Landing onProceed={() => setCurrentScreen('intake')} onOpenAvatar={() => setCurrentScreen('avatar')} /></div>;
+      case 'home': return <div style={{ minHeight: 'calc(100vh - 120px)' }}><Landing onProceed={(skipIntake) => skipIntake ? handleTabClick('rites') : setCurrentScreen('intake')} onOpenAvatar={() => setCurrentScreen('avatar')} /></div>;
       case 'rites': return <div><Rites pose={pose} /></div>;
       case 'grim': return <div><Grimoire pose={pose} /></div>;
       case 'altars': return <div><Altars pose={pose} /></div>;
@@ -289,7 +298,7 @@ export default function App() {
       {currentScreen === 'landing' && (
         <div id="s-land" className="land">
           <Landing 
-            onProceed={() => {
+            onProceed={(skipIntake) => {
               let hasAvatar = false;
               try {
                 const conf = JSON.parse(localStorage.getItem('avatar_config'));
@@ -297,8 +306,11 @@ export default function App() {
               } catch(e) {}
               const hasIntake = localStorage.getItem('intake_completed') === 'true';
               if (!hasAvatar) setCurrentScreen('avatar');
-              else if (!hasIntake) setCurrentScreen('intake');
-              else setCurrentScreen('app');
+              else if (!skipIntake && !hasIntake) setCurrentScreen('intake');
+              else {
+                setCurrentScreen('app');
+                handleTabClick('rites');
+              }
             }} 
             onOpenAvatar={() => setCurrentScreen('avatar')} 
           />
@@ -337,7 +349,7 @@ export default function App() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', flex: '0 0 auto' }}>
-              <button onClick={() => setShowSettings(true)} title="Configurations" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0 }}>
+              <button onClick={() => { if (settings.tts) speak("Configurations"); setShowSettings(true); }} title="Configurations" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0 }}>
                 <Icon name="ph-gear" style={{fontSize: '2rem'}} />
               </button>
             </div>
@@ -462,25 +474,21 @@ export default function App() {
                 
                 <div className="field" style={{ marginBottom: '1.5rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
-                    <label style={{ color: 'var(--crimson)', }}>
-                      <input type="checkbox" checked={settings.health}
-                             onChange={async (e) => {
-                               const checked = e.target.checked;
-                               if (checked && Capacitor.isNativePlatform()) {
-                                 alert("The System calls upon Native Android to weave corporeal data from Samsung Health, RingConn, and Renpho...");
-                                 setSettings({...settings, health: true});
-                               } else {
-                                 setSettings({...settings, health: checked});
-                               }
-                             }} /> Corporeal Sensors (RingConn, Renpho, Samsung)
+                    <label className="settings-toggle">
+                      <input type="checkbox" checked={settings.health} onChange={async (e) => {
+                        const checked = e.target.checked;
+                        if (checked) {
+                          const { requestHealthPermissions, syncWearableSnapshot } = await import('./lib/health-connect.js');
+                          const granted = await requestHealthPermissions();
+                          if (granted) {
+                            setSettings({...settings, health: true});
+                            syncWearableSnapshot();
+                          }
+                        } else {
+                          setSettings({...settings, health: checked});
+                        }
+                      }} /> Corporeal Sensors (RingConn, Renpho, Samsung)
                     </label>
-                    {settings.health && !Capacitor.isNativePlatform() && (
-                      <div style={{ marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <input type="text" placeholder="Terra Developer ID" value={settings.terraDevId || ''} onChange={e => setSettings({...settings, terraDevId: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
-                        <input type="text" placeholder="Terra API Key" value={settings.terraApiKey || ''} onChange={e => setSettings({...settings, terraApiKey: e.target.value})} style={{ padding: '0.5rem', width: '100%' }} />
-                        <div className="mt" style={{ fontSize: '0.8rem' }}>Offer your Terra seals to draw upon visions of sleep & readiness.</div>
-                      </div>
-                    )}
                     
                     <label style={{ color: 'var(--crimson)', marginTop: '1rem' }}>
                       <input type="checkbox" checked={settings.cal}

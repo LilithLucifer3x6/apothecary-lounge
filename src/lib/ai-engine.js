@@ -121,13 +121,21 @@ export async function parseProductImage(base64Image, mediaType) {
       input_schema: {
         type: 'object',
         properties: {
-          brand: { type: 'string' },
-          name: { type: 'string' },
-          ingredients: { type: 'array', items: { type: 'string' } },
-          category: { type: 'string' },
-          form: { type: 'string', enum: ['liquid', 'cream', 'gel', 'powder', 'solid'] }
+          brand: { type: 'string', description: 'Brand or manufacturer name' },
+          name: { type: 'string', description: 'Product name' },
+          ingredients: { type: 'array', items: { type: 'string' }, description: 'List of ingredients' },
+          category: { type: 'string', description: 'Product category (e.g., Cleanser, Moisturizer)' },
+          form: { type: 'string', enum: ['liquid', 'cream', 'gel', 'powder', 'solid'], description: 'Physical form of the product' },
+          application_zones: { type: 'array', items: { type: 'string' }, description: 'Body zones where this is applied (e.g., Visage, Vessel, Crown, Grin, oral)' },
+          period_after_opening_months: { type: 'number', description: 'PAO from the open jar icon (in months), if present' },
+          unopened_shelf_life_months: { type: 'number', description: 'Unopened shelf life (in months), if explicitly stated' },
+          manufacture_date: { type: 'string', description: 'Manufacture date (YYYY-MM-DD), if present' },
+          purchase_date: { type: 'string', description: 'Purchase date or received date (YYYY-MM-DD), if handwritten or printed' },
+          is_prescription: { type: 'boolean', description: 'True if this is a prescription medication from a pharmacy' },
+          prescription_details: { type: 'string', description: 'Prescription name, strength, and instructions if is_prescription is true' },
+          item_type: { type: 'string', enum: ['consumable', 'arsenal'], description: 'Whether this is a consumable product (creams, pills) or an arsenal tool (roller, brush, device)' }
         },
-        required: ['brand', 'name', 'ingredients', 'category', 'form']
+        required: ['brand', 'name', 'ingredients', 'category', 'form', 'application_zones', 'is_prescription', 'item_type']
       }
     }
   ];
@@ -148,7 +156,7 @@ export async function parseProductImage(base64Image, mediaType) {
             },
             {
               type: 'text',
-              text: 'Extract the brand, product name, ingredients list, category (e.g. Cleanser, Moisturizer, Toner), and physical form of this product.'
+              text: 'Extract the brand, product name, ingredients list, category (e.g. Cleanser, Moisturizer, Toner), and physical form of this product. Crucially, infer the application_zones (e.g. Visage, Vessel, Crown, Grin, or oral for pills), read the PAO (Period After Opening) jar icon if present, look for any printed manufacture/expiration dates, check if it is a pharmacy prescription (is_prescription), and classify its item_type (consumable for products, arsenal for physical tools/devices).'
             }
           ]
         }

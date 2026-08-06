@@ -7,6 +7,7 @@ import { parseTeaImage } from '../lib/ai-engine.js';
 import SpeakerButton from '../components/SpeakerButton.jsx';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
+import { getReadiness } from '../lib/health-connect.js';
 
 export default function ShadowTome({ pose }) {
   const [moodsList, setMoodsList] = useState([]);
@@ -23,6 +24,7 @@ export default function ShadowTome({ pose }) {
   const [breathInst, setBreathInst] = useState('');
   const [breathCircle, setBreathCircle] = useState({ transform: 'scale(1)', borderColor: 'var(--plum)' });
   const [readiness, setReadiness] = useState('normal');
+  const [healthStaleness, setHealthStaleness] = useState('');
   
   const [history, setHistory] = useState([]);
   
@@ -72,9 +74,12 @@ export default function ShadowTome({ pose }) {
 
   const loadHealthData = async () => {
     try {
-      const { data } = await supabase.from('user_profile').select('health_data').maybeSingle();
-      if (data?.health_data?.readiness) {
-        setReadiness(data.health_data.readiness.toLowerCase());
+      const readinessObj = await getReadiness();
+      if (readinessObj) {
+        setReadiness(readinessObj.state.toLowerCase());
+        if (readinessObj.captured_at) {
+          setHealthStaleness(new Date(readinessObj.captured_at).toLocaleString());
+        }
       }
     } catch (e) {
       console.error(e);
@@ -293,6 +298,12 @@ export default function ShadowTome({ pose }) {
   return (
     <div style={{ padding: '1rem', maxWidth: '1000px', margin: '0 auto' }}>
       
+      {healthStaleness && (
+        <div style={{ textAlign: 'center', color: 'var(--silver)', opacity: 0.8, fontSize: '0.9rem', marginBottom: '1rem' }}>
+          Corporeal Data as of: {healthStaleness}
+        </div>
+      )}
+
       <div className="tome-grid mt-4">
         
         {/* Left Column: Journal & History */}

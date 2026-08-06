@@ -98,7 +98,7 @@ export default function Altars({ pose }) {
           <span style={{ marginLeft: '0.4rem', display: 'flex', alignItems: 'center' }}><SpeakerButton text={item.name} /></span>
           {isAid && <span className="aid" title="Partner Assisted"><Icon name={G.tabAltars} /></span>}
         </div>
-        <div className="mt">{item.brand || 'Altar Step'} {item.desc ? `• ${item.desc}` : ''}</div>
+        <div className="mt">{item.brand ? `${item.brand} ` : ''}{item.desc ? `• ${item.desc}` : ''}</div>
       </div>
     </div>
   );

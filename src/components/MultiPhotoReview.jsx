@@ -9,6 +9,7 @@ import {
 } from '@dnd-kit/core';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import Icon from './Icon.jsx';
+import VoiceInput from './VoiceInput.jsx';
 
 function DraggableImage({ id, filename, src }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -60,20 +61,20 @@ function DroppableGroup({ product, onUpdateField, imagesData }) {
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
         <div style={{ flex: 1, minWidth: '200px' }}>
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <input 
-              type="text" 
-              value={product.brand || ''} 
-              onChange={e => onUpdateField(product.id, 'brand', e.target.value)} 
-              placeholder="Brand"
-              style={{ flex: 1, padding: '0.5rem' }}
-            />
-            <input 
-              type="text" 
-              value={product.name || ''} 
-              onChange={e => onUpdateField(product.id, 'name', e.target.value)} 
-              placeholder="Name"
-              style={{ flex: 2, padding: '0.5rem' }}
-            />
+            <div style={{ flex: 1 }}>
+              <VoiceInput 
+                value={product.brand || ''} 
+                onChange={e => onUpdateField(product.id, 'brand', e.target.value)} 
+                placeholder="Brand"
+              />
+            </div>
+            <div style={{ flex: 2 }}>
+              <VoiceInput 
+                value={product.name || ''} 
+                onChange={e => onUpdateField(product.id, 'name', e.target.value)} 
+                placeholder="Name"
+              />
+            </div>
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <select 
@@ -110,6 +111,73 @@ function DroppableGroup({ product, onUpdateField, imagesData }) {
               style={{ width: '100%', padding: '0.5rem', minHeight: '60px' }}
             />
           </div>
+
+          <details style={{ marginTop: '1rem', background: 'rgba(0,0,0,0.2)', padding: '0.5rem', borderRadius: '4px' }}>
+            <summary style={{ cursor: 'pointer', color: 'var(--plum)', fontSize: '0.9rem' }}>Advanced Details (AI Extracted)</summary>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <label style={{color: 'var(--dim)', fontSize: '0.8rem', width: '100px'}}>Item Type</label>
+                <select value={product.item_type || ''} onChange={e => onUpdateField(product.id, 'item_type', e.target.value)} style={{ padding: '0.5rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', flex: 1, borderRadius: '4px' }}>
+                  <option value="" disabled>Select Type...</option>
+                  <option value="consumable">Consumable</option>
+                  <option value="arsenal">Arsenal</option>
+                </select>
+              </div>
+
+              <VoiceInput 
+                value={(product.application_zones || []).join(', ')} 
+                onChange={e => onUpdateField(product.id, 'application_zones', e.target.value.split(',').map(s=>s.trim()).filter(Boolean))} 
+                placeholder="Application Zones (Required, comma separated)"
+              />
+
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', width: '100px'}}>
+                  <input type="checkbox" checked={!!product.is_prescription} onChange={e => onUpdateField(product.id, 'is_prescription', e.target.checked)} />
+                  Rx
+                </label>
+                {product.is_prescription && (
+                  <div style={{ flex: 1 }}>
+                    <VoiceInput 
+                      isTextArea={true}
+                      value={product.prescription_details || ''} 
+                      onChange={e => onUpdateField(product.id, 'prescription_details', e.target.value)} 
+                      placeholder="Prescription Details"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <input type="number" min="1" placeholder="PAO (Months)" value={product.period_after_opening_months || ''} onChange={e => onUpdateField(product.id, 'period_after_opening_months', e.target.value)} style={{ flex: 1, padding: '0.5rem' }} />
+                <input type="number" min="1" placeholder="Shelf Life (Months)" value={product.unopened_shelf_life_months || ''} onChange={e => onUpdateField(product.id, 'unopened_shelf_life_months', e.target.value)} style={{ flex: 1, padding: '0.5rem' }} />
+              </div>
+              
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{flex: 1}}>
+                  <label style={{fontSize: '0.7rem', color: 'var(--dim)'}}>Mfg Date</label>
+                  <input type="date" value={product.manufacture_date || ''} onChange={e => onUpdateField(product.id, 'manufacture_date', e.target.value)} style={{ width: '100%', padding: '0.5rem' }} />
+                </div>
+                <div style={{flex: 1}}>
+                  <label style={{fontSize: '0.7rem', color: 'var(--dim)'}}>Purchased</label>
+                  <input type="date" value={product.purchase_date || ''} onChange={e => onUpdateField(product.id, 'purchase_date', e.target.value)} style={{ width: '100%', padding: '0.5rem' }} />
+                </div>
+              </div>
+
+              <div>
+                <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem'}}>
+                  <input type="checkbox" checked={!!product.is_opened} onChange={e => onUpdateField(product.id, 'is_opened', e.target.checked)} />
+                  Break the Seal (Item is Opened)
+                </label>
+                {product.is_opened && (
+                  <div style={{marginTop: '0.2rem'}}>
+                    <label style={{fontSize: '0.7rem', color: 'var(--dim)'}}>Date Opened</label>
+                    <input type="date" value={product.opened_date || ''} onChange={e => onUpdateField(product.id, 'opened_date', e.target.value)} style={{ width: '100%', padding: '0.5rem' }} />
+                  </div>
+                )}
+              </div>
+            </div>
+          </details>
         </div>
         
         <div style={{ flex: '0 0 200px', background: 'rgba(0,0,0,0.3)', padding: '0.5rem', borderRadius: '4px', minHeight: '120px' }}>
@@ -196,7 +264,7 @@ export default function MultiPhotoReview({ initialProducts, imageFiles, onConfir
     ]);
   };
 
-  const submit = () => {
+  const submit = async () => {
     const readyProducts = products.filter(p => !p.ingredient_conflicts && (p.filenames.length > 0 || p.name));
     const conflictedProducts = products.filter(p => p.ingredient_conflicts && (p.filenames.length > 0 || p.name));
     
@@ -211,7 +279,10 @@ export default function MultiPhotoReview({ initialProducts, imageFiles, onConfir
 
     // Call onConfirm with the ready products and a flag indicating if we're done
     const isComplete = conflictedProducts.length === 0;
-    onConfirm(readyProducts, isComplete);
+    const success = await onConfirm(readyProducts, isComplete);
+    
+    if (success === false) return; // Validation failed, keep modal open
+
     
     if (!isComplete) {
       // Keep modal open, but remove the products we just saved

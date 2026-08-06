@@ -15,6 +15,8 @@ export default function Rites({ pose }) {
   const [checkedIds, setCheckedIds] = useState(new Set());
   const [amSaving, setAmSaving] = useState(false);
   const [amSaved, setAmSaved] = useState(false);
+  const [noRx, setNoRx] = useState(false);
+  const [healthStaleness, setHealthStaleness] = useState('');
   const [pmSaving, setPmSaving] = useState(false);
   const [pmSaved, setPmSaved] = useState(false);
 
@@ -41,6 +43,10 @@ export default function Rites({ pose }) {
       const sleepDuration = await getSleepDuration();
       const heavySweat = await getHeavySweat();
       const readinessObj = await getReadiness();
+      
+      if (readinessObj?.captured_at) {
+        setHealthStaleness(new Date(readinessObj.captured_at).toLocaleString());
+      }
       
       const realWearables = {
         sleepDuration: parseFloat(sleepDuration),
@@ -132,11 +138,20 @@ export default function Rites({ pose }) {
   const handleIsoCheck = async (id, taken) => {
     const dose = taken ? parseInt(id.split('-')[1]) : 0;
     const today = new Date().toISOString().split('T')[0];
+    
+    // Update state immediately to make the UI responsive and avoid stale closures during await
+    setCheckedIds(prev => {
+      const next = new Set(prev);
+      if (taken) next.add(id);
+      else next.add('iso-missed');
+      return next;
+    });
+
     await supabase.from('isotretinoin_log').insert({ last_confirmed_dose_mg: dose, last_confirmed_date: today });
-    const newChecked = new Set(checkedIds);
-    if (taken) newChecked.add(id);
-    else newChecked.add('iso-missed');
-    setCheckedIds(newChecked);
+    
+    // Also record in routine_history so the day's record shows it was handled (not silently absent)
+    const historyId = taken ? id : 'iso-missed';
+    await supabase.from('routine_history').insert({ completed_at: new Date().toISOString(), items_used: [historyId] });
   };
 
   const handleCheck = async (id) => {
@@ -172,7 +187,8 @@ export default function Rites({ pose }) {
 
   const handleCompleteAllAm = async () => {
     setAmSaving(true);
-    const toSave = amItems.filter(i => !checkedIds.has(i.id)).map(i => i.id);
+    // Don't mark Iso as taken if they already marked it as missed
+    const toSave = amItems.filter(i => !checkedIds.has(i.id) && !(i.id.startsWith('iso-') && checkedIds.has('iso-missed'))).map(i => i.id);
     if (toSave.length > 0) {
       await supabase.from('routine_history').insert({
         completed_at: new Date().toISOString(),
@@ -224,6 +240,10 @@ export default function Rites({ pose }) {
     if (item.isInjected || item.category === 'immutable') return item.name;
     
     const cat = (item.category || '').toLowerCase();
+    
+    // Rule 15: True prescriptions must always use their explicit name and strength.
+    if (item.is_prescription) return item.name;
+
     const isRx = item.risk_flags?.retinoid || item.name.toLowerCase().includes('tacrolimus') || item.name.toLowerCase().includes('drysol');
     if (isRx) return 'Apply Treatment (Elixir)';
 
@@ -304,9 +324,9 @@ export default function Rites({ pose }) {
           </div>
           {item.isInjected ? (
             <div className="mt" style={{opacity: 0.8}}>{item.desc}</div>
-          ) : (
-            <div className="mt">{item.brand || 'Elixir'}</div>
-          )}
+          ) : item.brand ? (
+            <div className="mt">{item.brand}</div>
+          ) : null}
         </div>
       </div>
     );
@@ -314,6 +334,11 @@ export default function Rites({ pose }) {
 
   return (
     <div style={{ padding: '1rem' }}>
+      {healthStaleness && (
+        <div style={{ textAlign: 'center', color: 'var(--silver)', opacity: 0.8, fontSize: '0.9rem', marginBottom: '1rem' }}>
+          Corporeal Data as of: {healthStaleness}
+        </div>
+      )}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'start', marginTop: '1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Left Column: Morning Invocation */}
@@ -323,12 +348,12 @@ export default function Rites({ pose }) {
           {amItems.length > 0 && (
             <div style={{ margin: '0.5rem 0 1rem 0', textAlign: 'center' }}>
               <button 
-                className={`btn ${amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
+                className={`btn ${amSaved || amItems.every(i => checkedIds.has(i.id) || (i.id.startsWith('iso-') && checkedIds.has('iso-missed'))) ? 'g' : 'plum'}`} 
                 style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
                 onClick={handleCompleteAllAm}
-                disabled={amSaving || amSaved || amItems.every(i => checkedIds.has(i.id))}
+                disabled={amSaving || amSaved || amItems.every(i => checkedIds.has(i.id) || (i.id.startsWith('iso-') && checkedIds.has('iso-missed')))}
               >
-                {amSaved || amItems.every(i => checkedIds.has(i.id)) ? 'The Altar is Sealed' : 'Seal the Morning Altar'}
+                {amSaving ? 'Sealing...' : (amSaved || amItems.every(i => checkedIds.has(i.id) || (i.id.startsWith('iso-') && checkedIds.has('iso-missed'))) ? 'The Morning Altar is Sealed' : 'Seal the Morning Altar')}
               </button>
             </div>
           )}

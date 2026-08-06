@@ -4,8 +4,9 @@ import { ic } from '../lib/icons.jsx';
 export default function Icon({ name, ...props }) {
   if (!name) return null;
   
-  // Fix missing ph-gear
-  let finalName = name === 'ph-gear' || name === 'gear' ? 'gear' : name;
+  // Strip 'ph-' prefix if present, since custom-icons.jsx ic() always prepends it
+  const finalName = name.startsWith('ph-') ? name.slice(3) : name;
+  
   return (
     <span 
       style={{ display: 'inline-flex', alignItems: 'center', filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.8))', ...props.style }} 

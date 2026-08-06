@@ -89,18 +89,19 @@ export default function Scrying({ pose }) {
           zone: reactionForm.zone,
           severity: String(reactionForm.severity),
           symptoms: Array.from(reactionForm.reactions)
-        }).eq('id', editId).select().single();
+        }).eq('id', editId).select().maybeSingle();
       } else {
         result = await supabase.from('somatic_reactions').insert({
           item_id: reactionForm.productId,
           zone: reactionForm.zone,
           severity: String(reactionForm.severity),
           symptoms: Array.from(reactionForm.reactions)
-        }).select().single();
+        }).select().maybeSingle();
       }
       const { error, data } = result;
 
       if (error) throw error;
+      if (!data) throw new Error('Failed to record reaction.');
       
       const item = inventory.find(i => i.id === reactionForm.productId);
       const newEntry = {

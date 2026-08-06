@@ -19,7 +19,7 @@
 5. **Conflicts are checked by application zone.** Two products only clash if their zones overlap or
    sit adjacent. Underarm astringent does not conflict with a facial retinoid.
 6. **The safety layer is deterministic code.** AI maintains the reference data. AI never makes the
-   pass/fail call.
+   pass/fail call. (Exception: Physiological risk wards like MELANIN_TRIGGERS are intentionally hardcoded as they are stable categories, not swappable ingredient data).
 7. **Seed nothing, and survive being empty.** The app starts with no products, no history, no
    profile. Every screen must render with nothing to show. Never use `.single()` where zero rows is
    possible — use `.maybeSingle()` and treat null as valid. This is the most likely crash in the
@@ -34,7 +34,7 @@
     the nearest one that has. Inventing new visual treatment is a defect.
 12. **Icons are drawn, never emoji.** Phosphor for functional marks, game-icons for ritual marks, AI
     draws an inline SVG when neither is exact. Resemblance to the real object is the standard.
-13. **Wearable integration uses a dual-platform approach.** Terra is the broker on the web build, and Android Health Connect is the broker on the Android APK build. This is an intentional platform exception.
+13. **Health Connect is the wearable broker on Android.** Android acts as the sole bridge to wearable data (RingConn, Samsung Health, Renpho) via Health Connect. When Android reads fresh data, it writes a snapshot to the `wearable_snapshots` table in Supabase. The web build has no direct wearable integration at all; instead, it reads the most recent snapshot from Supabase and clearly displays its staleness. If no snapshot exists (no wearable connected), everything degrades cleanly to its default state.
 14. **Everything degrades cleanly.** No wearable connected means those features simply do not appear.
 15. **Prescriptions are always named with strength.** Never a generic label.
 16. **No streaks, no guilt, no notifications** except the two restock nudges.
@@ -90,7 +90,7 @@ A one-time builder runs before The First Inscription. Its title is phrased as a 
 - The familiars offered are Cat, Bat, Owl, Serpent, and Raven. Spiders are strictly forbidden.
 
 The room is the landing screen and serves as the backdrop for all tabs. Instead of flat SVGs, these backgrounds are dynamically generated during the First Inscription via a live AI Image Generation API:
-- When the user selects their avatar's traits (loc style, robe color, familiar, etc.), the application generates 6 unique, high-fidelity 2D digital paintings (Studio Ghibli meets Castlevania aesthetic) corresponding to each tab.
+- When the user selects their avatar's traits (loc style, robe color, familiar, etc.), the application generates 6 unique, high-fidelity 2D digital paintings (painterly, hand-illustrated, gothic, muted palette, dark cottagecore aesthetic) corresponding to each tab.
 - The avatar and familiar are physically integrated and painted directly into the background of each room, fully matched with the ethereal lighting of the scene.
 - Once generated, these images are stored and used permanently, avoiding ongoing API costs.
 - Candles are plentiful and lit throughout.

@@ -210,9 +210,73 @@ export default function Rootwork({ pose }) {
   };
 
 
+  const validateItemForSave = (item) => {
+    // 0. Type Check
+    if (!item.item_type || !['consumable', 'arsenal', 'composite'].includes(item.item_type)) {
+      alert(`Safety Block: ${item.name || 'An item'} is missing its Item Type.`);
+      return false;
+    }
+
+    // 1. Universal Check: Must have a Zone
+    if (!item.application_zones || item.application_zones.length === 0) {
+      alert(`Safety Block: ${item.name || 'An item'} is missing its application zone (e.g. 'oral' for pills, 'visage' for creams).`);
+      return false;
+    }
+
+    // 2. Consumable/Composite Check: Must have Ingredients
+    if (item.item_type === 'consumable' || item.item_type === 'composite') {
+      const isMissingIngredients = Array.isArray(item.ingredients) 
+        ? item.ingredients.length === 0 
+        : (!item.ingredients || item.ingredients.trim() === '');
+
+      if (isMissingIngredients) {
+        alert(`Safety Block: ${item.name || 'A consumable'} must have its ingredients listed to pass the Codex.`);
+        return false;
+      }
+    }
+
+    // 2b. Composite Check
+    if (item.item_type === 'composite') {
+      if (!item.composite_form) {
+        alert(`Safety Block: ${item.name || 'A composite'} is missing its composite_form.`);
+        return false;
+      }
+      if (!item.selectedComponents || item.selectedComponents.length === 0) {
+        alert(`Safety Block: ${item.name || 'A composite'} must select its base components.`);
+        return false;
+      }
+    }
+
+    // 3. Prescription Check
+    if (item.is_prescription && (!item.prescription_details || item.prescription_details.trim() === '')) {
+      alert(`Safety Block: You must provide prescription details for ${item.name || 'the Rx item'}.`);
+      return false;
+    }
+
+    // 4. Expiry Check (Non-Arsenal Only)
+    if (item.item_type === 'consumable') {
+      const hasOpenedClock = !!item.period_after_opening_months && !!item.is_opened; 
+      const hasUnopenedClock = !!item.unopened_shelf_life_months && (!!item.manufacture_date || !!item.purchase_date);
+      
+      if (!hasOpenedClock && !hasUnopenedClock) {
+        alert(`Safety Block: ${item.name || 'A consumable'} must provide either an opened PAO clock, or an unopened manufacture shelf-life clock.`);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleSave = async () => {
     if (!addForm.name) return;
     
+    // Part B: Shared Validation
+    const isValid = validateItemForSave({
+      ...addForm,
+      item_type: addForm.item_type || (addForm.is_composite ? 'composite' : 'consumable'),
+      composite_form: addForm.is_composite ? 'other' : null
+    });
+    if (!isValid) return;
+
     // Block save if composite and any selected component is missing a proportion
     if (addForm.is_composite && addForm.selectedComponents?.length > 0) {
       const missingProportions = addForm.selectedComponents.some(c => !c.proportion || c.proportion.trim() === '');
@@ -248,12 +312,23 @@ export default function Rootwork({ pose }) {
           domain: addForm.domain,
           category: addForm.category,
           ingredients: ingStr,
+          application_zones: addForm.application_zones || [],
+          is_prescription: !!addForm.is_prescription,
+          prescription_details: addForm.prescription_details || null,
           risk_flags: riskFlagsStr,
           behavior_flags: bFlagsStr,
           glyph: aiResult.glyph,
-          period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          item_type: addForm.item_type || (addForm.is_composite ? 'composite' : 'consumable'),
+          lifecycle_state: addForm.lifecycle_state || 'stocked',
+          is_essential: !!addForm.is_essential,
+          period_after_opening_months: addForm.period_after_opening_months ? parseInt(addForm.period_after_opening_months, 10) : null,
+          unopened_shelf_life_months: addForm.unopened_shelf_life_months ? parseInt(addForm.unopened_shelf_life_months, 10) : null,
+          manufacture_date: addForm.manufacture_date || null,
+          purchase_date: addForm.purchase_date || null,
           price: addForm.price ? parseFloat(addForm.price) : null,
-          composite_form: addForm.is_composite ? 'other' : null
+          composite_form: addForm.is_composite ? 'other' : null,
+          is_opened: addForm.is_opened || false,
+          opened_date: addForm.is_opened ? (addForm.opened_date || new Date().toISOString()) : null
         }).eq('id', addForm.id);
       } else {
         const { data: inserted } = await supabase.from('items').insert([{
@@ -262,15 +337,22 @@ export default function Rootwork({ pose }) {
           domain: addForm.domain,
           category: addForm.category,
           ingredients: ingStr,
+          application_zones: addForm.application_zones || [],
+          is_prescription: !!addForm.is_prescription,
+          prescription_details: addForm.prescription_details || null,
           risk_flags: riskFlagsStr,
           behavior_flags: bFlagsStr,
-          item_type: addForm.is_composite ? 'composite' : 'consumable',
+          item_type: addForm.item_type || (addForm.is_composite ? 'composite' : 'consumable'), 
           lifecycle_state: 'stocked',
           is_essential: addForm.is_essential || false,
-          period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          period_after_opening_months: addForm.period_after_opening_months ? parseInt(addForm.period_after_opening_months, 10) : null,
+          unopened_shelf_life_months: addForm.unopened_shelf_life_months ? parseInt(addForm.unopened_shelf_life_months, 10) : null,
+          manufacture_date: addForm.manufacture_date || null,
+          purchase_date: addForm.purchase_date || null,
           price: addForm.price ? parseFloat(addForm.price) : null,
           composite_form: addForm.is_composite ? 'other' : null,
-          opened_date: new Date().toISOString()
+          is_opened: addForm.is_opened || false,
+          opened_date: addForm.is_opened ? (addForm.opened_date || new Date().toISOString()) : null
         }]).select();
         if (inserted && inserted.length > 0) savedItemId = inserted[0].id;
       }
@@ -296,9 +378,20 @@ export default function Rootwork({ pose }) {
           name: addForm.name,
           domain: addForm.domain,
           category: addForm.category,
-          period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          application_zones: addForm.application_zones || [],
+          is_prescription: !!addForm.is_prescription,
+          prescription_details: addForm.prescription_details || null,
+          item_type: addForm.item_type || (addForm.is_composite ? 'composite' : 'consumable'),
+          lifecycle_state: addForm.lifecycle_state || 'stocked',
+          is_essential: !!addForm.is_essential,
+          period_after_opening_months: addForm.period_after_opening_months ? parseInt(addForm.period_after_opening_months, 10) : null,
+          unopened_shelf_life_months: addForm.unopened_shelf_life_months ? parseInt(addForm.unopened_shelf_life_months, 10) : null,
+          manufacture_date: addForm.manufacture_date || null,
+          purchase_date: addForm.purchase_date || null,
           price: addForm.price ? parseFloat(addForm.price) : null,
-          composite_form: addForm.is_composite ? 'other' : null
+          composite_form: addForm.is_composite ? 'other' : null,
+          is_opened: addForm.is_opened || false,
+          opened_date: addForm.is_opened ? (addForm.opened_date || new Date().toISOString()) : null
         }).eq('id', addForm.id);
       } else {
         const { data: inserted } = await supabase.from('items').insert([{
@@ -306,24 +399,30 @@ export default function Rootwork({ pose }) {
           name: addForm.name, 
           domain: addForm.domain, 
           category: addForm.category, 
-          item_type: addForm.is_composite ? 'composite' : 'consumable', 
+          item_type: addForm.item_type || (addForm.is_composite ? 'composite' : 'consumable'),  
           lifecycle_state: 'stocked',
+          application_zones: addForm.application_zones || [],
+          is_prescription: !!addForm.is_prescription,
+          prescription_details: addForm.prescription_details || null,
           is_essential: addForm.is_essential || false,
-          period_after_opening_months: addForm.expiration ? parseInt(addForm.expiration, 10) : null,
+          period_after_opening_months: addForm.period_after_opening_months ? parseInt(addForm.period_after_opening_months, 10) : null,
+          unopened_shelf_life_months: addForm.unopened_shelf_life_months ? parseInt(addForm.unopened_shelf_life_months, 10) : null,
           price: addForm.price ? parseFloat(addForm.price) : null,
           composite_form: addForm.is_composite ? 'other' : null,
-          opened_date: new Date().toISOString()
+          is_opened: addForm.is_opened || false,
+          opened_date: addForm.is_opened ? (addForm.opened_date || new Date().toISOString()) : null
         }]).select();
         if (inserted && inserted.length > 0) savedItemId = inserted[0].id;
       }
       
+      // MAPPING COMPONENTS FOR MANUAL SAVE (FALLBACK)
       if (savedItemId && addForm.is_composite) {
         await supabase.from('composite_components').delete().eq('composite_id', savedItemId);
         if (addForm.selectedComponents?.length > 0) {
-          const links = addForm.selectedComponents.map(compId => ({
+          const links = addForm.selectedComponents.map(comp => ({
             composite_id: savedItemId,
-            component_id: compId,
-            proportion: 'equal'
+            component_id: comp.id,
+            proportion: comp.proportion?.trim() || 'equal'
           }));
           await supabase.from('composite_components').insert(links);
         }
@@ -332,7 +431,7 @@ export default function Rootwork({ pose }) {
     
     setIsSaving(false);
     setShowAddModal(false);
-    setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '', price: '', is_composite: false, selectedComponents: [] });
+    setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', period_after_opening_months: '', price: '', is_composite: false, is_opened: false, opened_date: '', application_zones: [], is_prescription: false, prescription_details: '', selectedComponents: [] });
     setIsAutoWeight(true);
     setPhotoStatus('Offer or Scry Photo');
     setModalState('photo');
@@ -449,6 +548,12 @@ export default function Rootwork({ pose }) {
   };
 
   const handleConfirmBatchImport = async (readyProducts, isComplete) => {
+    // Validate the entire batch before attempting insert
+    for (const p of readyProducts) {
+      const isValid = validateItemForSave(p);
+      if (!isValid) return false; // Halt batch insert, return false to keep modal open
+    }
+
     setImportStatus(`Committing ${readyProducts.length} ready items to the Codex...`);
     
     if (isComplete) {
@@ -460,10 +565,19 @@ export default function Rootwork({ pose }) {
       brand: p.brand || 'Unknown',
       domain: p.domain || 'Visage',
       primary_category: p.category || null,
-      item_type: 'consumable', // AI vision imports are generally consumables
+      item_type: p.item_type,
       lifecycle_state: 'stocked',
       price: p.price || null,
-      ingredients: JSON.stringify(p.ingredients || [])
+      ingredients: JSON.stringify(p.ingredients || []),
+      application_zones: p.application_zones || [],
+      period_after_opening_months: p.period_after_opening_months ? parseInt(p.period_after_opening_months, 10) : null,
+      unopened_shelf_life_months: p.unopened_shelf_life_months ? parseInt(p.unopened_shelf_life_months, 10) : null,
+      manufacture_date: p.manufacture_date || null,
+      purchase_date: p.purchase_date || null,
+      is_prescription: !!p.is_prescription,
+      prescription_details: p.prescription_details || null,
+      is_opened: !!p.is_opened,
+      opened_date: p.is_opened ? (p.opened_date || new Date().toISOString()) : null
     }));
     
     const { error } = await supabase.from('items').insert(toImport);
@@ -515,7 +629,17 @@ export default function Rootwork({ pose }) {
       price: item.price ? String(item.price) : '',
       is_essential: !!item.is_essential,
       is_composite: !!item.composite_form,
-      selectedComponents
+      item_type: item.item_type || 'consumable',
+      selectedComponents,
+      unopened_shelf_life_months: item.unopened_shelf_life_months || '',
+      manufacture_date: item.manufacture_date ? item.manufacture_date.substring(0, 10) : '',
+      purchase_date: item.purchase_date ? item.purchase_date.substring(0, 10) : '',
+      is_opened: !!item.is_opened,
+      opened_date: item.opened_date ? item.opened_date.substring(0, 10) : '',
+      period_after_opening_months: item.period_after_opening_months ? String(item.period_after_opening_months) : '',
+      application_zones: item.application_zones || [],
+      is_prescription: !!item.is_prescription,
+      prescription_details: item.prescription_details || ''
     });
     setIsAutoWeight(isAuto);
     setModalState('manual');
@@ -541,7 +665,7 @@ export default function Rootwork({ pose }) {
         </div>
         <div style={{flex: 1}}>
           <div className="nm">
-            {item.name} {statusPill}
+            {item.name} <SpeakerButton text={`${item.name}. ${item.brand || ''}. ${item.category || ''}`} /> {statusPill}
           </div>
           <div className="mt">{item.brand} &bull; {item.category}</div>
         </div>
@@ -572,7 +696,7 @@ export default function Rootwork({ pose }) {
               Import CSV
             </button>
             <button className="btn plum" style={{ fontSize: '1.2rem', padding: '0.5rem 1rem' }} onClick={() => {
-              setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', expiration: '', price: '', is_essential: false, is_composite: false, selectedComponents: [] });
+              setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', period_after_opening_months: '', unopened_shelf_life_months: '', manufacture_date: '', purchase_date: '', price: '', is_essential: false, is_composite: false, item_type: 'consumable', is_opened: false, opened_date: '', application_zones: [], is_prescription: false, prescription_details: '', selectedComponents: [] });
               setPhotoStatus('Offer or Scry Photo');
               setModalState('photo');
               setShowAddModal(true);
@@ -822,8 +946,30 @@ export default function Rootwork({ pose }) {
                 </div>
 
                 <div className="field">
+                  <label style={{color: 'var(--plum)'}}>Item Type</label>
+                  <select value={addForm.item_type || (addForm.is_composite ? 'composite' : 'consumable')} onChange={e => setAddForm({...addForm, item_type: e.target.value, is_composite: e.target.value === 'composite'})} style={{color: 'var(--plum)'}}>
+                    <option value="consumable">Consumable (Product)</option>
+                    <option value="arsenal">Arsenal (Tool/Device)</option>
+                    <option value="composite">Composite (Custom Mix)</option>
+                  </select>
+                </div>
+
+                <div className="field">
                   <label style={{color: 'var(--plum)'}}>Period After Opening (Months)</label>
-                  <input type="number" min="1" placeholder="e.g. 12" value={addForm.expiration} onChange={e => setAddForm({...addForm, expiration: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }} />
+                  <input type="number" min="1" placeholder="e.g. 12" value={addForm.period_after_opening_months} onChange={e => setAddForm({...addForm, period_after_opening_months: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }} />
+                </div>
+                
+                <div className="field">
+                  <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--plum)', cursor: 'pointer'}}>
+                    <input type="checkbox" checked={addForm.is_opened} onChange={e => setAddForm({...addForm, is_opened: e.target.checked})} style={{accentColor: 'var(--plum)'}} />
+                    Break the Seal (Item is Opened)
+                  </label>
+                  {addForm.is_opened && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <label style={{color: 'var(--dim)', fontSize: '0.9rem'}}>Date Opened (Backdatable)</label>
+                      <input type="date" value={addForm.opened_date} onChange={e => setAddForm({...addForm, opened_date: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px', marginTop: '0.3rem' }} />
+                    </div>
+                  )}
                 </div>
 
                 <div className="field">
@@ -835,6 +981,21 @@ export default function Rootwork({ pose }) {
                     <option value="Grin">Grin (Mouth & Teeth)</option>
                     <option value="Vessel">Vessel (Body)</option>
                   </select>
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--plum)'}}>Application Zones (Required)</label>
+                  <VoiceInput placeholder="e.g. oral, visage, entire body" value={(addForm.application_zones || []).join(', ')} onChange={e => setAddForm({...addForm, application_zones: e.target.value.split(',').map(s=>s.trim()).filter(Boolean)})} />
+                </div>
+
+                <div className="field" style={{background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)'}}>
+                  <label style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--plum)', cursor: 'pointer', marginBottom: addForm.is_prescription ? '1rem' : '0'}}>
+                    <input type="checkbox" checked={addForm.is_prescription} onChange={e => setAddForm({...addForm, is_prescription: e.target.checked})} style={{accentColor: 'var(--plum)'}} />
+                    Pharmacy Prescription (Rx)
+                  </label>
+                  {addForm.is_prescription && (
+                    <VoiceInput isTextArea={true} placeholder="Prescription details, strength, and instructions..." value={addForm.prescription_details} onChange={e => setAddForm({...addForm, prescription_details: e.target.value})} />
+                  )}
                 </div>
 
                 <div className="field">
@@ -850,6 +1011,22 @@ export default function Rootwork({ pose }) {
                 <div className="field">
                   <label style={{color: 'var(--plum)'}}>Material Offering (For The Silver Toll)</label>
                   <input type="number" step="0.01" placeholder="0.00" value={addForm.price} onChange={e => setAddForm({...addForm, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }} />
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label style={{color: 'var(--plum)'}}>Manufacture Date</label>
+                    <input type="date" value={addForm.manufacture_date} onChange={e => setAddForm({...addForm, manufacture_date: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }} />
+                  </div>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label style={{color: 'var(--plum)'}}>Purchase Date</label>
+                    <input type="date" value={addForm.purchase_date} onChange={e => setAddForm({...addForm, purchase_date: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }} />
+                  </div>
+                </div>
+
+                <div className="field">
+                  <label style={{color: 'var(--plum)'}}>Unopened Shelf Life (Months)</label>
+                  <input type="number" placeholder="e.g. 36" value={addForm.unopened_shelf_life_months} onChange={e => setAddForm({...addForm, unopened_shelf_life_months: e.target.value})} style={{ width: '100%', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--plum)', borderRadius: '4px' }} />
                 </div>
 
                 <div className="field">

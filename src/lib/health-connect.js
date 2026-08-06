@@ -27,8 +27,46 @@ export async function requestHealthPermissions() {
       return false;
     }
   }
-  console.log('Web Mock: Granted Health Connect permissions automatically.');
   return true;
+}
+
+let cachedSnapshot = undefined;
+
+async function fetchLatestSnapshot() {
+  if (cachedSnapshot !== undefined) return cachedSnapshot;
+  try {
+    const { supabase } = await import('./supabase.js');
+    const { data } = await supabase
+      .from('wearable_snapshots')
+      .select('*')
+      .order('captured_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    cachedSnapshot = data || null;
+  } catch(e) {
+    console.error('Failed to fetch snapshot:', e);
+    cachedSnapshot = null;
+  }
+  return cachedSnapshot;
+}
+
+export async function syncWearableSnapshot() {
+  if (!Capacitor.isNativePlatform()) return;
+  const readiness = await getReadiness();
+  const heavySweat = await getHeavySweat();
+  const sleepDuration = await getSleepDuration();
+  
+  try {
+    const { supabase } = await import('./supabase.js');
+    await supabase.from('wearable_snapshots').insert([{
+      readiness_score: readiness.score,
+      readiness_state: readiness.state,
+      heavy_sweat: heavySweat,
+      sleep_duration: parseFloat(sleepDuration)
+    }]);
+  } catch (e) {
+    console.error('Failed to sync wearable snapshot:', e);
+  }
 }
 
 export async function getReadiness() {
@@ -51,11 +89,12 @@ export async function getReadiness() {
       return { score: 80, state: 'optimal' };
     }
   }
-  // Web mock: random readiness
-  const score = Math.floor(Math.random() * 40) + 60;
-  let state = 'optimal';
-  if (score < 70) state = 'drained';
-  return { score, state };
+  
+  const snap = await fetchLatestSnapshot();
+  if (snap) {
+    return { score: snap.readiness_score, state: snap.readiness_state, captured_at: snap.captured_at };
+  }
+  return null; // degrade cleanly
 }
 
 export async function getHeavySweat() {
@@ -74,8 +113,9 @@ export async function getHeavySweat() {
       return false;
     }
   }
-  // Web mock: 30% chance of heavy sweat
-  return Math.random() > 0.7;
+  
+  const snap = await fetchLatestSnapshot();
+  return snap ? snap.heavy_sweat : false;
 }
 
 export async function getSleepDuration() {
@@ -100,5 +140,7 @@ export async function getSleepDuration() {
       return 7.5;
     }
   }
-  return (Math.random() * 3 + 5).toFixed(1); // 5 to 8 hours
+  
+  const snap = await fetchLatestSnapshot();
+  return snap ? snap.sleep_duration : 7.5;
 }
