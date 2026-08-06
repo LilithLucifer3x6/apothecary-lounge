@@ -9,7 +9,6 @@ import { Capacitor } from '@capacitor/core';
 import { initEngineRules } from './lib/routine-engine.js';
 
 import ConjureVisage from './screens/ConjureVisage.jsx';
-import Landing from './screens/Landing.jsx';
 import Intake from './screens/Intake.jsx';
 import Rites from './screens/Rites.jsx';
 import Grimoire from './screens/Grimoire.jsx';
@@ -208,10 +207,7 @@ export default function App() {
     }
   };
 
-  const handleReturnToCottage = () => {
-    if (settings.tts) speak("Return to Sanctuary");
-    setCurrentScreen('home');
-  };
+  // House button removed per spec
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
@@ -234,7 +230,6 @@ export default function App() {
     const pose = tab ? tab.pose : 'working';
     
     switch (activeTab) {
-      case 'home': return <div style={{ minHeight: 'calc(100vh - 120px)' }}><Landing onProceed={(skipIntake) => skipIntake ? handleTabClick('rites') : setCurrentScreen('intake')} onOpenAvatar={() => setCurrentScreen('avatar')} /></div>;
       case 'rites': return <div><Rites pose={pose} /></div>;
       case 'grim': return <div><Grimoire pose={pose} /></div>;
       case 'altars': return <div><Altars pose={pose} /></div>;
@@ -252,7 +247,7 @@ export default function App() {
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <Icon name="ph-warning-circle" style={{fontSize: '3rem', color: 'var(--crimson-b)'}} />
           <h2 style={{marginTop: '1rem', marginBottom: '1rem'}}>Connection Severed</h2>
-          <p style={{color: 'var(--dim)', marginBottom: '1rem'}}>The Apothecary Lounge cannot reach the Supabase backend. Please ensure your environment variables are configured correctly and the database is accessible.</p>
+          <p style={{color: 'var(--dim)', marginBottom: '1rem'}}>Shadow and Sanctuary cannot reach the Supabase backend. Please ensure your environment variables are configured correctly and the database is accessible.</p>
           <button className="btn plum" onClick={() => window.location.reload()}>Attempt Reconnection</button>
         </div>
       </div>
@@ -264,7 +259,7 @@ export default function App() {
       {currentScreen === 'splash' && (
         <div id="s-splash" className="land" style={{ justifyContent: 'center', padding: '10vh 2rem 5vh 2rem', height: '100vh', overflow: 'hidden' }}>
           <div style={{ textAlign: 'center' }}>
-            <h1 style={{ fontSize: 'clamp(2rem, 10vw, 3.5rem)', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--plum)', margin: '0' }}>Shadow & Sanctuary</h1>
+            <h1 style={{ fontSize: 'clamp(2rem, 10vw, 3.5rem)', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--plum)', margin: '0' }}>Shadow and Sanctuary</h1>
             <div className="tag" style={{ fontSize: '1rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--plum)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '0.6rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
           </div>
           <button onClick={handleEnter} className="btn" style={{ fontSize: '1.3rem', padding: '0.8rem 1.5rem', background: 'var(--card2)', borderColor: 'var(--plum)', color: 'var(--plum)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginTop: '4vh', width: '250px', whiteSpace: 'normal', lineHeight: '1.2' }}>
@@ -287,33 +282,12 @@ export default function App() {
               setCurrentScreen('intake');
             } else {
               setCurrentScreen('app'); 
-              handleTabClick('home'); 
+              handleTabClick('rites'); 
             }
           }} />
         </div>
       )}
 
-      {currentScreen === 'landing' && (
-        <div id="s-land" className="land">
-          <Landing 
-            onProceed={(skipIntake) => {
-              let hasAvatar = false;
-              try {
-                const conf = JSON.parse(localStorage.getItem('avatar_config'));
-                if (conf && conf.avatarVibe) hasAvatar = true;
-              } catch(e) {}
-              const hasIntake = localStorage.getItem('intake_completed') === 'true';
-              if (!hasAvatar) setCurrentScreen('avatar');
-              else if (!skipIntake && !hasIntake) setCurrentScreen('intake');
-              else {
-                setCurrentScreen('app');
-                handleTabClick('rites');
-              }
-            }} 
-            onOpenAvatar={() => setCurrentScreen('avatar')} 
-          />
-        </div>
-      )}
 
       {currentScreen === 'intake' && (
         <div id="s-ins" className="land">
@@ -326,9 +300,7 @@ export default function App() {
           <div style={{ position: 'relative', zIndex: 5 }}>
             <div className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem 1rem', position: 'sticky', top: 0, zIndex: 40, background: 'transparent', gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '0 0 auto' }}>
-              <button onClick={handleReturnToCottage} title="Return to Sanctuary" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--plum)', padding: 0, opacity: activeTab === 'home' ? 0.5 : 1 }}>
-                <Icon name="house" style={{fontSize: '2rem'}} />
-              </button>
+              {/* Left alignment spacer */}
             </div>
             
             <div className="tabs" style={{ display: 'flex', justifyContent: 'center', flex: 1, gap: '0.5rem', overflowX: 'auto', scrollbarWidth: 'none', padding: 0 }}>

@@ -1,4 +1,4 @@
-# Shadow & Sanctuary — Project Specification
+# Shadow and Sanctuary — Project Specification
 
 > **How to use this file.** This is the standing spec. Point your assistant at it at the start of
 > every session. If it is not read automatically, paste the RULES block below into the first message.
@@ -19,7 +19,7 @@
 5. **Conflicts are checked by application zone.** Two products only clash if their zones overlap or
    sit adjacent. Underarm astringent does not conflict with a facial retinoid.
 6. **The safety layer is deterministic code.** AI maintains the reference data. AI never makes the
-   pass/fail call. (Exception: Physiological risk wards like MELANIN_TRIGGERS are intentionally hardcoded as they are stable categories, not swappable ingredient data).
+   pass/fail call.
 7. **Seed nothing, and survive being empty.** The app starts with no products, no history, no
    profile. Every screen must render with nothing to show. Never use `.single()` where zero rows is
    possible — use `.maybeSingle()` and treat null as valid. This is the most likely crash in the
@@ -34,7 +34,7 @@
     the nearest one that has. Inventing new visual treatment is a defect.
 12. **Icons are drawn, never emoji.** Phosphor for functional marks, game-icons for ritual marks, AI
     draws an inline SVG when neither is exact. Resemblance to the real object is the standard.
-13. **Health Connect is the wearable broker on Android.** Android acts as the sole bridge to wearable data (RingConn, Samsung Health, Renpho) via Health Connect. When Android reads fresh data, it writes a snapshot to the `wearable_snapshots` table in Supabase. The web build has no direct wearable integration at all; instead, it reads the most recent snapshot from Supabase and clearly displays its staleness. If no snapshot exists (no wearable connected), everything degrades cleanly to its default state.
+13. **Health Connect is read-only and the only broker.** Never call a manufacturer SDK directly.
 14. **Everything degrades cleanly.** No wearable connected means those features simply do not appear.
 15. **Prescriptions are always named with strength.** Never a generic label.
 16. **No streaks, no guilt, no notifications** except the two restock nudges.
@@ -63,36 +63,27 @@
 
 ---
 
-
 ## 1. Overview
-
-Shadow & Sanctuary is a personal skin, hair, and body care companion for a single user. Two goals carry equal weight: healing and relaxation. Healing covers the skin barrier, active acne, acne scarring, body scarring, scalp sebopsoriasis, and hair moisture. Relaxation means the routine should feel like ritual rather than obligation. The user has ADHD and memory-recall difficulty, so every design decision favors low friction and zero guilt. Everything the app does is cosmetic. It never diagnoses and never replaces a provider. Platform: one codebase serving a web app and an Android build. Single user, no multi-tenancy, no public release.
+Shadow and Sanctuary is a personal skin, hair, and body care companion for a single user. Two goals carry equal weight: healing and relaxation. Healing covers the skin barrier, active acne, acne scarring, body scarring, scalp sebopsoriasis, and hair moisture. Relaxation means the routine should feel like ritual rather than obligation. The user has ADHD and memory-recall difficulty, so every design decision favors low friction and zero guilt. Everything the app does is cosmetic. It never diagnoses and never replaces a provider. Platform: one codebase serving a web app and an Android build. Single user, no multi-tenancy, no public release.
 
 ## 2. Principles
-
 These constrain every decision below. One. Nothing is hardcoded. Every routine is generated from current inventory. No product names appear in engine code. Two. One connected system. Where two parts need to share data, they share it. Three. Zero pressure. No streaks, no guilt, no forced completion. Notifications are limited to the two restock cases in section 7. Four. Cosmetic only. The app observes, suggests, and organizes. It does not diagnose. Five. Melanated skin is the default assumption. Hyperpigmentation risk and photosensitivity are checked on every product. Six. Prescriptions are named explicitly everywhere. Never a generic label. Seven. Every domain is equal. Hair, eyes, mouth, face, and body receive identical depth of tracking and evaluation.
 
 ## 3. Accessibility and assistance
-
 The user has fibromyalgia, spondyloarthritis, rheumatoid arthritis, and osteoarthritis alongside ADHD, works forty hours a week, and is starting a master's program. Some days involve genuine physical incapacity, not only low executive function. This shapes three requirements. Voice-to-text is mandatory on every text input in the application without exception. Not primary, not preferred — required. Every field, quiz response, search, journal entry, note, and log accepts voice input. A text input without voice capability is a defect, because typing is painful during flares. The reduced routine is presented as a legitimate routine, not a fallback. Choosing it must not read as failure. It is triggered by pain and mobility as often as by executive function. Steps carry a partner-assisted flag. Steps routinely performed by the user's partner: drying off after showering, body acne extractions, lotion application, oil application, operating the RevAir, and dressing assistance including pajamas and socks. Flagged steps display an assist indicator and are understood by the system as requiring another person's availability, not merely the user's energy.
 - Text-to-speech is available throughout, not only on documents. Any block of readable content carries a small, unobtrusive speaker control at its right edge: routine steps, weekly wheel entries, calendar days, appointments, altar contents, inventory rows, and Scrying Pool output. Navigation labels and tab titles do not.
 - Text-to-speech is toggleable in settings and off does not degrade anything else.
 - Font size and typeface are user-adjustable in settings. Every screen reflows to accommodate the chosen size; text may wrap but layout must not break, overlap, or clip at any supported size.
 
 ## 4. The avatar and the room
-
 A one-time builder runs before The First Inscription. Its title is phrased as a question. All wording within it uses the application's own vocabulary — the hair controls belong to The Crown and are named accordingly, never as generic loc colour or loc style.
-- The figure renders with visible microlocs at every setting. These must be depicted as true microlocs—so small and fine that when grouped up they almost look like loose hair, beautifully adorned. Locs are the default and only texture; no European textures are offered.
-- The figure is strictly plus-size and full-figured (representing a 5'8", ~250lb body type). This is the default and only body type.
+- The figure renders with visible microlocs at every setting. Locs are the default and only texture; no European textures are offered.
 - Hairstyles are visually distinct from one another at a glance. No two options may render alike. Twin buns is a confirmed keeper.
 - Every builder choice persists into the room and everywhere else the figure appears. A selection that reverts to default on the following screen is a defect.
-- Avatar robes can be customized to any color of the rainbow, EXCEPT pink and blue. Pink and blue are permitted in background elements, but the robes themselves must never be pink or blue.
-- The familiars offered are Cat, Bat, Owl, Serpent, and Raven. Spiders are strictly forbidden.
+- The avatar and familiar are editable later from Settings without repeating intake.
 
-The room is the landing screen and serves as the backdrop for all tabs. Instead of flat SVGs, these backgrounds are dynamically generated during the First Inscription via a live AI Image Generation API:
-- When the user selects their avatar's traits (loc style, robe color, familiar, etc.), the application generates 6 unique, high-fidelity 2D digital paintings (painterly, hand-illustrated, gothic, muted palette, dark cottagecore aesthetic) corresponding to each tab.
-- The avatar and familiar are physically integrated and painted directly into the background of each room, fully matched with the ethereal lighting of the scene.
-- Once generated, these images are stored and used permanently, avoiding ongoing API costs.
+The room is the landing screen: a static illustrated interior, generously sized, richly dressed rather than sparse.
+- It contains a hearth with cauldron, an alchemy station with vessels and apparatus, an apothecary bench, a sleeping area, a ritual space, and a working circle marked on the floor.
 - Candles are plentiful and lit throughout.
 - The figure holds a grimoire, marking them as the one who does the work.
 - The familiar shares the room.
@@ -102,15 +93,12 @@ The room is the landing screen and serves as the backdrop for all tabs. Instead 
 - The avatar carries no gender. Every label, option, and button in the builder and everywhere the figure appears uses neutral language — their complexion, their crown, their familiar, the Keeper stands ready. No pronoun that assumes a gender appears anywhere in the application, including here. This is not a preference to be weighed against phrasing that reads more naturally; it is a requirement, and gendered wording is a defect.
 
 ## 5. Architecture
-
 Rootwork is the single source of truth. It holds all inventory. Rootwork feeds the routine engine. The engine generates every routine surface: Mortal Rites, The Altars, and The Grimoire. These surfaces hold no product data of their own. User activity flows back. Completed steps write to history. Reactions write to The Scrying Pool. The Scrying Pool evaluates that activity and writes conclusions back to Rootwork as state changes and suggestions. The next day's routines read the updated Rootwork. Shadow Tome is deliberately isolated from this loop. It is a private journal and feeds nothing.
 
 ## 6. Item data model
-
 Fields on every item. Name: the product's real identity with marketing and accessory language removed. Waterpik, not Waterpik brand wireless water flosser with attachments. Never truncated to a single word. Domain: Crown, Gaze, Grin, Visage, or Vessel. Primary category, derived by AI rather than chosen from a fixed list. Cleanser, toner, serum, moisturizer, sunscreen, mask, oil, exfoliant, and spot treatment are illustrations only. Sub-class, likewise derived. Gel, foaming, sheet, clay, sleep, wash-off, astringent, and gentle are illustrations only. Application zone, required: scalp, hairline and edges, orbital and eyelid, face-upper, face-mid, face-lower, full-face, underarms, chest and back, general body, intimate, oral, lips. Ingredients: structured, manually correctable. Behavior flags: requires-rinse, timer duration in minutes, layering weight one to ten where one is thinnest. Risk flags: melanin caution, photosensitizer, comedogenic, buildup risk, fragrance, retinoid, acid, vitamin C, benzoyl peroxide, exfoliant. Lifecycle state. Opened date, editable and backdatable. Period after opening in months. Storage location: mini fridge, bathroom, vanity, basket, cabinet. Displayed on routine steps so the user knows where to retrieve an item. Price, optional. Scheduling mode: scheduled or anytime. Partner-assisted flag. Glyph. Two independent expiry clocks are held per item. Period after opening runs from Break the Seal. Unopened shelf life runs from manufacture or purchase and applies whether or not the seal is ever broken; a product left unopened for years is not safe by virtue of being sealed. Whichever expires first governs. Both surface through the Scrying Pool's expiry watch. Every field on every item is editable after creation, reachable from the item itself rather than only at entry. Voice-captured input is shown as editable text for correction before it is committed; nothing dictated is written without the chance to amend it. Arsenal items do not carry period-after-opening or opened dates, which are meaningless for durable tools; they carry maintenance and cleaning cadence instead, and may optionally carry an expected service life where a manufacturer states one. Durable tools in The Arsenal carry neither period-after-opening nor an opened date; those fields apply to consumables only. Tools instead track cleaning and maintenance cadence, and where manufacturer data supports it, expected service life by use count. Storage location is user-set and editable on every item, chosen from a list the user extends, never a fixed set.
 
 ## 7. Classification rules
-
 Categories and sub-classes are not a fixed enumeration. The system derives them from what a product actually is.
 - No category list is hardcoded. AI determines both primary category and sub-class from the label, ingredients, and form, and may create a category or sub-class that has not been seen before.
 - Any category named anywhere in this specification is an illustration, not a permitted value.
@@ -120,10 +108,8 @@ Categories and sub-classes are not a fixed enumeration. The system derives them 
 - Glyphs are globally unique. No two categories, sub-classes, tasks, appointments, altars, or arsenal entries share a glyph. A registry enforces this: on collision AI selects the next best semantic fit rather than duplicating.
 - A glyph must depict what the thing is or does, never a word in its name. A thermal cap is not a baseball cap. A lotion warmer is not a plant. Extractions are not a sewing needle. Where no adequate symbol exists, an abstract mark from the application's own ornament set is preferred over a poor literal match.
 - Every glyph depicting a person uses a dark-skinned variant. Where a whole-body figure is meant, a single whole-body figure is used rather than a composite of parts.
-+
 
 ## 8. Icons
-
 Every icon is unique across the entire application . No two categories, sub-classes, tools, tasks, routines, or rituals share one. Uniqueness is enforced against a live registry at assignment time; when the obvious choice is taken, AI selects the next most functionally apt symbol rather than reusing.
 - Glyphs must be legible at small size and must map to function, not to a word in the name. A tool called a cap does not receive a baseball cap. A lotion warmer does not receive a plant. Extractions receive tweezers, not a sewing needle.
 - Glyphs are a custom icon set, not Unicode emoji. Emoji is a closed vocabulary of roughly three thousand seven hundred characters containing no tweezers, no skipping rope, no contact lens, no bonnet, and no dropper, so a system requiring a unique apt mark for every category cannot be built on it. Emoji also renders differently on every platform and reads bright and cartoonish, working against the intended aesthetic.
@@ -137,7 +123,6 @@ Every icon is unique across the entire application . No two categories, sub-clas
 - Icon assignment for a new product is AI-assisted selection, not AI generation. The model chooses the best mark from the existing set and, where nothing fits, says so and proposes what a new mark should depict rather than inventing one. Generated vector art is unreliable at icon scale and produces shapes that do not read; selection from a curated set is both accurate and effectively free. A proposed new mark is drawn once and added to the set, so the vocabulary grows deliberately. Icon generation is an AI responsibility at the moment a product is added, not a design task performed once. When an item enters Rootwork, the system first seeks an exact match in the installed libraries. Where no apt mark exists — and for most cosmetic objects none does — AI generates a simple line drawing as inline SVG on the same twenty-four unit grid and stroke weight as the rest, using currentColor so it inherits palette and text size. The generated mark is stored with the item, entered in the registry, and checked for uniqueness like any other. The standard is resemblance to the object itself. A cleanser is a pump bottle, an ointment is a squeezed tube, a nail lacquer is a lacquer bottle with its brush. An unrelated object that shares a word or a vague shape is not acceptable — a paint brush is not a toothbrush and a paint bucket is not a mask. Where an existing library icon is genuinely exact, it is used unchanged.
 
 ## 9. Composite items
-
 Some items are blends the user compounds. Two exist today: a bath soak of whole milk powder, orange peel powder, rose petals powder, and epsom salts, ground together and dispensed by the scoop; and a scalp oil of olive, black castor, rosemary, and rose oils.
 - Entry is through a dedicated action beside photograph and search, labelled in the application's voice rather than as DIY.
 - The flow collects: a name; two ingredient fields with an option to add more; the batch creation date; and the form of the blend — oil, liquid, powder, balm, or other.
@@ -149,7 +134,6 @@ Some items are blends the user compounds. Two exist today: a bath soak of whole 
 - Composites are evaluated by the Scrying Pool at both levels: the blend as a ritual, and components individually.
 
 ## 10. Lifecycle states
-
 Every item holds one state. States describe availability and verdict, never quality of the routine.
 - Stocked
   - Default for anything on hand, including new items in trial.
@@ -178,11 +162,9 @@ Every item holds one state. States describe availability and verdict, never qual
   - Where a purchase date is known, it bounds the earliest possible open date and is offered as an estimate.
 
 ## 11. Restock behavior
-
 The Summoning Scroll is the restock list and lives on Rootwork. Essential items surface immediately when Ebbing. Non-essential items batch silently until five accumulate, then surface together. Two notifications exist in the entire application, both restock-related: the batch-of-five prompt, and a per-item prompt once that item has enough usage history to predict depletion. The system sets Ebbing itself once predictive; it never prompts the user to set it manually. Item actions surface directly on the item rather than hiding behind a menu. Enshrine, Banish, Ebbing, Hollow, Break the Seal, Replenish, and Edit are all reachable without opening an overflow. Only destructive or rare actions belong in the overflow. Action labels carry no scaffolding words such as Mark. Every item is editable after creation, and every entry the user makes can be deleted.
 
 ## 12. Routine engine
-
 Every routine surface calls this engine. It decides order dynamically. Nothing about placement is hardcoded.
 - Input: all Rootwork items whose state is Stocked, Ebbing, or Enshrined, filtered by domain and time of day. Excluded: Banished always, Hollow while out of stock.
 - Ordering is derived, never fixed. The engine weighs: function; formulation weight and texture, thinnest to thickest; ingredient behaviour, including pH dependence, occlusivity, penetration, and what must reach skin unimpeded; documented layering convention for the domain; and interactions among everything else scheduled that day.
@@ -195,7 +177,6 @@ Every routine surface calls this engine. It decides order dynamically. Nothing a
 - Layering knowledge is sourced from the reference data described in the safety section and applied by the AI layer, not from rules written into application code. As inventory changes, prescriptions change, or products are discontinued, order is recomputed rather than migrated.
 
 ## 13. Safety layer
-
 Deterministic checks run on reference data. No AI participates in a pass or fail decision, though AI maintains and expands the reference data it checks against.
 - The Codex: a block list of ingredients. Any match prevents a product entering a routine. Lavender is a permanent, non-removable entry. Others are added at intake or when a product is banished for an ingredient reason.
 - Conflict checking is exhaustive, not a fixed shortlist. Every ingredient of every item is checked against a reference set of known interactions, which is queried and expanded through the AI layer rather than enumerated in code. Any conflicts named in this document are examples, not the complete set.
@@ -209,19 +190,17 @@ Deterministic checks run on reference data. No AI participates in a pass or fail
 - Sun protection is treated as load-bearing rather than routine, and includes reapplication guidance where daytime exposure is known. Window glass transmits UVA, which drives pigmentation, so indoor exposure to direct sunlight counts.
 
 ## 14. Conflict resolution by zone
-
-Conflicts are evaluated by application zone, not by co-presence in the routine. Two products conflict only when their zones overlap or are directly adjacent. Alcohol-based witch hazel on the underarms does not conflict with a facial retinoid. Salicylic acid bars on chest and back do not conflict with facial actives. A retinal eye serum in the orbital zone and a strong topical retinoid applied nose-down do not directly layer; that pairing produces an advisory about total retinoid load rather than a block. Adjacent zones produce a migration advisory. A conflict reschedules rather than forbids. The engine moves one product to a slot where it works. Vitamin C conflicting with a nightly retinoid moves to the Morning Rite, its conventional placement. Exfoliating acids move to nights the retinoid is skipped. Buffering is supported, applying moisturizer before a prescription to reduce irritation. Only a Codex match or a genuine hazard removes a product outright. Where nothing can be safely scheduled, the app says so and explains why. Warnings are overridable. The user may proceed after acknowledgment, since a provider may have approved a combination the engine flags. Hardcoded zone rule: Drysol is never scheduled on the same day as the bath ritual or as underarm witch hazel, because aluminum chloride on freshly exfoliated or astringent-treated skin causes burning.
+Conflicts are evaluated by application zone, not by co-presence in the routine. Two products conflict only when their zones overlap or are directly adjacent. Alcohol-based witch hazel on the underarms does not conflict with a facial retinoid. Salicylic acid bars on chest and back do not conflict with facial actives. A retinal eye serum in the orbital zone and tretinoin applied nose-down do not directly layer; that pairing produces an advisory about total retinoid load rather than a block. Adjacent zones produce a migration advisory. A conflict reschedules rather than forbids. The engine moves one product to a slot where it works. Vitamin C conflicting with a nightly retinoid moves to the Morning Rite, its conventional placement. Exfoliating acids move to nights the retinoid is skipped. Buffering is supported, applying moisturizer before a prescription to reduce irritation. Only a Codex match or a genuine hazard removes a product outright. Where nothing can be safely scheduled, the app says so and explains why. Warnings are overridable. The user may proceed after acknowledgment, since a provider may have approved a combination the engine flags. Hardcoded zone rule: Drysol is never scheduled on the same day as the bath ritual or as underarm witch hazel, because aluminum chloride on freshly exfoliated or astringent-treated skin causes burning.
 
 ## 15. Master Invocations
-
 Prescriptions. Cannot be Banished by ordinary means; provider-directed discontinuation is the exception and is recorded as such. May be marked Hollow. Zones are editable. Named explicitly wherever they appear.
-
+- Tretinoin 0.05% cream. Zone: chin per the label, editable. Under active titration, see below.
 - Tacrolimus 0.1% ointment. Zone: orbital and eyelid. Eyelid eczema.
 - Drysol, aluminium chloride. Zone: underarms. Hyperhidrosis. Bedtime, dry skin only, never on freshly shaved or irritated skin.
 - Zoryve 0.3% foam. Insurance denied refill. Runs out with the current bottle, then Banished as unobtainable.
-- Isotretinoin, oral (40mg/80mg). Zone: Systemic. Daily step in the Morning Rite. Anchor date: August 3, 2026, first dose 40mg. Alternates between 40mg and 80mg based on the *last confirmed dose*, not the calendar date. If the last confirmed dose was 40mg, the next suggested dose is 80mg. If there is no confirmed dose yet (empty state), the next suggested dose defaults to 40mg (anchor value). Missing a day does not advance the sequence.
 
-
+Tretinoin titration. The pharmacist directed one to two nights weekly, increasing as tolerated toward nightly. The app supports that progression and never drives it alone.
+- Scheduling begins at one to two nights weekly.
 - Every two weeks the app opens an AI-led conversation about tolerance: peeling, redness, blistering, bumps, stinging, and pigment change.
 - Responses feed the Scrying Pool, which evaluates tolerance across time rather than from a single answer.
 - Where tolerance is established, the Pool proposes a single-step increase in weekly frequency. The user confirms. The app never increases frequency on its own.
@@ -230,26 +209,22 @@ Prescriptions. Cannot be Banished by ordinary means; provider-directed discontin
 - Blistering or severe reaction is surfaced as a reason to contact the prescriber, not something the app titrates around.
 
 ## 16. The Scrying Pool
-
 The evaluation engine. It reads from everywhere in the system and assesses how well the routine serves the user's stated goals. Inputs: every Rootwork item and state; every Enshrine and Banish with reasons; every logged reaction with zone and severity; completion history including which steps are skipped; intake answers; every Reading check-in. Reaction logging is always available and never gated behind banishing. The Pool lists every product in inventory. Beside each, it renders checkboxes for reactions associated with that product's category and ingredient classes. Retinoid: peeling, redness, purging, dryness, photosensitivity. Acid: stinging, burning, peeling. Fragrance: itching, redness, rash. Hyperpigmentation appears wherever the ingredient class warrants it. Checkboxes derive from ingredient class, not per-product authoring. Each reaction records zone and severity one to five. Outputs: ingredient patterns across banished products; whether the routine is moving toward current goals; replacement suggestions drawn first from owned items, then from the external product database; recommendations to remove a step where the routine does not need it; suggestions for unowned products that would work synergistically; and observed correlations such as which steps are skipped and whether reactions cluster around ingredients or application frequency. Banish reasons are weighted. Availability and cost banishes carry no signal about formulation and are excluded from ingredient pattern analysis. Composites are evaluated at two levels: the blend as a ritual, and its components individually. When two blends share a component and reactions follow the component rather than the blend, that is a strong attribution signal. All five domains receive identical evaluation depth. The Pool contains the Crypt of Ashes, the archive of banished products. All output is cosmetic and observational. Three additional queries. The Waning:  items whose period-after-opening countdown is nearing its end are surfaced proactively, before a product degrades. The Echo: before a purchase, the Pool reports whether the user already owns multiple active items built around the same primary active, guarding against redundant spending. The Silver Toll: total monthly cost of the current routine, derived from per-item price and usage frequency, surfaced alongside the Summoning Scroll so restock decisions carry visible cost context.
 
 ## 17. The Echo and adaptive suggestions
-
 The Echo accepts prospective items. A photograph or screenshot of something under consideration — in a shop, on a listing, anywhere — is submitted without adding it to inventory. The Pool reports whether its primary actives duplicate what is already owned, whether it conflicts with anything in rotation, whether it trips any domain risk flag, and how it would fit the current routine. Prospective items are held separately from inventory and can be promoted to Rootwork or discarded. Sleep and activity data, where a wearable is connected, informs optional suggestions: poor sleep may surface a de-puffing step for the eye area, and heavy sweat may surface a gentle body cleanse. Suggestions appear only when a suitable product is in inventory, and are always optional.
 
 ## 18. Settings
-
 Reached by a gear control in the header, present on every screen.
 - Typography: font size and typeface selection, applied globally with full reflow.
-- Text-to-speech, defaulting to off. When off, no speaker control appears anywhere in the application — the controls are not merely inactive, they are absent, and the interface must be free of them. When switched on, a small unobtrusive speaker appears at the right of readable elements, and unlike earlier specs, titles and headers DO carry the speaker control (e.g. "The Apothecary").
+- Text-to-speech, defaulting to off. When off, no speaker control appears anywhere in the application — the controls are not merely inactive, they are absent, and the interface must be free of them. When switched on, a small unobtrusive speaker appears at the right of every readable element: routine steps, weekly entries, calendar days, appointed days, altar contents, inventory rows, and Pool findings. Titles and tab labels never carry one.
 - Voice selection offers several feminine voices rather than a single default, drawn from those the device provides, with rate and pitch adjustable. The chosen voice persists.
 - Integrations: Health Connect authorisation and per-source selection, covering the ring, the watch, and any other connected wellness source. Only data the application actually uses is requested — sleep, readiness, activity, and heavy-sweat signals. Google Calendar authorisation lives here too.
 - Resets, at three levels: an individual entry may be deleted anywhere it was entered; a single tab or the routine alone may be reset without touching anything else; and a full reset returns the application to first launch. Destructive resets confirm before acting and name exactly what will be lost.
 - Avatar and familiar may be edited here at any time without repeating intake.
 
 ## 19. Wearables and health data
-
-Data arrives exclusively through Android Health Connect. Google Calendar sync remains independent. The application must remain strictly free to use, and third-party paid APIs (like Terra) are explicitly forbidden to keep operating costs under $10 a year.
+Data arrives through Android Health Connect, which acts as the single broker. The application never talks to a manufacturer's service directly.
 - Sources the user connects: the RingConn companion application for the Gen 3 ring; Samsung Health for the Galaxy watch; and the Renpho application for its devices. Each is toggled independently and states plainly what it contributes.
 - Setup is guided rather than a permission wall. The app names each source, explains in one line what it will draw and why, and lets the user decline any single stream while keeping the rest.
 - Data drawn, and what each is for:
@@ -266,25 +241,21 @@ Data arrives exclusively through Android Health Connect. Google Calendar sync re
 - The system degrades cleanly. With no wearable connected, every feature above simply does not appear, and no routine depends on data that may be absent.
 
 ## 20. Screens
-
 Six tabs across the top, horizontally scrollable on narrow screens. A landing screen precedes them. First launch routes to intake before anything else. Mortal Rites. Morning Rite and Evening Rite, both present. Generic category labels for ordinary products, real names for prescriptions. Each step is an independent checkbox logging on check. No button requires all steps to be complete. Optional steps use a toggle rather than a checkbox and gate nothing. The Grimoire. Weekly Wheel at top, showing everything scheduled for each day rather than a token entry or two. The month view is sized so day numbers and marks are legible without strain. Below it a real calendar month with the correct day count for the current month and year. Below that, completion history. Salon appointments live here with a Mark Done action that recalculates the next date from actual completion: nails roughly two weeks, retie roughly eight. Veet and shaving are tracked as two separate independently-learned cadences, both permanently optional. The Altars. Five sub-views, always ordered head to toe and never alphabetically or by any other arrangement: The Crown for hair and scalp, with distinct daily-maintenance and wash-day layers; The Gaze for eye care; The Grin for oral care; The Visage for face; The Vessel for body, personal hygiene, and the bath ritual. The Gaze and The Grin do not appear on the calendar; their steps appear in the Rites. Rootwork. The Summoning Scroll at top. Below it The Apothecary for consumables and The Arsenal for durable tools, each grouped by category then sub-category. Add by photo; search is the fallback. The Scrying Pool. Per section 12. The Shadow Tome. A private journal, isolated from all routine logic. Mood is chosen from named feelings, never a numeric scale, and more than one may be true at once. The vocabulary of feeling is AI-generated and broad rather than a fixed handful. A guided breathing and meditation space lives here, drawing on readiness data where a wearable is connected. Voice-to-text throughout, with a visible microphone. Each Altar shows its complete routine in executable order, not an unordered list of the products it draws on. Where an Altar holds more than one rhythm, such as The Crown's daily maintenance and wash day, each is shown whole and in order. Steps name the action, not the product category alone: a toothbrush step reads as brushing teeth so the system and the user share the same meaning.
 
 ## 21. Fixed sequences
-
 Two routines do not vary by product and are sequenced rather than generated. The Grin: floss picks, water pick, mouthwash, brush. The evening wind-down: shower, dry off, extractions with the heated eye mask running concurrently, lotion, oil. Extractions precede all oils. Stainless steel tools are submerged in 70 percent isopropyl alcohol for five to ten minutes before and after use. The bath ritual sits in The Vessel at roughly a two-week cadence, adjustable and invitational. The soak is a composite per section 5. Its milk powder contributes lactic acid, so it carries the exfoliant flag, which triggers the Drysol separation in section 10 and prevents same-day stacking with salicylic acid body bars.
 - Where a step carries a required interval before the next, completing it starts a visible countdown automatically. Retaine MGD drops begin the fifteen to twenty minute wait before lens insertion without the user starting anything.
 - Devices that time themselves are not given app timers, and their durations are not restated in the step.
 
 ## 22. Equipment rules
-
 Tools in The Arsenal carry usage rules that are not ingredient-based and cannot be derived from a label. These are stored per tool and surfaced on the step that uses them. Hooded steamer: no plastic cap underneath. Direct steam is the purpose, and a cap blocks it. Thermal or silver-lined heat cap: plastic cap goes underneath. This is the inverse of the steamer rule, and the two are easily confused. Extraction tools: hands washed with antibacterial soap before starting; tools submerged in seventy percent isopropyl alcohol for five to ten minutes before and after use. RevAir: flagged partner-assisted, being heavy and difficult to maneuver. Hand washing is an ordinary routine step following any prescription application. It gates nothing and blocks nothing; it appears in sequence like any other step.
 
 ## 23. Onboarding and check-ins
-
 Both intake and check-in are AI-led conversations rather than forms. The user speaks; AI asks, follows up, and structures the answers. Form and checkbox paths remain available as the fast route.
 - The First Inscription runs once, before any other screen. It gathers known allergies and sensitivities, seeding the Codex; active prescriptions, becoming Master Invocations; conditions to protect; current concerns, setting routine priority; oral medications as cosmetic-evaluation context; and product philosophy preference across traditions, which shapes what the Scrying Pool suggests, limited to what ships to the US.
 - The Reading runs every thirty days. It asks what currently weighs on the user and what the goals are, then re-sorts the entire routine across all domains. It re-asks medications, pre-filled with the previous answer.
-
+- The tretinoin tolerance check runs every two weeks as its own short conversation.
 - Banishing a product opens a conversation that captures the reason.
 - Any data entry that can be conducted as a conversation is conducted as one. Manual entry is a fallback, never the primary path.
 - The conditions question, the current-concerns question, and the opening skin question are required. The opening question offers a relaxation-only answer for when nothing is actively wrong.
@@ -297,26 +268,20 @@ Both intake and check-in are AI-led conversations rather than forms. The user sp
 - AI widens each pool at presentation time, drawing adjacent and related conditions the user has not named, and refines what it offers as it learns what is relevant.
 
 ## 24. Oral medications
-
 Oral medications are recorded at intake as cosmetic-evaluation context. The app flags three classes with direct cosmetic relevance. Photosensitizers, including tetracycline-class antibiotics commonly prescribed for acne, compound topical retinoid sun sensitivity and raise hyperpigmentation risk on melanated skin. The app reinforces sun protection prompts accordingly. Systemically drying medications increase the barrier support the routine should provide. Immunosuppressants, standard treatment for rheumatoid arthritis and spondyloarthritis, raise infection risk during skin-breaking procedures. Where one is recorded, the app surfaces a caution on the extraction step and on its sanitization protocol rather than scheduling extractions without comment. The app performs no drug interaction checking. That is a pharmacist function with purpose-built tools, and anything beyond the three cosmetic classes above is routed to the user's pharmacist. Recorded medications: methotrexate and etanercept, both for inflammatory arthritis. Both are immunosuppressant, activating the extraction caution described above against a routine that currently schedules extractions every shower. Methotrexate is additionally photosensitizing, which compounds topical retinoid sun sensitivity and raises hyperpigmentation risk on melanated skin; sun protection prompts are weighted accordingly and are treated as load-bearing rather than routine.
 
 ## 25. AI scope
-
 AI never touches the safety layer. The Codex, Melanin Ward, Synergy Engine, zone rules, and Master Invocation handling are deterministic code, because a safety rule that occasionally hallucinates is not a safety rule. Everywhere else, AI carries the manual burden. The design goal is that the user photographs, speaks, or taps, and never types structured data. Natural language capture. Speech-to-text transcription runs on-device through the browser speech API at no cost; AI parses the resulting transcript into structured records. Adding a product, logging a reaction, marking something Hollow, or noting a purchase can all be done by speaking a sentence. Checkbox and form paths remain as the fast route; voice is the low-effort route. The Reading is conducted conversationally rather than as a form. AI asks, the user talks, AI structures the answers. Evaluation. Replacement suggestions on banish, drawn from owned items and the external database and screened through the full safety layer before display. The judgment that a step should be removed rather than replaced. Failure summarization. Ingredient patterns across the banished set. The Echo redundancy check. The whole-routine assessment. Proactive suggestions for unowned products, weighted toward hyperpigmentation and photosensitivity risk on melanated skin. Composite blend analysis across component ingredients. Price estimation where no receipt exists, stored and displayed as an estimate. All AI-generated text displayed in the interface is written in the application's voice per section 22. Suggestions, summaries, assessments, and empty states read as ritual language, not as generic assistant prose. This is a hard constraint on every prompt, not a stylistic preference: the input may be casual speech, but nothing rendered on screen breaks the voice. All AI output is cosmetic and advisory. It suggests products; it does not name conditions.
 
 ## 26. Data capture and import
-
 Product intake. Multiple photos per product are captured in one session and submitted together: front for name and brand, back for the ingredient list and period-after-opening symbol, and a separate close shot of any embossed or stamped code, which typically sits on the crimp or base and needs its own angle. From that set AI returns name, brand, category, sub-class, full ingredient list, period-after-opening, container size, and inferred application zone, layering weight, texture, risk flags, and glyph. The user confirms or corrects rather than authoring. Embossed codes are frequently batch codes rather than dates, and decoding conventions vary by manufacturer, so any uncertain read is surfaced as unconfirmed rather than written silently into a countdown the user then relies on. Where a product is absent from the external ingredient database, AI supplies the ingredient list from its own knowledge, marked unverified. Bulk import is source-agnostic. Any uploaded image may contribute any field, and no source is restricted to a fixed set of data. Ingredients are not reliably printed on the container: they frequently appear only on outer packaging that gets discarded, or only on a retailer listing. Valid sources include the product front and back, the outer carton, an embossed code close-up, a retailer product page screenshot, and an order-history screenshot. AI extracts whatever each image actually contains rather than what its category is expected to contain. Images for many products are uploaded in a single operation. AI groups them by product, matching front, back, carton, and listing shots of the same item, and proposes the grouping for review. Nothing commits until the user confirms the grouped sets, because an incorrectly merged pair of products is more costly to untangle afterward than to correct before writing. Where multiple sources describe the same field, they merge by precedence rather than by arrival order. The physical container ranks highest, since it is authoritative for the item actually owned. Outer packaging ranks next. Retailer listings rank below both, because listings go stale when a product is reformulated. The external ingredient database ranks next, and AI knowledge last. Disagreements between sources are surfaced to the user with both values shown rather than silently resolved, since an ingredient list is the input to every safety check. Fields present in only one source are taken from it and flagged as single-sourced.
 
 ## 27. Product identification
-
 Products are added by photo. Optical character recognition extracts label text, matched against an external database — Open Beauty Facts and the INCI ingredient dictionary — returning a structured ingredient list that feeds the Melanin Ward and Synergy Engine. A search bar is the fallback when a photo cannot be identified, searching that same external database. It does not search the user's own inventory. Manual correction of any scanned result is always available, since every safety check depends on ingredient accuracy.
 
 ## 28. Visual and voice
-
 Palette: obsidian ground, crimson and purple accents, silver and platinum metals. Green is excluded. Gold is permitted sparingly.
-- Typography is strictly Sacramento. All text, display, headers, and functional text uses Sacramento, a flowing fountain-pen script form. Do not use plain block lettering or sans-serifs. The atmospheric aesthetic governs everything.
-- Color Contrast: The app prioritizes atmospheric aesthetics over strict WCAG contrast rules. For example, text uses a dark `--plum` color to blend into the gothic aesthetic, rather than forcing high-contrast white or gray on dark backgrounds.
+- Typography leans calligraphic. Display and headers use flowing fountain-pen and copperplate forms — the hand of an old grimoire or a summoning scroll, not plain block lettering. Readability governs: functional text, step labels, and anything read repeatedly stays legible, using a calligraphic face only where it does not cost clarity.
 - Texture references aged parchment and ink, not wood, leather, or clay.
 - Theme is Virgin Islander and Hoodoo heritage blended with cottagecore goth, handled with respect and never as caricature.
 - Display names are consistent. Every tab and section heading carries the definite article: The Mortal Rites, The Grimoire, The Altars, The Rootwork, The Scrying Pool, The Shadow Tome. Running prose follows ordinary grammar.
@@ -339,7 +304,6 @@ Palette: obsidian ground, crimson and purple accents, silver and platinum metals
 - A screen that has no equivalent in the mockup takes its styling from the nearest one that does. Inventing a new visual treatment is a defect, not a contribution.
 
 ## 29. Interface and ornament
-
 The interface carries the theme visually, not only in wording. Flat panels of black and grey are a failure state.
 - Ornament: swirl and flourish borders, calligraphic rules and dividers, moons, stars, and alchemical marks framing sections. Cards carry decorated corners and edges rather than plain strokes.
 - Palette extends beyond obsidian and crimson into a full cottagecore-goth range: aged parchment, tarnished silver, deep plum, dried rose, moss shadow, candle gold, ink black. Green as a dominant remains excluded; muted shadow tones are permitted within the palette.
@@ -348,7 +312,6 @@ The interface carries the theme visually, not only in wording. Flat panels of bl
 - Routine steps name the action plainly and briefly. Composite sequences appear as one named step rather than their component parts spelled out. Durations belonging to a device are not restated in the step.
 
 ## 30. Stack, build, and cost
-
 The stack, stated concretely so nothing is inferred.
 - Framework: Vite with React. Not Next.js with server-side rendering. Capacitor requires a static client bundle, and an SSR application cannot be wrapped. Vercel will host SSR happily, so this conflict stays invisible until the Android build fails. If the project already uses Next.js, it must be configured for static export.
 - Database, auth, and storage: Supabase, which is Postgres.
@@ -369,10 +332,9 @@ Build in this order. Each phase should run before the next begins.
 
 Estimate, given existing Postgres experience and a prior successful Android build: a working core in one to two weeks of evenings, full scope in a further three to five weeks.
 
-Cost. Everything except AI is free at this scale: Supabase free tier, Vercel free tier, and a sideloaded Android build. AI is pay-per-use with no subscription. The application explicitly uses Claude Sonnet 5 (`claude-sonnet-5`) globally for all extraction, classification, parsing, and conversational tasks. The entire build for all AI queries and generations throughout the year must remain strictly under $10 a year. Three controls hold this envelope: Sonnet 5 serves everything; the Batch API halves anything not time-sensitive; and prompt caching cuts repeated input by about ninety percent, which applies to nearly every intake call since the system prompt is identical across them.
+Cost. Everything except AI is free at this scale: Supabase free tier, Vercel free tier, and a sideloaded Android build. AI is pay-per-use with no subscription. At Haiku 4.5 rates of one dollar per million input tokens and five per million output, with AI carrying the manual burden described elsewhere, steady state is roughly eighteen cents per month, about two dollars and twenty cents per year. The one-time bulk import of around eighty products at three photos each costs sixty-eight cents at standard rates, or thirty-four cents through the Batch API. First month totals roughly fifty cents. Three controls hold this envelope: Haiku serves all extraction, classification, and parsing; the Batch API halves anything not time-sensitive; and prompt caching cuts repeated input by about ninety percent, which applies to nearly every intake call since the system prompt is identical across them.
 
 ## 31. The Steeping — specified, not built
-
 A future feature, flagged off. Written down so it is not lost or half-built. It does not enter version one.
 - Purpose: the ritual that precedes journaling. Brew, settle, then open The Shadow Tome. The Steeping lives inside The Shadow Tome rather than as its own tab, because it belongs to that ritual rather than being a separate errand.
 - Herbal Elixirs is the inventory within it. It borrows Rootwork's shape, not its contents. Rootwork governs what goes on the body; this governs what is drunk, and most of Rootwork's machinery is meaningless here.
@@ -403,16 +365,16 @@ What is specific to this inventory and exists nowhere else:
 
 Infused honey. The strength of the honey is arithmetic anchored to one measured value, and the specification follows the user's actual process rather than a generic one.
 - The chain, recorded as a batch:
-  - Raw flower is weighed on a precision scale and tested for total cannabinoid percentage. The tester requires the Flower and Concentrate Expansion Kit for this; the base unit cannot do it.
+  - Raw flower is weighed on a precision scale and tested for total cannabinoid percentage, reported as a percent, not a volume-based unit. The tester requires the Flower and Concentrate Expansion Kit for this; the base unit cannot do it.
   - Flower is decarboxylated in the infuser. Temperature and duration are recorded.
-  - Decarbed flower is tested again, and both readings are kept, since the difference across decarboxylation is itself worth seeing over time.
+  - Decarbed flower is tested again, also as a percentage, and both readings are kept, since the difference across decarboxylation is itself worth seeing over time. Flower readings and oil readings are different kinds of measurement and are never displayed or combined as though they share a unit.
   - Flower is infused into a carrier oil in the machine — roughly one ounce of flower to sixteen ounces of oil in this user's practice. Carrier type, quantities, temperature, and duration are recorded.
-  - The finished oil is tested, giving milligrams per millilitre. This reading is the anchor for everything downstream. Every figure the application reports traces back to it.
+  - The finished oil is tested, giving milligrams of cannabinoid per unit volume. The tester reports in several selectable units — millilitre, teaspoon, or tablespoon — and the unit actually used is recorded alongside the number rather than assumed. This reading is the anchor for everything downstream. Every figure the application reports traces back to it, converted to a common internal unit before any arithmetic runs, and displayed back in whichever unit the user prefers.
   - Oil is combined with honey over gentle heat, sunflower lecithin is added as an emulsifier, and an immersion blender brings it together. Volumes of oil, honey, and lecithin are recorded, along with the method.
 - The honey itself cannot be tested. The tester supports oils, butter, tinctures, flower, and concentrates; honey is not a supported base, and no reading of the finished honey is possible. The application must never suggest testing it.
 - Consequently the honey's strength is calculated, not measured: total milligrams carried in by the oil, divided across the total volume of the blend. It is labelled as calculated from a measured oil reading, which is materially different from an estimate derived from flower percentage, and the interface says which.
 - Two sources of drift are stated rather than hidden. The tester's repeatability is about fifteen percent, so the anchor reading is close rather than exact. And the calculation assumes even distribution through the honey — reasonable given lecithin and an immersion blender, which is why the emulsification method is recorded, but an assumption nonetheless.
-- Readings may be entered by hand or read from a screenshot of the testing application. Every field stays editable. Batch notes are voice-enabled like everything else.
+- Readings may be entered by hand or read from a screenshot of the testing application, including its structured fields — measurement, unit, source material, and base type — not only a free-text note. Every field stays editable. + Batch details may equally be spoken or typed as one plain note rather than filled field by field, matching how the user actually records them in practice — for example, "toasted flower blueberry kush, twenty-one grams in three cups MCT oil." AI parses strain, weight, carrier volume, and carrier type out of that single note into the structured record, and every extracted field remains editable. Filling fields directly stays available for anyone who prefers it; neither path is required over the other.
 - Where a reading exceeds the tester's maximum of roughly fifteen milligrams per millilitre, the sample must be diluted before testing and the dilution factor recorded, or the figure is wrong.
 
 Vessels. The amount of honey actually taken is the last unknown, and spoons vary enough to matter.
@@ -427,7 +389,6 @@ What the application does and does not do with this.
 - Naming follows the application's voice. Nothing here is called a dosage calculator on screen.
 
 ## 32. Out of scope for version one
-
 Version one carries everything in this document, including Google Calendar synchronisation, wearable integration through Health Connect, and the contact lens steps.
 - Contact lens steps ship in version one. Menicon Z rigid gas-permeable lenses, removed nightly, requiring a fifteen to twenty minute gap after Retaine MGD drops before insertion. Like any step, they render only when the products they need are in stock.
 - Deferred to version two: gamification. A Tamagotchi-style companion occupying the landing scene, animating the avatar and familiar already established there and responding to completed routine steps. The version one scene is built as its foundation, not as a placeholder to be discarded. Design proceeds during version one use; construction follows at an unhurried pace.
@@ -435,5 +396,4 @@ Version one carries everything in this document, including Google Calendar synch
 - The Steeping, described above, is specified and deliberately deferred. It is a nice-to-have that should sit behind a feature flag until the core is stable.
 
 ## 33. Open decisions
-
-State names, domain names, and prescriptions are settled. Ebbing and Hollow are confirmed. The Gaze and The Grin are confirmed. The landing screen is the illustrated cottage interior holding the avatar and familiar, preceded on first launch by the avatar builder. No open decisions remain.
+State names, domain names, and tretinoin cadence are settled. Ebbing and Hollow are confirmed. The Gaze and The Grin are confirmed. Titration follows the pharmacist's direction as described in the Master Invocations section. The landing screen is the illustrated cottage interior holding the avatar and familiar, preceded on first launch by the avatar builder. No open decisions remain.

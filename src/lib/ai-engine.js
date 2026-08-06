@@ -2,7 +2,7 @@ import { supabase } from './supabase.js';
 
 export const ANTHROPIC_MODEL = 'claude-sonnet-5';
 
-export async function invokeAnthropicProxy(body, retries = 2) {
+export async function invokeAnthropicProxy(body, retries = 1) {
   for (let i = 0; i <= retries; i++) {
     try {
       const controller = new AbortController();
@@ -31,7 +31,7 @@ export async function invokeAnthropicProxy(body, retries = 2) {
 export async function conductIntake(messageHistory) {
   
 
-  const systemPrompt = `You are the keeper of Shadow & Sanctuary, an entity guiding a user through The First Inscription (an onboarding ritual).
+  const systemPrompt = `You are the keeper of Shadow and Sanctuary, an entity guiding a user through The First Inscription (an onboarding ritual).
 Speak in a respectful, slightly mystical, cottagecore-goth tone ("ritual voice"). Do not be overly verbose. Be direct but atmospheric.
 Do not use gendered language for the user. Do not assume their gender or use pronouns.
 
@@ -281,7 +281,7 @@ export async function evaluateScryingPool(productInfo, userProfile, inventory, r
   const banished = inventory.filter(i => i.lifecycle_state === 'banished');
   const banishedStr = banished.map(i => `${i.name} (Ingredients: ${i.ingredients})`).join('\n');
 
-  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow & Sanctuary.
+  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow and Sanctuary.
 The user seeks your wisdom on a prospective new product or formula (The Echo).
 Perform a strict Safety Check against their known allergies (The Codex), medical conditions, and past Somatic Reactions. 
 If they have banished items or reacted poorly (peeling, redness, burning), deduce the common denominator ingredients and explicitly warn them if the prospective item contains them.
@@ -327,7 +327,7 @@ ${inventory.length > 40 ? '...[TRUNCATED - Showing 40 of ' + inventory.length + 
 export async function generateScryingEvaluation(inventory, banishedItems, ledgerEntries, intakeAnswers) {
   
 
-  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow & Sanctuary.
+  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow and Sanctuary.
 The user seeks a holistic divination of their entire routine ecosystem.
 Analyze their active inventory, banished products, somatic reactions, and intake goals.
 Output a comprehensive report formatted in Markdown that covers the following areas:

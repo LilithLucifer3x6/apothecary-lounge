@@ -5,25 +5,25 @@ import Icon from '../components/Icon.jsx';
 
 // ── PHYSICAL BASE (hardcoded per user spec) ──────────────────────────────────
 const BASE_DESCRIPTION =
-  'A full-figured Black femme, 5\'8", approximately 250 lbs, with a warm medium espresso skin tone, an ample full-figured frame with a beautiful bust, and long pointy stiletto nails painted to match her robe color. No gold jewelry or accessories. Silver, black, or dark metals only.';
+  'A full-figured Black femme, 5\'8", approximately 250 lbs, with a warm medium espresso skin tone, an ample full-figured frame with a beautiful bust, and long pointy stiletto nails painted to match their robe color. Gold jewelry or accessories are permitted sparingly. Silver, black, or dark metals are preferred.';
 
 // ── HAIRSTYLE / LOC STYLES ───────────────────────────────────────────────────
 const HAIRSTYLES = [
-  { id: 'microlocs_loose',      label: 'Microlocs — Loose & Free',         img: 'hair_microlocs_loose_1785995461023.jpg', desc: 'Shoulder-length, ultra-skinny microlocs worn completely free, framing the face' },
-  { id: 'microlocs_halfup',     label: 'Microlocs — Half-Up Crown',        img: 'avatar_updo_1785969752264.jpg', desc: 'Top half swept up in a crown, rest cascading freely at shoulder length' },
-  { id: 'microlocs_highbun',    label: 'Microlocs — Dramatic High Bun',    img: 'avatar_updo_1785969752264.jpg', desc: 'All locs swept into a large dramatic high bun with silver pins' },
-  { id: 'microlocs_ponytail',   label: 'Microlocs — High Ponytail',        img: 'avatar_base_1785969739750.jpg', desc: 'Locs gathered into a sleek high ponytail' },
-  { id: 'microlocs_sideover',   label: 'Microlocs — Side Swept',           img: 'avatar_base_1785969739750.jpg', desc: 'All locs swept dramatically over one shoulder' },
-  { id: 'microlocs_ceremonial', label: 'Microlocs — Ceremonial Updo',      img: 'avatar_updo_1785969752264.jpg', desc: 'Elaborate updo with locs pinned in an artistic ceremonial arrangement' },
-  { id: 'microlocs_wrapped',    label: 'Microlocs — Wrapped Sections',     img: 'avatar_base_1785969739750.jpg', desc: 'Select locs wrapped with dark thread and silver wire at intervals' },
-  { id: 'microlocs_twinbuns',   label: 'Microlocs — Twin Space Buns',      img: 'avatar_updo_1785969752264.jpg', desc: 'Locs divided into two full high buns' },
-  { id: 'microlocs_upbraid',    label: 'Microlocs — Braided Back Sections',img: 'avatar_updo_1785969752264.jpg', desc: 'Front sections braided back, remaining locs hanging freely' },
+  { id: 'microlocs_loose',      label: 'Microlocs — Loose & Free',         img: 'hair_microlocs_loose_1786057466910.jpg', desc: 'Shoulder-length, ultra-skinny microlocs worn completely free, framing the face' },
+  { id: 'microlocs_halfup',     label: 'Microlocs — Half-Up Crown',        img: 'hair_microlocs_halfup_1786057476435.jpg', desc: 'Top half swept up in a crown, rest cascading freely at shoulder length' },
+  { id: 'microlocs_highbun',    label: 'Microlocs — Dramatic High Bun',    img: 'hair_microlocs_highbun_1786057483707.jpg', desc: 'All locs swept into a large dramatic high bun with silver pins' },
+  { id: 'microlocs_ponytail',   label: 'Microlocs — High Ponytail',        img: 'hair_microlocs_ponytail_1786057490323.jpg', desc: 'Locs gathered into a sleek high ponytail' },
+  { id: 'microlocs_sideover',   label: 'Microlocs — Side Swept',           img: 'hair_microlocs_sideover_1786057497184.jpg', desc: 'All locs swept dramatically over one shoulder' },
+  { id: 'microlocs_ceremonial', label: 'Microlocs — Ceremonial Updo',      img: 'hair_microlocs_ceremonial_1786057504791.jpg', desc: 'Elaborate updo with locs pinned in an artistic ceremonial arrangement' },
+  { id: 'microlocs_wrapped',    label: 'Microlocs — Wrapped Sections',     img: 'hair_microlocs_wrapped_1786057512068.jpg', desc: 'Select locs wrapped with dark thread and silver wire at intervals' },
+  { id: 'microlocs_twinbuns',   label: 'Microlocs — Twin Space Buns',      img: 'hair_microlocs_twinbuns_1786057518739.jpg', desc: 'Locs divided into two full high buns' },
+  { id: 'microlocs_upbraid',    label: 'Microlocs — Braided Back Sections',img: 'hair_microlocs_upbraid_1786057526367.jpg', desc: 'Front sections braided back, remaining locs hanging freely' },
 ];
 
 // ── ROBE DESIGNS ─────────────────────────────────────────────────────────────
 const ROBE_DESIGNS = [
-  { id: 'flowing_ceremonial', label: 'Flowing Ceremonial Robe',    desc: 'Full-length flowing robe with wide sleeves and embroidered magical trim', img: 'robe_flowing_ceremonial_1785969874360.jpg' },
-  { id: 'structured_coat',    label: 'Sorceress Coat',             desc: 'Structured long coat with a cinched waist belt and high dramatic collar', img: 'robe_structured_coat_1785969846458.jpg' },
+  { id: 'flowing_ceremonial', label: 'Flowing Ceremonial Robe',    desc: 'Full-length flowing robe with wide sleeves and embroidered magical trim', img: 'robe_flowing_ceremonial_1786057541423.jpg' },
+  { id: 'structured_coat',    label: 'Sorceress Coat',             desc: 'Structured long coat with a cinched waist belt and high dramatic collar', img: 'robe_structured_coat_1786057548830.jpg' },
   { id: 'kimono_wrap',        label: 'Kimono-Style Wrap Robe',     desc: 'Elegant wrap robe with a wide obi-style sash belt', img: 'robe_kimono_wrap_1785969853409.jpg' },
   { id: 'asymmetric',         label: 'Asymmetric Ritual Robe',     desc: 'Dramatic asymmetric hem with layered fabric and one exposed shoulder', img: 'robe_asymmetric_1785969883713.jpg' },
   { id: 'layered_scholar',    label: "Scholar's Layered Robes",    desc: 'Multiple layered robes with intricate detail and overlapping panels', img: 'robe_layered_scholar_1785969892009.jpg' },
@@ -34,7 +34,7 @@ const ROBE_DESIGNS = [
   { id: 'hooded_cloak',       label: 'Hooded Ritual Cloak',        desc: 'Long hooded cloak with a fitted inner robe visible at the hem', img: 'robe_hooded_1785991503119.jpg' },
 ];
 
-// ── HAIR COLORS (natural + unnatural; no pink, no blue, no gold, no yellow, no blonde) ────
+// ── HAIR COLORS (natural + unnatural; no pink, no blue, gold permitted sparingly, no yellow, no blonde) ────
 const HAIR_COLORS = [
   // Natural
   { id: 'jet_black',      label: 'Jet Black',         hex: '#0d0d0d',  type: 'natural'   },
@@ -62,7 +62,7 @@ const HAIR_COLORS = [
   { id: 'dark_ombre_red', label: 'Dark Red Ombré',     hex: '#3a0a00',  type: 'unnatural' },
 ];
 
-// ── ROBE COLORS (no pink, no blue, no gold, no yellow) ─────────────────────
+// ── ROBE COLORS (no pink, no blue, gold permitted sparingly, no yellow) ─────────────────────
 const ROBE_COLORS = [
   // Blacks & Grays
   { id: 'obsidian',       label: 'Obsidian',           hex: '#0d0d0d' },
@@ -98,7 +98,7 @@ const ROBE_COLORS = [
   { id: 'eggplant',       label: 'Eggplant',           hex: '#1a0a1a' },
 ];
 
-// ── HAIR ACCESSORIES (no gold, no pink, no blue) ─────────────────────────────
+// ── HAIR ACCESSORIES (gold permitted sparingly, no pink, no blue) ─────────────────────────────
 const HAIR_ACCESSORIES = [
   { id: 'silver_cuffs',   label: 'Silver Loc Cuffs',        desc: 'Delicate silver cuffs placed at intervals along the locs', img: 'acc_silver_cuffs_1785991545863.jpg' },
   { id: 'black_iron',     label: 'Black Iron Wraps',         desc: 'Dark iron spiral wraps threaded through the locs', img: 'acc_black_iron_1785991560822.jpg' },
@@ -106,13 +106,13 @@ const HAIR_ACCESSORIES = [
   { id: 'obsidian_beads', label: 'Obsidian Beads',           desc: 'Polished obsidian beads woven throughout the locs', img: 'acc_obsidian_1785991579981.jpg' },
   { id: 'silver_moons',   label: 'Silver Moon Charms',       desc: 'Crescent moon and star charms dangling from the locs', img: 'acc_moons_1785991588255.jpg' },
   { id: 'bone_wood',      label: 'Bone & Wood Wraps',        desc: 'Organic carved bone and wood wraps for an earthy look', img: 'acc_bone_wood_1785991603327.jpg' },
-  { id: 'copper_spiral',  label: 'Copper Spiral Cuffs',      desc: 'Warm copper (not gold) spiral wraps coiled along the locs', img: 'acc_copper_spiral_1785991609908.jpg' },
+  { id: 'copper_spiral',  label: 'Copper Spiral Cuffs',      desc: 'Warm copper spiral wraps coiled along the locs', img: 'acc_copper_spiral_1785991609908.jpg' },
   { id: 'garnet_pins',    label: 'Garnet-Set Silver Pins',   desc: 'Silver pins topped with deep red garnet stones pinned throughout', img: 'acc_garnet_pins_1785991616405.jpg' },
   { id: 'wire_wrapped',   label: 'Silver Wire Wrapped Tips', desc: 'Loc tips wrapped in delicate silver wire with crystal beads', img: 'acc_wire_wrapped_1785991623704.jpg' },
   { id: 'none',           label: 'No Accessories',           desc: 'Natural locs without any additional adornment' },
 ];
 
-// ── JEWELRY STYLE (no gold) ───────────────────────────────────────────────────
+// ── JEWELRY STYLE (gold permitted sparingly) ───────────────────────────────────────────────────
 const JEWELRY = [
   { id: 'silver_amethyst', label: 'Silver & Amethyst',       desc: 'Silver chains, amethyst pendant and stacking rings' },
   { id: 'silver_onyx',     label: 'Silver & Black Onyx',     desc: 'Bold silver settings with black onyx stones, multiple rings' },
@@ -137,12 +137,12 @@ const FAMILIARS = [
 
 // ── ROOM DEFINITIONS for background generation ────────────────────────────────
 export const ROOM_PROMPTS = {
-  rites:  (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design, adorned with ${cfg.jewelry} jewelry. Standing in a cozy witchy cottage interior with a fireplace and cauldron, brewing a skincare potion. Her ${cfg.familiar} familiar watches nearby. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  grim:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Standing before towering shelves of glowing potion bottles in a dark magical library, examining a product label. Her ${cfg.familiar} familiar perches nearby. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  altars: (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Sitting at a beautifully arranged altar with crystals, candles, and offerings, with hands raised in ritual gesture. Her ${cfg.familiar} familiar rests on the altar. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  root:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Casting spells over a large bubbling cauldron, magical glowing symbols forming in the air. Her ${cfg.familiar} familiar watches from a wooden beam above. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  pool:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Gazing into a glowing scrying pool with swirling visions of wisdom in the water. Her ${cfg.familiar} familiar is reflected in the water. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  tome:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Writing in a large leather-bound shadow tome by candlelight, surrounded by drying herbs and honey jars with a warm cup of herbal tea. Her ${cfg.familiar} familiar curls up beside the tome. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
+  rites:  (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design, adorned with ${cfg.jewelry} jewelry. Standing in a cozy witchy cottage interior with a fireplace and cauldron, brewing a skincare potion. Their ${cfg.familiar} familiar watches nearby. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
+  grim:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Standing before towering shelves of glowing potion bottles in a dark magical library, examining a product label. Their ${cfg.familiar} familiar perches nearby. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
+  altars: (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Sitting at a beautifully arranged altar with crystals, candles, and offerings, with hands raised in ritual gesture. Their ${cfg.familiar} familiar rests on the altar. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
+  root:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Casting spells over a large bubbling cauldron, magical glowing symbols forming in the air. Their ${cfg.familiar} familiar watches from a wooden beam above. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
+  pool:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Gazing into a glowing scrying pool with swirling visions of wisdom in the water. Their ${cfg.familiar} familiar is reflected in the water. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
+  tome:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} microlocs adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Writing in a large leather-bound shadow tome by candlelight, surrounded by drying herbs and honey jars with a warm cup of herbal tea. Their ${cfg.familiar} familiar curls up beside the tome. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
 };
 
 // ── SECTION COMPONENT ────────────────────────────────────────────────────────
@@ -382,7 +382,7 @@ export default function ConjureVisage({ onFinish }) {
           Conjure Your Visage
         </h1>
         <p style={{ textAlign: 'center', color: 'var(--dim)', marginBottom: '2.5rem', fontSize: '0.9rem' }}>
-          Shape your Keeper. Once bound, she will be painted into every room of the Sanctuary.
+          Shape your Keeper. Once bound, they will be painted into every room of the Sanctuary.
         </p>
 
         {/* NAME */}
