@@ -9,7 +9,7 @@ const BASE_DESCRIPTION =
 
 // ── HAIRSTYLE / LOC STYLES ───────────────────────────────────────────────────
 const HAIRSTYLES = [
-  { id: 'microlocs_loose',      label: 'Microlocs — Loose & Free',         img: 'avatar_base_1785969739750.jpg', desc: 'Shoulder-length, ultra-skinny microlocs worn completely free, framing the face' },
+  { id: 'microlocs_loose',      label: 'Microlocs — Loose & Free',         img: 'hair_microlocs_loose_1785995461023.jpg', desc: 'Shoulder-length, ultra-skinny microlocs worn completely free, framing the face' },
   { id: 'microlocs_halfup',     label: 'Microlocs — Half-Up Crown',        img: 'avatar_updo_1785969752264.jpg', desc: 'Top half swept up in a crown, rest cascading freely at shoulder length' },
   { id: 'microlocs_highbun',    label: 'Microlocs — Dramatic High Bun',    img: 'avatar_updo_1785969752264.jpg', desc: 'All locs swept into a large dramatic high bun with silver pins' },
   { id: 'microlocs_ponytail',   label: 'Microlocs — High Ponytail',        img: 'avatar_base_1785969739750.jpg', desc: 'Locs gathered into a sleek high ponytail' },

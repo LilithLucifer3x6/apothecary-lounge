@@ -212,8 +212,6 @@ export default function App() {
     if (settings.tts) speak("Return to Sanctuary");
     setCurrentScreen('home');
   };
-    handleTabClick('home');
-  };
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);

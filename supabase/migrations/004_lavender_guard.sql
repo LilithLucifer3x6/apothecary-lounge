@@ -31,12 +31,14 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Prevent deletion
+DROP TRIGGER IF EXISTS enforce_lavender_guard_delete ON codex_entries;
 CREATE TRIGGER enforce_lavender_guard_delete
 BEFORE DELETE ON codex_entries
 FOR EACH ROW
 EXECUTE FUNCTION guard_lavender_codex_delete();
 
 -- Prevent renaming out of Lavender
+DROP TRIGGER IF EXISTS enforce_lavender_guard_update ON codex_entries;
 CREATE TRIGGER enforce_lavender_guard_update
 BEFORE UPDATE ON codex_entries
 FOR EACH ROW
