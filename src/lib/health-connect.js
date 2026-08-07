@@ -11,7 +11,7 @@ async function getHealth() {
 
 /**
  * Health Connect Broker
- * Integrates Android Health Connect via Capacitor native plugins, falling back to mocks on Web.
+ * Integrates Android Health Connect via Capacitor native plugins, falling back to snapshots on Web.
  */
 
 export async function requestHealthPermissions() {
@@ -113,7 +113,7 @@ export async function getReadiness() {
       return { score, state };
     } catch (e) {
       console.error('Health Connect query error:', e);
-      return { score: 80, state: 'optimal' };
+      // Fall through to snapshot
     }
   }
   
@@ -137,7 +137,8 @@ export async function getHeavySweat() {
       });
       return workoutData && workoutData.samples && workoutData.samples.length > 0;
     } catch (e) {
-      return false;
+      console.error('Health Connect query error:', e);
+      // Fall through to snapshot
     }
   }
   
@@ -162,9 +163,9 @@ export async function getSleepDuration() {
         }, 0);
         return (totalMs / (1000 * 60 * 60)).toFixed(1);
       }
-      return 7.5;
     } catch (e) {
-      return 7.5;
+      console.error('Health Connect query error:', e);
+      // Fall through to snapshot
     }
   }
   
