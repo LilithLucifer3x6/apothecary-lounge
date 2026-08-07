@@ -211,7 +211,9 @@ export function buildBaseRoutines(items, userProfile = {}, wearables = {}) {
     { id: 'wd-2', name: 'The Drying', desc: 'With the aid of another', category: 'immutable', domain: 'vessel', weight: 0.2, isInjected: true }
   ];
   
-  immutableWindDown.push({ id: 'wd-3a', name: 'The Purging of Blemishes', desc: '', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true });
+  if (!isImmunosuppressed) {
+    immutableWindDown.push({ id: 'wd-3a', name: 'The Purging of Blemishes', desc: '', category: 'immutable', domain: 'visage', weight: 0.3, isInjected: true });
+  }
   immutableWindDown.push({ id: 'wd-3b', name: 'The Warm Gaze', desc: 'Warm compress and eye massage.', category: 'immutable', domain: 'visage', weight: 0.31, isInjected: true });
   
   if (isWeekend) {
@@ -341,4 +343,3 @@ export function checkConflicts(items, userProfile = {}) {
 
   return conflicts;
 }
-

@@ -14,9 +14,13 @@ export function generateRite(items, timeOfDay, date) {
   });
 
   // Sort by layering_weight (thinnest first)
+  // layering_weight lives in behavior_flags per the schema (001_core_schema.sql),
+  // not at the item root — reading a.layering_weight directly always returned
+  // undefined for every item, silently ignoring real per-item weights and
+  // treating everything as the same default.
   activeItems.sort((a, b) => {
-    const weightA = a.layering_weight !== undefined ? a.layering_weight : 5;
-    const weightB = b.layering_weight !== undefined ? b.layering_weight : 5;
+    const weightA = a.behavior_flags?.layering_weight !== undefined ? a.behavior_flags.layering_weight : 5;
+    const weightB = b.behavior_flags?.layering_weight !== undefined ? b.behavior_flags.layering_weight : 5;
     return weightA - weightB;
   });
 
@@ -114,4 +118,3 @@ export function generateWeeklySchedule(items, appointments = []) {
 
   return schedule;
 }
-

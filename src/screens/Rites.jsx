@@ -302,25 +302,29 @@ export default function Rites({ pose }) {
       return 'sparkles'; 
     };
     
+    const isIso = !isOpt && item.id.startsWith('iso-');
+
+    const isoButtons = isIso ? (
+      <div style={{ display: 'flex', gap: '0.6rem', flexShrink: 0, justifyContent: 'center', marginTop: '0.6rem', width: '100%' }}>
+        {checkedIds.has(item.id) || checkedIds.has('iso-missed') ? (
+          <span style={{color:'var(--silver)', fontSize:'0.9rem', fontWeight: 'bold'}}>{checkedIds.has(item.id) ? 'Taken' : 'Missed'}</span>
+        ) : (
+          <>
+            <button className="btn plum" style={{padding:'0.4rem 0.9rem', fontSize:'0.85rem'}} onClick={() => handleIsoCheck(item.id, true)}>Took {item.expectedDose}mg</button>
+            <button className="btn" style={{padding:'0.4rem 0.9rem', fontSize:'0.85rem', background: 'rgba(255,255,255,0.1)'}} onClick={() => handleIsoCheck(item.id, false)}>Missed</button>
+          </>
+        )}
+      </div>
+    ) : null;
+
     return (
-      <div key={item.id} className={`step ${optClass}`}>
+      <div key={item.id} className={`step ${optClass}`} style={isIso ? { flexDirection: 'column', alignItems: 'stretch' } : undefined}>
         {isOpt ? (
           <label className="sw">
             <input type="checkbox" />
             <span className="sl"></span>
           </label>
-        ) : item.id.startsWith('iso-') ? (
-           <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
-             {checkedIds.has(item.id) || checkedIds.has('iso-missed') ? (
-               <span style={{color:'var(--silver)', fontSize:'0.9rem', fontWeight: 'bold'}}>{checkedIds.has(item.id) ? 'Taken' : 'Missed'}</span>
-             ) : (
-               <>
-                 <button className="btn plum" style={{padding:'0.3rem 0.6rem', fontSize:'0.8rem'}} onClick={() => handleIsoCheck(item.id, true)}>Took {item.expectedDose}mg</button>
-                 <button className="btn" style={{padding:'0.3rem 0.6rem', fontSize:'0.8rem', background: 'rgba(255,255,255,0.1)'}} onClick={() => handleIsoCheck(item.id, false)}>Missed</button>
-               </>
-             )}
-           </div>
-        ) : (
+        ) : isIso ? null : (
           <input 
             type="checkbox" 
             className="step-chk" 
@@ -341,6 +345,7 @@ export default function Rites({ pose }) {
             <div className="mt">{item.brand}</div>
           ) : null}
         </div>
+        {isoButtons}
       </div>
     );
   };
@@ -438,4 +443,3 @@ export default function Rites({ pose }) {
     </div>
   );
 }
-
