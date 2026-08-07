@@ -279,18 +279,8 @@ export function checkConflicts(items, userProfile = {}) {
     const ingA = rule.ingredient_a.toLowerCase();
     const ingB = rule.ingredient_b.toLowerCase();
     
-    const hasA = (itemList) => itemList.some(i => 
-      (i.risk_flags && i.risk_flags[ingA]) || 
-      checkIngredients(i.ingredients, [ingA]) || 
-      (i.name && i.name.toLowerCase().includes(ingA)) ||
-      (i.category && i.category.toLowerCase().includes(ingA))
-    );
-    const hasB = (itemList) => itemList.some(i => 
-      (i.risk_flags && i.risk_flags[ingB]) || 
-      checkIngredients(i.ingredients, [ingB]) || 
-      (i.name && i.name.toLowerCase().includes(ingB)) ||
-      (i.category && i.category.toLowerCase().includes(ingB))
-    );
+    const hasA = (itemList) => itemList.some(i => (i.risk_flags && i.risk_flags[ingA]) || checkIngredients(i.ingredients, [ingA]) || i.name.toLowerCase().includes(ingA));
+    const hasB = (itemList) => itemList.some(i => (i.risk_flags && i.risk_flags[ingB]) || checkIngredients(i.ingredients, [ingB]) || i.name.toLowerCase().includes(ingB));
     
     if (rule.zone_specific) {
       for (const [zone, zoneItems] of Object.entries(zoneMap)) {
@@ -341,7 +331,13 @@ export function checkConflicts(items, userProfile = {}) {
     conflicts.push(`Sensitive Ward: Depilatory (${depilatories.map(i=>i.name).join(', ')}) requires a low-pH cleanse post-care to neutralize alkaline burns.`);
   }
 
-  // DRYSOL HARD RULE removed; now handled by conflict_rules from Supabase.
+  // DRYSOL HARD RULE
+  const hasDrysol = items.some(i => i.risk_flags && i.risk_flags.hyperhidrosis_treatment);
+  const hasBathRitual = items.some(i => (i.category || '').toLowerCase().includes('soak'));
+  const hasWitchHazel = items.some(i => i.risk_flags && i.risk_flags.astringent);
+  if (hasDrysol && (hasBathRitual || hasWitchHazel)) {
+    conflicts.push("Drysol Hard Rule: Never apply aluminum chloride on the same day as the bath ritual or astringents to avoid chemical burning.");
+  }
 
   // Immunosuppressants override accepted: Tool sanitization is handled by the user.
 

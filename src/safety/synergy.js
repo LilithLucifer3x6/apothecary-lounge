@@ -11,7 +11,22 @@ import { zonesOverlap, zonesAdjacent } from './zone-resolver.js';
 export async function checkConflicts(itemA, itemB) {
   const conflicts = [];
   
-  // Hardcoded Drysol check removed; now handled dynamically via conflict_rules from Supabase.
+  // Hardcoded Drysol check
+  const isDrysol = (item) => item.name.toLowerCase().includes('drysol');
+  const isBathRitual = (item) => item.name.toLowerCase().includes('bath ritual') || item.category?.toLowerCase() === 'bath';
+  const isUnderarmWitchHazel = (item) => item.name.toLowerCase().includes('witch hazel') && item.application_zones?.includes('underarms');
+  
+  if (
+    (isDrysol(itemA) && (isBathRitual(itemB) || isUnderarmWitchHazel(itemB))) ||
+    (isDrysol(itemB) && (isBathRitual(itemA) || isUnderarmWitchHazel(itemA)))
+  ) {
+    conflicts.push({
+      rule: 'Drysol incompatibility',
+      type: 'block',
+      description: 'Drysol must never be invoked on the same day as a bath ritual or underarm witch hazel to prevent severe irritation.',
+      canOverride: false
+    });
+  }
 
   // Zone check
   const zonesA = itemA.application_zones || [];
@@ -48,12 +63,9 @@ export async function checkConflicts(itemA, itemB) {
     const flagsA = itemA.risk_flags || {};
     const flagsB = itemB.risk_flags || {};
     
-    const hasCategory = (item, itemFlags, itemIngs, category) => {
+    const hasCategory = (itemFlags, itemIngs, category) => {
       if (itemFlags[category]) return true;
-      if (itemIngs.some(i => i.includes(category))) return true;
-      if (item.name && item.name.toLowerCase().includes(category)) return true;
-      if (item.category && item.category.toLowerCase().includes(category)) return true;
-      return false;
+      return itemIngs.some(i => i.includes(category));
     };
 
     for (const rule of rules) {
@@ -62,11 +74,11 @@ export async function checkConflicts(itemA, itemB) {
       // If zone specific and they are only adjacent but not overlapping, we might skip
       if (zone_specific && !overlap) continue;
       
-      const aHasFirst = hasCategory(itemA, flagsA, lowerIngA, ingredient_a);
-      const bHasSecond = hasCategory(itemB, flagsB, lowerIngB, ingredient_b);
+      const aHasFirst = hasCategory(flagsA, lowerIngA, ingredient_a);
+      const bHasSecond = hasCategory(flagsB, lowerIngB, ingredient_b);
       
-      const aHasSecond = hasCategory(itemA, flagsA, lowerIngA, ingredient_b);
-      const bHasFirst = hasCategory(itemB, flagsB, lowerIngB, ingredient_a);
+      const aHasSecond = hasCategory(flagsA, lowerIngA, ingredient_b);
+      const bHasFirst = hasCategory(flagsB, lowerIngB, ingredient_a);
       
       if ((aHasFirst && bHasSecond) || (aHasSecond && bHasFirst)) {
         conflicts.push({
@@ -83,4 +95,3 @@ export async function checkConflicts(itemA, itemB) {
 
   return { conflicts };
 }
-
