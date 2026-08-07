@@ -279,8 +279,18 @@ export function checkConflicts(items, userProfile = {}) {
     const ingA = rule.ingredient_a.toLowerCase();
     const ingB = rule.ingredient_b.toLowerCase();
     
-    const hasA = (itemList) => itemList.some(i => (i.risk_flags && i.risk_flags[ingA]) || checkIngredients(i.ingredients, [ingA]) || i.name.toLowerCase().includes(ingA));
-    const hasB = (itemList) => itemList.some(i => (i.risk_flags && i.risk_flags[ingB]) || checkIngredients(i.ingredients, [ingB]) || i.name.toLowerCase().includes(ingB));
+    const hasA = (itemList) => itemList.some(i => 
+      (i.risk_flags && i.risk_flags[ingA]) || 
+      checkIngredients(i.ingredients, [ingA]) || 
+      (i.name && i.name.toLowerCase().includes(ingA)) ||
+      (i.category && i.category.toLowerCase().includes(ingA))
+    );
+    const hasB = (itemList) => itemList.some(i => 
+      (i.risk_flags && i.risk_flags[ingB]) || 
+      checkIngredients(i.ingredients, [ingB]) || 
+      (i.name && i.name.toLowerCase().includes(ingB)) ||
+      (i.category && i.category.toLowerCase().includes(ingB))
+    );
     
     if (rule.zone_specific) {
       for (const [zone, zoneItems] of Object.entries(zoneMap)) {
