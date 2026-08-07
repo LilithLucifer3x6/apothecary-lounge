@@ -10,9 +10,10 @@ export default function Icon({ name, ...props }) {
   return (
     <span 
       style={{ display: 'inline-flex', alignItems: 'center', filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.8))', ...props.style }} 
-      dangerouslySetInnerHTML={{ __html: ic(finalName) }}
       {...props}
-    />
+    >
+      {ic(finalName)}
+    </span>
   );
 }
 
