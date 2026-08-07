@@ -15,6 +15,16 @@ export async function checkCodex(ingredientList) {
   const matches = [];
   const lowerIngredients = ingredientList.map(i => i.toLowerCase());
 
+  // Hardcoded Lavender check
+  for (const ing of lowerIngredients) {
+    if (/(lavender|lavandula|lavandin)/.test(ing)) {
+      matches.push({
+        ingredient: ing,
+        reason: 'Lavender is strictly forbidden. It has been sealed in the Crypt of Ashes.'
+      });
+    }
+  }
+
   try {
     const { data: codexEntries, error } = await supabase
       .from('codex_entries')

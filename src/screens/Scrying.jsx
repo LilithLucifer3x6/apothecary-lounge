@@ -4,6 +4,7 @@ import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import { evaluateScryingPool, parseProductImage } from '../lib/ai-engine.js';
 import { getReadiness } from '../lib/health-connect.js';
+import { fetchHydratedItems } from '../lib/routine-engine.js';
 import VoiceInput from '../components/VoiceInput.jsx';
 import { useDialog } from '../components/Dialogs.jsx';
 import SpeakerButton from '../components/SpeakerButton.jsx';
@@ -37,7 +38,7 @@ export default function Scrying({ pose }) {
   ];
   useEffect(() => {
     async function fetchData() {
-      const { data: items } = await supabase.from('items').select('*');
+      const items = await fetchHydratedItems();
       setInventory(items || []);
       
       const { data: userProfile } = await supabase.from('user_profile').select('*').maybeSingle();

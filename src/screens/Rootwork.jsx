@@ -188,6 +188,7 @@ export default function Rootwork({ pose }) {
         await supabase.from('items').insert([{
           brand: 'Unknown',
           name: 'Lavender Formula (Banished)',
+          domain: 'Vessel',
           item_type: 'consumable',
           lifecycle_state: 'banished'
         }]);

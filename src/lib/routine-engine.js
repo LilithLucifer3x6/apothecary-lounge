@@ -22,6 +22,37 @@ export async function initEngineRules() {
 
 // Risk Ward checks (presence-based triggers)
 const MELANIN_TRIGGERS = ['hydroquinone', 'citrus', 'lemon', 'lime', 'grapefruit'];
+
+export async function fetchHydratedItems(filterStates = null) {
+  let query = supabase.from('items').select(`*, composite_components(component_id, items(*))`);
+  if (filterStates && filterStates.length > 0) {
+    query = query.in('lifecycle_state', filterStates);
+  }
+  
+  const { data: items } = await query;
+  if (!items) return [];
+
+  return items.map(item => {
+    if (item.item_type === 'composite' && item.composite_components) {
+      const components = item.composite_components.map(cc => cc.items).filter(Boolean);
+      
+      const allIngs = new Set(typeof item.ingredients === 'string' ? JSON.parse(item.ingredients) : (item.ingredients || []));
+      let baseFlags = typeof item.risk_flags === 'string' ? JSON.parse(item.risk_flags) : (item.risk_flags || {});
+      
+      components.forEach(c => {
+        const cIng = typeof c.ingredients === 'string' ? JSON.parse(c.ingredients) : (c.ingredients || []);
+        cIng.forEach(i => allIngs.add(i));
+        
+        const cFlags = typeof c.risk_flags === 'string' ? JSON.parse(c.risk_flags) : (c.risk_flags || {});
+        baseFlags = { ...baseFlags, ...cFlags };
+      });
+      
+      item.ingredients = Array.from(allIngs);
+      item.risk_flags = baseFlags;
+    }
+    return item;
+  });
+}
 const HAIR_4C_BUILDUP = ['beeswax', 'petrolatum', 'mineral oil', 'dimethicone']; // Heavy waxes/silicones
 const INTIMATE_DISRUPTORS = ['fragrance', 'parfum', 'baking soda', 'sodium bicarbonate'];
 const DEPILATORY_CAUTIONS = ['thioglycolate', 'calcium hydroxide', 'potassium hydroxide'];

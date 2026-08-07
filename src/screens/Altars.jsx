@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase.js';
 import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import SpeakerButton from '../components/SpeakerButton.jsx';
-import { buildBaseRoutines } from '../lib/routine-engine.js';
+import { buildBaseRoutines, fetchHydratedItems } from '../lib/routine-engine.js';
 
 const ALTARS = [
   { id: 'crown', name: 'Crown', icon: G.crown },
@@ -23,7 +23,7 @@ export default function Altars({ pose }) {
   const [checkedIds, setCheckedIds] = useState(new Set());
   
   useEffect(() => {
-    supabase.from('items').select('*').in('lifecycle_state', ['stocked', 'ebbing', 'enshrined']).then(({ data }) => {
+    fetchHydratedItems(['stocked', 'ebbing', 'enshrined']).then(data => {
       if (data) setItems(data);
     });
   }, []);
