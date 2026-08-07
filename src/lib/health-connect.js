@@ -75,14 +75,41 @@ export async function getReadiness() {
     try {
       const end = new Date();
       const start = new Date(end.getTime() - (24 * 60 * 60 * 1000));
+      
       const hrData = await Health.query({
         sampleType: 'heartRate',
         startDate: start.toISOString(),
         endDate: end.toISOString()
       });
-      const score = hrData && hrData.samples && hrData.samples.length > 0 ? 85 : 75;
+
+      const sleepDurationHours = parseFloat(await getSleepDuration());
+      let score = 50; 
+      
+      const sleepScore = Math.min(30, (sleepDurationHours / 8) * 30);
+      score += sleepScore;
+      
+      let rhr = 70; 
+      if (hrData && hrData.samples && hrData.samples.length > 0) {
+        const validHr = hrData.samples
+          .map(s => typeof s.value === 'number' ? s.value : (s.value?.count || 70))
+          .filter(v => v > 30 && v < 150); 
+          
+        if (validHr.length > 0) {
+          validHr.sort((a, b) => a - b);
+          rhr = validHr[Math.floor(validHr.length * 0.05)]; 
+        }
+      }
+      
+      if (rhr < 60) score += 20;       
+      else if (rhr < 70) score += 15;  
+      else if (rhr < 80) score += 5;   
+
+      score = Math.min(100, Math.round(score));
+      
       let state = 'optimal';
-      if (score < 70) state = 'drained';
+      if (score < 60) state = 'drained';
+      else if (score < 80) state = 'fair';
+      
       return { score, state };
     } catch (e) {
       console.error('Health Connect query error:', e);
@@ -94,7 +121,7 @@ export async function getReadiness() {
   if (snap) {
     return { score: snap.readiness_score, state: snap.readiness_state, captured_at: snap.captured_at };
   }
-  return null; // degrade cleanly
+  return null;
 }
 
 export async function getHeavySweat() {
