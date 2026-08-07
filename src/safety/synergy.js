@@ -11,22 +11,7 @@ import { zonesOverlap, zonesAdjacent } from './zone-resolver.js';
 export async function checkConflicts(itemA, itemB) {
   const conflicts = [];
   
-  // Hardcoded Drysol check
-  const isDrysol = (item) => item.name.toLowerCase().includes('drysol');
-  const isBathRitual = (item) => item.name.toLowerCase().includes('bath ritual') || item.category?.toLowerCase() === 'bath';
-  const isUnderarmWitchHazel = (item) => item.name.toLowerCase().includes('witch hazel') && item.application_zones?.includes('underarms');
-  
-  if (
-    (isDrysol(itemA) && (isBathRitual(itemB) || isUnderarmWitchHazel(itemB))) ||
-    (isDrysol(itemB) && (isBathRitual(itemA) || isUnderarmWitchHazel(itemA)))
-  ) {
-    conflicts.push({
-      rule: 'Drysol incompatibility',
-      type: 'block',
-      description: 'Drysol must never be invoked on the same day as a bath ritual or underarm witch hazel to prevent severe irritation.',
-      canOverride: false
-    });
-  }
+  // Hardcoded Drysol check removed; now handled dynamically via conflict_rules from Supabase.
 
   // Zone check
   const zonesA = itemA.application_zones || [];
