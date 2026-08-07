@@ -208,7 +208,7 @@ export default function App() {
 
   const handleReturnToCottage = () => {
     if (settings.tts) speak("Return to Sanctuary");
-    handleTabClick('home');
+    handleTabClick('rites');
   };
 
   const handleTabClick = (tabId) => {
@@ -273,7 +273,7 @@ export default function App() {
               setCurrentScreen('intake');
             } else {
               setCurrentScreen('app'); 
-              handleTabClick('home'); 
+              handleTabClick('rites'); 
             }
           }} />
         </div>
@@ -286,7 +286,7 @@ export default function App() {
               let hasAvatar = false;
               try {
                 const conf = JSON.parse(localStorage.getItem('avatar_config'));
-                if (conf && conf.avatarVibe) hasAvatar = true;
+                if (conf && conf.name) hasAvatar = true;
               } catch(e) {}
               const hasIntake = localStorage.getItem('intake_completed') === 'true';
               if (!hasAvatar) setCurrentScreen('avatar');
