@@ -310,6 +310,15 @@ export async function parseBatchProductImages(images) {
                   items: { type: 'string' },
                   description: 'The definitive ingredients list'
                 },
+                form: { type: 'string', enum: ['liquid', 'cream', 'gel', 'powder', 'solid'], description: 'Physical form of the product' },
+                application_zones: { type: 'array', items: { type: 'string' }, description: 'Body zones where this is applied (e.g., Visage, Vessel, Crown, Grin, oral)' },
+                period_after_opening_months: { type: 'number', description: 'PAO from the open jar icon (in months), if present' },
+                unopened_shelf_life_months: { type: 'number', description: 'Unopened shelf life (in months), if explicitly stated' },
+                manufacture_date: { type: 'string', description: 'Manufacture date (YYYY-MM-DD), if present' },
+                purchase_date: { type: 'string', description: 'Purchase date or received date (YYYY-MM-DD), if handwritten or printed' },
+                is_prescription: { type: 'boolean', description: 'True if this is a prescription medication from a pharmacy' },
+                prescription_details: { type: 'string', description: 'Prescription name, strength, and instructions if is_prescription is true' },
+                item_type: { type: 'string', enum: ['consumable', 'arsenal'], description: 'Whether this is a consumable product (creams, pills) or an arsenal tool (roller, brush, device)' },
                 ingredient_conflicts: {
                   type: 'boolean',
                   description: 'True if there is ambiguity or disagreement across photos regarding ingredients/risk flags'
@@ -319,7 +328,7 @@ export async function parseBatchProductImages(images) {
                   description: 'If ingredient_conflicts is true, explain the disagreement so the user can resolve it.'
                 }
               },
-              required: ['filenames', 'brand', 'name', 'domain', 'ingredients', 'ingredient_conflicts']
+              required: ['filenames', 'brand', 'name', 'domain', 'ingredients', 'form', 'application_zones', 'is_prescription', 'item_type', 'ingredient_conflicts']
             }
           }
         },
@@ -613,4 +622,34 @@ export async function parseTeaImage(images) {
 
   throw new Error("Failed to extract tea details from image");
 }
+
+/**
+ * Searches Open Beauty Facts API for a product by name.
+ * @param {string} query 
+ * @returns {Promise<Array>}
+ */
+export async function searchOpenBeautyFacts(query) {
+  if (!query) return [];
+  try {
+    const res = await fetch(`https://world.openbeautyfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1`);
+    if (!res.ok) throw new Error("Failed to fetch from Open Beauty Facts");
+    const data = await res.json();
+    
+    if (data.products && data.products.length > 0) {
+      return data.products.slice(0, 10).map(p => ({
+        id: p._id,
+        brand: p.brands || p.brand_owner || 'Unknown Brand',
+        name: p.product_name || 'Unknown Product',
+        ingredients: p.ingredients_text ? p.ingredients_text : '',
+        category: p.categories ? p.categories.split(',')[0] : '',
+        image: p.image_url || ''
+      }));
+    }
+    return [];
+  } catch (err) {
+    console.error("Open Beauty Facts search error:", err);
+    return [];
+  }
+}
+
 

@@ -250,7 +250,7 @@ export default function Grimoire({ pose }) {
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span>{i}</span>
           <div style={{ display: 'flex', gap: '0.2rem' }}>
-            {hasRetie && <span title="Root Weaving" style={{ color: 'var(--plum)' }}><Icon name="ph-scissors" /></span>}
+            {hasRetie && <span title="The Root Weaving" style={{ color: 'var(--plum)' }}><Icon name="ph-scissors" /></span>}
             {hasNails && <span title="The Gilded Hand" style={{ color: 'var(--plum)' }}><Icon name="ph-hand-palm" /></span>}
           </div>
         </div>
@@ -337,7 +337,7 @@ export default function Grimoire({ pose }) {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               <div className="row" style={{ flex: '0 1 auto', marginBottom: 0, justifyContent: 'center' }}>
                 <div>
-                  <div className="nm">Root Weaving <Icon name="ph-scissors" /></div>
+                  <div className="nm">The Root Weaving <Icon name="ph-scissors" /></div>
                   <div className="mt">
                     Every 8 weeks.{retieAppt?.date ? ` Scheduled for ${new Date(retieAppt.date).toLocaleDateString()}.` : ''}
                   </div>

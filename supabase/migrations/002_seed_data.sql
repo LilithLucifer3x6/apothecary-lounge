@@ -14,8 +14,8 @@ VALUES
 
 INSERT INTO appointments (name, cadence_weeks, glyph, is_optional)
 VALUES
-  ('Root Weaving', 8, 'locs', false),
-  ('Talon Honing', 2, 'talon', false),
+  ('The Root Weaving', 8, 'locs', false),
+  ('The Gilded Hand', 2, 'talon', false),
   ('The Soaking', 2, 'bathtub', false),
   ('The Smoothing', NULL, 'depilatory', true),
   ('The Paring', NULL, 'razor', true);

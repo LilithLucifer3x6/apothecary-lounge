@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase.js';
 import { G, verifyGlyphs } from './lib/icons.jsx';
+import { useDialog } from './components/Dialogs.jsx';
 import { speak, getTtsEnabled, getTtsRate, getTtsPitch, getTtsVoiceURI, setTtsEnabled, setTtsRate, setTtsPitch, setTtsVoiceURI, getFeminineVoices } from './lib/tts.js';
 import Icon from './components/Icon.jsx';
 import { initGoogleCalendar, requestCalendarAccess } from './lib/gcal.js';
@@ -36,6 +37,7 @@ function getSpellDate() {
 }
 
 export default function App() {
+  const { alert, confirm } = useDialog();
   const [currentScreen, setCurrentScreen] = useState(() => {
     if (!localStorage.getItem('avatar_config')) return 'splash';
     return sessionStorage.getItem('al_currentScreen') || 'splash';
@@ -515,7 +517,7 @@ export default function App() {
                   <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--crimson)', textAlign: 'center' }}>Danger Zone</h3>
                   
                   <button onClick={() => {
-                    alert('Glossary:\nAppSpeak Translation Guide\n\nCrown = Hair\nGaze = Eyes\nGrin = Mouth/Teeth\nVisage = Face\nVessel = Body\nSanctuary = App\nReliquary = Tools/Devices\nApothecary = Consumables');
+                    alert('Glossary:\nAppSpeak Translation Guide\n\nCrown = Hair\nGaze = Eyes\nGrin = Mouth/Teeth\nVisage = Face\nVessel = Body\nSanctuary = App\nReliquary = Tools/Devices\nApothecary = Consumables', 'Glossary');
                   }} className="btn" style={{ width: '100%', marginBottom: '1rem', background: 'var(--card2)', borderColor: 'var(--plum)', color: 'var(--plum)' }}>Glossary of AppSpeak</button>
                   
                   <button onClick={() => {
@@ -524,7 +526,7 @@ export default function App() {
                   }} className="btn plum" style={{ width: '100%', marginBottom: '1rem' }}>Reshape Visage (Avatar Builder)</button>
 
                   <button onClick={async () => {
-                    if (window.confirm("Do you truly wish to shatter the First Inscription? You will be cast back to the initial inquiry.")) {
+                    if (await confirm("Do you truly wish to shatter the First Inscription? You will be cast back to the initial inquiry.")) {
                       try {
                         const { data: profile, error: profileErr } = await supabase.from('user_profile').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
                         if (profileErr) throw profileErr;
@@ -536,13 +538,13 @@ export default function App() {
                         setCurrentScreen('intake');
                       } catch (err) {
                         console.error('Failed to shatter inscription', err);
-                        alert('Failed to communicate with the Sanctuary. Please try again.');
+                        await alert('Failed to communicate with the Sanctuary. Please try again.');
                       }
                     }
                   }} className="btn g" style={{ width: '100%', marginBottom: '1rem' }}>Shatter the First Inscription</button>
 
                   <button onClick={async () => {
-                    if (window.confirm("Do you truly wish to raze this Sanctuary to ash? All saved rites, items, and settings shall be lost to the void. This cannot be undone.")) {
+                    if (await confirm("Do you truly wish to raze this Sanctuary to ash? All saved rites, items, and settings shall be lost to the void. This cannot be undone.", "Danger")) {
                       try {
                         const { error: profileErr } = await supabase.from('user_profile').delete().not('id', 'is', null);
                         if (profileErr) throw profileErr;
@@ -553,7 +555,7 @@ export default function App() {
                         await supabase.from('items').delete().not('id', 'is', null);
                       } catch (err) {
                         console.error('Failed to erase Codex', err);
-                        alert('Failed to erase Codex. Continuing local wipe.');
+                        await alert('Failed to erase Codex. Continuing local wipe.');
                       }
                       localStorage.clear();
                       sessionStorage.clear();

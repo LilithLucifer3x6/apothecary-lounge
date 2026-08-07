@@ -58,7 +58,8 @@
 
   .btn{background:var(--card);color:var(--plum);
       border:1.5px solid var(--plum);border-radius:8px;padding:.58rem 1rem;
-      font-size:.85em;cursor:pointer;font-family:inherit;text-shadow:0 1px 2px rgba(0,0,0,0.5);text-align:center;}
+      font-size:.85em;cursor:pointer;font-family:inherit;text-shadow:0 1px 2px rgba(0,0,0,0.5);text-align:center;
+      touch-action: manipulation;}
   .btn:hover{background:rgba(0,0,0,0.4);border-color:var(--plum);box-shadow:0 0 15px rgba(106,58,112,0.6);transform:translateY(-1px);transition:0.2s;}
   .btn.g{background:rgba(0,0,0,0.4);border-color:var(--plum-b);}
   .btn.sm{padding:.3rem .6rem;font-size:.72em;}

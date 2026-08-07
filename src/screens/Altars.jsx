@@ -153,20 +153,8 @@ export default function Altars({ pose }) {
         {ALTARS.map(altar => (
           <button
             key={altar.id}
-            className="btn"
+            className={`btn ${activeAltarId === altar.id ? 'active' : ''}`}
             onClick={() => handleTabClick(altar.id, altar.name)}
-            style={{ 
-              textAlign: 'center', 
-              padding: '0.6rem 1.2rem', 
-              fontSize: '1.2rem', 
-              background: activeAltarId === altar.id ? 'rgba(0,0,0,0.95)' : 'rgba(0,0,0,0.65)', 
-              color: activeAltarId === altar.id ? 'var(--silver)' : 'var(--plum)',
-              border: activeAltarId === altar.id ? '1px solid var(--plum)' : '1px solid var(--border)',
-              boxShadow: activeAltarId === altar.id ? 'inset 0 0 15px rgba(176, 136, 204, 0.3)' : 'none',
-              width: 'fit-content',
-              transition: 'all 0.2s',
-              fontWeight: 'normal'
-            }}
           >
             <Icon name={altar.icon} /> {`The ${altar.name}`}
           </button>

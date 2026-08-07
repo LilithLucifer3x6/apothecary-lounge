@@ -5,9 +5,11 @@ import Icon from '../components/Icon.jsx';
 import { evaluateScryingPool, parseProductImage } from '../lib/ai-engine.js';
 import { getReadiness } from '../lib/health-connect.js';
 import VoiceInput from '../components/VoiceInput.jsx';
+import { useDialog } from '../components/Dialogs.jsx';
 import SpeakerButton from '../components/SpeakerButton.jsx';
 
 export default function Scrying({ pose }) {
+  const { alert, confirm } = useDialog();
   const [inventory, setInventory] = useState([]);
   const [profile, setProfile] = useState(null);
   const [readiness, setReadiness] = useState(null);
@@ -124,7 +126,7 @@ export default function Scrying({ pose }) {
       setEditId(null);
     } catch (err) {
       console.error(err);
-      alert('Failed to save to ledger.');
+      await alert('Failed to save to ledger.');
     }
   };
 
@@ -139,7 +141,7 @@ export default function Scrying({ pose }) {
   };
 
   const handleDeleteLedger = async (id, index) => {
-    if (confirm("Erase this affliction from the ledger?")) {
+    if (await confirm("Erase this affliction from the ledger?")) {
       if (id) {
         await supabase.from('somatic_reactions').delete().eq('id', id);
       }

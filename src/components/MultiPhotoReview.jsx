@@ -9,6 +9,7 @@ import {
 } from '@dnd-kit/core';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import Icon from './Icon.jsx';
+import { useDialog } from './Dialogs.jsx';
 import VoiceInput from './VoiceInput.jsx';
 
 function DraggableImage({ id, filename, src }) {
@@ -201,7 +202,8 @@ function DroppableGroup({ product, onUpdateField, imagesData }) {
   );
 }
 
-export default function MultiPhotoReview({ initialProducts, imageFiles, onConfirm, onCancel }) {
+export default function MultiPhotoReview({
+  const { alert } = useDialog(); initialProducts, imageFiles, onConfirm, onCancel }) {
   // Generate stable IDs for products
   const [products, setProducts] = useState(() => 
     initialProducts.map((p, i) => ({ ...p, id: `group-${i}` }))
@@ -270,7 +272,7 @@ export default function MultiPhotoReview({ initialProducts, imageFiles, onConfir
     
     if (readyProducts.length === 0) {
       if (conflictedProducts.length > 0) {
-        alert("Please resolve the Safety Disagreements before saving these items.");
+        await alert("Please resolve the Safety Disagreements before saving these items.");
       } else {
         onCancel(); // Nothing left
       }

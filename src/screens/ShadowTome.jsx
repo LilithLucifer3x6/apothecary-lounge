@@ -7,9 +7,12 @@ import { parseTeaImage } from '../lib/ai-engine.js';
 import SpeakerButton from '../components/SpeakerButton.jsx';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
+import { useDialog } from '../components/Dialogs.jsx';
 import { getReadiness } from '../lib/health-connect.js';
 
 export default function ShadowTome({ pose }) {
+  const { alert, confirm } = useDialog();
+  const [activeTab, setActiveTab] = useState('journal');
   const [moodsList, setMoodsList] = useState([]);
   const [selectedMoods, setSelectedMoods] = useState(new Set());
   const [entryText, setEntryText] = useState('');
@@ -137,14 +140,14 @@ export default function ShadowTome({ pose }) {
   };
 
   const handleBanish = async (id) => {
-    if (window.confirm("Unweave this spell from the tome? It cannot be recovered.")) {
+    if (await confirm("Unweave this spell from the tome? It cannot be recovered.")) {
       await supabase.from('journal_entries').delete().eq('id', id);
       loadHistory();
     }
   };
 
   const handleBanishTea = async (id, name) => {
-    if (window.confirm(`Shatter the jar of ${name}? It cannot be recovered.`)) {
+    if (await confirm(`Shatter the jar of ${name}? It cannot be recovered.`)) {
       await supabase.from('shadowtome_elixirs').delete().eq('id', id);
       loadPantry();
     }
@@ -448,8 +451,8 @@ export default function ShadowTome({ pose }) {
                     <div className="nm">{tea.name}</div>
                     <div className="mt">{tea.brand} &bull; {tea.circadian_alignment}</div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--dim)', marginTop: '0.2rem' }}>
-                      <span style={{ color: 'var(--plum)' }}>The Steeping:</span> {tea.steep_time} <br/>
-                      <span style={{ color: 'var(--plum)' }}>Stimulating Vigor:</span> {tea.caffeine_content}
+                      <span style={{ color: 'var(--plum)' }}>The Steeping:</span> {tea.steep_time || 'Unknown'} <br/>
+                      <span style={{ color: 'var(--plum)' }}>Stimulating Vigor:</span> {tea.caffeine_content || 'Unknown'}
                     </div>
                   </div>
                   <div className="acts" style={{ display: 'flex', gap: '0.5rem' }}>
@@ -556,9 +559,9 @@ export default function ShadowTome({ pose }) {
                   {teaForm.brand ? `${teaForm.brand} ` : ''}{teaForm.name}
                 </h2>
                 <div style={{color: 'var(--dim)', marginBottom: '1rem'}}>
-                  The Steeping: {teaForm.steep_time} <br/>
-                  Circadian Alignment: {teaForm.circadian_alignment} <br/>
-                  Stimulating Vigor: {teaForm.caffeine_content}
+                  The Steeping: {teaForm.steep_time || 'Unknown'} <br/>
+                  Circadian Alignment: {teaForm.circadian_alignment || 'Unknown'} <br/>
+                  Stimulating Vigor: {teaForm.caffeine_content || 'Unknown'}
                 </div>
                 
                 <div style={{display: 'flex', justifyContent: 'center', gap: '1rem'}}>
@@ -600,9 +603,9 @@ export default function ShadowTome({ pose }) {
                   <label style={{color: 'var(--plum)'}}>Circadian Alignment</label>
                   <select value={teaForm.circadian_alignment} onChange={e => setTeaForm({...teaForm, circadian_alignment: e.target.value})} style={{color: 'var(--plum)'}}>
                     <option value="">Select...</option>
-                    <option value="Solar Hours">Solar Hours</option>
-                    <option value="Nocturnal Hours">Nocturnal Hours</option>
-                    <option value="All Hours">All Hours</option>
+                    <option value="Daytime">Daytime</option>
+                    <option value="Nighttime">Nighttime</option>
+                    <option value="Anytime">Anytime</option>
                   </select>
                 </div>
                 

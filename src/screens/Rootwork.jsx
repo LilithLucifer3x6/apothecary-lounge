@@ -4,11 +4,13 @@ import MultiPhotoReview from '../components/MultiPhotoReview.jsx';
 import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import VoiceInput from '../components/VoiceInput.jsx';
+import { useDialog } from '../components/Dialogs.jsx';
 import { attachVoice } from '../lib/voice.js';
 import { buildBaseRoutines } from '../lib/routine-engine.js';
 import SpeakerButton from '../components/SpeakerButton.jsx';
 
-export default function Rootwork({ pose }) {
+export default function Rootwork({
+  const { alert, confirm } = useDialog(); pose }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -33,11 +35,30 @@ export default function Rootwork({ pose }) {
   const [photoStatus, setPhotoStatus] = useState('Offer or Scry Photo');
   const [modalState, setModalState] = useState('photo');
   const [banishState, setBanishState] = useState(null);
+  const [isSearchingOBF, setIsSearchingOBF] = useState(false);
+  const [obfResults, setObfResults] = useState([]);
   
   const [profile, setProfile] = useState(null);
   const [echoInput, setEchoInput] = useState('');
   const [echoStatus, setEchoStatus] = useState('');
   const [echoResult, setEchoResult] = useState('');
+
+  const handleSearchOBF = async () => {
+    if (!addForm.name) return;
+    setIsSearchingOBF(true);
+    setObfResults([]);
+    try {
+      const { searchOpenBeautyFacts } = await import('../lib/ai-engine.js');
+      const results = await searchOpenBeautyFacts(addForm.name);
+      setObfResults(results);
+      if (results.length === 0) {
+        await alert("No relics found by that name in the global index.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    setIsSearchingOBF(false);
+  };
 
   const fetchItems = async () => {
     setLoading(true);
@@ -125,14 +146,23 @@ export default function Rootwork({ pose }) {
       const mime = dataUrl.split(';')[0].split(':')[1];
       
       try {
-        const { parseProductImage } = await import('../lib/ai-engine.js');
+                const { parseProductImage } = await import('../lib/ai-engine.js');
         const details = await parseProductImage(base64, mime);
         
         setAddForm(prev => ({
           ...prev,
           brand: details.brand || prev.brand,
           name: details.name || prev.name,
-          category: details.category || prev.category
+          category: details.category || prev.category,
+          ingredients: details.ingredients ? details.ingredients.join(', ') : prev.ingredients,
+          application_zones: details.application_zones || prev.application_zones,
+          item_type: details.item_type || prev.item_type,
+          period_after_opening_months: details.period_after_opening_months ? String(details.period_after_opening_months) : prev.period_after_opening_months,
+          unopened_shelf_life_months: details.unopened_shelf_life_months ? String(details.unopened_shelf_life_months) : prev.unopened_shelf_life_months,
+          manufacture_date: details.manufacture_date || prev.manufacture_date,
+          purchase_date: details.purchase_date || prev.purchase_date,
+          is_prescription: details.is_prescription !== undefined ? details.is_prescription : prev.is_prescription,
+          prescription_details: details.prescription_details || prev.prescription_details
         }));
         
         setPhotoStatus('Vision extracted.');
@@ -210,16 +240,16 @@ export default function Rootwork({ pose }) {
   };
 
 
-  const validateItemForSave = (item) => {
+  const validateItemForSave = async (item) => {
     // 0. Type Check
     if (!item.item_type || !['consumable', 'arsenal', 'composite'].includes(item.item_type)) {
-      alert(`Safety Block: ${item.name || 'An item'} is missing its Item Type.`);
+      await alert(`Safety Block: ${item.name || 'An item'} is missing its Item Type.`);
       return false;
     }
 
     // 1. Universal Check: Must have a Zone
     if (!item.application_zones || item.application_zones.length === 0) {
-      alert(`Safety Block: ${item.name || 'An item'} is missing its application zone (e.g. 'oral' for pills, 'visage' for creams).`);
+      await alert(`Safety Block: ${item.name || 'An item'} is missing its application zone (e.g. 'oral' for pills, 'visage' for creams).`);
       return false;
     }
 
@@ -230,7 +260,7 @@ export default function Rootwork({ pose }) {
         : (!item.ingredients || item.ingredients.trim() === '');
 
       if (isMissingIngredients) {
-        alert(`Safety Block: ${item.name || 'A consumable'} must have its ingredients listed to pass the Codex.`);
+        await alert(`Safety Block: ${item.name || 'A consumable'} must have its ingredients listed to pass the Codex.`);
         return false;
       }
     }
@@ -238,18 +268,18 @@ export default function Rootwork({ pose }) {
     // 2b. Composite Check
     if (item.item_type === 'composite') {
       if (!item.composite_form) {
-        alert(`Safety Block: ${item.name || 'A composite'} is missing its composite_form.`);
+        await alert(`Safety Block: ${item.name || 'A composite'} is missing its composite_form.`);
         return false;
       }
       if (!item.selectedComponents || item.selectedComponents.length === 0) {
-        alert(`Safety Block: ${item.name || 'A composite'} must select its base components.`);
+        await alert(`Safety Block: ${item.name || 'A composite'} must select its base components.`);
         return false;
       }
     }
 
     // 3. Prescription Check
     if (item.is_prescription && (!item.prescription_details || item.prescription_details.trim() === '')) {
-      alert(`Safety Block: You must provide prescription details for ${item.name || 'the Rx item'}.`);
+      await alert(`Safety Block: You must provide prescription details for ${item.name || 'the Rx item'}.`);
       return false;
     }
 
@@ -259,7 +289,7 @@ export default function Rootwork({ pose }) {
       const hasUnopenedClock = !!item.unopened_shelf_life_months && (!!item.manufacture_date || !!item.purchase_date);
       
       if (!hasOpenedClock && !hasUnopenedClock) {
-        alert(`Safety Block: ${item.name || 'A consumable'} must provide either an opened PAO clock, or an unopened manufacture shelf-life clock.`);
+        await alert(`Safety Block: ${item.name || 'A consumable'} must provide either an opened PAO clock, or an unopened manufacture shelf-life clock.`);
         return false;
       }
     }
@@ -270,7 +300,7 @@ export default function Rootwork({ pose }) {
     if (!addForm.name) return;
     
     // Part B: Shared Validation
-    const isValid = validateItemForSave({
+    const isValid = await validateItemForSave({
       ...addForm,
       item_type: addForm.item_type || (addForm.is_composite ? 'composite' : 'consumable'),
       composite_form: addForm.is_composite ? 'other' : null
@@ -281,7 +311,7 @@ export default function Rootwork({ pose }) {
     if (addForm.is_composite && addForm.selectedComponents?.length > 0) {
       const missingProportions = addForm.selectedComponents.some(c => !c.proportion || c.proportion.trim() === '');
       if (missingProportions) {
-        alert("Please specify a proportion for all selected base elements.");
+        await alert("Please specify a proportion for all selected base elements.");
         return;
       }
     }
@@ -550,7 +580,7 @@ export default function Rootwork({ pose }) {
   const handleConfirmBatchImport = async (readyProducts, isComplete) => {
     // Validate the entire batch before attempting insert
     for (const p of readyProducts) {
-      const isValid = validateItemForSave(p);
+      const isValid = await validateItemForSave(p);
       if (!isValid) return false; // Halt batch insert, return false to keep modal open
     }
 
@@ -692,10 +722,8 @@ export default function Rootwork({ pose }) {
               setImportStatus('');
               setPendingImports([]);
               setShowImportModal(true);
-            }}>
-              Import CSV
-            </button>
-            <button className="btn plum" style={{ fontSize: '1.2rem', padding: '0.5rem 1rem' }} onClick={() => {
+            }}>Bulk Photo Import</button>
+            <button className="btn plum"  onClick={() => {
               setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', period_after_opening_months: '', unopened_shelf_life_months: '', manufacture_date: '', purchase_date: '', price: '', is_essential: false, is_composite: false, item_type: 'consumable', is_opened: false, opened_date: '', application_zones: [], is_prescription: false, prescription_details: '', selectedComponents: [] });
               setPhotoStatus('Offer or Scry Photo');
               setModalState('photo');
@@ -844,7 +872,7 @@ export default function Rootwork({ pose }) {
         <div className="modal-backdrop" onClick={() => setShowImportModal(false)}>
           <div className="card" style={{maxWidth: '600px', width: '90%'}} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ margin: 0 }}>Bulk Import CSV</h3>
+              <h3 style={{ margin: 0 }}>Bulk Photo Import</h3>
               <button className="btn link" onClick={() => setShowImportModal(false)}>Close</button>
             </div>
             
@@ -891,7 +919,7 @@ export default function Rootwork({ pose }) {
               <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                 <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--plum)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name={G.tabPool} /> 
-                  <span style={{marginTop: '1rem', textAlign: 'center', fontSize: '1.2rem'}}>{photoStatus}</span>
+                  <span style={{marginTop: '1rem', textAlign: 'center'}}>{photoStatus}</span>
                   <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
                 </div>
                 
