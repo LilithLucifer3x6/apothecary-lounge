@@ -387,7 +387,7 @@ export default function ConjureVisage({ onFinish }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', justifyContent: 'center' }}>
             {HAIR_COLORS.map(c => (
                 <div key={c.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setHairColor(c.id)}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: c.hex, border: hairColor === c.id ? '2px solid var(--plum)' : '1px solid transparent', mixBlendMode: 'multiply' }} />
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: c.hex, border: hairColor === c.id ? '2px solid var(--plum)' : '1px solid rgba(176,132,148,0.2)' }} />
                     <div style={{ fontSize: '0.6rem', color: 'var(--dim)' }}>{c.label}</div>
                 </div>
             ))}
@@ -406,7 +406,7 @@ export default function ConjureVisage({ onFinish }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', justifyContent: 'center' }}>
             {ROBE_COLORS.map(c => (
                 <div key={c.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setRobeColor(c.id)}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: c.hex, border: robeColor === c.id ? '2px solid var(--plum)' : '1px solid transparent', mixBlendMode: 'multiply' }} />
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: c.hex, border: robeColor === c.id ? '2px solid var(--plum)' : '1px solid rgba(176,132,148,0.2)' }} />
                     <div style={{ fontSize: '0.6rem', color: 'var(--dim)' }}>{c.label}</div>
                 </div>
             ))}

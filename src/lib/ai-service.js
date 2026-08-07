@@ -218,12 +218,21 @@ Ask one question at a time. Be empathetic, poetic, and concise (1-2 sentences).
 If you have gathered enough information (after 2-3 exchanges), conclude the reading by ending your final response with exactly: "[READING_COMPLETE: <summary of changes or 'No changes'>]".
 Current profile: ${JSON.stringify(userProfile?.intake_answers || {})}
 `;
-    const msgs = history.map(h => ({ role: h.role, content: h.text }));
+    const rawMsgs = history.map(h => ({ role: h.role, content: h.text }));
+    // Anthropic's API requires the messages array to start with role 'user'.
+    // The opening exchange always produces an assistant-first history once
+    // the Keeper's first question is added, so every reply after the first
+    // was sending an invalid assistant-first array and getting rejected.
+    const msgs = rawMsgs.length === 0
+      ? [{ role: 'user', content: 'I am ready for the reading.' }]
+      : rawMsgs[0].role === 'user'
+        ? rawMsgs
+        : [{ role: 'user', content: 'I am ready for the reading.' }, ...rawMsgs];
 
     const { data, error } = await invokeAnthropicProxy({
         max_tokens: 300,
         system: promptText,
-        messages: msgs.length > 0 ? msgs : [{ role: 'user', content: 'I am ready for the reading.' }]
+        messages: msgs
     });
     
     if (error) throw error;
