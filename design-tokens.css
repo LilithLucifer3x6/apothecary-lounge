@@ -49,7 +49,7 @@
   .corner.tl{top:8px;left:11px;} .corner.tr{top:8px;right:11px;}
   .corner.bl{bottom:6px;left:11px;} .corner.br{bottom:6px;right:11px;}
 
-  h2.t{font-size:2.35em;margin:0;text-align:center;
+  .t{font-size:2.35em;margin:0;text-align:center;
     line-height:1.4;padding:0.3em 0.5em 0.4em 0.5em;
     color:var(--plum);text-shadow:0 2px 4px rgba(0,0,0,0.9);}
   h3{font-size:1.5em;color:var(--plum);margin:0.2em 0 0.5em;

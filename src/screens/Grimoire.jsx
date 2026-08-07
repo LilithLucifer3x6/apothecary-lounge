@@ -109,8 +109,10 @@ export default function Grimoire({ pose }) {
   const handleStartReading = async () => {
     setReadingState({ history: [], input: '', isTyping: true, completeSummary: null });
     try {
-      const { converseReading } = await import('../lib/ai-service.js');
-      const reply = await withHardTimeout(converseReading([], profile));
+      const reply = await withHardTimeout((async () => {
+        const { converseReading } = await import('../lib/ai-service.js');
+        return converseReading([], profile);
+      })());
       setReadingState(prev => {
         if (!prev) return null;
         return { ...prev, history: [{ role: 'assistant', text: reply }] };
@@ -136,9 +138,11 @@ export default function Grimoire({ pose }) {
     });
     
     try {
-      const { converseReading } = await import('../lib/ai-service.js');
       const currentHist = [...readingState.history, { role: 'user', text: userText }];
-      const reply = await withHardTimeout(converseReading(currentHist, profile)) || "";
+      const reply = await withHardTimeout((async () => {
+        const { converseReading } = await import('../lib/ai-service.js');
+        return converseReading(currentHist, profile);
+      })()) || "";
       
       const match = reply.match(/\[READING_COMPLETE:\s*(.*?)\]/);
       if (match) {

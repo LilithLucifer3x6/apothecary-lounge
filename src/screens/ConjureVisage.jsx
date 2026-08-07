@@ -158,12 +158,13 @@ function Section({ title, children }) {
 }
 
 // ── IMAGE CARD ───────────────────────────────────────────────────────────────
-function ImgCard({ item, selected, onSelect }) {
+function ImgCard({ item, selected, onSelect, width = '160px' }) {
   const isSelected = selected === item.id;
   return (
     <div
       onClick={() => onSelect(item.id)}
       style={{
+        width,
         border: isSelected ? '2px solid var(--plum)' : '1px solid rgba(176,132,148,0.2)',
         background: isSelected ? 'rgba(176,132,148,0.12)' : 'rgba(5,3,10,0.6)',
         borderRadius: '8px',
@@ -176,7 +177,7 @@ function ImgCard({ item, selected, onSelect }) {
       }}
     >
       {item.img ? (
-        <div style={{ width: '100%', aspectRatio: '1/1', background: '#000', overflow: 'hidden' }}>
+        <div style={{ width: '100%', aspectRatio: '4/5', background: '#000', overflow: 'hidden' }}>
           <img
             src={`/assets/${item.img}`}
             alt={item.label}
@@ -185,7 +186,7 @@ function ImgCard({ item, selected, onSelect }) {
         </div>
       ) : (
         <div style={{
-          width: '100%', aspectRatio: '1/1',
+          width: '100%', aspectRatio: '4/5',
           background: 'rgba(176,132,148,0.05)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '2rem', color: isSelected ? 'var(--plum)' : 'rgba(176,132,148,0.3)'
@@ -355,9 +356,10 @@ export default function ConjureVisage({ onFinish }) {
         border: '1px solid rgba(176,132,148,0.25)',
         borderRadius: '12px', padding: '2rem',
       }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '0.5rem', fontSize: '2.2rem', color: 'var(--plum)' }}>
+        <h1 className="t" style={{ textAlign: 'center', marginBottom: '0.2rem', color: 'var(--plum)' }}>
           Conjure Your Visage
         </h1>
+        <div style={{ textAlign: 'center', marginBottom: '1.2rem', color: 'var(--dim)', fontSize: '1.2rem' }}>✦ ✦ ✦</div>
         <p style={{ textAlign: 'center', color: 'var(--dim)', marginBottom: '2.5rem', fontSize: '0.9rem' }}>
           Shape your Keeper. Once bound, they will be painted into every room of the Sanctuary.
         </p>
@@ -377,59 +379,53 @@ export default function ConjureVisage({ onFinish }) {
 
         {/* HAIRSTYLE */}
         <Section title="Hairstyle & Locs">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.8rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.2rem' }}>
             {HAIRSTYLES.map(h => <ImgCard key={h.id} item={h} selected={locStyle} onSelect={setLocStyle} />)}
           </div>
         </Section>
 
         {/* HAIR COLOR */}
         <Section title="Loc Color">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
             {HAIR_COLORS.map(c => (
-                <div key={c.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setHairColor(c.id)}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: c.hex, border: hairColor === c.id ? '2px solid var(--plum)' : '1px solid rgba(176,132,148,0.2)' }} />
-                    <div style={{ fontSize: '0.6rem', color: 'var(--dim)' }}>{c.label}</div>
-                </div>
+              <ColorSwatch key={c.id} color={c} selected={hairColor} onSelect={setHairColor} />
             ))}
           </div>
         </Section>
 
         {/* ROBE DESIGN */}
         <Section title="Robe Design">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.8rem' }}>
-            {ROBE_DESIGNS.map(d => <ImgCard key={d.id} item={d} selected={robeDesign} onSelect={setRobeDesign} />)}
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.2rem' }}>
+            {ROBE_DESIGNS.map(d => <ImgCard key={d.id} item={d} selected={robeDesign} onSelect={setRobeDesign} width="180px" />)}
           </div>
         </Section>
 
         {/* ROBE COLOR */}
         <Section title="Robe Color">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
             {ROBE_COLORS.map(c => (
-                <div key={c.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setRobeColor(c.id)}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: c.hex, border: robeColor === c.id ? '2px solid var(--plum)' : '1px solid rgba(176,132,148,0.2)' }} />
-                    <div style={{ fontSize: '0.6rem', color: 'var(--dim)' }}>{c.label}</div>
-                </div>
+              <ColorSwatch key={c.id} color={c} selected={robeColor} onSelect={setRobeColor} />
             ))}
           </div>
         </Section>
 
         {/* HAIR ACCESSORIES */}
         <Section title="Hair Accessories">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.8rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.2rem' }}>
             {HAIR_ACCESSORIES.map(a => <ImgCard key={a.id} item={a} selected={hairAccessory} onSelect={setHairAccessory} />)}
           </div>
         </Section>
 
         {/* JEWELRY */}
         <Section title="Jewels & Adornments">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.8rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.2rem' }}>
             {JEWELRY.map(j => <ImgCard key={j.id} item={j} selected={jewelry} onSelect={setJewelry} />)}
           </div>
         </Section>
 
         {/* FAMILIAR */}
         <Section title="Your Familiar">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.8rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.2rem' }}>
             {FAMILIARS.map(f => <ImgCard key={f.id} item={f} selected={familiar} onSelect={setFamiliar} />)}
           </div>
         </Section>
