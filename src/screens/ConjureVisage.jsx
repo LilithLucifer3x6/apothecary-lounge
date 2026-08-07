@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 import VoiceInput from '../components/VoiceInput.jsx';
 import Icon from '../components/Icon.jsx';
+import { invokeImageProxy } from '../lib/ai-engine.js';
 
 // ── PHYSICAL BASE (hardcoded per user spec) ──────────────────────────────────
 const BASE_DESCRIPTION =
@@ -181,8 +182,16 @@ function ImgCard({ item, selected, onSelect, width = '160px' }) {
           <img
             src={`/assets/${item.img}`}
             alt={item.label}
+            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
             style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isSelected ? 1 : 0.65, transition: 'opacity 0.2s' }}
           />
+          <div style={{
+            display: 'none',
+            width: '100%', height: '100%',
+            background: 'rgba(176,132,148,0.05)',
+            alignItems: 'center', justifyContent: 'center',
+            fontSize: '2rem', color: isSelected ? 'var(--plum)' : 'rgba(176,132,148,0.3)'
+          }}>✦</div>
         </div>
       ) : (
         <div style={{
@@ -265,6 +274,9 @@ export default function ConjureVisage({ onFinish }) {
   const [genPhase,   setGenPhase]   = useState('');
   const [genStep,    setGenStep]    = useState(0);
 
+  const [previewImage, setPreviewImage] = useState(null);
+  const [generatingPreview, setGeneratingPreview] = useState(false);
+
   const isComplete = name && locStyle && hairColor && robeDesign && robeColor && hairAccessory && jewelry && familiar;
 
   const buildKeeperDescription = () => {
@@ -288,6 +300,31 @@ export default function ConjureVisage({ onFinish }) {
       robeColorHex:  color?.hex    || '#1e0a2e',
       base:          BASE_DESCRIPTION,
     };
+  };
+
+  const handleGeneratePreview = async () => {
+    if (!isComplete) return;
+    setGeneratingPreview(true);
+    setPreviewImage(null);
+    const config = buildKeeperDescription();
+    const portraitPrompt = `High-fidelity 2D digital painting portrait of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${config.locStyle || 'long'} microlocs adorned with ${config.hairAccessory || 'nothing'}. Wearing a deep ${config.robeColor || 'black'} gothic cottagecore robe of ${config.robeDesign || 'simple'} design, adorned with ${config.jewelry || 'no'} jewelry. Plain neutral gray background. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`;
+    
+    try {
+      const { data, error } = await invokeImageProxy({
+        version: "39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b", // sdxl fallback
+        input: { prompt: portraitPrompt, width: 1024, height: 1024 }
+      });
+      if (data && data.output && data.output[0]) {
+        setPreviewImage(data.output[0]);
+      } else {
+        alert("The Scrying Pool clouded over. Failed to generate preview.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("A disruption in the weave. Failed to generate preview.");
+    } finally {
+      setGeneratingPreview(false);
+    }
   };
 
   const handleFinish = async () => {
@@ -362,72 +399,105 @@ export default function ConjureVisage({ onFinish }) {
         <div style={{ textAlign: 'center', marginBottom: '1.2rem', color: 'var(--dim)', fontSize: '1.2rem' }}>✦ ✦ ✦</div>
         
         {/* LIVE AVATAR PREVIEW */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
           <div style={{
             position: 'relative', width: '220px', height: '300px',
             background: 'rgba(5,3,10,0.6)', borderRadius: '16px',
             border: '1px solid rgba(176,132,148,0.3)',
             boxShadow: '0 0 25px rgba(176,132,148,0.1)', overflow: 'hidden'
           }}>
-            <svg viewBox="0 0 200 280" style={{ width: '100%', height: '100%' }}>
-              {/* Base Body */}
-              <path d="M 60,280 C 60,200 40,160 80,120 C 85,115 90,110 90,90 C 90,70 80,40 100,40 C 120,40 110,70 110,90 C 110,110 115,115 120,120 C 160,160 140,200 140,280 Z" fill="#4a3020" />
-              {/* Face Details */}
-              <circle cx="93" cy="80" r="2" fill="rgba(0,0,0,0.4)" />
-              <circle cx="107" cy="80" r="2" fill="rgba(0,0,0,0.4)" />
-              <path d="M 95,95 Q 100,98 105,95" stroke="rgba(0,0,0,0.3)" strokeWidth="1.5" fill="none" />
+            {previewImage ? (
+              <img src={previewImage} alt="Avatar Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : generatingPreview ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '1rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '0.5rem', animation: 'spin 2s linear infinite' }}>✧</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--plum)' }}>Divining your image...</div>
+              </div>
+            ) : (
+              <svg viewBox="0 0 200 280" style={{ width: '100%', height: '100%' }}>
+                {/* Base Body */}
+                <path d="M 60,280 C 60,200 40,160 80,120 C 85,115 90,110 90,90 C 90,70 80,40 100,40 C 120,40 110,70 110,90 C 110,110 115,115 120,120 C 160,160 140,200 140,280 Z" fill="#4a3020" />
+                {/* Face Details */}
+                <circle cx="93" cy="80" r="2" fill="rgba(0,0,0,0.4)" />
+                <circle cx="107" cy="80" r="2" fill="rgba(0,0,0,0.4)" />
+                <path d="M 95,95 Q 100,98 105,95" stroke="rgba(0,0,0,0.3)" strokeWidth="1.5" fill="none" />
 
-              {/* Robe */}
-              {robeDesign && (
-                <path d={
-                  robeDesign.includes('asymmetric') ? "M 60,280 L 70,160 L 140,120 L 140,280 Z" :
-                  robeDesign.includes('cape') ? "M 50,280 L 70,120 L 130,120 L 150,280 Z" :
-                  "M 60,280 L 80,130 Q 100,150 120,130 L 140,280 Z"
-                } fill={ROBE_COLORS.find(c => c.id === robeColor)?.hex || 'transparent'} opacity="0.95" />
-              )}
-              
-              {/* Hair */}
-              {locStyle && (
-                <path d={
-                  locStyle.includes('bun') ? "M 90,50 C 70,20 130,20 110,50 M 70,120 C 80,90 85,50 100,40 C 115,50 120,90 130,120" :
-                  locStyle.includes('side') ? "M 100,40 C 120,50 130,90 145,150 C 130,90 110,60 100,40" :
-                  "M 70,140 C 80,90 85,50 100,40 C 115,50 120,90 130,140"
-                } stroke={HAIR_COLORS.find(c => c.id === hairColor)?.hex || 'transparent'} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.95" />
-              )}
+                {/* Robe */}
+                {robeDesign && (
+                  <path d={
+                    robeDesign.includes('asymmetric') ? "M 60,280 L 70,160 L 140,120 L 140,280 Z" :
+                    robeDesign.includes('cape') ? "M 50,280 L 70,120 L 130,120 L 150,280 Z" :
+                    "M 60,280 L 80,130 Q 100,150 120,130 L 140,280 Z"
+                  } fill={ROBE_COLORS.find(c => c.id === robeColor)?.hex || 'transparent'} opacity="0.95" />
+                )}
+                
+                {/* Hair */}
+                {locStyle && (
+                  <path d={
+                    locStyle.includes('bun') ? "M 90,50 C 70,20 130,20 110,50 M 70,120 C 80,90 85,50 100,40 C 115,50 120,90 130,120" :
+                    locStyle.includes('side') ? "M 100,40 C 120,50 130,90 145,150 C 130,90 110,60 100,40" :
+                    "M 70,140 C 80,90 85,50 100,40 C 115,50 120,90 130,140"
+                  } stroke={HAIR_COLORS.find(c => c.id === hairColor)?.hex || 'transparent'} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.95" />
+                )}
 
-              {/* Jewelry */}
-              {jewelry && jewelry !== 'none' && (
-                <path d="M 90,125 Q 100,140 110,125" stroke={jewelry.includes('gold') ? '#d4af37' : '#c0c0c0'} strokeWidth="2" fill="none" />
-              )}
-              {jewelry && jewelry.includes('amethyst') && <circle cx="100" cy="133" r="3" fill="#7a3a9a" />}
-              {jewelry && jewelry.includes('ruby') && <circle cx="100" cy="133" r="3" fill="#9b111e" />}
-              {jewelry && jewelry.includes('emerald') && <circle cx="100" cy="133" r="3" fill="#0a6a2a" />}
-              {jewelry && jewelry.includes('onyx') && <circle cx="100" cy="133" r="3" fill="#111" />}
+                {/* Jewelry */}
+                {jewelry && jewelry !== 'none' && (
+                  <path d="M 90,125 Q 100,140 110,125" stroke={jewelry.includes('gold') ? '#d4af37' : '#c0c0c0'} strokeWidth="2" fill="none" />
+                )}
+                {jewelry && jewelry.includes('amethyst') && <circle cx="100" cy="133" r="3" fill="#7a3a9a" />}
+                {jewelry && jewelry.includes('ruby') && <circle cx="100" cy="133" r="3" fill="#9b111e" />}
+                {jewelry && jewelry.includes('emerald') && <circle cx="100" cy="133" r="3" fill="#0a6a2a" />}
+                {jewelry && jewelry.includes('onyx') && <circle cx="100" cy="133" r="3" fill="#111" />}
 
-              {/* Hair Accessories */}
-              {hairAccessory && hairAccessory !== 'none' && (
-                <>
-                  <circle cx="85" cy="100" r="2.5" fill={hairAccessory.includes('copper') ? '#b87333' : '#c0c0c0'} />
-                  <circle cx="115" cy="110" r="2.5" fill={hairAccessory.includes('copper') ? '#b87333' : '#c0c0c0'} />
-                </>
-              )}
+                {/* Hair Accessories */}
+                {hairAccessory && hairAccessory !== 'none' && (
+                  <>
+                    <circle cx="85" cy="100" r="2.5" fill={hairAccessory.includes('copper') ? '#b87333' : '#c0c0c0'} />
+                    <circle cx="115" cy="110" r="2.5" fill={hairAccessory.includes('copper') ? '#b87333' : '#c0c0c0'} />
+                  </>
+                )}
 
-              {/* Familiar */}
-              {familiar && (
-                <g transform="translate(130, 220)">
-                  {familiar === 'cat' && <path d="M 0,20 Q -10,0 0,-10 Q 10,0 0,20 M -5,-10 L -8,-18 L 0,-12 M 5,-10 L 8,-18 L 0,-12" fill="#111" />}
-                  {familiar === 'raven' && <path d="M 0,20 Q -15,-5 0,-15 Q 15,-5 0,20 M -5,-10 L -15,-5 L -5,-5 M 5,-10 L 15,-5 L 5,-5" fill="#1a1a2e" />}
-                  {familiar === 'bat' && <path d="M 0,0 Q -15,-20 0,-10 Q 15,-20 0,0 M -5,-10 L -20,-15 L -5,-5 M 5,-10 L 20,-15 L 5,-5" fill="#2a2a35" />}
-                  {familiar === 'owl' && <path d="M 0,20 Q -15,0 0,-15 Q 15,0 0,20 M -5,-15 L -10,-22 L 0,-18 M 5,-15 L 10,-22 L 0,-18" fill="#4a3b32" />}
-                  {familiar === 'snake' && <path d="M 0,20 Q -15,10 0,0 Q 15,-10 0,-20 Q -10,-25 -5,-30" stroke="#1a4a3a" strokeWidth="4" fill="none" />}
-                </g>
-              )}
-            </svg>
-            <div style={{ position: 'absolute', bottom: '8px', left: '0', right: '0', textAlign: 'center', fontSize: '0.7rem', color: 'var(--silver)', opacity: 0.7 }}>
-              {isComplete ? 'Ready for binding' : 'Awaiting your design'}
-            </div>
+                {/* Familiar */}
+                {familiar && (
+                  <g transform="translate(130, 220)">
+                    {familiar === 'cat' && <path d="M 0,20 Q -10,0 0,-10 Q 10,0 0,20 M -5,-10 L -8,-18 L 0,-12 M 5,-10 L 8,-18 L 0,-12" fill="#111" />}
+                    {familiar === 'raven' && <path d="M 0,20 Q -15,-5 0,-15 Q 15,-5 0,20 M -5,-10 L -15,-5 L -5,-5 M 5,-10 L 15,-5 L 5,-5" fill="#1a1a2e" />}
+                    {familiar === 'bat' && <path d="M 0,0 Q -15,-20 0,-10 Q 15,-20 0,0 M -5,-10 L -20,-15 L -5,-5 M 5,-10 L 20,-15 L 5,-5" fill="#2a2a35" />}
+                    {familiar === 'owl' && <path d="M 0,20 Q -15,0 0,-15 Q 15,0 0,20 M -5,-15 L -10,-22 L 0,-18 M 5,-15 L 10,-22 L 0,-18" fill="#4a3b32" />}
+                    {familiar === 'snake' && <path d="M 0,20 Q -15,10 0,0 Q 15,-10 0,-20 Q -10,-25 -5,-30" stroke="#1a4a3a" strokeWidth="4" fill="none" />}
+                  </g>
+                )}
+              </svg>
+            )}
+            {!previewImage && !generatingPreview && (
+              <div style={{ position: 'absolute', bottom: '8px', left: '0', right: '0', textAlign: 'center', fontSize: '0.7rem', color: 'var(--silver)', opacity: 0.7 }}>
+                {isComplete ? 'Ready for preview' : 'Awaiting your design'}
+              </div>
+            )}
           </div>
         </div>
+
+        {/* PREVIEW BUTTON */}
+        {isComplete && !previewImage && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
+            <button
+              onClick={handleGeneratePreview}
+              disabled={generatingPreview}
+              style={{
+                padding: '0.8rem 1.5rem',
+                fontSize: '1rem',
+                background: 'rgba(176,132,148,0.15)',
+                border: '1px solid var(--plum)',
+                color: 'var(--plum)',
+                borderRadius: '8px', cursor: generatingPreview ? 'wait' : 'pointer',
+                boxShadow: '0 0 15px rgba(176,132,148,0.2)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              {generatingPreview ? 'Conjuring...' : '✧ Generate My Preview ✧'}
+            </button>
+          </div>
+        )}
 
         <p style={{ textAlign: 'center', color: 'var(--dim)', marginBottom: '2.5rem', fontSize: '0.9rem' }}>
           Shape your Keeper. Once bound, they will be painted into every room of the Sanctuary.
