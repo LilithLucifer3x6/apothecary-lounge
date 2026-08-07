@@ -368,7 +368,7 @@ Cost. Everything except AI is free at this scale: Supabase free tier, Vercel fre
 
 ## 31. The Steeping
 
-- Status: This is an active v1 feature. `shadowtome_elixirs` is a real table storing real user data through a working UI.
+- Status: specified, not built, deferred.
 - Purpose: the ritual that precedes journaling. Brew, settle, then open The Shadow Tome. The Steeping lives inside The Shadow Tome rather than as its own tab, because it belongs to that ritual rather than being a separate errand.
 - Herbal Elixirs is the inventory within it. It borrows Rootwork's shape, not its contents. Rootwork governs what goes on the body; this governs what is drunk, and most of Rootwork's machinery is meaningless here.
 
@@ -427,6 +427,7 @@ Version one carries everything in this document, including Google Calendar synch
 - Contact lens steps ship in version one. Menicon Z rigid gas-permeable lenses, removed nightly. Insertion is a normal, ungated step with no product-related waiting period.
 - Deferred to version two: gamification. A Tamagotchi-style companion occupying the landing scene, animating the avatar and familiar already established there and responding to completed routine steps. The version one scene is built as its foundation, not as a placeholder to be discarded. Design proceeds during version one use; construction follows at an unhurried pace.
 - Deferred: multi-user support and public release.
+- The Steeping, described above, is specified and deliberately deferred. It is a nice-to-have that should sit behind a feature flag until the core is stable.
 
 ## 33. Open decisions
 

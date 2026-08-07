@@ -9,10 +9,10 @@
     --card2:rgba(28, 12, 36, 0.9); 
     --border:rgba(176, 136, 204, 0.3);
     
-    --crimson: #80489c; 
-    --crimson-b: rgba(128, 72, 156, 0.2); 
-    --plum: #9e5ba6; 
-    --plum-b: rgba(158, 91, 166, 0.2); 
+    --crimson: #654694; 
+    --crimson-b: rgba(101, 70, 148, 0.2); 
+    --plum: #7b5ea7; 
+    --plum-b: rgba(123, 94, 167, 0.2); 
     
     --rose: #d6b8e6; 
     --parch: #c9b1d1; 
@@ -77,8 +77,8 @@
     color:var(--plum);font-size:1em;text-align:left;line-height:1.15;}
   .tabs{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:none;padding:.5rem .6rem .65rem;justify-content:center;}
   .tabs::-webkit-scrollbar{display:none;}
-  .tb{flex:0 0 auto;display:flex;align-items:center;gap:.6rem;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);
-      border:1px solid rgba(176, 136, 204, 0.2);color:var(--plum);font-size:1.1em;padding:.5rem .9rem;
+  .tb{flex:0 0 auto;display:flex;align-items:center;gap:.4rem;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);
+      border:1px solid rgba(176, 136, 204, 0.2);color:var(--plum);font-size:0.95rem;padding:.3rem .6rem;
       border-radius:8px;cursor:pointer;font-family:inherit;}
   .tb:hover{border-color:rgba(176, 136, 204, 0.6);color:var(--plum);box-shadow:0 0 10px rgba(176, 136, 204, 0.15);}
   .tb.on{background:rgba(0,0,0,0.95);border-color:var(--crimson);color:var(--plum);box-shadow:inset 0 0 15px rgba(176, 136, 204, 0.3);}
