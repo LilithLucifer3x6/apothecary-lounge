@@ -211,11 +211,21 @@ Otherwise, reply sympathetically and ask a clarifying question. Keep responses t
 export async function converseReading(history, userProfile) {
   const apiKey = localStorage.getItem('al_anthropic_key') || '';
   try {
+    const userTurnCount = history.filter(h => h.role === 'user').length;
+    // The model was only ever *asked* to conclude "after 2-3 exchanges" —
+    // a soft suggestion it could ignore indefinitely, since it has no real
+    // enforcement. Once we're clearly past a reasonable conversation length,
+    // force conclusion explicitly on this specific call instead of hoping.
+    const mustConclude = userTurnCount >= 3;
+
     const promptText = `
 You are the Keeper of the Sanctuary, leading "The Reading", a monthly reflection on the user's wellness rituals.
 Goal: Have a short conversation to check if they are experiencing any new skin concerns (dryness, breakouts), lifestyle changes (more stress, less sleep), or if any products are causing irritation.
 Ask one question at a time. Be empathetic, poetic, and concise (1-2 sentences).
-If you have gathered enough information (after 2-3 exchanges), conclude the reading by ending your final response with exactly: "[READING_COMPLETE: <summary of changes or 'No changes'>]".
+${mustConclude
+  ? \`This is your FINAL response, regardless of what has been discussed so far. You must end this response with exactly: "[READING_COMPLETE: <summary of changes or 'No changes'>]". Do not ask another question.\`
+  : \`If you have gathered enough information (after 2-3 exchanges), conclude the reading by ending your final response with exactly: "[READING_COMPLETE: <summary of changes or 'No changes'>]".\`
+}
 Current profile: ${JSON.stringify(userProfile?.intake_answers || {})}
 `;
     const rawMsgs = history.map(h => ({ role: h.role, content: h.text }));
