@@ -370,7 +370,10 @@ export default function ShadowTome({ pose }) {
 
                   {entry.moods?.length > 0 && (
                     <div className="mb-2" style={{ color: 'var(--plum)', fontSize: '0.9rem' }}>
-                      {entry.moods.join(' \u2022 ')}
+                      {entry.moods.map(id => {
+                        const found = moodsList.find(m => m.id === id);
+                        return found ? found.label : id;
+                      }).join(' • ')}
                     </div>
                   )}
                   <div style={{ fontSize: '1.1rem', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>

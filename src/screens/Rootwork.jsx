@@ -554,7 +554,7 @@ export default function Rootwork({ pose }) {
       if (!isValid) return false; // Halt batch insert, return false to keep modal open
     }
 
-    setImportStatus(`Committing ${readyProducts.length} ready items to the Codex...`);
+    setImportStatus(`Summoning ${readyProducts.length} ready items to the Rootwork...`);
     
     if (isComplete) {
       setReviewProducts(null); // Hide modal entirely
@@ -778,7 +778,7 @@ export default function Rootwork({ pose }) {
             <div style={{ width: '100%' }}>
               <VoiceInput 
                 isTextArea={true}
-                placeholder="Or catalog the formula's true name..."
+                placeholder="Or provide the formula's true name..."
                 value={echoInput}
                 onChange={(e) => setEchoInput(e.target.value)}
                 style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--plum)', fontSize: '1.1rem' }}
@@ -878,7 +878,7 @@ export default function Rootwork({ pose }) {
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
               <div>
                 <h3 style={{color: 'var(--plum)'}}>The Relic Inscription</h3>
-                <div className="mt mb-4" style={{color: 'var(--plum)'}}>Commit a new artifact to your Reliquary or vessel to the Apothecary.</div>
+                <div className="mt mb-4" style={{color: 'var(--plum)'}}>Summon a new artifact to your Reliquary or vessel to the Apothecary.</div>
               </div>
               {modalState !== 'manual' && (
                 <button className="btn sm" style={{padding: '0.4rem 1rem', whiteSpace: 'nowrap', flexShrink: 0}} onClick={() => setModalState('manual')} title="Manual Inscription">

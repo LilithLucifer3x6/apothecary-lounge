@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS prospective_items (id uuid primary key default gen_random_uuid(), user_id uuid, name text, category text, ingredients text[], created_at timestamp with time zone default now(), status text default 'pending'); 

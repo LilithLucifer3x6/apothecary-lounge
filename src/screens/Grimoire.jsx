@@ -92,12 +92,22 @@ export default function Grimoire({ pose }) {
 
   const handleStartReading = async () => {
     setReadingState({ history: [], input: '', isTyping: true, completeSummary: null });
-    const { converseReading } = await import('../lib/ai-service.js');
-    const reply = await converseReading([], profile);
-    setReadingState(prev => {
-      if (!prev) return null;
-      return { ...prev, isTyping: false, history: [{ role: 'assistant', text: reply }] };
-    });
+    try {
+      const { converseReading } = await import('../lib/ai-service.js');
+      const reply = await converseReading([], profile);
+      setReadingState(prev => {
+        if (!prev) return null;
+        return { ...prev, history: [{ role: 'assistant', text: reply }] };
+      });
+    } catch (err) {
+      console.error("Failed to start reading:", err);
+      setReadingState(prev => {
+        if (!prev) return null;
+        return { ...prev, history: [{ role: 'assistant', text: "The stars are obscured. I cannot commune right now." }] };
+      });
+    } finally {
+      setReadingState(prev => prev ? { ...prev, isTyping: false } : null);
+    }
   };
 
   const handleSendReading = async () => {
@@ -109,25 +119,33 @@ export default function Grimoire({ pose }) {
       return { ...prev, history: newHist, input: '', isTyping: true };
     });
     
-    const { converseReading } = await import('../lib/ai-service.js');
-    const currentHist = [...readingState.history, { role: 'user', text: userText }];
-    const reply = await converseReading(currentHist, profile);
-    
-    const match = reply.match(/\[READING_COMPLETE:\s*(.*?)\]/);
-    if (match) {
-      const summary = match[1];
+    try {
+      const { converseReading } = await import('../lib/ai-service.js');
+      const currentHist = [...readingState.history, { role: 'user', text: userText }];
+      const reply = await converseReading(currentHist, profile) || "";
+      
+      const match = reply.match(/\[READING_COMPLETE:\s*(.*?)\]/);
+      if (match) {
+        const summary = match[1];
+        setReadingState(prev => ({
+          ...prev, 
+          completeSummary: summary,
+          history: [...prev.history, { role: 'assistant', text: reply.replace(/\[READING_COMPLETE:.*?\]/, '').trim() }]
+        }));
+      } else {
+        setReadingState(prev => ({
+          ...prev, 
+          history: [...prev.history, { role: 'assistant', text: reply }]
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to send reading:", err);
       setReadingState(prev => ({
-        ...prev, 
-        isTyping: false,
-        completeSummary: summary,
-        history: [...prev.history, { role: 'assistant', text: reply.replace(/\[READING_COMPLETE:.*?\]/, '').trim() }]
+        ...prev,
+        history: [...prev.history, { role: 'assistant', text: "A sudden storm clouds my vision. Try speaking your truth once more." }]
       }));
-    } else {
-      setReadingState(prev => ({
-        ...prev, 
-        isTyping: false,
-        history: [...prev.history, { role: 'assistant', text: reply }]
-      }));
+    } finally {
+      setReadingState(prev => prev ? { ...prev, isTyping: false } : null);
     }
   };
 
@@ -478,7 +496,12 @@ export default function Grimoire({ pose }) {
         <div className="modal" style={{display: 'block'}}>
           <div className="modal-content card" style={{maxWidth: '550px'}}>
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-            <h3 style={{color: 'var(--plum)'}}>The Reading <SpeakerButton text="The Reading" /></h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <h3 style={{color: 'var(--plum)', margin: 0}}>The Reading <SpeakerButton text="The Reading" /></h3>
+              <button className="spk" onClick={() => setReadingState(null)} title="Abandon Reading" style={{ fontSize: '1.2rem', padding: '0.2rem' }}>
+                <i className="ph-duotone ph-x"></i>
+              </button>
+            </div>
             <div className="mt mb-4">Reflect on the past 30 days of your rituals.</div>
             
             <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '1rem', marginTop: '1rem', paddingRight: '0.5rem' }}>

@@ -1,8 +1,9 @@
 import { supabase } from './supabase.js';
+import { ROOM_PROMPTS } from '../screens/ConjureVisage.jsx';
 
 export const ANTHROPIC_MODEL = 'claude-sonnet-5';
 
-export async function invokeAnthropicProxy(body, retries = 2) {
+export async function invokeAnthropicProxy(body, retries = 1) {
   for (let i = 0; i <= retries; i++) {
     try {
       const controller = new AbortController();
@@ -23,6 +24,103 @@ export async function invokeAnthropicProxy(body, retries = 2) {
   }
 }
 
+export async function invokeImageProxy(body, retries = 2) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
+      const { data, error } = await supabase.functions.invoke('image-proxy', {
+        body,
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (error) throw error;
+      if (!data) throw new Error("No data returned from Image proxy.");
+      return { data, error: null };
+    } catch (err) {
+      if (i === retries) return { data: null, error: err };
+      await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+    }
+  }
+}
+
+
+export async function startBackgroundRoomGeneration(config) {
+  // Fire and forget - do not await this function's completion in the UI
+  (async () => {
+    try {
+      // 1. Generate Reference Portrait
+      const portraitPrompt = `High-fidelity 2D digital painting portrait of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${config.locStyle || 'long'} microlocs adorned with ${config.hairAccessory || 'nothing'}. Wearing a deep ${config.robeColor || 'black'} gothic cottagecore robe of ${config.robeDesign || 'simple'} design, adorned with ${config.jewelry || 'no'} jewelry. Plain neutral gray background. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`;
+      
+      const { data: refData, error: refErr } = await invokeImageProxy({
+        version: "39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b", // sdxl fallback
+        input: { prompt: portraitPrompt, width: 1024, height: 1024 }
+      });
+      
+      if (refErr || !refData || !refData.output || !refData.output[0]) {
+        console.error("Reference portrait failed, aborting room pipeline", refErr);
+        return; // Fallback empty rooms will be used
+      }
+      
+      const referenceImageUrl = refData.output[0];
+
+      // 2. Generate 7 Room Scenes
+      const rooms = [
+        { id: 'rites', title: 'The Mortal Rites' },
+        { id: 'grim', title: 'The Grimoire' },
+        { id: 'altars', title: 'The Altars' },
+        { id: 'root', title: 'The Rootwork' },
+        { id: 'pool', title: 'The Scrying Pool' },
+        { id: 'tome', title: 'The Shadow Tome' },
+        { id: 'landing', title: 'The Exterior' }
+      ];
+
+      // ROOM_PROMPTS imported from ConjureVisage.jsx
+      const generatedBgs = config.generatedBgs || {};
+
+      for (let i = 0; i < rooms.length; i++) {
+        const room = rooms[i];
+        
+        // Skip landing if not defined in ROOM_PROMPTS, although it should be handled
+        const promptFactory = ROOM_PROMPTS[room.id];
+        if (!promptFactory) continue;
+
+        const prompt = promptFactory(config);
+        
+        try {
+          // Using SDXL IP-Adapter version
+          const { data, error } = await invokeImageProxy({
+            version: "fofr/sdxl-ip-adapter", // dummy version for IP adapter
+            input: { 
+              prompt: prompt,
+              image: referenceImageUrl,
+              width: 1024,
+              height: 1024
+            }
+          });
+          
+          if (!error && data && data.output && data.output[0]) {
+            generatedBgs[room.id] = data.output[0];
+            // Update local storage incrementally
+            const currentConfig = JSON.parse(localStorage.getItem('avatar_config') || '{}');
+            currentConfig.generatedBgs = generatedBgs;
+            localStorage.setItem('avatar_config', JSON.stringify(currentConfig));
+            // Trigger UI update
+            window.dispatchEvent(new Event('backgrounds_updated'));
+          } else {
+            console.warn(`Failed to generate ${room.id} bg:`, error);
+          }
+        } catch (err) {
+          console.warn(`Failed to invoke generate-room-bg for ${room.id}:`, err);
+        }
+      }
+    } catch (e) {
+      console.error("Background generation pipeline failed:", e);
+    }
+  })();
+}
+
 /**
  * Conducts the intake conversation and extracts answers when ready.
  * @param {Array<{role: string, content: string}>} messageHistory 
@@ -31,7 +129,7 @@ export async function invokeAnthropicProxy(body, retries = 2) {
 export async function conductIntake(messageHistory) {
   
 
-  const systemPrompt = `You are the keeper of Shadow & Sanctuary, an entity guiding a user through The First Inscription (an onboarding ritual).
+  const systemPrompt = `You are the keeper of Shadow and Sanctuary, an entity guiding a user through The First Inscription (an onboarding ritual).
 Speak in a respectful, slightly mystical, cottagecore-goth tone ("ritual voice"). Do not be overly verbose. Be direct but atmospheric.
 Do not use gendered language for the user. Do not assume their gender or use pronouns.
 
@@ -281,7 +379,7 @@ export async function evaluateScryingPool(productInfo, userProfile, inventory, r
   const banished = inventory.filter(i => i.lifecycle_state === 'banished');
   const banishedStr = banished.map(i => `${i.name} (Ingredients: ${i.ingredients})`).join('\n');
 
-  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow & Sanctuary.
+  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow and Sanctuary.
 The user seeks your wisdom on a prospective new product or formula (The Echo).
 Perform a strict Safety Check against their known allergies (The Codex), medical conditions, and past Somatic Reactions. 
 If they have banished items or reacted poorly (peeling, redness, burning), deduce the common denominator ingredients and explicitly warn them if the prospective item contains them.
@@ -327,7 +425,7 @@ ${inventory.length > 40 ? '...[TRUNCATED - Showing 40 of ' + inventory.length + 
 export async function generateScryingEvaluation(inventory, banishedItems, ledgerEntries, intakeAnswers) {
   
 
-  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow & Sanctuary.
+  const systemPrompt = `You are the Scrying Pool, an oracle within Shadow and Sanctuary.
 The user seeks a holistic divination of their entire routine ecosystem.
 Analyze their active inventory, banished products, somatic reactions, and intake goals.
 Output a comprehensive report formatted in Markdown that covers the following areas:
