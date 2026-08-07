@@ -64,8 +64,8 @@ export default function Landing({ onProceed, onOpenAvatar }) {
         </div>
       )}
 
-      {/* Main UI Container */}
-      <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', background: 'rgba(20, 15, 25, 0.7)', padding: '3rem 2rem', borderRadius: '12px', border: '1px solid var(--border)', backdropFilter: 'blur(4px)', boxShadow: '0 10px 30px rgba(0,0,0,0.8)' }}>
+      {/* Main UI Container — no card box, text sits directly over the background */}
+      <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '2rem' }}>
           <h1 style={{ fontSize: 'clamp(2rem, 10vw, 3.5rem)', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--plum)', margin: '0 0 0.5rem 0' }}>
             Shadow & Sanctuary
           </h1>
@@ -101,4 +101,3 @@ export default function Landing({ onProceed, onOpenAvatar }) {
     </div>
   );
 }
-
