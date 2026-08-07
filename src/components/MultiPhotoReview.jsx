@@ -202,8 +202,8 @@ function DroppableGroup({ product, onUpdateField, imagesData }) {
   );
 }
 
-export default function MultiPhotoReview({
-  const { alert } = useDialog(); initialProducts, imageFiles, onConfirm, onCancel }) {
+export default function MultiPhotoReview({ initialProducts, imageFiles, onConfirm, onCancel }) {
+  const { alert } = useDialog();
   // Generate stable IDs for products
   const [products, setProducts] = useState(() => 
     initialProducts.map((p, i) => ({ ...p, id: `group-${i}` }))

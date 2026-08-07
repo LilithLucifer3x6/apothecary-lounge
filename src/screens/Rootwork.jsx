@@ -9,8 +9,8 @@ import { attachVoice } from '../lib/voice.js';
 import { buildBaseRoutines } from '../lib/routine-engine.js';
 import SpeakerButton from '../components/SpeakerButton.jsx';
 
-export default function Rootwork({
-  const { alert, confirm } = useDialog(); pose }) {
+export default function Rootwork({ pose }) {
+  const { alert, confirm } = useDialog();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -1207,4 +1207,3 @@ export default function Rootwork({
     </div>
   );
 }
-
