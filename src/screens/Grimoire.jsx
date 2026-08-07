@@ -333,9 +333,9 @@ export default function Grimoire({ pose }) {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               <div className="row" style={{ flex: '0 1 auto', marginBottom: 0, justifyContent: 'center' }}>
                 <div>
-                  <div className="nm">Root Weaving (Retie) <Icon name="ph-scissors" /></div>
+                  <div className="nm">Root Weaving <Icon name="ph-scissors" /></div>
                   <div className="mt">
-                    Every 8 weeks. Scheduled for {retieAppt?.date ? new Date(retieAppt.date).toLocaleDateString() : 'Unknown'}.
+                    Every 8 weeks.{retieAppt?.date ? ` Scheduled for ${new Date(retieAppt.date).toLocaleDateString()}.` : ''}
                   </div>
                 </div>
               </div>
@@ -356,9 +356,9 @@ export default function Grimoire({ pose }) {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               <div className="row" style={{ flex: '0 1 auto', marginBottom: 0, justifyContent: 'center' }}>
                 <div>
-                  <div className="nm">The Gilded Hand (Nails) <Icon name="ph-hand-palm" /></div>
+                  <div className="nm">The Gilded Hand <Icon name="ph-hand-palm" /></div>
                   <div className="mt">
-                    Every 2 weeks. Scheduled for {nailsAppt?.date ? new Date(nailsAppt.date).toLocaleDateString() : 'Unknown'}.
+                    Every 2 weeks.{nailsAppt?.date ? ` Scheduled for ${new Date(nailsAppt.date).toLocaleDateString()}.` : ''}
                   </div>
                 </div>
               </div>

@@ -851,7 +851,7 @@ export default function Rootwork({ pose }) {
             {pendingImports.length === 0 ? (
               <>
                 <p style={{color: 'var(--dim)', fontSize: '0.9rem'}}>
-                  Upload multiple photos (front, back, ingredient labels, price tags) of your inventory. 
+                  Upload multiple photos (front, back, element labels, price tags) of your inventory. 
                   The Oracle will group them by product and extract their details for your review.
                 </p>
                 

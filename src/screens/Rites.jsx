@@ -19,6 +19,8 @@ export default function Rites({ pose }) {
   const [healthStaleness, setHealthStaleness] = useState('');
   const [pmSaving, setPmSaving] = useState(false);
   const [pmSaved, setPmSaved] = useState(false);
+  const [scheduleSaving, setScheduleSaving] = useState(false);
+  const [scheduleSaved, setScheduleSaved] = useState(false);
 
   const todayKey = new Date().toISOString().split('T')[0];
   const [scheduleChecked, setScheduleChecked] = useState(() => {
@@ -218,6 +220,17 @@ export default function Rites({ pose }) {
     setPmSaving(false);
   };
 
+  const handleCompleteAllLongHours = () => {
+    setScheduleSaving(true);
+    const LONG_HOURS_KEYS = ['The Awakening', 'The Morning Respite', 'The Midday Sustenance', 'The Afternoon Respite', 'The Descent'];
+    const newChecked = new Set(scheduleChecked);
+    LONG_HOURS_KEYS.forEach(k => newChecked.add(k));
+    setScheduleChecked(newChecked);
+    localStorage.setItem(`schedule_${todayKey}`, JSON.stringify(Array.from(newChecked)));
+    setScheduleSaved(true);
+    setScheduleSaving(false);
+  };
+
   const renderScheduleStep = (time, desc, color, glyphName) => (
     <div key={time} className="step">
       <input 
@@ -366,6 +379,16 @@ export default function Rites({ pose }) {
         <div className="card">
           <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
           <h3>The Long Hours <SpeakerButton text='The Long Hours' /></h3>
+          <div style={{ margin: '0.5rem 0 1rem 0', textAlign: 'center' }}>
+            <button 
+              className={`btn ${scheduleSaved || ['The Awakening', 'The Morning Respite', 'The Midday Sustenance', 'The Afternoon Respite', 'The Descent'].every(i => scheduleChecked.has(i)) ? 'g' : 'plum'}`} 
+              style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
+              onClick={handleCompleteAllLongHours}
+              disabled={scheduleSaving || scheduleSaved || ['The Awakening', 'The Morning Respite', 'The Midday Sustenance', 'The Afternoon Respite', 'The Descent'].every(i => scheduleChecked.has(i))}
+            >
+              {scheduleSaving ? 'Sealing...' : (scheduleSaved || ['The Awakening', 'The Morning Respite', 'The Midday Sustenance', 'The Afternoon Respite', 'The Descent'].every(i => scheduleChecked.has(i)) ? 'The Long Hours are Sealed' : 'Seal the Long Hours')}
+            </button>
+          </div>
           <div className="mt mb-4" style={{ textAlign: 'center' }}>The Order of the Day</div>
           
           {renderScheduleStep('The Awakening', 'Allow 5 to 10 minutes for the veil of sleep to lift.', 'var(--crimson-b)', 'ph-sun')}

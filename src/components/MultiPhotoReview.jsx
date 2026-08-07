@@ -101,13 +101,13 @@ function DroppableGroup({ product, onUpdateField, imagesData }) {
               <div style={{ background: 'rgba(200,50,50,0.2)', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--crimson)', marginBottom: '0.5rem' }}>
                 <Icon name="warning" style={{ color: 'var(--crimson)' }} /> <strong>Safety Disagreement!</strong>
                 <p style={{ fontSize: '0.8rem', margin: '0.5rem 0' }}>{product.ingredient_conflict_details}</p>
-                <div style={{ fontSize: '0.8rem', color: 'var(--plum)' }}>You MUST manually review and edit the ingredients below to resolve this.</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--plum)' }}>You MUST manually review and edit The Consecrated Elements below to resolve this.</div>
               </div>
             )}
             <textarea 
               value={(product.ingredients || []).join(', ')} 
               onChange={e => onUpdateField(product.id, 'ingredients', e.target.value.split(',').map(s=>s.trim()))} 
-              placeholder="Ingredients (comma separated)"
+              placeholder="The Consecrated Elements (comma separated)"
               style={{ width: '100%', padding: '0.5rem', minHeight: '60px' }}
             />
           </div>
