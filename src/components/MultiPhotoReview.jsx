@@ -317,7 +317,7 @@ export default function MultiPhotoReview({ initialProducts, imageFiles, onConfir
           <div style={{ flex: 1 }}></div>
           <button className="btn outline" onClick={onCancel}>Cancel Ritual</button>
           <button className="btn plum" onClick={submit}>
-            {hasConflicts ? `Save Ready Items & Keep Unresolved` : `Commit to Codex`}
+            {hasConflicts ? `Summon Ready Items & Retain Unresolved` : `Summon to the Rootwork`}
           </button>
         </div>
       </div>

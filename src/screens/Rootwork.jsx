@@ -778,7 +778,7 @@ export default function Rootwork({ pose }) {
             <div style={{ width: '100%' }}>
               <VoiceInput 
                 isTextArea={true}
-                placeholder="Or inscribe the formula's true name..."
+                placeholder="Or catalog the formula's true name..."
                 value={echoInput}
                 onChange={(e) => setEchoInput(e.target.value)}
                 style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--plum)', fontSize: '1.1rem' }}
@@ -882,7 +882,7 @@ export default function Rootwork({ pose }) {
               </div>
               {modalState !== 'manual' && (
                 <button className="btn sm" style={{padding: '0.4rem 1rem', whiteSpace: 'nowrap', flexShrink: 0}} onClick={() => setModalState('manual')} title="Manual Inscription">
-                  Inscribe by Hand
+                  Summon by Hand
                 </button>
               )}
             </div>
@@ -918,7 +918,7 @@ export default function Rootwork({ pose }) {
                 <div style={{display: 'flex', justifyContent: 'center', gap: '1rem'}}>
                   <button className="btn" onClick={() => setModalState('photo')}>Reject Vision</button>
                   <button className="btn plum" onClick={handleSave} disabled={isSaving}>
-                    {isSaving ? 'Inscribing...' : 'Inscribe'}
+                    {isSaving ? 'Summoning...' : 'Summon'}
                   </button>
                 </div>
               </div>
@@ -1101,7 +1101,7 @@ export default function Rootwork({ pose }) {
                 <div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem'}}>
                   <button className="btn" onClick={() => setShowAddModal(false)}>Abandon</button>
                   <button className="btn plum" onClick={handleSave} disabled={isSaving || !addForm.name}>
-                    {isSaving ? 'Inscribing...' : 'Inscribe'}
+                    {isSaving ? 'Summoning...' : 'Summon'}
                   </button>
                 </div>
               </>

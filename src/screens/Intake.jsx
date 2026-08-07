@@ -257,7 +257,7 @@ export default function Intake({ onComplete }) {
               padding: '0.6rem 1.2rem'
             }}
           >
-            The Direct Path
+            The Swift Invocation
           </button>
         </div>
       </div>
@@ -415,7 +415,7 @@ export default function Intake({ onComplete }) {
                       </div>
                     </div>
                   ))}
-                  <button className="btn" onClick={addRx} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Topical Prescription</button>
+                  <button className="btn" onClick={addRx} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Summon Topical Prescription</button>
                 </div>
               )}
             </div>
@@ -440,7 +440,7 @@ export default function Intake({ onComplete }) {
                       <button className="btn sm" style={{ background: 'transparent', color: 'var(--plum)', padding: '0.5rem' }} onClick={() => removeOral(i)}>Shatter</button>
                     </div>
                   ))}
-                  <button className="btn" onClick={addOral} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Systemic Measure</button>
+                  <button className="btn" onClick={addOral} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Summon Systemic Measure</button>
                   
                   {oralList.some(m => m.toLowerCase().includes('isotretinoin') || m.toLowerCase().includes('accutane')) && (
                     <div className="field mt-4" style={{ padding: '1rem', border: '1px solid var(--crimson)', borderRadius: '8px' }}>
@@ -482,7 +482,7 @@ export default function Intake({ onComplete }) {
                       }}>Shatter</button>
                     </div>
                   ))}
-                  <button className="btn" onClick={() => setAlgList([...algList, ''])} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Inscribe Aversion</button>
+                  <button className="btn" onClick={() => setAlgList([...algList, ''])} style={{ width: 'fit-content', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Icon name="plus" /> Summon Aversion</button>
                 </div>
               )}
             </div>

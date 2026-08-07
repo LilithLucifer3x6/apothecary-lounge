@@ -111,7 +111,7 @@ export default function Altars({ pose }) {
       .sort((a, b) => getWeight(a) - getWeight(b));
 
     if (domainItems.length === 0) {
-      return <div className="mt mb-4">No rites currently inscribed for this domain. The shelves are bare.</div>;
+      return <div className="mt mb-4">No rites currently summoned for this domain. The shelves are bare.</div>;
     }
 
     return (

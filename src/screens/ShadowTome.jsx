@@ -427,7 +427,7 @@ export default function ShadowTome({ pose }) {
             </div>
             
             <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-              <button className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }} onClick={() => { setShowTeaModal(true); setTeaModalState('manual'); }}>Inscribe by Hand</button>
+              <button className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }} onClick={() => { setShowTeaModal(true); setTeaModalState('manual'); }}>Summon by Hand</button>
             </div>
           </div>
 

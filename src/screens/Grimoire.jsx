@@ -327,7 +327,7 @@ export default function Grimoire({ pose }) {
                   onClick={() => markDone('retie')}
                   style={{ opacity: marked['retie'] ? 0.5 : 1 }}
                 >
-                  {marked['retie'] ? 'Marked' : 'Inscribe'}
+                  {marked['retie'] ? 'Sealed' : 'Seal'}
                 </button>
                 <button className="spk btn-override" title="Override Calendar Fate" onClick={() => handleOverride('retie')}>
                   <i className="ph-duotone ph-dots-three-vertical"></i>
@@ -350,7 +350,7 @@ export default function Grimoire({ pose }) {
                   onClick={() => markDone('nails')}
                   style={{ opacity: marked['nails'] ? 0.5 : 1 }}
                 >
-                  {marked['nails'] ? 'Marked' : 'Inscribe'}
+                  {marked['nails'] ? 'Sealed' : 'Seal'}
                 </button>
                 <button className="spk btn-override" title="Override Calendar Fate" onClick={() => handleOverride('nails')}>
                   <i className="ph-duotone ph-dots-three-vertical"></i>
@@ -458,7 +458,7 @@ export default function Grimoire({ pose }) {
             <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
             <h3 style={{ color: 'var(--plum)' }}>Rewrite Fate</h3>
             <div className="mt mb-4" style={{ color: 'var(--plum)' }}>
-              Inscribe the date this rite was last fulfilled.
+              Name the date this rite was last fulfilled.
             </div>
             <input 
               type="date" 

@@ -180,7 +180,7 @@ export default function Scrying({ pose }) {
             {evaluationStatus}
           </div>
           <div style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: 1.5, color: 'var(--plum)', whiteSpace: 'pre-wrap' }}>
-            {evaluationResult || <div className="empty" style={{textAlign: 'left', margin: 0}}>The water is still. Inscribe your ledger, then seek the water's counsel.</div>}
+            {evaluationResult || <div className="empty" style={{textAlign: 'left', margin: 0}}>The water is still. Summon your relics, then seek the water's counsel.</div>}
           </div>
         </div>
 
@@ -247,7 +247,7 @@ export default function Scrying({ pose }) {
             {editId && <button className="btn" onClick={() => { setEditId(null); setReactionForm({ productId: '', zone: 'The visage, below — jaw and chin', reactions: new Set(), severity: 0 }); }}>Release</button>}
           </div>
         ) : (
-          <div className="empty">Your apothecary stands empty. Inscribe relics to record afflictions.</div>
+          <div className="empty">Your apothecary stands empty. Summon relics to record afflictions.</div>
         )}
 
         {ledgerEntries.length > 0 && (

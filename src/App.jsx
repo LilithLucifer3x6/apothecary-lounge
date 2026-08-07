@@ -210,7 +210,7 @@ export default function App() {
 
   const handleReturnToCottage = () => {
     if (settings.tts) speak("Return to Sanctuary");
-    setCurrentScreen('home');
+    handleTabClick('home');
   };
 
   const handleTabClick = (tabId) => {
