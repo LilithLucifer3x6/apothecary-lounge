@@ -65,7 +65,11 @@ export default function Grimoire({ pose }) {
   const markDone = async (type) => {
     await markAppointmentDone(type);
     setMarked(prev => ({ ...prev, [type]: true }));
-    syncAppointments().then(setAppointments);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.provider_token) {
+        syncAppointments().then(setAppointments);
+      }
+    });
   };
 
   const handleOverride = (type) => {
