@@ -48,9 +48,12 @@ export async function checkConflicts(itemA, itemB) {
     const flagsA = itemA.risk_flags || {};
     const flagsB = itemB.risk_flags || {};
     
-    const hasCategory = (itemFlags, itemIngs, category) => {
+    const hasCategory = (item, itemFlags, itemIngs, category) => {
       if (itemFlags[category]) return true;
-      return itemIngs.some(i => i.includes(category));
+      if (itemIngs.some(i => i.includes(category))) return true;
+      if (item.name && item.name.toLowerCase().includes(category)) return true;
+      if (item.category && item.category.toLowerCase().includes(category)) return true;
+      return false;
     };
 
     for (const rule of rules) {
@@ -59,11 +62,11 @@ export async function checkConflicts(itemA, itemB) {
       // If zone specific and they are only adjacent but not overlapping, we might skip
       if (zone_specific && !overlap) continue;
       
-      const aHasFirst = hasCategory(flagsA, lowerIngA, ingredient_a);
-      const bHasSecond = hasCategory(flagsB, lowerIngB, ingredient_b);
+      const aHasFirst = hasCategory(itemA, flagsA, lowerIngA, ingredient_a);
+      const bHasSecond = hasCategory(itemB, flagsB, lowerIngB, ingredient_b);
       
-      const aHasSecond = hasCategory(flagsA, lowerIngA, ingredient_b);
-      const bHasFirst = hasCategory(flagsB, lowerIngB, ingredient_a);
+      const aHasSecond = hasCategory(itemA, flagsA, lowerIngA, ingredient_b);
+      const bHasFirst = hasCategory(itemB, flagsB, lowerIngB, ingredient_a);
       
       if ((aHasFirst && bHasSecond) || (aHasSecond && bHasFirst)) {
         conflicts.push({
