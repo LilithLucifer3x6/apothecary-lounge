@@ -91,7 +91,7 @@ export async function startBackgroundRoomGeneration(config) {
         try {
           // Using SDXL IP-Adapter version
           const { data, error } = await invokeImageProxy({
-            version: "fofr/sdxl-ip-adapter", // dummy version for IP adapter
+            version: "226c6bf67a75a129b0f978e518fed33e1fb13956e15761c1ac53c9d2f898c9af", // lucataco/ip_adapter-sdxl-face
             input: { 
               prompt: prompt,
               image: referenceImageUrl,
