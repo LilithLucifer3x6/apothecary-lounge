@@ -39,8 +39,9 @@ function getSpellDate() {
 export default function App() {
   const { alert, confirm } = useDialog();
   const [currentScreen, setCurrentScreen] = useState(() => {
-    if (!localStorage.getItem('avatar_config')) return 'splash';
-    return sessionStorage.getItem('al_currentScreen') || 'splash';
+    if (!localStorage.getItem('avatar_config')) return 'landing';
+    const stored = sessionStorage.getItem('al_currentScreen');
+    return (stored && stored !== 'splash') ? stored : 'landing';
   });
   const [activeTab, setActiveTab] = useState(() => {
     if (!localStorage.getItem('avatar_config')) return 'rites';
@@ -69,7 +70,7 @@ export default function App() {
 
   useEffect(() => {
     sessionStorage.setItem('al_currentScreen', currentScreen);
-    if (currentScreen === 'splash' || currentScreen === 'landing' || currentScreen === 'avatar') {
+    if (currentScreen === 'landing' || currentScreen === 'avatar') {
       document.body.style.backgroundImage = 'none';
       document.body.style.backgroundColor = 'var(--bg)';
     } else if (currentScreen === 'intake') {
@@ -183,32 +184,27 @@ export default function App() {
     }
   };
 
-  const handleEnter = async () => {
-    let profile = null;
-    try {
-      const res = await supabase.from('user_profile').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
-      if (res.error) setSupabaseError(true);
-      profile = res.data;
-    } catch(e) {
-      setSupabaseError(true);
-    }
-    
-    if (profile && profile.avatar_config) {
-      localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
-    }
-    
-    const isCompletedLocally = localStorage.getItem('intake_completed') === 'true';
-    const hasAvatar = !!localStorage.getItem('avatar_config');
-
-    if (!profile && !hasAvatar) {
-      setCurrentScreen('avatar');
-    } else if (!isCompletedLocally && (!profile || !profile.intake_completed)) {
-      setCurrentScreen('intake');
-    } else {
-      setCurrentScreen('app');
-      handleTabClick('home');
-    }
-  };
+  // Runs once on mount to recover avatar_config from Supabase if it's
+  // missing locally (e.g. a new device/browser with an existing profile).
+  // This used to only run when the old splash screen's "Enter" button was
+  // clicked; now it runs automatically since that separate screen is gone.
+  useEffect(() => {
+    (async () => {
+      if (localStorage.getItem('avatar_config')) return; // already have it locally
+      let profile = null;
+      try {
+        const res = await supabase.from('user_profile').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
+        if (res.error) { setSupabaseError(true); return; }
+        profile = res.data;
+      } catch (e) {
+        setSupabaseError(true);
+        return;
+      }
+      if (profile && profile.avatar_config) {
+        localStorage.setItem('avatar_config', JSON.stringify(profile.avatar_config));
+      }
+    })();
+  }, []);
 
   const handleReturnToCottage = () => {
     if (settings.tts) speak("Return to Sanctuary");
@@ -263,18 +259,6 @@ export default function App() {
 
   return (
     <>
-      {currentScreen === 'splash' && (
-        <div id="s-splash" className="land" style={{ justifyContent: 'center', padding: '10vh 2rem 5vh 2rem', height: '100vh', overflow: 'hidden' }}>
-          <div style={{ textAlign: 'center' }}>
-            <h1 style={{ fontSize: 'clamp(2rem, 10vw, 3.5rem)', textShadow: '2px 2px 0 #0b090e, -1px -1px 0 #0b090e, 1px -1px 0 #0b090e, -1px 1px 0 #0b090e, 0 8px 30px rgba(0,0,0,1)', color: 'var(--plum)', margin: '0' }}>Shadow & Sanctuary</h1>
-            <div className="tag" style={{ fontSize: '1rem', textShadow: '1px 1px 0 #0b090e, 0 4px 15px rgba(0,0,0,1)', color: 'var(--plum)', marginTop: '0.5rem', background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)', padding: '0.6rem', display: 'inline-block' }}>A sanctuary of self-care.</div>
-          </div>
-          <button onClick={handleEnter} className="btn" style={{ fontSize: '1.3rem', padding: '0.8rem 1.5rem', background: 'var(--card2)', borderColor: 'var(--plum)', color: 'var(--plum)', boxShadow: '0 4px 15px rgba(0,0,0,0.8)', marginTop: '4vh', width: '250px', whiteSpace: 'normal', lineHeight: '1.2' }}>
-            Enter the Sanctuary
-          </button>
-        </div>
-      )}
-
       {currentScreen === 'loading' && (
         <div id="s-loading" className="land">
           <div className="tag" style={{ textShadow: '0 0 10px rgba(0,0,0,0.8)', color: 'var(--plum)' }}>Consulting the rites...</div>
@@ -573,4 +557,3 @@ export default function App() {
     </>
   );
 }
-

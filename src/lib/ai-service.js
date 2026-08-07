@@ -223,8 +223,8 @@ You are the Keeper of the Sanctuary, leading "The Reading", a monthly reflection
 Goal: Have a short conversation to check if they are experiencing any new skin concerns (dryness, breakouts), lifestyle changes (more stress, less sleep), or if any products are causing irritation.
 Ask one question at a time. Be empathetic, poetic, and concise (1-2 sentences).
 ${mustConclude
-  ? \`This is your FINAL response, regardless of what has been discussed so far. You must end this response with exactly: "[READING_COMPLETE: <summary of changes or 'No changes'>]". Do not ask another question.\`
-  : \`If you have gathered enough information (after 2-3 exchanges), conclude the reading by ending your final response with exactly: "[READING_COMPLETE: <summary of changes or 'No changes'>]".\`
+  ? `This is your FINAL response, regardless of what has been discussed so far. You must end this response with exactly: "[READING_COMPLETE: <summary of changes or 'No changes'>]". Do not ask another question.`
+  : `If you have gathered enough information (after 2-3 exchanges), conclude the reading by ending your final response with exactly: "[READING_COMPLETE: <summary of changes or 'No changes'>]".`
 }
 Current profile: ${JSON.stringify(userProfile?.intake_answers || {})}
 `;
