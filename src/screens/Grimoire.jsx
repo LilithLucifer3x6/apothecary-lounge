@@ -94,11 +94,23 @@ export default function Grimoire({ pose }) {
     }
   };
 
+  // Hard client-side failsafe: guarantees this never hangs forever in the UI,
+  // even if the underlying Supabase call's own abort/retry logic fails to
+  // actually settle (e.g. a signal that doesn't propagate, a cold-start hang).
+  const withHardTimeout = (promise, ms = 20000) => {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timed out waiting for a response.')), ms)
+      )
+    ]);
+  };
+
   const handleStartReading = async () => {
     setReadingState({ history: [], input: '', isTyping: true, completeSummary: null });
     try {
       const { converseReading } = await import('../lib/ai-service.js');
-      const reply = await converseReading([], profile);
+      const reply = await withHardTimeout(converseReading([], profile));
       setReadingState(prev => {
         if (!prev) return null;
         return { ...prev, history: [{ role: 'assistant', text: reply }] };
@@ -126,7 +138,7 @@ export default function Grimoire({ pose }) {
     try {
       const { converseReading } = await import('../lib/ai-service.js');
       const currentHist = [...readingState.history, { role: 'user', text: userText }];
-      const reply = await converseReading(currentHist, profile) || "";
+      const reply = await withHardTimeout(converseReading(currentHist, profile)) || "";
       
       const match = reply.match(/\[READING_COMPLETE:\s*(.*?)\]/);
       if (match) {
@@ -555,4 +567,3 @@ export default function Grimoire({ pose }) {
     </div>
   );
 }
-
