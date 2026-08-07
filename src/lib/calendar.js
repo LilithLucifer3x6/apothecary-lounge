@@ -71,7 +71,61 @@ export async function syncAppointments() {
 }
 
 export async function markAppointmentDone(appointmentType) {
-  console.log(`Marked ${appointmentType} as done. Recalculating next date...`);
-  // In a full implementation, we'd POST a new event to Google Calendar for +2 or +8 weeks here.
-  return true;
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || !session.provider_token) {
+      console.warn("No Google provider token found. Cannot create calendar event.");
+      return false;
+    }
+
+    const token = session.provider_token;
+    
+    let weeksOffset = 2; 
+    let title = "Nails Appointment";
+    if (appointmentType === 'retie') {
+      weeksOffset = 8;
+      title = "Locs Retie";
+    } else if (appointmentType === 'derm') {
+      weeksOffset = 4;
+      title = "Dermatologist Check-in";
+    }
+    
+    const nextDate = new Date();
+    nextDate.setDate(nextDate.getDate() + (weeksOffset * 7));
+    nextDate.setHours(10, 0, 0, 0);
+    
+    const endDate = new Date(nextDate);
+    endDate.setHours(11, 0, 0, 0);
+
+    const event = {
+      summary: title,
+      start: {
+        dateTime: nextDate.toISOString(),
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      },
+      end: {
+        dateTime: endDate.toISOString(),
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
+    };
+
+    const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(event)
+    });
+
+    if (!res.ok) {
+      throw new Error(`Calendar create failed: ${res.status}`);
+    }
+
+    console.log(`Successfully created new ${appointmentType} appointment for ${nextDate.toDateString()}`);
+    return true;
+  } catch (err) {
+    console.error("Failed to create next appointment in Google Calendar:", err);
+    return false;
+  }
 }
