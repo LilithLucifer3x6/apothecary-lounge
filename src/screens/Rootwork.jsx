@@ -179,7 +179,7 @@ export default function Rootwork({ pose }) {
     if (!query) return;
     
     // LAVENDER BAN
-    if (query.toLowerCase().includes('lavender')) {
+    if (/(lavender|lavandula|lavandin)/i.test(query)) {
       setEchoStatus(<span><Icon name="warning" /> WARNING: Lavender detected. This formula is sealed in the Crypt of Ashes.</span>);
       setEchoResult('Lavender is strictly forbidden from your routine. It has been sealed in the Crypt of Ashes.');
       
