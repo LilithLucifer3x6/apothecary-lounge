@@ -301,7 +301,7 @@ export default function Grimoire({ pose }) {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="card" style={{ marginTop: 0 }}>
         <div className="corner tl"></div><div className="corner tr"></div><div className="corner bl"></div><div className="corner br"></div>
-        <h3>Appointed Times <SpeakerButton text="Appointed Times" /></h3>
+        <h3>The Appointed Times <SpeakerButton text="The Appointed Times" /></h3>
         
         {realEvents.length > 0 ? realEvents.map((ev, i) => (
           <div key={i} className="step">
