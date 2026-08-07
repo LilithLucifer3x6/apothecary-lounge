@@ -4,7 +4,7 @@ import { G } from '../lib/icons.jsx';
 import Icon from '../components/Icon.jsx';
 import { fetchTodayEvents, fetchMonthEvents } from '../lib/gcal.js';
 import SpeakerButton from '../components/SpeakerButton.jsx';
-import { syncAppointments, markAppointmentDone } from '../lib/calendar.js';
+import { syncAppointments } from '../lib/calendar.js';
 
 import VoiceInput from '../components/VoiceInput.jsx';
 
@@ -23,8 +23,22 @@ export default function Grimoire({ pose }) {
 
   useEffect(() => {
     let mounted = true;
-    syncAppointments().then(data => {
-      if (mounted) setAppointments(data);
+    // The appointments table (name, cadence_weeks, last_completed, next_due)
+    // was already correctly designed for local scheduling, but nothing ever
+    // actually read from it — the app only ever tried Google Calendar sync,
+    // which silently does nothing without a connected provider token. This
+    // is the real, reliable source; Google sync stays available separately
+    // for realEvents/monthEvents, but Root Weaving / Gilded Hand scheduling
+    // no longer depends on it.
+    supabase.from('appointments').select('*').then(({ data }) => {
+      if (mounted && data) {
+        const mapped = data.map(row => ({
+          ...row,
+          type: row.name === 'The Root Weaving' ? 'retie' : row.name === 'The Gilded Hand' ? 'nails' : null,
+          date: row.next_due
+        }));
+        setAppointments(mapped);
+      }
     });
 
     supabase.from('routine_history').select('*').order('completed_at', { ascending: false }).limit(30)
@@ -63,8 +77,32 @@ export default function Grimoire({ pose }) {
   const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday
 
   const markDone = async (type) => {
-    await markAppointmentDone(type);
+    const name = type === 'retie' ? 'The Root Weaving' : type === 'nails' ? 'The Gilded Hand' : null;
+    const appt = appointments.find(a => a.type === type);
+    if (!name || !appt) return;
+
+    const today = new Date();
+    const cadenceWeeks = appt.cadence_weeks || (type === 'retie' ? 8 : 2);
+    const nextDue = new Date(today.getTime() + cadenceWeeks * 7 * 86400000);
+    const todayStr = today.toISOString().split('T')[0];
+    const nextDueStr = nextDue.toISOString().split('T')[0];
+
+    const { error } = await supabase.from('appointments').update({
+      last_completed: todayStr,
+      next_due: nextDueStr,
+      updated_at: new Date().toISOString()
+    }).eq('id', appt.id);
+
+    if (error) {
+      console.error('Failed to update appointment:', error);
+      return;
+    }
+
+    setAppointments(prev => prev.map(a =>
+      a.id === appt.id ? { ...a, last_completed: todayStr, next_due: nextDueStr, date: nextDueStr } : a
+    ));
     setMarked(prev => ({ ...prev, [type]: true }));
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.provider_token) {
         syncAppointments().then(setAppointments);
@@ -145,12 +183,23 @@ export default function Grimoire({ pose }) {
       })()) || "";
       
       const match = reply.match(/\[READING_COMPLETE:\s*(.*?)\]/);
+      // Hard cap: even with the stronger prompt instruction, don't depend
+      // 100% on the model actually including the marker. If we're well past
+      // a reasonable conversation length and it still didn't conclude,
+      // force it client-side rather than let the reading run forever.
+      const userTurnCount = currentHist.filter(h => h.role === 'user').length;
       if (match) {
         const summary = match[1];
         setReadingState(prev => ({
           ...prev, 
           completeSummary: summary,
           history: [...prev.history, { role: 'assistant', text: reply.replace(/\[READING_COMPLETE:.*?\]/, '').trim() }]
+        }));
+      } else if (userTurnCount >= 4) {
+        setReadingState(prev => ({
+          ...prev,
+          completeSummary: 'Reading concluded.',
+          history: [...prev.history, { role: 'assistant', text: reply }]
         }));
       } else {
         setReadingState(prev => ({
