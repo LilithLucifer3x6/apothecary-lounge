@@ -1,8 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
 
-// This script should be run with environment variables set, e.g., 
+// Run with environment variables set:
 // VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -24,8 +22,12 @@ const TEST_USER = {
 async function seedTestAuth() {
   console.log("Seeding test auth and data...");
 
-  // 1. Create or get test user
-  let userId;
+  // 1. Create or get test user.
+  // Note: this app is single-user with no per-row user scoping anywhere in
+  // the schema (RLS policies are all "Allow all access", not auth.uid()
+  // scoped) — so this auth user exists only to give Playwright a real JWT
+  // to authenticate with. It is NOT referenced by a user_id column on any
+  // table, because no such column exists.
   const { data: usersData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
   if (listError) {
     console.error("Error listing users:", listError);
@@ -48,31 +50,31 @@ async function seedTestAuth() {
     console.error("Error creating test user:", createError);
     return;
   }
-  
-  userId = newUser.user.id;
-  console.log(`Created test user ${TEST_USER.email} (ID: ${userId})`);
 
-  // 2. Insert mock inventory (items)
+  console.log(`Created test user ${TEST_USER.email} (ID: ${newUser.user.id})`);
+
+  // 2. Insert mock inventory (items) — matches the real items schema
+  // (001_core_schema.sql): category, not primary_category; no user_id.
   const items = [
     {
-      user_id: userId,
       name: 'Test Cleanser',
       brand: 'TestBrand',
-      primary_category: 'Cleanser',
+      domain: 'Visage',
+      category: 'Cleanser',
       item_type: 'consumable',
       lifecycle_state: 'stocked',
-      application_zones: ['visage'],
+      application_zones: ['face-mid'],
       is_prescription: false,
       is_essential: true,
     },
     {
-      user_id: userId,
       name: 'Test Moisturizer',
       brand: 'TestBrand',
-      primary_category: 'Moisturizer',
+      domain: 'Visage',
+      category: 'Moisturizer',
       item_type: 'consumable',
       lifecycle_state: 'stocked',
-      application_zones: ['visage'],
+      application_zones: ['face-mid'],
       is_prescription: false,
       is_essential: true,
     }
@@ -85,14 +87,14 @@ async function seedTestAuth() {
     console.log("Inserted test items.");
   }
 
-  // 3. Insert mock journal entry
+  // 3. Insert mock journal entry — matches the real journal_entries schema:
+  // entry_date (not date), body_text (not morning/evening_notes), no
+  // weather column, no user_id. moon_phase/photos from 008 migration.
   const journalEntry = {
-    user_id: userId,
-    date: new Date().toISOString(),
-    weather: 'Clear',
+    entry_date: new Date().toISOString().split('T')[0],
+    body_text: 'Test journal entry for Playwright.',
+    moods: ['Calm'],
     moon_phase: 'Full Moon',
-    morning_notes: 'Test morning note',
-    evening_notes: 'Test evening note',
     photos: []
   };
 

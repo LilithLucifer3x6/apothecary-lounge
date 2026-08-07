@@ -120,8 +120,7 @@ export default function Altars({ pose }) {
         
         <div style={{ margin: '0.5rem 0 1rem 0', textAlign: 'center' }}>
           <button 
-            className={`btn ${domainItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
-            style={{ fontSize: '1rem', padding: '0.6rem 1.5rem', width: '100%' }}
+            className={`btn full ${domainItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
             onClick={() => {
               const toSave = domainItems.filter(i => !checkedIds.has(i.id)).map(i => i.id);
               if (toSave.length > 0) {
@@ -169,4 +168,3 @@ export default function Altars({ pose }) {
     </div>
   );
 }
-

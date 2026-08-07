@@ -29,7 +29,6 @@ export default function Rootwork({ pose }) {
   });
   const [isAutoWeight, setIsAutoWeight] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false);
   const [importStatus, setImportStatus] = useState('');
   const [pendingImports, setPendingImports] = useState([]);
   const [photoStatus, setPhotoStatus] = useState('Offer or Scry Photo');
@@ -566,7 +565,7 @@ export default function Rootwork({ pose }) {
       if (aiProducts.length > 0) {
         setReviewProducts(aiProducts);
         setImportStatus(''); // Clear status, show review modal
-        setShowImportModal(false); // We show our own Review Modal now
+        setShowAddModal(false); // We show our own Review Modal now
       } else {
         setImportStatus('The Oracle found no items in these images.');
       }
@@ -718,11 +717,6 @@ export default function Rootwork({ pose }) {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', marginBottom: '1rem' }}>
           <h3 style={{ margin: 0 }}>The Apothecary <SpeakerButton text="The Apothecary" /></h3>
           <div style={{ position: 'absolute', right: 0, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <button className="btn outline" style={{ fontSize: '0.9rem', padding: '0.4rem 0.8rem' }} onClick={() => {
-              setImportStatus('');
-              setPendingImports([]);
-              setShowImportModal(true);
-            }}>Bulk Photo Import</button>
             <button className="btn plum"  onClick={() => {
               setAddForm({ brand: '', name: '', domain: 'Crown', category: '', ingredients: '', weight: '5', period_after_opening_months: '', unopened_shelf_life_months: '', manufacture_date: '', purchase_date: '', price: '', is_essential: false, is_composite: false, item_type: 'consumable', is_opened: false, opened_date: '', application_zones: [], is_prescription: false, prescription_details: '', selectedComponents: [] });
               setPhotoStatus('Offer or Scry Photo');
@@ -868,36 +862,6 @@ export default function Rootwork({ pose }) {
       </div>
 
 
-      {showImportModal && (
-        <div className="modal-backdrop" onClick={() => setShowImportModal(false)}>
-          <div className="card" style={{maxWidth: '600px', width: '90%'}} onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ margin: 0 }}>Bulk Photo Import</h3>
-              <button className="btn link" onClick={() => setShowImportModal(false)}>Close</button>
-            </div>
-            
-            {pendingImports.length === 0 ? (
-              <>
-                <p style={{color: 'var(--dim)', fontSize: '0.9rem'}}>
-                  Upload multiple photos (front, back, element labels, price tags) of your inventory. 
-                  The Oracle will group them by product and extract their details for your review.
-                </p>
-                
-                <div className="field mt">
-                  <input type="file" multiple accept="image/*" onChange={handleMultiPhotoUpload} style={{ color: 'var(--plum)', fontSize: '1rem', padding: '0.5rem' }} />
-                </div>
-              </>
-            ) : null}
-            
-            {importStatus && (
-              <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', borderRadius: '4px', textAlign: 'center', color: 'var(--plum)' }}>
-                {importStatus}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {showAddModal && (
         <div className="modal" style={{display: 'block'}}>
           <div className="modal-content card" style={{maxWidth: '500px'}}>
@@ -909,7 +873,7 @@ export default function Rootwork({ pose }) {
                 <div className="mt mb-4" style={{color: 'var(--plum)'}}>Summon a new artifact to your Reliquary or vessel to the Apothecary.</div>
               </div>
               {modalState !== 'manual' && (
-                <button className="btn sm" style={{padding: '0.4rem 1rem', whiteSpace: 'nowrap', flexShrink: 0}} onClick={() => setModalState('manual')} title="Manual Inscription">
+                <button className="btn sm" style={{whiteSpace: 'nowrap', flexShrink: 0}} onClick={() => setModalState('manual')} title="Manual Inscription">
                   Summon by Hand
                 </button>
               )}
@@ -918,16 +882,16 @@ export default function Rootwork({ pose }) {
             {modalState === 'photo' && (
               <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                 <div style={{position: 'relative', overflow: 'hidden', background: 'var(--card2)', border: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--plum)', cursor: 'pointer', borderRadius: '8px'}}>
-                  <Icon name={G.tabPool} /> 
-                  <span style={{marginTop: '1rem', textAlign: 'center'}}>{photoStatus}</span>
-                  <input type="file" accept="image/*" capture="environment" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
-                </div>
-                
-                <div style={{position: 'relative', overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', color: 'var(--plum)', cursor: 'pointer', borderRadius: '8px'}}>
                   <Icon name="ph-images" />
-                  <span style={{marginTop: '0.5rem', textAlign: 'center'}}>Summon Multiple Visions</span>
-                  <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handlePhotoUpload} />
+                  <span style={{marginTop: '1rem', textAlign: 'center'}}>Summon Multiple Visions</span>
+                  <input type="file" accept="image/*" multiple style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer'}} onChange={handleMultiPhotoUpload} />
                 </div>
+
+                {importStatus && (
+                  <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', borderRadius: '4px', textAlign: 'center', color: 'var(--plum)' }}>
+                    {importStatus}
+                  </div>
+                )}
 
                 <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '1rem'}}>
                   <button className="btn" onClick={() => setShowAddModal(false)}>Abandon</button>
@@ -1198,8 +1162,8 @@ export default function Rootwork({ pose }) {
         />
       )}
       
-      {/* GLOBAL TOAST/STATUS for Import */}
-      {!showImportModal && importStatus && (
+      {/* GLOBAL TOAST/STATUS for Import — shown if the user closes the modal while processing continues */}
+      {!showAddModal && importStatus && (
         <div style={{ position: 'fixed', bottom: '2rem', right: '2rem', background: 'var(--card)', border: '1px solid var(--plum)', padding: '1rem', borderRadius: '8px', zIndex: 1000, color: 'var(--plum)' }}>
           {importStatus}
         </div>
