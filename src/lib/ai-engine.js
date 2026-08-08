@@ -7,7 +7,7 @@ export async function invokeAnthropicProxy(body, retries = 1) {
   for (let i = 0; i <= retries; i++) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const timeoutId = setTimeout(() => controller.abort(), 45000);
       
       const { data, error } = await supabase.functions.invoke('anthropic-proxy', {
         body: { model: ANTHROPIC_MODEL, ...body },

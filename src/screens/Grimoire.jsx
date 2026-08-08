@@ -135,7 +135,7 @@ export default function Grimoire({ pose }) {
   // Hard client-side failsafe: guarantees this never hangs forever in the UI,
   // even if the underlying Supabase call's own abort/retry logic fails to
   // actually settle (e.g. a signal that doesn't propagate, a cold-start hang).
-  const withHardTimeout = (promise, ms = 20000) => {
+  const withHardTimeout = (promise, ms = 50000) => {
     return Promise.race([
       promise,
       new Promise((_, reject) =>
