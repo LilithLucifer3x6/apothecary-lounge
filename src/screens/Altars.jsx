@@ -114,34 +114,72 @@ export default function Altars({ pose }) {
       return <div className="mt mb-4">No rites currently summoned for this domain. The shelves are bare.</div>;
     }
 
+    const renderRhythm = (rhythmName, itemsInRhythm) => {
+      if (itemsInRhythm.length === 0) return null;
+      return (
+        <div style={{ marginBottom: '2rem' }}>
+          <div className="mt mb-4" style={{ textAlign: 'center', color: 'var(--plum)', fontWeight: 'bold' }}>{rhythmName}</div>
+          <div style={{ margin: '0.5rem 0 1rem 0', textAlign: 'center' }}>
+            <button 
+              className={`btn full ${itemsInRhythm.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
+              onClick={() => {
+                const toSave = itemsInRhythm.filter(i => !checkedIds.has(i.id)).map(i => i.id);
+                if (toSave.length > 0) {
+                  supabase.from('routine_history').insert({ completed_at: new Date().toISOString(), items_used: toSave }).then();
+                  const nextChecked = new Set(checkedIds);
+                  toSave.forEach(id => nextChecked.add(id));
+                  setCheckedIds(nextChecked);
+                }
+              }}
+              disabled={itemsInRhythm.every(i => checkedIds.has(i.id))}
+            >
+              {itemsInRhythm.every(i => checkedIds.has(i.id)) ? 'Consecrated' : 'Consecrate'}
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {itemsInRhythm.map(i => {
+              const isOpt = i.category?.toLowerCase().includes('mask') || i.category?.toLowerCase().includes('treatment');
+              return renderStep(i, isOpt);
+            })}
+          </div>
+        </div>
+      );
+    };
+
+    if (activeAltarId === 'crown') {
+      const washDayItems = domainItems.filter(i => {
+        const c = (i.category || '').toLowerCase();
+        return c.includes('shampoo') || c.includes('wash') || c.includes('cleanse') || c.includes('deep condition') || c.includes('mask') || c.includes('treatment');
+      });
+      const dailyItems = domainItems.filter(i => !washDayItems.includes(i));
+      
+      return (
+        <div>
+          {renderRhythm('Wash Day', washDayItems)}
+          {renderRhythm('Daily Maintenance', dailyItems)}
+        </div>
+      );
+    }
+
+    if (activeAltarId === 'vessel') {
+      const bathRitualItems = domainItems.filter(i => {
+        const c = (i.category || '').toLowerCase();
+        const n = (i.name || '').toLowerCase();
+        return c.includes('soak') || c.includes('salt') || c.includes('milk') || c.includes('scrub') || n.includes('bath');
+      });
+      const dailyItems = domainItems.filter(i => !bathRitualItems.includes(i));
+      
+      return (
+        <div>
+          {renderRhythm('Daily Maintenance', dailyItems)}
+          {renderRhythm('The Bath Ritual', bathRitualItems)}
+        </div>
+      );
+    }
+
     return (
       <div>
-        <div className="mt mb-4" style={{ textAlign: 'center' }}>The Liturgy of Sequence</div>
-        
-        <div style={{ margin: '0.5rem 0 1rem 0', textAlign: 'center' }}>
-          <button 
-            className={`btn full ${domainItems.every(i => checkedIds.has(i.id)) ? 'g' : 'plum'}`} 
-            onClick={() => {
-              const toSave = domainItems.filter(i => !checkedIds.has(i.id)).map(i => i.id);
-              if (toSave.length > 0) {
-                supabase.from('routine_history').insert({ completed_at: new Date().toISOString(), items_used: toSave }).then();
-                const nextChecked = new Set(checkedIds);
-                toSave.forEach(id => nextChecked.add(id));
-                setCheckedIds(nextChecked);
-              }
-            }}
-            disabled={domainItems.every(i => checkedIds.has(i.id))}
-          >
-            {domainItems.every(i => checkedIds.has(i.id)) ? 'The Altar is Sealed' : 'Seal the Altar'}
-          </button>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {domainItems.map(i => {
-            const isOpt = i.category?.toLowerCase().includes('mask') || i.category?.toLowerCase().includes('treatment');
-            return renderStep(i, isOpt);
-          })}
-        </div>
+        {renderRhythm('The Liturgy of Sequence', domainItems)}
       </div>
     );
   };
