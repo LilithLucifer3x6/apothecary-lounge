@@ -1,7 +1,7 @@
 import { supabase } from './supabase.js';
 import { ROOM_PROMPTS } from '../screens/ConjureVisage.jsx';
 
-export const ANTHROPIC_MODEL = 'claude-sonnet-5';
+export const ANTHROPIC_MODEL = 'claude-3-5-sonnet-20240620';
 
 export async function invokeAnthropicProxy(body, retries = 1) {
   for (let i = 0; i <= retries; i++) {
