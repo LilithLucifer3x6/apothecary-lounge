@@ -575,7 +575,7 @@ export default function Grimoire({ pose }) {
             
             <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '1rem', marginTop: '1rem', paddingRight: '0.5rem' }}>
               {readingState.history.map((msg, idx) => (
-                <div key={idx} style={{ 
+                <div key={idx} className={msg.role === 'assistant' ? 'msg-bot' : 'msg-user'} style={{ 
                   textAlign: msg.role === 'user' ? 'right' : 'left', 
                   marginBottom: '1rem',
                   color: msg.role === 'user' ? 'var(--text)' : 'var(--plum)'
