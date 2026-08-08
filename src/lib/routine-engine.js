@@ -204,19 +204,38 @@ export function buildBaseRoutines(items, userProfile = {}, wearables = {}) {
   }
 
   const getWeight = (item) => {
+    // 1. Explicit user overrides
     if (item.behavior_flags && item.behavior_flags.layering_weight) {
       return item.behavior_flags.layering_weight;
     }
+    
     const cat = (item.category || '').toLowerCase();
+    
+    // 2. Functional category overrides (must-be-first / must-be-last)
     if (cat.includes('cleanser') || cat.includes('wash')) return 1;
+    if (cat.includes('sunscreen') || cat.includes('spf')) return 10;
+
+    // 3. Texture-based physical layering (thinnest to thickest)
+    if (item.texture) {
+      const tex = item.texture.toLowerCase();
+      if (tex === 'liquid' || tex === 'gel') return 2;
+      if (tex === 'serum') return 3;
+      if (tex === 'lotion' || tex === 'mousse') return 5;
+      if (tex === 'cream') return 7;
+      if (tex === 'oil') return 8;
+      if (tex === 'balm' || tex === 'ointment' || tex === 'solid') return 9;
+      if (tex === 'powder') return 10;
+    }
+
+    // 4. Fallback inference if texture is missing (legacy products)
     if (cat.includes('toner') || cat.includes('essence') || cat.includes('mist')) return 2;
     if (cat.includes('serum') || cat.includes('ampoule')) return 3;
     if (cat.includes('lotion') || cat.includes('emulsion')) return 5;
     if (cat.includes('cream') || cat.includes('moisturizer')) return 7;
     if (cat.includes('oil')) return 8;
     if (cat.includes('balm') || cat.includes('ointment')) return 9;
-    if (cat.includes('sunscreen') || cat.includes('spf')) return 10;
-    return 5;
+    
+    return 5; // Default middle-weight
   };
 
   amItems.sort((a, b) => getWeight(a) - getWeight(b));

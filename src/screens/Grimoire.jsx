@@ -34,7 +34,7 @@ export default function Grimoire({ pose }) {
       if (mounted && data) {
         const mapped = data.map(row => ({
           ...row,
-          type: row.name === 'The Root Weaving' ? 'retie' : row.name === 'The Gilded Hand' ? 'nails' : null,
+          type: (row.name === 'The Root Weaving' || row.name === 'Root Weaving') ? 'retie' : (row.name === 'The Gilded Hand' || row.name === 'Talon Honing') ? 'nails' : null,
           date: row.next_due
         }));
         setAppointments(mapped);
@@ -77,9 +77,9 @@ export default function Grimoire({ pose }) {
   const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday
 
   const markDone = async (type) => {
-    const name = type === 'retie' ? 'The Root Weaving' : type === 'nails' ? 'The Gilded Hand' : null;
     const appt = appointments.find(a => a.type === type);
-    if (!name || !appt) return;
+    if (!appt) return;
+
 
     const today = new Date();
     const cadenceWeeks = appt.cadence_weeks || (type === 'retie' ? 8 : 2);
@@ -97,6 +97,7 @@ export default function Grimoire({ pose }) {
       console.error('Failed to update appointment:', error);
       return;
     }
+
 
     setAppointments(prev => prev.map(a =>
       a.id === appt.id ? { ...a, last_completed: todayStr, next_due: nextDueStr, date: nextDueStr } : a

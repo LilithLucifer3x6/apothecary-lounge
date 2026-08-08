@@ -230,6 +230,8 @@ export async function parseProductImage(base64Image, mediaType) {
           ingredients: { type: 'array', items: { type: 'string' }, description: 'List of ingredients' },
           category: { type: 'string', description: 'Product category (e.g., Cleanser, Moisturizer)' },
           form: { type: 'string', enum: ['liquid', 'cream', 'gel', 'powder', 'solid'], description: 'Physical form of the product' },
+          container_size: { type: 'string', description: 'Volume or weight (e.g. 50ml, 1.7oz, 30g)' },
+          texture: { type: 'string', enum: ['liquid', 'gel', 'serum', 'lotion', 'mousse', 'cream', 'oil', 'balm', 'ointment', 'solid', 'powder'], description: 'Physical texture of the product' },
           application_zones: { type: 'array', items: { type: 'string' }, description: 'Body zones where this is applied (e.g., Visage, Vessel, Crown, Grin, oral)' },
           period_after_opening_months: { type: 'number', description: 'PAO from the open jar icon (in months), if present' },
           unopened_shelf_life_months: { type: 'number', description: 'Unopened shelf life (in months), if explicitly stated' },
@@ -317,6 +319,8 @@ export async function parseBatchProductImages(images) {
                   description: 'The definitive ingredients list'
                 },
                 form: { type: 'string', enum: ['liquid', 'cream', 'gel', 'powder', 'solid'], description: 'Physical form of the product' },
+                container_size: { type: 'string', description: 'Volume or weight (e.g. 50ml, 1.7oz, 30g)' },
+                texture: { type: 'string', enum: ['liquid', 'gel', 'serum', 'lotion', 'mousse', 'cream', 'oil', 'balm', 'ointment', 'solid', 'powder'], description: 'Physical texture of the product' },
                 application_zones: { type: 'array', items: { type: 'string' }, description: 'Body zones where this is applied (e.g., Visage, Vessel, Crown, Grin, oral)' },
                 period_after_opening_months: { type: 'number', description: 'PAO from the open jar icon (in months), if present' },
                 unopened_shelf_life_months: { type: 'number', description: 'Unopened shelf life (in months), if explicitly stated' },
