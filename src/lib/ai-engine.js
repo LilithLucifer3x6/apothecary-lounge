@@ -16,6 +16,12 @@ export async function invokeAnthropicProxy(body, retries = 1) {
       clearTimeout(timeoutId);
       if (error) throw error;
       if (!data) throw new Error("No data returned from Anthropic proxy.");
+      // claude-sonnet-5 with extended thinking returns a "thinking" block as
+      // content[0] before the actual text block. Strip non-text blocks so all
+      // callers can safely use content[0].text without thinking-awareness.
+      if (data.content && Array.isArray(data.content)) {
+        data.content = data.content.filter(b => b.type === 'text');
+      }
       return { data, error: null };
     } catch (err) {
       if (i === retries) return { data: null, error: err };
