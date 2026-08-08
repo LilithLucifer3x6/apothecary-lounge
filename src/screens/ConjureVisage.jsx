@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 import VoiceInput from '../components/VoiceInput.jsx';
 import Icon from '../components/Icon.jsx';
+import { useDialog } from '../components/Dialogs.jsx';
 import { invokeImageProxy } from '../lib/ai-engine.js';
 
 // ── PHYSICAL BASE (hardcoded per user spec) ──────────────────────────────────
@@ -138,12 +139,12 @@ const FAMILIARS = [
 
 // ── ROOM DEFINITIONS for background generation ────────────────────────────────
 export const ROOM_PROMPTS = {
-  rites:  (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design, adorned with ${cfg.jewelry} jewelry. Standing in a cozy witchy cottage interior with a fireplace and cauldron, brewing a skincare potion. Their ${cfg.familiar} familiar watches nearby. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  grim:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Standing before towering shelves of glowing potion bottles in a dark magical library, examining a product label. Their ${cfg.familiar} familiar perches nearby. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  altars: (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Sitting at a beautifully arranged altar with crystals, candles, and offerings, with hands raised in ritual gesture. Their ${cfg.familiar} familiar rests on the altar. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  root:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Casting spells over a large bubbling cauldron, magical glowing symbols forming in the air. Their ${cfg.familiar} familiar watches from a wooden beam above. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  pool:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Gazing into a glowing scrying pool with swirling visions of wisdom in the water. Their ${cfg.familiar} familiar is reflected in the water. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
-  tome:   (cfg) => `High-fidelity 2D digital painting of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Writing in a large leather-bound shadow tome by candlelight, surrounded by drying herbs and honey jars with a warm cup of herbal tea. Their ${cfg.familiar} familiar curls up beside the tome. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`,
+  rites:  (cfg) => `Hand-painted 2D animated dark-fantasy illustration of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design, adorned with ${cfg.jewelry} jewelry. Standing in a cozy witchy cottage interior with a fireplace and cauldron, brewing a skincare potion. Their ${cfg.familiar} familiar watches nearby. Lush painterly backgrounds, expressive stylized character design, gothic dark-fantasy video-game aesthetic, richly detailed candlelit interiors, moody atmospheric lighting with dramatic shadows and ornate gothic architecture. No velvet texture anywhere; prefer flowing silk, brocade, or heavy wool-like fabrics instead. Soft glowing aura, calm expression.`,
+  grim:   (cfg) => `Hand-painted 2D animated dark-fantasy illustration of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Standing before towering shelves of glowing potion bottles in a dark magical library, examining a product label. Their ${cfg.familiar} familiar perches nearby. Lush painterly backgrounds, expressive stylized character design, gothic dark-fantasy video-game aesthetic, richly detailed candlelit interiors, moody atmospheric lighting with dramatic shadows and ornate gothic architecture. No velvet texture anywhere; prefer flowing silk, brocade, or heavy wool-like fabrics instead. Soft glowing aura, calm expression.`,
+  altars: (cfg) => `Hand-painted 2D animated dark-fantasy illustration of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Sitting at a beautifully arranged altar with crystals, candles, and offerings, with hands raised in ritual gesture. Their ${cfg.familiar} familiar rests on the altar. Lush painterly backgrounds, expressive stylized character design, gothic dark-fantasy video-game aesthetic, richly detailed candlelit interiors, moody atmospheric lighting with dramatic shadows and ornate gothic architecture. No velvet texture anywhere; prefer flowing silk, brocade, or heavy wool-like fabrics instead. Soft glowing aura, calm expression.`,
+  root:   (cfg) => `Hand-painted 2D animated dark-fantasy illustration of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Casting spells over a large bubbling cauldron, magical glowing symbols forming in the air. Their ${cfg.familiar} familiar watches from a wooden beam above. Lush painterly backgrounds, expressive stylized character design, gothic dark-fantasy video-game aesthetic, richly detailed candlelit interiors, moody atmospheric lighting with dramatic shadows and ornate gothic architecture. No velvet texture anywhere; prefer flowing silk, brocade, or heavy wool-like fabrics instead. Soft glowing aura, calm expression.`,
+  pool:   (cfg) => `Hand-painted 2D animated dark-fantasy illustration of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Gazing into a glowing scrying pool with swirling visions of wisdom in the water. Their ${cfg.familiar} familiar is reflected in the water. Lush painterly backgrounds, expressive stylized character design, gothic dark-fantasy video-game aesthetic, richly detailed candlelit interiors, moody atmospheric lighting with dramatic shadows and ornate gothic architecture. No velvet texture anywhere; prefer flowing silk, brocade, or heavy wool-like fabrics instead. Soft glowing aura, calm expression.`,
+  tome:   (cfg) => `Hand-painted 2D animated dark-fantasy illustration of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${cfg.locStyle} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${cfg.hairAccessory}. Wearing a deep ${cfg.robeColor} gothic cottagecore robe of ${cfg.robeDesign} design. Writing in a large leather-bound shadow tome by candlelight, surrounded by drying herbs and honey jars with a warm cup of herbal tea. Their ${cfg.familiar} familiar curls up beside the tome. Lush painterly backgrounds, expressive stylized character design, gothic dark-fantasy video-game aesthetic, richly detailed candlelit interiors, moody atmospheric lighting with dramatic shadows and ornate gothic architecture. No velvet texture anywhere; prefer flowing silk, brocade, or heavy wool-like fabrics instead. Soft glowing aura, calm expression.`,
 };
 
 // ── SECTION COMPONENT ────────────────────────────────────────────────────────
@@ -261,6 +262,7 @@ function ColorSwatch({ color, selected, onSelect }) {
 }
 
 export default function ConjureVisage({ onFinish }) {
+  const { alert } = useDialog();
   const [name, setName] = useState('');
   const [locStyle,       setLocStyle]       = useState('');
   const [hairColor,      setHairColor]      = useState('');
@@ -307,7 +309,7 @@ export default function ConjureVisage({ onFinish }) {
     setGeneratingPreview(true);
     setPreviewImage(null);
     const config = buildKeeperDescription();
-    const portraitPrompt = `High-fidelity 2D digital painting portrait of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${config.locStyle || 'long'} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${config.hairAccessory || 'nothing'}. Wearing a deep ${config.robeColor || 'black'} gothic cottagecore robe of ${config.robeDesign || 'simple'} design, adorned with ${config.jewelry || 'no'} jewelry. Plain neutral gray background. Magical, ethereal lighting, painterly, hand-illustrated, gothic, muted palette. Soft glowing aura, calm expression.`;
+    const portraitPrompt = `Hand-painted 2D animated dark-fantasy illustration portrait of a mystical Keeper. Plus size, full figure body type. Androgynous, dark rich umber skin, and ${config.locStyle || 'long'} ultra-thin, thread-like microlocs (0.2cm thickness) adorned with ${config.hairAccessory || 'nothing'}. Wearing a deep ${config.robeColor || 'black'} gothic cottagecore robe of ${config.robeDesign || 'simple'} design, adorned with ${config.jewelry || 'no'} jewelry. Plain neutral gray background. Lush painterly rendering, expressive stylized character design, gothic dark-fantasy video-game aesthetic, moody atmospheric lighting with dramatic shadows. No velvet texture anywhere; prefer flowing silk, brocade, or heavy wool-like fabrics instead. Soft glowing aura, calm expression.`;
     
     try {
       const { data, error } = await invokeImageProxy({
@@ -317,11 +319,16 @@ export default function ConjureVisage({ onFinish }) {
       if (data && data.output && data.output[0]) {
         setPreviewImage(data.output[0]);
       } else {
-        alert("The Scrying Pool clouded over. Failed to generate preview.");
+        console.error('Preview generation failed:', error);
+        const isQuota = error?.message?.toLowerCase().includes('429') || error?.message?.toLowerCase().includes('rate limit') || error?.message?.toLowerCase().includes('too many requests');
+        await alert(isQuota
+          ? "The image quota is still exhausted for now — try again once it resets."
+          : `The Scrying Pool clouded over: ${error?.message || 'unknown error, check console for details'}`
+        );
       }
     } catch (e) {
-      console.error(e);
-      alert("A disruption in the weave. Failed to generate preview.");
+      console.error('Preview generation threw:', e);
+      await alert(`A disruption in the weave: ${e?.message || 'unknown error, check console for details'}`);
     } finally {
       setGeneratingPreview(false);
     }
