@@ -317,7 +317,7 @@ export default function App() {
               </button>
             </div>
             
-            <div className="tabs" style={{ display: 'flex', justifyContent: 'center', flex: 1, gap: '0.5rem', overflowX: 'auto', scrollbarWidth: 'none', padding: 0 }}>
+            <div className="tabs" style={{ display: 'flex', justifyContent: 'center', flex: 1, gap: '0.5rem', overflowX: 'auto', scrollbarWidth: 'none', padding: '0 0.3rem' }}>
               {TABS.map(t => (
                 <button
                   key={t.id}
